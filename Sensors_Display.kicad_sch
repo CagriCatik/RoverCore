@@ -1029,7 +1029,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "Carrier part: female header 9x1 2.54 mm, through-hole; manufacturer part and height open (O-31). The module (bought separately) plugs in with its own male header. Pinout from Adafruit_LSM6DSOX.brd: 1 VIN, 2 3Vo, 3 GND, 4 SCL, 5 SDA, 6 DO, 7 CS, 8 INT1, 9 INT2. VIN = +3V3, address 0x6A, INT1 push-pull 3.3 V."
+		(property "Description" "Carrier socket Samtec SSW-109-01-T-S: 1x9, 2.54 mm, body 8.51 mm above the board, tail 0.79 x 0.41 mm (Samtec drawing SSW-1XX rev CJ). The module plugs in with its own male header. Pinout from Adafruit_LSM6DSOX.brd: 1 VIN, 2 3Vo, 3 GND, 4 SCL, 5 SDA, 6 DO, 7 CS, 8 INT1, 9 INT2. VIN = +3V3, address 0x6A, INT1 push-pull 3.3 V."
 			(at 50.8 101.6 0)
 			(effects
 				(font
@@ -1038,7 +1038,7 @@
 				(hide yes)
 			)
 		)
-		(property "Manufacturer" "Adafruit (module)"
+		(property "Manufacturer" "Samtec (socket); module Adafruit 4438 bought separately"
 			(at 50.8 101.6 0)
 			(effects
 				(font
@@ -1047,7 +1047,7 @@
 				(hide yes)
 			)
 		)
-		(property "MPN" "4438 module + carrier female header 1x9 (part open, O-31)"
+		(property "MPN" "SSW-109-01-T-S"
 			(at 50.8 101.6 0)
 			(effects
 				(font
@@ -1334,7 +1334,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "Carrier part: female header 8x1 2.54 mm, through-hole; manufacturer part and height open (O-31). The module (bought separately) plugs in with its own male header. Pinout from 'Adafruit 0.96in 128x64 OLED STEMMA QT.brd': 1 Data, 2 Clk, 3 DC/A0, 4 Rst, 5 CS, 6 3Vo, 7 Vin, 8 GND. I2C default, address 0x3D."
+		(property "Description" "Carrier socket Samtec SSW-108-01-T-S: 1x8, 2.54 mm, body 8.51 mm above the board, tail 0.79 x 0.41 mm (Samtec drawing SSW-1XX rev CJ). The module plugs in with its own male header. Pinout from 'Adafruit 0.96in 128x64 OLED STEMMA QT.brd': 1 Data, 2 Clk, 3 DC/A0, 4 Rst, 5 CS, 6 3Vo, 7 Vin, 8 GND. I2C default, address 0x3D."
 			(at 246.38 111.76 0)
 			(effects
 				(font
@@ -1343,7 +1343,7 @@
 				(hide yes)
 			)
 		)
-		(property "Manufacturer" "Adafruit (module)"
+		(property "Manufacturer" "Samtec (socket); module Adafruit 326 (STEMMA QT rev.) bought separately"
 			(at 246.38 111.76 0)
 			(effects
 				(font
@@ -1352,7 +1352,7 @@
 				(hide yes)
 			)
 		)
-		(property "MPN" "326 module (STEMMA QT rev.) + carrier female header 1x8 (part open, O-31)"
+		(property "MPN" "SSW-108-01-T-S"
 			(at 246.38 111.76 0)
 			(effects
 				(font
@@ -2475,7 +2475,7 @@
 		)
 		(uuid "532641b0-5b59-526d-bf88-67dc52e0004d")
 	)
-	(text "Module pull-ups 10k to VIN (= +3V3) each: 10k || 10k = 5.0k.\nRise time approx. 0.21 us at 50 pF (estimate; 400 kHz: <= 0.3 us).\nR801/R802 DNP option. R803 holds IMU_INT1 low without IMU."
+	(text "Module pull-ups 10k to VIN (= +3V3) each: 10k || 10k = 5.0k.\nRise time approx. 0.21 us at an assumed 50 pF: 400 kHz only plausible by calculation.\nFirmware starts at 100 kHz; 400 kHz after measurement (O-32).\nR801/R802 DNP option. R803 holds IMU_INT1 low without IMU."
 		(exclude_from_sim no)
 		(at 107.95 68.58 0)
 		(effects

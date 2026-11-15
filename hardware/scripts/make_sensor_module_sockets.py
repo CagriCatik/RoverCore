@@ -29,6 +29,10 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from make_devkit_socket import SYM_LIB, FP_DIR, prop, pin, rect, line, poly, text  # noqa: E402
 
 HOLE = 2.7  # carrier NPTH for an M2.5 standoff screw (module holes 2.5 mm plated)
+# Carrier socket: Samtec SSW-1xx-01-T-S (drawing SSW-1XX-XX-XXX-X-XX-XXX-XX rev CJ, sheet 1): body 2.41 mm wide,
+# length N x 2.54 + 0.51 mm, 8.51 mm above the board, tail 0.79 x 0.41 mm, 2.64 mm long (lead style -01).
+# The drawing gives no PCB hole; 1.0 mm drill leaves 0.11 mm on the 0.89 mm tail diagonal (check, O-31).
+SOCKET_W, SOCKET_EXTRA, SOCKET_H = 2.41, 0.51, 8.51
 
 MODULES = {
     "Adafruit_4438_LSM6DSOX_Socket": dict(
@@ -37,7 +41,7 @@ MODULES = {
         pad1=(2.54, 2.54), step=+2.54, board=(0.0, 0.0, 25.40, 17.78), notch=None,
         holes=[(2.54, 15.24), (22.86, 15.24)], fab_holes=[],
         unused=[("JP2 aux 1x5 - no header, no socket", 12.7, 15.24)],
-        title="Adafruit 4438 LSM6DSOX",
+        title="Adafruit 4438 LSM6DSOX", socket="SSW-109-01-T-S",
         desc="Carrier female header 1x9 2.54 mm for Adafruit 4438 (LSM6DSOX), plugged component side up. "
              "Pins per Adafruit_LSM6DSOX.brd: 1 VIN, 2 3Vo, 3 GND, 4 SCL, 5 SDA, 6 DO, 7 CS, 8 INT1, 9 INT2. "
              "Two NPTH 2.7 mm for M2.5 standoffs at the module holes; aux header JP2 unused.",
@@ -48,7 +52,7 @@ MODULES = {
         pad1=(23.495, 29.21), step=-2.54, board=(0.0, 0.0, 29.21, 31.75), notch=(5.08, 0.0, 24.13, 5.08),
         holes=[(2.54, 2.54), (26.67, 2.54)], fab_holes=[(2.54, 29.21), (26.67, 29.21)],
         unused=[],
-        title="Adafruit 326 OLED 0.96in",
+        title="Adafruit 326 OLED 0.96in", socket="SSW-108-01-T-S",
         desc="Carrier female header 1x8 2.54 mm for Adafruit 326 (0.96in 128x64 SSD1306, STEMMA QT revision), plugged "
              "component side up. Pins per 'Adafruit 0.96in 128x64 OLED STEMMA QT.brd': 1 Data, 2 Clk, 3 DC/A0, 4 Rst, "
              "5 CS, 6 3Vo, 7 Vin, 8 GND. NPTH 2.7 mm only at the two corner-tab holes; the holes beside the header "
@@ -129,6 +133,11 @@ def footprint(name, m):
             body += line("F.Fab", tx(a[0]), ty(a[1]), tx(b[0]), ty(b[1]), 0.1)
     else:
         body += rect("F.Fab", tx(bx0), ty(by0), tx(bx1), ty(by1), 0.1)
+    # carrier socket body (Samtec SSW) on F.Fab, centred on the pad row
+    length = n * 2.54 + SOCKET_EXTRA
+    mid = (n - 1) * m["step"] / 2
+    body += rect("F.Fab", mid - length / 2, -SOCKET_W / 2, mid + length / 2, SOCKET_W / 2, 0.1)
+    body += text("user", "SSW-1%02d-01-T-S, %.2f mm high" % (n, SOCKET_H), mid, SOCKET_W / 2 + 0.9, "F.Fab", 0.6)
     for X, Y in m["holes"] + m["fab_holes"]:
         body += circle("F.Fab", tx(X), ty(Y), 1.25)
     for X, Y in m["fab_holes"]:

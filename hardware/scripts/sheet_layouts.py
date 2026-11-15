@@ -10,6 +10,8 @@ hier_local: hierarchical nets that keep a local label (net name unchanged) -> pi
 R = {"_ref_at": (2.54, -1.27), "_val_at": (2.54, 1.27)}      # field text right of a vertical two-pin part
 TPF = {"_ref_at": (2.54, -2.54), "_val_at": (2.54, 0.0)}
 YAGEO_RC = "https://www.yageogroup.com/content/datasheet/asset/file/PYU-RC_GROUP_51_ROHS_L"
+SOCKET_DESC = ("Carrier socket Samtec SSW-1%02d-01-T-S: 1x%d, 2.54 mm, body 8.51 mm above the board, tail 0.79 x 0.41 mm "
+               "(Samtec drawing SSW-1XX rev CJ). The module plugs in with its own male header. Pinout from %s.")
 
 LAYOUTS = {}
 
@@ -488,8 +490,16 @@ LAYOUTS["Lighting_IO"] = {
 LAYOUTS["Sensors_Display"] = {
     # J115 rotated 180 (pins right) faces J116 (pins left): SDA and SCL run as two straight wires, no crossing
     "parts": {
-        "J115": (50.8, 101.6, 180, {"_ref_at": (5.08, -15.24), "_val_at": (5.08, 15.24), "_stub": {"1": 10.16}}),
-        "J116": (246.38, 111.76, 0, {"_ref_at": (-5.08, -15.24), "_val_at": (-5.08, 15.24)}),
+        "J115": (50.8, 101.6, 180, {"_ref_at": (5.08, -15.24), "_val_at": (5.08, 15.24), "_stub": {"1": 10.16},
+                                    "Manufacturer": "Samtec (socket); module Adafruit 4438 bought separately",
+                                    "MPN": "SSW-109-01-T-S",
+                                    "Description": SOCKET_DESC % (9, 9, "Adafruit_LSM6DSOX.brd: 1 VIN, 2 3Vo, 3 GND, 4 SCL, "
+                                                   "5 SDA, 6 DO, 7 CS, 8 INT1, 9 INT2. VIN = +3V3, address 0x6A, INT1 push-pull 3.3 V")}),
+        "J116": (246.38, 111.76, 0, {"_ref_at": (-5.08, -15.24), "_val_at": (-5.08, 15.24),
+                                     "Manufacturer": "Samtec (socket); module Adafruit 326 (STEMMA QT rev.) bought separately",
+                                     "MPN": "SSW-108-01-T-S",
+                                     "Description": SOCKET_DESC % (8, 8, "'Adafruit 0.96in 128x64 OLED STEMMA QT.brd': 1 Data, "
+                                                    "2 Clk, 3 DC/A0, 4 Rst, 5 CS, 6 3Vo, 7 Vin, 8 GND. I2C default, address 0x3D")}),
         "R803": (76.2, 93.98, 90),
         "R801": (127.0, 92.71, 0, R),
         "R802": (139.7, 113.03, 0, dict(R, _pwr_rot={"2": 180})),
@@ -506,7 +516,8 @@ LAYOUTS["Sensors_Display"] = {
                 "Addr 0x6A (DO open: module pull-down, SJ1 open).\\nINT1 push-pull 3.3 V. Two M2.5 standoffs."),
         "bus": ("2  Shared I2C bus", (106.68, 63.5, 210.82, 132.08),
                 "Module pull-ups 10k to VIN (= +3V3) each: 10k || 10k = 5.0k.\\n"
-                "Rise time approx. 0.21 us at 50 pF (estimate; 400 kHz: <= 0.3 us).\\n"
+                "Rise time approx. 0.21 us at an assumed 50 pF: 400 kHz only plausible by calculation.\\n"
+                "Firmware starts at 100 kHz; 400 kHz after measurement (O-32).\\n"
                 "R801/R802 DNP option. R803 holds IMU_INT1 low without IMU."),
         "oled": ("3  OLED J116 - Adafruit 326", (215.9, 63.5, 274.32, 132.08),
                  "SSD1306 128x64, STEMMA QT rev.:\\nI2C default (SJ1/SJ2 closed).\\n"
