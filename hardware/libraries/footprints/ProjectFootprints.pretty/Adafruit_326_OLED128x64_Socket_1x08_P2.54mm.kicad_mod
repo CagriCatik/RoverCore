@@ -1,0 +1,388 @@
+(footprint "Adafruit_326_OLED128x64_Socket_1x08_P2.54mm"
+	(version 20260206)
+	(generator "rovercore_make_sensor_module_sockets")
+	(generator_version "10.0")
+	(layer "F.Cu")
+	(descr "Carrier female header 1x8 2.54 mm for Adafruit 326 (0.96in 128x64 SSD1306, STEMMA QT revision), plugged component side up. Pins per 'Adafruit 0.96in 128x64 OLED STEMMA QT.brd': 1 Data, 2 Clk, 3 DC/A0, 4 Rst, 5 CS, 6 3Vo, 7 Vin, 8 GND. NPTH 2.7 mm only at the two corner-tab holes; the holes beside the header are too close to the socket for a standoff. Source: https://github.com/adafruit/Adafruit-128x64-Monochrome-OLED-PCB (Eagle board file).")
+	(tags "Adafruit module socket 2.54mm")
+	(property "Reference" "REF**"
+		(at -8.89 -4.039999999999999 0)
+		(layer "F.SilkS")
+		(effects
+			(font
+				(size 1.0 1.0)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Value" "Adafruit_326_OLED128x64_Socket_1x08_P2.54mm"
+		(at -8.89 30.71 0)
+		(layer "F.Fab")
+		(effects
+			(font
+				(size 1.0 1.0)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Datasheet" ""
+		(at 0 0 0)
+		(layer "F.Fab")
+		(hide yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Description" ""
+		(at 0 0 0)
+		(layer "F.Fab")
+		(hide yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+				(thickness 0.15)
+			)
+		)
+	)
+	(attr through_hole)
+	(fp_line
+		(start -23.495 29.21)
+		(end -18.415 29.21)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(layer "F.Fab")
+	)
+	(fp_line
+		(start -18.415 29.21)
+		(end -18.415 24.13)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(layer "F.Fab")
+	)
+	(fp_line
+		(start -18.415 24.13)
+		(end 0.635 24.13)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(layer "F.Fab")
+	)
+	(fp_line
+		(start 0.635 24.13)
+		(end 0.635 29.21)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(layer "F.Fab")
+	)
+	(fp_line
+		(start 0.635 29.21)
+		(end 5.715 29.21)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(layer "F.Fab")
+	)
+	(fp_line
+		(start 5.715 29.21)
+		(end 5.715 -2.54)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(layer "F.Fab")
+	)
+	(fp_line
+		(start 5.715 -2.54)
+		(end -23.495 -2.54)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(layer "F.Fab")
+	)
+	(fp_line
+		(start -23.495 -2.54)
+		(end -23.495 29.21)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(layer "F.Fab")
+	)
+	(fp_circle
+		(center -20.955 26.67)
+		(end -19.705 26.67)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(fill no)
+		(layer "F.Fab")
+	)
+	(fp_circle
+		(center 3.175 26.67)
+		(end 4.425 26.67)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(fill no)
+		(layer "F.Fab")
+	)
+	(fp_circle
+		(center -20.955 0.0)
+		(end -19.705 0.0)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(fill no)
+		(layer "F.Fab")
+	)
+	(fp_circle
+		(center 3.175 0.0)
+		(end 4.425 0.0)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(fill no)
+		(layer "F.Fab")
+	)
+	(fp_text user "no standoff"
+		(at -20.955000000000002 2.2 0)
+		(layer "F.Fab")
+		(effects
+			(font
+				(size 0.6 0.6)
+				(thickness 0.15)
+			)
+		)
+	)
+	(fp_text user "no standoff"
+		(at 3.1750000000000007 2.2 0)
+		(layer "F.Fab")
+		(effects
+			(font
+				(size 0.6 0.6)
+				(thickness 0.15)
+			)
+		)
+	)
+	(fp_text user "Adafruit 326 OLED 0.96in - component side up"
+		(at -8.89 13.335 0)
+		(layer "F.Fab")
+		(effects
+			(font
+				(size 0.8 0.8)
+				(thickness 0.15)
+			)
+		)
+	)
+	(fp_text user "${REFERENCE}"
+		(at -8.89 14.935 0)
+		(layer "F.Fab")
+		(effects
+			(font
+				(size 0.8 0.8)
+				(thickness 0.15)
+			)
+		)
+	)
+	(fp_rect
+		(start -23.645 -2.69)
+		(end 5.865 29.36)
+		(stroke
+			(width 0.12)
+			(type solid)
+		)
+		(fill no)
+		(layer "F.SilkS")
+	)
+	(fp_poly
+		(pts (xy 1.6 1.2) (xy 1.6 2.4) (xy 0.6 1.8))
+		(stroke
+			(width 0.12)
+			(type solid)
+		)
+		(fill yes)
+		(layer "F.SilkS")
+	)
+	(fp_text user "Data"
+		(at -0.0 -1.9 0)
+		(layer "F.SilkS")
+		(effects
+			(font
+				(size 0.6 0.6)
+				(thickness 0.15)
+			)
+		)
+	)
+	(fp_text user "Clk"
+		(at -2.54 -1.9 0)
+		(layer "F.SilkS")
+		(effects
+			(font
+				(size 0.6 0.6)
+				(thickness 0.15)
+			)
+		)
+	)
+	(fp_text user "DC"
+		(at -5.08 -1.9 0)
+		(layer "F.SilkS")
+		(effects
+			(font
+				(size 0.6 0.6)
+				(thickness 0.15)
+			)
+		)
+	)
+	(fp_text user "Rst"
+		(at -7.62 -1.9 0)
+		(layer "F.SilkS")
+		(effects
+			(font
+				(size 0.6 0.6)
+				(thickness 0.15)
+			)
+		)
+	)
+	(fp_text user "CS"
+		(at -10.16 -1.9 0)
+		(layer "F.SilkS")
+		(effects
+			(font
+				(size 0.6 0.6)
+				(thickness 0.15)
+			)
+		)
+	)
+	(fp_text user "3Vo"
+		(at -12.7 -1.9 0)
+		(layer "F.SilkS")
+		(effects
+			(font
+				(size 0.6 0.6)
+				(thickness 0.15)
+			)
+		)
+	)
+	(fp_text user "Vin"
+		(at -15.24 -1.9 0)
+		(layer "F.SilkS")
+		(effects
+			(font
+				(size 0.6 0.6)
+				(thickness 0.15)
+			)
+		)
+	)
+	(fp_text user "GND"
+		(at -17.78 -1.9 0)
+		(layer "F.SilkS")
+		(effects
+			(font
+				(size 0.6 0.6)
+				(thickness 0.15)
+			)
+		)
+	)
+	(fp_rect
+		(start -23.745 -2.79)
+		(end 5.965 29.46)
+		(stroke
+			(width 0.05)
+			(type solid)
+		)
+		(fill no)
+		(layer "F.CrtYd")
+	)
+	(pad "1" thru_hole rect
+		(at -0.0 0.0)
+		(size 1.7 1.7)
+		(drill 1)
+		(layers "*.Cu" "*.Mask")
+		(remove_unused_layers no)
+	)
+	(pad "2" thru_hole roundrect
+		(at -2.54 0.0)
+		(size 1.7 1.7)
+		(drill 1)
+		(layers "*.Cu" "*.Mask")
+		(remove_unused_layers no)
+		(roundrect_rratio 0.25)
+	)
+	(pad "3" thru_hole roundrect
+		(at -5.08 0.0)
+		(size 1.7 1.7)
+		(drill 1)
+		(layers "*.Cu" "*.Mask")
+		(remove_unused_layers no)
+		(roundrect_rratio 0.25)
+	)
+	(pad "4" thru_hole roundrect
+		(at -7.62 0.0)
+		(size 1.7 1.7)
+		(drill 1)
+		(layers "*.Cu" "*.Mask")
+		(remove_unused_layers no)
+		(roundrect_rratio 0.25)
+	)
+	(pad "5" thru_hole roundrect
+		(at -10.16 0.0)
+		(size 1.7 1.7)
+		(drill 1)
+		(layers "*.Cu" "*.Mask")
+		(remove_unused_layers no)
+		(roundrect_rratio 0.25)
+	)
+	(pad "6" thru_hole roundrect
+		(at -12.7 0.0)
+		(size 1.7 1.7)
+		(drill 1)
+		(layers "*.Cu" "*.Mask")
+		(remove_unused_layers no)
+		(roundrect_rratio 0.25)
+	)
+	(pad "7" thru_hole roundrect
+		(at -15.24 0.0)
+		(size 1.7 1.7)
+		(drill 1)
+		(layers "*.Cu" "*.Mask")
+		(remove_unused_layers no)
+		(roundrect_rratio 0.25)
+	)
+	(pad "8" thru_hole roundrect
+		(at -17.78 0.0)
+		(size 1.7 1.7)
+		(drill 1)
+		(layers "*.Cu" "*.Mask")
+		(remove_unused_layers no)
+		(roundrect_rratio 0.25)
+	)
+	(pad "" np_thru_hole circle
+		(at -20.955 26.67)
+		(size 2.7 2.7)
+		(drill 2.7)
+		(layers "*.Cu" "*.Mask")
+	)
+	(pad "" np_thru_hole circle
+		(at 3.175 26.67)
+		(size 2.7 2.7)
+		(drill 2.7)
+		(layers "*.Cu" "*.Mask")
+	)
+	(embedded_fonts no)
+)

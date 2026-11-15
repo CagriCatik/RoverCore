@@ -115,9 +115,9 @@ class Sheet:
         self.libs.add(lib_id)
         power = ref.startswith("#")
         body = ("\t(symbol\n\t\t(lib_id \"%s\")\n\t\t(at %s %s %d)\n\t\t(unit 1)\n\t\t(exclude_from_sim no)\n"
-                "\t\t(in_bom %s)\n\t\t(on_board %s)\n\t\t(dnp no)\n\t\t(uuid \"%s\")\n"
+                "\t\t(in_bom %s)\n\t\t(on_board %s)\n\t\t(dnp %s)\n\t\t(uuid \"%s\")\n"
                 % (lib_id, x, y, rot, "yes" if (in_bom and not power) else "no", "no" if power else "yes",
-                   fields.get("_uuid") or self.uid("symbol-" + ref)))
+                   "yes" if fields.get("_dnp") else "no", fields.get("_uuid") or self.uid("symbol-" + ref)))
         if "_ref_at" in fields:  # explicit field offsets for large symbols
             (rdx, rdy), (vdx, vdy) = fields["_ref_at"], fields["_val_at"]
             ref_at, val_at, just = (x + rdx, y + rdy), (x + vdx, y + vdy), "left"
@@ -127,8 +127,9 @@ class Sheet:
         elif power:
             # supply symbols (arrow up): value above the arrow like KiCad's default, so it never lands on the
             # neighbouring pin row; GND keeps its hidden value below
-            above = not lib_id.endswith(":GND")
-            ref_at, val_at, just, angle = (x, y + 3.81), (x, round(y - 3.81, 4) if above else y + 5.08), None, 0
+            above = not lib_id.endswith(":GND") and rot != 180
+            ref_at, val_at, just, angle = (x, y + 3.81), (x, round(y - 3.81, 4) if above else round(y + 3.81, 4)
+                                                          if rot == 180 else y + 5.08), None, 0
         elif self.vertical(lib_id, rot):
             ref_at, val_at, just = (x + 6.35, y - 1.27), (x + 6.35, y + 1.27), "left"
             angle = rot if rot in (90, 270) else 0
@@ -326,8 +327,10 @@ class Sheet:
             if net in power_nets:
                 self.pwr += 1
                 name = power_nets[net].split(":")[1]
+                # opt-in: a supply symbol at a downward stub may point down (rotation 180, value below the arrow)
+                prot = fields.get("_pwr_rot", {}).get(number, 0)
                 self._symbol(power_nets[net], "#PWR%s%02d" % (ref, self.pwr), name, "", ex, ey,
-                             0 if name == "GND" else 0, {"1": net}, {})
+                             prot, {"1": net}, {})
             else:
                 self.label(net, ex, ey, (dx, dy), "%s-%s" % (ref, number), hier.get(net))
 

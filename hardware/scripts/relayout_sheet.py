@@ -105,6 +105,8 @@ def extract(sheet):
         info["root_uuid"], info["sheet_uuid"] = path.group(1), path.group(2)
         fields = {k: v for k, v in props if k not in ("Reference", "Value", "Footprint")}
         fields["_uuid"] = re.search(r'\n\t\t\(uuid "([^"]+)"\)', blk).group(1)
+        if "\n\t\t(dnp yes)" in blk:
+            fields["_dnp"] = True
         fields["_pin_uuids"] = dict(re.findall(r'\(pin "([^"]+)"\n\t\t\t\(uuid "([^"]+)"\)', blk))
         at = re.search(r'\n\t\t\(at ([-\d.]+) ([-\d.]+) (\d+)\)', blk)
         info["symbols"][ref] = dict(lib=lib, value=dict(props)["Value"], footprint=dict(props)["Footprint"],
@@ -128,7 +130,14 @@ def local_name(sheet, info, net):
 
 def build(sheet, spec, nets):
     info = extract(sheet)
-    syms = info["symbols"]
+    syms = dict(info["symbols"])
+    # parts added by this layout step (electrical change, listed in the spec): lib, value, footprint, pins, fields
+    for ref, (lib, value, footprint, pins, fields) in spec.get("new", {}).items():
+        if ref in syms:
+            continue  # already in the sheet: from now on taken from the sheet like every other part
+        uuids = {num: None for num in pins}
+        syms[ref] = dict(lib=lib, value=value, footprint=footprint, fields=dict(fields, _pin_uuids=uuids),
+                         in_bom=not ref.startswith("TP"), at=None, new_pins=pins)
     missing, extra = set(syms) - set(spec["parts"]), set(spec["parts"]) - set(syms)
     if missing or extra:
         raise SystemExit("%s: layout spec mismatch, missing %s, unknown %s" % (sheet, sorted(missing), sorted(extra)))
@@ -149,14 +158,19 @@ def build(sheet, spec, nets):
         sym = syms[ref]
         x, y, rot = place[:3]
         extra_fields = place[3] if len(place) > 3 else {}
-        pins = {}
+        pins = dict(sym.get("new_pins", {}))
         for num in sym["fields"]["_pin_uuids"]:
+            if num in pins:
+                continue
             net = nets.get((ref, num))
             if net is None:
                 raise SystemExit("%s: pin %s.%s not in netlist" % (sheet, ref, num))
             pins[num] = local_name(sheet, info, net)
         pins.update(spec.get("pins", {}).get(ref, {}))
         fields = dict(sym["fields"], **extra_fields)
+        if all(v is None for v in fields["_pin_uuids"].values()):
+            fields.pop("_pin_uuids")
+            fields.pop("_uuid", None)
         s.part(ref, sym["lib"], sym["value"], sym["footprint"], (x, y, rot), pins, fields, power_nets, hier,
                in_bom=sym["in_bom"])
     s.route()
