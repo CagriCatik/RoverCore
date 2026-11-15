@@ -1,1 +1,2 @@
 filename_or_part,manufacturer,source_url,document_revision,retrieved_on,sha256,licence_or_redistribution_notes
+LTC7803 datasheet (components/datasheets/ltc7803.pdf local only),Analog Devices,https://www.analog.com/media/en/technical-documentation/data-sheets/ltc7803.pdf,Rev B (11/22),2026-11-15,3a27428e9faccb9d87ec03c38fcfc698236fe6580c85ae7cefdd99a4f901f670,ADI copyright; PDF not committed - keep URL and hash only

@@ -254,22 +254,24 @@ und am Prototyp gemessen.
 
 Datei `ServoPower.kicad_sch` (A3), einmalig erzeugt mit
 `hardware/scripts/bootstrap_servo_power.py`; danach ist die KiCad-Datei
-maßgeblich. LTC7803-Angaben aus Datenblatt **Rev A** (LCSC-Spiegel); Rev B
-konnte nicht abgerufen werden (O-7). Das LTC7803-Symbol fehlt in KiCad und
+maßgeblich. LTC7803-Angaben aus Datenblatt **Rev B (11/22)**, Analog Devices,
+lokal geprüft (SHA-256 in `components/sources.csv`, PDF nicht im Repository).
+Rev B ändert gegenüber Rev A laut Revisionshistorie nur AEC-Q100-Angaben;
+Pinbelegung und Kennwerte sind gleich (O-7 erledigt). Das LTC7803-Symbol fehlt in KiCad und
 liegt projektlokal in `hardware/libraries/symbols/ProjectSymbols.kicad_sym`
-(`sym-lib-table` mit `${KIPRJMOD}`), Pinbelegung MSOP-16E laut Rev A:
+(`sym-lib-table` mit `${KIPRJMOD}`), Pinbelegung MSOP-16E laut Rev B:
 1 TRACK/SS, 2 SENSE+, 3 SENSE−, 4 VFB, 5 ITH, 6 RUN, 7 FREQ, 8 PLLIN/SPREAD,
 9 MODE, 10 INTVCC, 11 EXTVCC, 12 VIN, 13 BG, 14 BOOST, 15 TG, 16 SW,
 17 (Exposed Pad) GND.
 
 | Funktion | Bauteil / Beschaltung | Begründung |
 |---|---|---|
-| Regler | U401 LTC7803EMSE#PBF, MSOP-16-1EP mit Thermal-Vias | FREQ = GND (375 kHz), PLLIN/SPREAD = GND (fest), MODE = INTVCC (Forced Continuous), EXTVCC = VSERVO_REG (6,8 V > 4,7 V Umschaltschwelle, abs. max. 30 V) |
-| FETs | Q401/Q402 Infineon BSC026N04LS, PG-TDSON-8 | generisches Symbol S 1–3, G 4, D 5 = Footprint-Pads |
+| Regler | U401 LTC7803EMSE#PBF, Projekt-Footprint `ADI_MSE16_MSOP-16-1EP_ThermalVias` (O-26) | FREQ = GND (375 kHz), PLLIN/SPREAD = GND (fest), MODE = INTVCC (Forced Continuous), EXTVCC = VSERVO_REG (6,8 V > 4,7 V Umschaltschwelle, abs. max. 30 V) |
+| FETs | Q401/Q402 Infineon BSC026N04LS, Projekt-Footprint `Infineon_PG-TDSON-8_BSC026N04LS` (O-26) | generisches Symbol S 1–3, G 4, D 5 = Footprint-Pads |
 | Drossel | L401 Coilcraft XAL1010-332MED (3,3 µH, **Kandidat**; 2,2 µH Alternative) | siehe Rechnung unten |
-| Strom-Shunt | RS401 Vishay WSL10203L000FEA 3 mΩ, Footprint R_1020 | Land Pattern gegen Vishay prüfen (O-26) |
+| Strom-Shunt | RS401 Vishay WSL10203L000FEA 3 mΩ, Projekt-Footprint `R_Vishay_WSL1020` | Land Pattern nach Vishay (O-26) |
 | Sense-Filter | RF401 100 Ω **nur in SENSE+**, CF401 1 nF C0G über SENSE+/SENSE− | Datenblatt Abb. 2a; SENSE− zieht bei 6,8 V ca. 0,7 mA, ein Widerstand dort würde die Schwelle verschieben. Startwerte |
-| Boost | D401 Nexperia BAS316 (schnelle PN-Diode), C411 100 nF | Sperrspannung der Diode ≈ VIN; Schottky-Kandidaten überschreiten heiß den 30-µA-Mindeststrom der Ladepumpe. Preis: ca. 0,4 V weniger Gatespannung am oberen FET (O-25) |
+| Boost | D401 Nexperia BAS316 (schnelle PN-Diode, **Kandidat**), C411 **1 µF / 25 V** (korrigiert, vorher 100 nF) | Sperrspannung der Diode ≈ VIN; Schottky-Kandidaten überschreiten heiß den 30-µA-Mindeststrom der Ladepumpe; ADI erlaubt ausdrücklich eine PN-Diode mit kleinem Leckstrom. C_B muss laut Datenblatt ≥ 100 × Eingangskapazität des oberen FETs sein: C_iss max. 3,22 nF → ≥ 0,32 µF; 100 nF war zu klein |
 | INTVCC | C412 4,7 µF + C413 1 µF | Datenblatt: ≥ 4,7 µF, zusätzlich 1 µF direkt an den Pins |
 | Kompensation | R413 11 kΩ, C418 3,3 nF, C419 100 pF | Startwerte aus Abb. 13 (5 V/10 A), im Labor abstimmen |
 | Soft-Start | C414 33 nF | 2,1 ms |
@@ -277,7 +279,7 @@ liegt projektlokal in `hardware/libraries/symbols/ProjectSymbols.kicad_sym`
 | Rückkopplungsabgriff | **NT403**: ein Punkt an den Ausgangskondensatoren, **vor** dem Messshunt RS402 | Abfall an RS402 (22 mV bei 11,2 A) wird nicht ausgeregelt, ist im Spannungsbudget enthalten (3.4) |
 | Kelvin-Leitungen | **NT401/NT402** (SENSE+/SENSE− an RS401), **NT404/NT405** (INA240 an RS402) | Net-Ties machen die Messleitungen zu eigenen Netzen, die getrennt vom Laststrom als enges Paar ab den Shunt-Pads geführt werden |
 | RUN / Abschaltung | R405 140 kΩ / R406 20 kΩ (ein 9,60 V, aus 8,80 V); Q403 2N7002 zieht RUN bei `SERVO_PWR_DIS` = high auf GND; R407 100 kΩ Gate-Pull-down | Reglerabschaltung, keine Leistungstrennung (3.6) |
-| Ausgangskondensatoren | C406/C407 Panasonic 16SVPG270MX, C408–C410 3 × 22 µF Murata | Footprint CP_Elec_6.3x7.7 gegen SVPG (6,3 × 7,9) prüfen (O-26) |
+| Ausgangskondensatoren | C406/C407 Panasonic 16SVPG270MX, C408–C410 3 × 22 µF Murata | Projekt-Footprint `CP_Panasonic_OSCON_SVPG_C8` nach Panasonic-Land-Pattern (O-26) |
 | Eingangskondensatoren | C401–C404 4 × 10 µF/50 V, C405 100 nF am VIN-Pin | Eingangsrippel bis ca. 5,6 A bei 12,6 V |
 | Strommessung | RS402 2 mΩ (WSL10202L000FEA), U402 INA240A3DR (Symbol INA240A1D, gleiche Pinbelegung), REF1/REF2 = GND, R412 1 kΩ / C415 1 µF zum ADC | 3.6 |
 | Spannungsmessung | R410 100 kΩ / R411 47 kΩ, C417 100 nF → VSERVO_SENSE | 6,91 V → 2,21 V, 7,81 V → 2,50 V (ADC 0–2,9 V) |
@@ -286,6 +288,49 @@ liegt projektlokal in `hardware/libraries/symbols/ProjectSymbols.kicad_sym`
 Signale zum noch fehlenden Controller- bzw. Aktorblatt (`SERVO_PWR_DIS`,
 `VSERVO_SENSE`, `ISERVO_SENSE`, `+V_SERVO`, `+3V3`) sind vorerst globale
 Labels; VBAT_PROT kommt hierarchisch vom Blatt `Power`.
+
+**Unabhängiger Datenblattabgleich (Stand 2026-11-15):** Der Vergleich der
+Netzliste mit den Generatorvorgaben bestätigt nur, dass die Vorgaben
+umgesetzt sind – nicht, dass sie elektrisch richtig sind. Deshalb zusätzlich:
+
+| Bauteil | Abgleich gegen | Ergebnis |
+|---|---|---|
+| LTC7803 Projektsymbol | Pin-Tabelle „Pin Configuration", MSE-Gehäuse (MSOP-16E), Datenblatt **Rev A und Rev B** | alle 17 Pins stimmen in beiden Revisionen; einzige Gehäusevariante MSE16; Exposed Pad = Pin 17 = GND und muss verlötet werden; Footprint führt das EP als Pad 17 |
+| INA240A3D (SOIC-8) | TI SBOS662C Tab. 6-1 | 1 IN−, 2 GND, 3 REF2, **4 NC**, 5 OUT, 6 VS, 7 REF1, 8 IN+. Das KiCad-Symbol nennt Pin 4 „GND"; TI erlaubt „connect to ground or leave floating" – Verbindung nach GND zulässig. VS abs. max. 6 V, versorgt mit 3,3 V |
+| BSC026N04LS | Infineon-Datenblatt (Table 1, Table 4) | S1–S3, G4, D5–D8 = generisches Symbol und PG-TDSON-8-Pads 1–5 (Drain-Pads 5–8 und Fahne als Pad 5); V_GS(th) 1,2–2,0 V; R_DS(on) max. 3,6 mΩ bei 4,5 V, 2,6 mΩ bei 10 V |
+| BAS316 | Nexperia, 1 July 2022 | V_F max. 715 mV/1 mA, 855 mV/10 mA, 1,0 V/50 mA, 1,25 V/150 mA; I_R 30 nA bei 25 V, 25 °C |
+
+**O-25 – Gatespannung des oberen FETs (Schätzung):**
+
+| Beitrag | Wert | Quelle |
+|---|---|---|
+| INTVCC min. | 4,95 V − 2 % Lastregelung = 4,85 V | LTC7803 Rev B, EC-Tabelle |
+| Diodenabfall BAS316 | 1,0 V bei 50 mA (25 °C), ca. 1,09 V bei −20 °C | Nexperia; Temperaturkoeffizient generisch |
+| Bootstrap-Abfall während der Einschaltphase | Q_g max. 22 nC / C_B wirksam 0,6–1,0 µF = 22–37 mV | Infineon / Annahme DC-Bias |
+| **V_GS,min oberer FET** | **3,72 V (−20 °C) … 3,83 V (25 °C)** | |
+| zum Vergleich mit Schottky (V_F ≈ 0,45 V) | ≈ 4,36 V | |
+
+Bewertung: Der BSC026N04LS garantiert R_DS(on) nur bei V_GS = 4,5 V und
+10 V. Bei 3,7–3,8 V ist sein Einschaltwiderstand **nicht garantiert**, nur
+über typische Kurven abschätzbar – und auch mit Schottky-Diode bliebe V_GS
+unter 4,5 V. Das ist eine Eigenschaft der Kombination LTC7803 (INTVCC 5,15 V
+nominal) und dieses FETs, nicht der Diode. Bei 100 % Tastverhältnis hält die
+interne Ladepumpe BOOST; welche Gatespannung sich dabei einstellt, nennt
+auch Rev B nicht (O-25). Der untere FET erhält INTVCC direkt (≥ 4,85 V) und ist
+nicht betroffen. Folge: Für den oberen FET einen Typ suchen, dessen R_DS(on)
+bei V_GS ≤ 3,5 V garantiert ist, oder den Wert am Muster messen und mit
+Reserve bewerten (O-25).
+
+**Prüfbericht – was die Netzlistenprüfung zeigt:** Der Abgleich der
+exportierten Netzliste mit den Generatorvorgaben bestätigt die **Umsetzung**
+der Vorgaben, nicht ihre elektrische Richtigkeit. Die elektrische Richtigkeit
+stützt sich auf den unabhängigen Datenblattabgleich oben, die Rechnungen
+(Schätzungen) und später die Messung am Prototyp.
+
+**Drossel:** 3,3 µH bleibt vorläufig. Der Sense-Rippel von 7,6 mV liegt unter
+ADIs empfohlenem Ziel von 10–20 mV bei etwa 50 % Tastverhältnis; das ist kein
+Ausschlusskriterium, verlangt aber sorgfältige Filter- und Layoutauslegung
+(Kelvin-Führung, RF401/CF401) und eine Messung am Prototyp.
 
 **Auslegung mit Toleranzen** (L ±20 %, f_min 340 kHz, V_out 6,69–6,91 V,
 V_in 9,0–12,6 V, R_S +1 % und +100 ppm/K über +60 K, V_SENSE,min 45 mV;
@@ -302,6 +347,30 @@ V_in 9,0–12,6 V, R_S +1 % und +100 ppm/K über +60 K, V_SENSE,min 45 mV;
 | FET oben, Leitung (+ Schalten grob) | 0,49 W (+0,12) bei 9 V; 0,35 W (+0,16) bei 12,6 V | gleich |
 | FET unten, Leitung | 0,15 W (9 V) / 0,29 W (12,6 V) | gleich |
 | RS401 | 0,38 W bei 11,2 A, 1,03 W an der Stromgrenze (2 W bei 70 °C) | gleich |
+
+### 3.5b Footprints nach Hersteller-Land-Pattern (O-26, Stand 2026-11-15)
+
+Die KiCad-Standardfootprints weichen bei vier Bauteilen von den
+Herstellerangaben ab. Projekt-Footprints in
+`hardware/libraries/footprints/ProjectFootprints.pretty` (`fp-lib-table` mit
+`${KIPRJMOD}`), erzeugt mit `hardware/scripts/make_project_footprints.py`;
+Grafik und 3D-Modell aus KiCad 10.0.7, Pads nach Hersteller, Courtyard = KiCad
+∪ Pads + 0,25 mm.
+
+| Footprint | Quelle | Abweichung KiCad → Hersteller | Ergebnis |
+|---|---|---|---|
+| `R_Vishay_WSL1020` (RS401, RS402) | Vishay Dok. 30183 (27.03.2024), Solder Pad Dimensions | Padmittenabstand −0,25 mm, Spalt −0,40 mm | Pads 1,00 × 5,65 mm bei ±1,25 mm |
+| `CP_Panasonic_OSCON_SVPG_C8` (C406, C407) | Panasonic AAB8000COL10 (31.10.2025), Gehäuse C8 | Padabstand −0,2 mm | Pads 3,5 × 1,6 mm bei ±2,8 mm; Pad 1 = Anode, Polaritätsmarke übernommen |
+| `ADI_MSE16_MSOP-16-1EP_ThermalVias` (U401) | LTC7803 Rev B S. 36, MSE16 05-08-1667 Rev F | Pads +0,56 mm länger, Reihenabstand 0,35–0,6 mm enger | Pads 0,305 × 0,889 mm, Reihenspalt 3,325 mm (Mitte des Bereichs 3,20–3,45); EP 1,651 × 2,845 mm unverändert (identisch) |
+| `Infineon_PG-TDSON-8_BSC026N04LS` (Q401, Q402) | BSC026N04LS Rev 2.3, Fig. 2 Outline Boardpads | Abstand Pin-Reihe zu Drain 0,65 statt 1,27 mm | Pins 0,5 × 0,925 mm; Drain 4,41 mm hoch mit vier Fingern 0,6 × 0,8 mm. **Pastenfenster des Drain-Pads (2 × 2 je 1,5 mm) sind eine Näherung** – vor Schablonenbestellung prüfen (O-27) |
+
+Prüfung: ERC 0 Befunde; Netzliste unverändert (nur sieben Footprint-Felder
+geändert); `scripts/kit verify` meldet `pin_pad_mapping` und
+`library_references` ohne Befund; Sichtprüfung der F.Cu/F.Paste/F.CrtYd-
+Ansicht jedes Footprints. Net-Ties (NT401–NT405) markieren nur die
+Kelvin-Abgriffe im Schaltplan; die eigentliche Kelvin-Führung (getrenntes,
+enges Leitungspaar ab den inneren Padkanten der Shunts) entsteht erst im
+Layout und ist dort zu prüfen.
 
 ### 3.6 Strommessung der Servoschiene (O-18)
 
@@ -609,7 +678,6 @@ Schutzkoordination (O-17).
 | O-2 | ESC Hobbywing QuicRun Fusion Pro 2300 KV an 3S (Auswahl). Signalverlust zuerst ohne Motor (Signale, Anzeigen), danach kontrollierter Test mit Motor (tatsächliches Stoppen); LiPo-Abschaltung 3,25 V/Zelle | Owner |
 | O-3 | Akkueinbruch am Fahrzeug unter Motorlast messen | Owner |
 | O-4 | DevKitC-1-N16R8 v1.1 festgelegt; am gekauften Board nachmessen, Bauhöhe bestimmen | Owner |
-| O-7 | LTC7803 Rev B gegenlesen; R_DS(on) bei INTVCC ≈ 4,8 V; Kompensation und Durchtrittsfrequenz im Labor | Agent |
 | O-8 | Bestellnummern und Bezugsquellen aller Module | Agent |
 | O-15 | Polarität des XT30 am Akkukabel prüfen, „+/−" auf Silkscreen | Owner |
 | O-16 | WROOM-1-N16R8 nur bis 65 °C: Platzierung fern von Reglern, Temperatur messen | Owner |
@@ -621,12 +689,12 @@ Schutzkoordination (O-17).
 | O-22 | Datenblattquellen ohne verifizierten Herstellerlink: C101 Rubycon 35PJV330M10X10.5, C102/C301 Samsung CL32B106KBJNNNE, L301 Würth 74439346100 (we-online antwortet 403), C306 Yageo CC0603JRNPO9BN750 (C282074). Keine URL nach Namensmuster eintragen | Agent |
 | O-23 | +5V: LED SK6812MINI-E und Buzzer CMT-8540S-SMT-TR gewählt (3.8); offen: Opsco-Datenblatt direkt vom Hersteller (nur LCSC-Kopie), Footprint gegen Rev B/2, Buzzer-Beschaffung (LCSC 0), Schutzelement für J112, Lastsprünge und Regelschleife am Prototyp messen | Agent / Owner |
 | O-24 | Einschaltstrom beim Einstecken (C101, C102, Reglereingänge) rechnen und messen; Q101-SOA und Sicherungs-I²t prüfen | Agent |
-| O-25 | Boost-Diode BAS316: Gatespannung oberer FET (INTVCC − V_F ≈ 4,3–4,6 V) gegen BOOST-UVLO des LTC7803 und R_DS(on)-Kurve des BSC026N04LS prüfen; Leckstrom heiß am Muster messen | Agent |
-| O-26 | Footprints prüfen: R_1020 gegen Vishay-WSL1020-Land-Pattern, CP_Elec_6.3x7.7 gegen Panasonic SVPG, MSOP-16-1EP gegen LTC MSE16 (0213 Rev F), PG-TDSON-8 gegen Infineon | Agent |
-| O-27 | ServoPower: Kompensation (R413/C418/C419) und Sense-Filter (RF401/CF401) im Labor abstimmen; Entscheidung 2,2 oder 3,3 µH nach Störabstand und Lastsprung; Datenblattquellen Coilcraft, Panasonic SVPG, Samsung/Yageo-MLCC und RT-Widerstände nur als LCSC-Kopie (O-22) | Agent |
+| O-25 | Oberer Servo-FET: V_GS,min 3,72–3,83 V (Rechnung 3.5a) liegt unter dem einzigen garantierten R_DS(on)-Punkt des BSC026N04LS (4,5 V). FET mit garantiertem R_DS(on) bei V_GS ≤ 3,5 V suchen oder am Muster messen; Ladepumpenverhalten bei 100 % Tastverhältnis (in Rev B nicht spezifiziert) am Muster messen | Agent |
+| O-27 | ServoPower: Pastenöffnungen des TDSON-Drain-Pads vor Schablonenbestellung gegen Infineon Fig. 2 bzw. Bestückerregeln prüfen (3.5b); Kompensation (R413/C418/C419) und Sense-Filter (RF401/CF401) im Labor abstimmen; Entscheidung 2,2 oder 3,3 µH nach Störabstand und Lastsprung; Datenblattquellen Coilcraft, Panasonic SVPG, Samsung/Yageo-MLCC und RT-Widerstände nur als LCSC-Kopie (O-22) | Agent |
 
-Erledigt: O-5 (DevKit-LDO), O-6 (Lenkservos), O-9 (Projektort), O-14
-(ersetzt durch O-17). O-10 bis O-13 stehen im
+Erledigt: O-5 (DevKit-LDO), O-6 (Lenkservos), O-7 (LTC7803 Rev B, 3.5a;
+Kompensation weiter unter O-27), O-9 (Projektort), O-14 (ersetzt durch O-17),
+O-26 (Footprints, 3.5b; Rest unter O-27). O-10 bis O-13 stehen im
 [GPIO- und Anschlussplan](rev1-pin-und-anschlussplan.md#5-offene-punkte).
 
 ## Anhang A – Historische 2S-Rechnung (ersetzt am 2026-11-15)

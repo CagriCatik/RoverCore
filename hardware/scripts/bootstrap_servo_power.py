@@ -83,7 +83,7 @@ def parts():
     P = PARTS_DATA
     return [
         # ---- controller ----
-        ("U401", "ProjectSymbols:LTC7803", "LTC7803", "Package_SO:MSOP-16-1EP_3x4.039mm_P0.5mm_EP1.651x2.845mm_ThermalVias",
+        ("U401", "ProjectSymbols:LTC7803", "LTC7803", "ProjectFootprints:ADI_MSE16_MSOP-16-1EP_ThermalVias",
          (101.6, 226.06, 0),
          {"12": "VBAT_PROT", "6": "RUN_SERVO", "11": "VSERVO_REG", "1": "SS_SERVO", "7": "GND", "8": "GND",
           "9": "INTVCC_SERVO", "5": "ITH_SERVO", "14": "BOOST_SERVO", "15": "TG_SERVO", "16": "SW_SERVO",
@@ -94,12 +94,12 @@ def parts():
           "Description": "Sync buck controller, 100 % duty; FREQ=GND 375 kHz, PLLIN/SPREAD=GND fixed, MODE=INTVCC "
                          "forced continuous, EXTVCC=VOUT (6.8 V > 4.7 V switchover); pins per Rev A"}),
         # ---- power stage ----
-        ("Q401", FET, "BSC026N04LS", "Package_SON:Infineon_PG-TDSON-8_6.15x5.15mm", (152.4, 96.52, 0),
+        ("Q401", FET, "BSC026N04LS", "ProjectFootprints:Infineon_PG-TDSON-8_BSC026N04LS", (152.4, 96.52, 0),
          {"1": "SW_SERVO", "2": "SW_SERVO", "3": "SW_SERVO", "4": "TG_SERVO", "5": "VBAT_PROT"},
          {"Manufacturer": "Infineon", "MPN": "BSC026N04LS", "LCSC": "C3039672",
           "Datasheet": "https://www.infineon.com/dgdl/Infineon-BSC026N04LS-DS-v02_01-EN.pdf?fileId=5546d462525dbac40152ae7e3a463fb0",
           "Description": "Top FET, 40 V, 3.6 mOhm max at VGS 4.5 V; generic SSSGD symbol (S 1-3, G 4, D 5) matches PG-TDSON-8"}),
-        ("Q402", FET, "BSC026N04LS", "Package_SON:Infineon_PG-TDSON-8_6.15x5.15mm", (152.4, 147.32, 0),
+        ("Q402", FET, "BSC026N04LS", "ProjectFootprints:Infineon_PG-TDSON-8_BSC026N04LS", (152.4, 147.32, 0),
          {"1": "GND", "2": "GND", "3": "GND", "4": "BG_SERVO", "5": "SW_SERVO"},
          {"Manufacturer": "Infineon", "MPN": "BSC026N04LS", "LCSC": "C3039672",
           "Datasheet": "https://www.infineon.com/dgdl/Infineon-BSC026N04LS-DS-v02_01-EN.pdf?fileId=5546d462525dbac40152ae7e3a463fb0",
@@ -109,10 +109,10 @@ def parts():
          {"Manufacturer": "Coilcraft", "MPN": "XAL1010-332MED", "LCSC": "C3911672",
           "Description": "3.3 uH candidate (2.2 uH alternative): Isat 27.4 A (-30 %, 25 degC), Irms 18.2 A (+20 K), "
                          "DCR max 4.10 mOhm (Coilcraft doc 804-1); datasheet source open (coilcraft.com blocks automated access)"}),
-        ("RS401", "Device:R", "3m", "Resistor_SMD:R_1020_2550Metric", (238.76, 119.38, 90),
+        ("RS401", "Device:R", "3m", "ProjectFootprints:R_Vishay_WSL1020", (238.76, 119.38, 90),
          {"1": "ISNS_PWR", "2": "VSERVO_REG"},
          {"Manufacturer": "Vishay", "MPN": "WSL10203L000FEA", "LCSC": "C844481", "Datasheet": "https://www.vishay.com/doc?30183",
-          "Description": "LTC7803 current sense 3 mOhm 1 %, 2 W, wide terminal; footprint R_1020 to be checked against Vishay land pattern"}),
+          "Description": "LTC7803 current sense 3 mOhm 1 %, 2 W, wide terminal; land pattern per Vishay doc 30183 (O-26)"}),
         ("NT401", "Device:NetTie_2", "Kelvin", NT, (213.36, 88.9, 0), {"1": "ISNS_PWR", "2": "SENSE_P_K"},
          {"Description": "Kelvin tap SENSE+ at RS401 pad 1 (inductor side); route SENSE+ and SENSE- as a close pair"}),
         ("NT402", "Device:NetTie_2", "Kelvin", NT, (259.08, 88.9, 0), {"1": "VSERVO_REG", "2": "SENSE_N"},
@@ -127,10 +127,10 @@ def parts():
         ("C405", "Device:C", "100n 50V", C0603, (91.44, 129.54, 0), {"1": "VBAT_PROT", "2": "GND"},
          dict(P["C100N"], Description="VIN pin decoupling at U401 pin 12")),
         # ---- output capacitors ----
-        *[("C%d" % (406 + i), "Device:C_Polarized", "270u 16V", "Capacitor_SMD:CP_Elec_6.3x7.7", (251.46 + 12.7 * i, 154.94, 0),
+        *[("C%d" % (406 + i), "Device:C_Polarized", "270u 16V", "ProjectFootprints:CP_Panasonic_OSCON_SVPG_C8", (251.46 + 12.7 * i, 154.94, 0),
            {"1": "VSERVO_REG", "2": "GND"},
            {"Manufacturer": "Panasonic", "MPN": "16SVPG270MX", "LCSC": "C2161621",
-            "Description": "Polymer 270 uF 16 V, ESR max 10 mOhm; footprint CP_Elec_6.3x7.7 to be checked against Panasonic land pattern (SVPG 6.3x7.9); datasheet source open"})
+            "Description": "Polymer 270 uF 16 V, ESR max 10 mOhm; land pattern per Panasonic AAB8000COL10 (O-26); datasheet source open"})
           for i in range(2)],
         *[("C%d" % (408 + i), "Device:C", "22u 25V", "Capacitor_SMD:C_1210_3225Metric", (276.86 + 12.7 * i, 154.94, 0),
            {"1": "VSERVO_REG", "2": "GND"},
@@ -141,8 +141,8 @@ def parts():
         # ---- controller support ----
         ("D401", "Device:D", P["DBOOT"]["Value"], P["DBOOT"]["Footprint"], (132.08, 177.8, 0),
          {"1": "BOOST_SERVO", "2": "INTVCC_SERVO"}, P["DBOOT"]["fields"]),
-        ("C411", "Device:C", "100n 50V", C0603, (172.72, 177.8, 0), {"1": "BOOST_SERVO", "2": "SW_SERVO"},
-         dict(P["C100N"], Description="Bootstrap capacitor CB (datasheet: 0.1 uF generally sufficient)")),
+        ("C411", "Device:C", "1u 25V", C0603, (172.72, 177.8, 0), {"1": "BOOST_SERVO", "2": "SW_SERVO"},
+         dict(P["C1U"], Description="Bootstrap capacitor CB >= 100 x top-FET Ciss (max 3.22 nF -> >= 0.32 uF)")),
         ("C412", "Device:C", "4.7u", C0805, (124.46, 266.7, 0), {"1": "INTVCC_SERVO", "2": "GND"},
          dict(P["C4U7"], Description="INTVCC >= 4.7 uF ceramic (datasheet pin functions)")),
         ("C413", "Device:C", "1u", C0603, (139.7, 266.7, 0), {"1": "INTVCC_SERVO", "2": "GND"},
@@ -172,7 +172,7 @@ def parts():
         ("R407", "Device:R", "100k", R0603, (66.04, 210.82, 0), {"1": "SERVO_PWR_DIS", "2": "GND"},
          rc("RC0603FR-07100KL", "C14675", "Gate pull-down: servo rail stays enabled while SERVO_PWR_DIS is not driven")),
         # ---- output shunt and current sense ----
-        ("RS402", "Device:R", "2m", "Resistor_SMD:R_1020_2550Metric", (309.88, 119.38, 90),
+        ("RS402", "Device:R", "2m", "ProjectFootprints:R_Vishay_WSL1020", (309.88, 119.38, 90),
          {"1": "VSERVO_REG", "2": "+V_SERVO"},
          {"Manufacturer": "Vishay", "MPN": "WSL10202L000FEA", "LCSC": "C1711510", "Datasheet": "https://www.vishay.com/doc?30183",
           "Description": "Output current shunt 2 mOhm 1 %, 2 W (O-18); outside the regulator feedback"}),

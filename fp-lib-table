@@ -1,0 +1,4 @@
+(fp_lib_table
+	(version 7)
+	(lib (name "ProjectFootprints") (type "KiCad") (uri "${KIPRJMOD}/hardware/libraries/footprints/ProjectFootprints.pretty") (options "") (descr "RoverCore footprints with manufacturer land patterns (O-26)"))
+)

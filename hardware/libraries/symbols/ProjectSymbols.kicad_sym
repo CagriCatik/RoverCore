@@ -24,7 +24,7 @@
 				(justify right)
 			)
 		)
-		(property "Footprint" "Package_SO:MSOP-16-1EP_3x4.039mm_P0.5mm_EP1.651x2.845mm_ThermalVias"
+		(property "Footprint" "ProjectFootprints:ADI_MSE16_MSOP-16-1EP_ThermalVias"
 			(at 0 -22.86 0)
 			(effects
 				(font
@@ -42,7 +42,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "40 V low-IQ 100 % duty synchronous step-down controller, MSOP-16E (MSE); pins per datasheet Rev A Pin Configuration, exposed pad 17 = GND"
+		(property "Description" "40 V low-IQ 100 % duty synchronous step-down controller, MSOP-16E (MSE); pins per datasheet Rev A/B Pin Configuration (identical), exposed pad 17 = GND"
 			(at 0 0 0)
 			(effects
 				(font
