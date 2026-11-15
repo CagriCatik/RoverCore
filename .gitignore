@@ -21,7 +21,7 @@ Thumbs.db
 __pycache__/
 *.pyc
 .venv/
-qa/generated/
+qa/generated/environment
 qa/reports/generated/
 manufacturing/fabrication/generated/
 manufacturing/assembly/generated/
@@ -31,7 +31,7 @@ manufacturing/releases/generated/
 firmware/build/
 .pio/
 # Same outputs inside nested projects (e.g. qa/fixtures/*) and generated projects
-**/qa/generated/
+**/qa/generated/verification
 **/manufacturing/releases/generated/
 **/firmware/build/
 # Static site documentation build output

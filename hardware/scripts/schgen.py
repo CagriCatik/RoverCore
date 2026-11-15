@@ -34,6 +34,15 @@ class Sheet:
         self.libs, self.items, self.endpoints = set(), [], {}
         self.pwr = 0
         self.paper = "A4"
+        self.file_uuid = None      # keep the sheet file uuid when re-laying out an existing sheet
+        self.wired = []            # nets drawn as direct wires instead of labels (route())
+        self.anchor = {}           # net -> (ref, pin) that keeps the label of a wired net
+        self.pins = {}             # (ref, pin) -> dict(p, e, net, dir)
+        self.segs = []             # (net, (x1, y1), (x2, y2)) of every wire
+        self.points = []           # (net, (x, y)) of pin points, stub ends, label and power anchors
+        self.fallbacks = []
+        self.power_nets = {}
+        self.label_only = set()    # (ref, pin) of wired nets that keep a plain label (e.g. dense connector rows)
 
     def uid(self, label):
         return str(uuid.uuid5(self.ns, label))
@@ -107,10 +116,11 @@ class Sheet:
         body = ("\t(symbol\n\t\t(lib_id \"%s\")\n\t\t(at %s %s %d)\n\t\t(unit 1)\n\t\t(exclude_from_sim no)\n"
                 "\t\t(in_bom %s)\n\t\t(on_board %s)\n\t\t(dnp no)\n\t\t(uuid \"%s\")\n"
                 % (lib_id, x, y, rot, "yes" if (in_bom and not power) else "no", "no" if power else "yes",
-                   self.uid("symbol-" + ref)))
+                   fields.get("_uuid") or self.uid("symbol-" + ref)))
         if "_ref_at" in fields:  # explicit field offsets for large symbols
             (rdx, rdy), (vdx, vdy) = fields["_ref_at"], fields["_val_at"]
-            ref_at, val_at, just, angle = (x + rdx, y + rdy), (x + vdx, y + vdy), "left", 0
+            ref_at, val_at, just = (x + rdx, y + rdy), (x + vdx, y + vdy), "left"
+            angle = rot if rot in (90, 270) else 0   # KiCad draws field text relative to the symbol rotation
         elif ref.startswith("#FLG"):  # keep the flag text clear of the net symbol at the same point
             ref_at, val_at, just, angle = (x, y + 3.81), (round(x - 1.27, 4), round(y - 2.54, 4)), "right", 0
         elif power:
@@ -132,12 +142,15 @@ class Sheet:
             if key in fields:
                 body += self.prop(key, fields[key], (x, y), hide=True)
         for number in sorted(pins):
-            body += '\t\t(pin "%s"\n\t\t\t(uuid "%s")\n\t\t)\n' % (number, self.uid("pin-%s-%s" % (ref, number)))
+            body += '\t\t(pin "%s"\n\t\t\t(uuid "%s")\n\t\t)\n' % (
+                number, fields.get("_pin_uuids", {}).get(number) or self.uid("pin-%s-%s" % (ref, number)))
         body += ("\t\t(instances\n\t\t\t(project \"%s\"\n\t\t\t\t(path \"%s\"\n\t\t\t\t\t(reference \"%s\")\n"
                  "\t\t\t\t\t(unit 1)\n\t\t\t\t)\n\t\t\t)\n\t\t)\n\t)\n") % (PROJECT, self.path, ref)
         self.items.append(body)
 
-    def wire(self, x1, y1, x2, y2, key):
+    def wire(self, x1, y1, x2, y2, key, net=None):
+        if net is not None:
+            self.segs.append((net, (x1, y1), (x2, y2)))
         self.items.append(("\t(wire\n\t\t(pts\n\t\t\t(xy %s %s) (xy %s %s)\n\t\t)\n\t\t(stroke\n\t\t\t(width 0)\n"
                            "\t\t\t(type default)\n\t\t)\n\t\t(uuid \"%s\")\n\t)\n") % (x1, y1, x2, y2, self.uid("wire-" + key)))
 
@@ -160,10 +173,113 @@ class Sheet:
                                "\t\t\t)\n\t\t\t(justify %s bottom)\n\t\t)\n\t\t(uuid \"%s\")\n\t)\n")
                               % (net, x, y, angle, justify, self.uid("label-" + key)))
 
-    def note(self, text, x, y, key):
+    # ---------- direct wiring ----------
+    @staticmethod
+    def _on(q, a, b):
+        """q on segment a-b (inclusive), axis-parallel segments only."""
+        (x1, y1), (x2, y2) = a, b
+        eps = 1e-6
+        if abs(x1 - x2) < eps:
+            return abs(q[0] - x1) < eps and min(y1, y2) - eps <= q[1] <= max(y1, y2) + eps
+        if abs(y1 - y2) < eps:
+            return abs(q[1] - y1) < eps and min(x1, x2) - eps <= q[0] <= max(x1, x2) + eps
+        return False
+
+    def _ok(self, net, seg):
+        a, b = seg
+        for n, q in self.points:
+            if n != net and self._on(q, a, b):
+                return False
+        for n, c, d in self.segs:
+            if n == net:
+                continue
+            if self._on(a, c, d) or self._on(b, c, d) or self._on(c, a, b) or self._on(d, a, b):
+                return False
+            # collinear overlap without shared endpoints
+            if (abs(a[0] - b[0]) < 1e-6 and abs(c[0] - d[0]) < 1e-6 and abs(a[0] - c[0]) < 1e-6) or \
+               (abs(a[1] - b[1]) < 1e-6 and abs(c[1] - d[1]) < 1e-6 and abs(a[1] - c[1]) < 1e-6):
+                lo1, hi1 = sorted((a[1], b[1]) if abs(a[0] - b[0]) < 1e-6 else (a[0], b[0]))
+                lo2, hi2 = sorted((c[1], d[1]) if abs(c[0] - d[0]) < 1e-6 else (c[0], d[0]))
+                if lo1 < hi2 - 1e-6 and lo2 < hi1 - 1e-6:
+                    return False
+        return True
+
+    def route(self):
+        """Connect the stub ends of every net in self.wired with orthogonal wires (L shapes) where this cannot touch
+        another net; members that cannot be routed keep a net label (recorded in self.fallbacks)."""
+        for net in self.wired:
+            members = sorted([k for k, v in self.pins.items() if v["net"] == net and k not in self.label_only],
+                             key=lambda k: (k != self.anchor.get(net), k))
+            for k in sorted(k for k, v in self.pins.items() if v["net"] == net and k in self.label_only):
+                pin = self.pins[k]
+                self.label(net, pin["e"][0], pin["e"][1], pin["dir"], "%s-%s" % k, pin["hier"])
+            if not members:
+                continue
+            done, nodes = [members[0]], [self.pins[members[0]]["e"]]
+            pending = members[1:]
+            while pending:
+                best = None
+                for m in pending:
+                    e = self.pins[m]["e"]
+                    for t in sorted(nodes, key=lambda q: abs(q[0] - e[0]) + abs(q[1] - e[1])):
+                        for corner in ((t[0], e[1]), (e[0], t[1])):
+                            path = [s for s in ((e, corner), (corner, t)) if s[0] != s[1]]
+                            if all(self._ok(net, s) for s in path):
+                                cost = abs(t[0] - e[0]) + abs(t[1] - e[1])
+                                if best is None or cost < best[0]:
+                                    best = (cost, m, path)
+                                break
+                        else:
+                            continue
+                        break
+                if best is None:
+                    break
+                _, m, path = best
+                for i, (a, b) in enumerate(path):
+                    self.wire(a[0], a[1], b[0], b[1], "route-%s-%s-%s-%d" % (net, m[0], m[1], i), net)
+                    nodes += [a, b]
+                    self.points += [(net, a), (net, b)]
+                done.append(m)
+                pending.remove(m)
+            for m in [members[0]] + pending:
+                pin = self.pins[m]
+                if m != members[0]:
+                    self.fallbacks.append((net, m))
+                ex, ey = pin["e"]
+                if net in self.power_nets:
+                    self.pwr += 1
+                    name = self.power_nets[net].split(":")[1]
+                    self._symbol(self.power_nets[net], "#PWR%s%02d" % (m[0], self.pwr), name, "", ex, ey, 0, {"1": net}, {})
+                else:
+                    self.label(net, ex, ey, pin["dir"], "%s-%s" % m, pin["hier"])
+            # junctions: points with three or more wire ends, or a wire end inside another wire of the net
+            ends = {}
+            for n, a, b in self.segs:
+                if n == net:
+                    for q in (a, b):
+                        ends[q] = ends.get(q, 0) + 1
+            for q, cnt in ends.items():
+                inner = any(self._on(q, a, b) and q not in (a, b) for n, a, b in self.segs if n == net)
+                if cnt >= 3 or inner:
+                    self.items.append("\t(junction\n\t\t(at %s %s)\n\t\t(diameter 0)\n\t\t(color 0 0 0 0)\n"
+                                      "\t\t(uuid \"%s\")\n\t)\n" % (q[0], q[1], self.uid("junction-%s-%s-%s" % (net, q[0], q[1]))))
+
+    def group(self, title, x1, y1, x2, y2, key, comment=None):
+        """Dashed frame with a bold heading (and optional one-line comment) for a functional group."""
+        self.items.append(("\t(rectangle\n\t\t(start %s %s)\n\t\t(end %s %s)\n\t\t(stroke\n\t\t\t(width 0)\n"
+                           "\t\t\t(type dash)\n\t\t)\n\t\t(fill\n\t\t\t(type none)\n\t\t)\n\t\t(uuid \"%s\")\n\t)\n")
+                          % (x1, y1, x2, y2, self.uid("group-" + key)))
         self.items.append(("\t(text \"%s\"\n\t\t(exclude_from_sim no)\n\t\t(at %s %s 0)\n\t\t(effects\n\t\t\t(font\n"
-                           "\t\t\t\t(size 1.27 1.27)\n\t\t\t)\n\t\t\t(justify left bottom)\n\t\t)\n\t\t(uuid \"%s\")\n\t)\n")
-                          % (text.replace('"', "'"), x, y, self.uid("text-" + key)))
+                           "\t\t\t\t(size 2 2)\n\t\t\t\t(thickness 0.4)\n\t\t\t\t(bold yes)\n\t\t\t)\n"
+                           "\t\t\t(justify left bottom)\n\t\t)\n\t\t(uuid \"%s\")\n\t)\n")
+                          % (title.replace('"', "'"), round(x1 + 1.27, 2), round(y1 + 3.81, 2), self.uid("group-title-" + key)))
+        if comment:
+            self.note(comment, round(x1 + 1.27, 2), round(y1 + 5.08, 2), "group-comment-" + key, "left top")
+
+    def note(self, text, x, y, key, justify="left bottom"):
+        self.items.append(("\t(text \"%s\"\n\t\t(exclude_from_sim no)\n\t\t(at %s %s 0)\n\t\t(effects\n\t\t\t(font\n"
+                           "\t\t\t\t(size 1.27 1.27)\n\t\t\t)\n\t\t\t(justify %s)\n\t\t)\n\t\t(uuid \"%s\")\n\t)\n")
+                          % (text.replace('"', "'"), x, y, justify, self.uid("text-" + key)))
 
     # ---------- parts ----------
     def part(self, ref, lib_id, value, footprint, xyr, pins, fields, power_nets, hier=None, in_bom=True):
@@ -191,7 +307,12 @@ class Sheet:
             dx, dy = self.outward(rot, langle)
             stub = fields.get("_stub", {}).get(number, STUB)  # optional longer stub to stagger crowded labels
             ex, ey = round(px + dx * stub, 4), round(py + dy * stub, 4)
-            self.wire(px, py, ex, ey, "%s-%s" % (ref, number))
+            self.wire(px, py, ex, ey, "%s-%s" % (ref, number), net)
+            self.pins[(ref, number)] = dict(p=(px, py), e=(ex, ey), net=net, dir=(dx, dy), hier=hier.get(net))
+            self.points += [(net, (px, py)), (net, (ex, ey))]
+            self.power_nets.update(power_nets)
+            if net in self.wired:
+                continue
             if net in power_nets:
                 self.pwr += 1
                 name = power_nets[net].split(":")[1]
@@ -211,7 +332,7 @@ class Sheet:
         return ("(kicad_sch\n\t(version 20260306)\n\t(generator \"eeschema\")\n\t(generator_version \"10.0\")\n"
                 "\t(uuid \"%s\")\n\t(paper \"%s\")\n\t(title_block\n\t\t(title \"%s\")\n\t\t(rev \"A\")\n"
                 "\t\t(comment 1 \"%s\")\n\t)\n\t(lib_symbols\n%s\n\t)\n%s\t(embedded_fonts no)\n)\n"
-                % (self.uid("sheet-file"), self.paper, self.title, self.comment, libs, "".join(self.items)))
+                % (self.file_uuid or self.uid("sheet-file"), self.paper, self.title, self.comment, libs, "".join(self.items)))
 
 
 def sheet_block(project_root_uuid, sheet_uuid, name, filename, x, y, w, h, page, pins):

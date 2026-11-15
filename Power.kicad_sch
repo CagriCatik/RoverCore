@@ -1666,7 +1666,7 @@
 	)
 	(symbol
 		(lib_id "Connector_Generic:Conn_01x02")
-		(at 40.64 101.6 0)
+		(at 45.72 91.44 90)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -1674,7 +1674,7 @@
 		(dnp no)
 		(uuid "098614e4-ce40-5555-96f6-d0738259ec91")
 		(property "Reference" "J101"
-			(at 46.99 100.33 0)
+			(at 33.019999999999996 85.09 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1683,7 +1683,7 @@
 			)
 		)
 		(property "Value" "XT30PW-M"
-			(at 46.99 102.86999999999999 0)
+			(at 33.019999999999996 87.63 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1692,7 +1692,7 @@
 			)
 		)
 		(property "Footprint" "Connector_AMASS:AMASS_XT30PW-M_1x02_P2.50mm_Horizontal"
-			(at 40.64 101.6 0)
+			(at 45.72 91.44 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1701,7 +1701,7 @@
 			)
 		)
 		(property "Datasheet" "https://www.china-amass.net/xt30pw-m-product/"
-			(at 40.64 101.6 0)
+			(at 45.72 91.44 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1710,7 +1710,7 @@
 			)
 		)
 		(property "Description" "Battery input, 3S LiPo. Pin 1 = minus, pin 2 = plus per KiCad footprint silkscreen; confirm against the battery lead (O-15)"
-			(at 40.64 101.6 0)
+			(at 45.72 91.44 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1719,7 +1719,7 @@
 			)
 		)
 		(property "Manufacturer" "Amass"
-			(at 40.64 101.6 0)
+			(at 45.72 91.44 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1728,7 +1728,7 @@
 			)
 		)
 		(property "MPN" "XT30PW-M30.G.Y"
-			(at 40.64 101.6 0)
+			(at 45.72 91.44 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1737,7 +1737,7 @@
 			)
 		)
 		(property "LCSC" "C431092"
-			(at 40.64 101.6 0)
+			(at 45.72 91.44 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1762,25 +1762,25 @@
 	)
 	(wire
 		(pts
-			(xy 35.56 101.6) (xy 30.48 101.6)
+			(xy 45.72 96.52) (xy 45.72 101.6)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "61f2c6f5-13de-57d3-a196-ab7aa5228d3f")
+		(uuid "50f81101-4b46-5c82-830c-c34810e56bf6")
 	)
 	(symbol
 		(lib_id "power:GND")
-		(at 30.48 101.6 0)
+		(at 45.72 101.6 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom no)
 		(on_board no)
 		(dnp no)
-		(uuid "cd69b167-497c-53df-a637-cab2e8ea8816")
-		(property "Reference" "#PWR001"
-			(at 30.48 105.41 0)
+		(uuid "54aab1fc-d96c-55fd-8484-62b4abd58271")
+		(property "Reference" "#PWRJ10101"
+			(at 45.72 105.41 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1789,7 +1789,7 @@
 			)
 		)
 		(property "Value" "GND"
-			(at 30.48 106.67999999999999 0)
+			(at 45.72 106.67999999999999 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1798,7 +1798,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 30.48 101.6 0)
+			(at 45.72 101.6 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1807,7 +1807,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 30.48 101.6 0)
+			(at 45.72 101.6 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1816,7 +1816,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 30.48 101.6 0)
+			(at 45.72 101.6 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1825,12 +1825,12 @@
 			)
 		)
 		(pin "1"
-			(uuid "ff57432c-8833-5200-8d9b-4c75cd7c9a48")
+			(uuid "e3d83163-bd91-54ef-8a83-1e60253be1c2")
 		)
 		(instances
 			(project "RoverCore"
 				(path "/d069f045-7f09-4f8a-bd29-51e87a8a0808/e9c06933-c6d3-564c-ab16-c67b686c12ba"
-					(reference "#PWR001")
+					(reference "#PWRJ10101")
 					(unit 1)
 				)
 			)
@@ -1838,27 +1838,93 @@
 	)
 	(wire
 		(pts
-			(xy 35.56 104.14) (xy 30.48 104.14)
+			(xy 48.26 96.52) (xy 48.26 101.6)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "c1769a0f-8c14-5ad2-b5a6-72264579801f")
+		(uuid "70e5359a-f11f-5828-8b2f-512f30d93607")
 	)
-	(label "VBAT_IN"
-		(at 30.48 104.14 180)
-		(effects
-			(font
-				(size 1.27 1.27)
+	(symbol
+		(lib_id "Connector:TestPoint")
+		(at 76.2 83.82 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom no)
+		(on_board yes)
+		(dnp no)
+		(uuid "67ff229f-20b8-551c-aa6d-c4e1dde219c7")
+		(property "Reference" "TP101"
+			(at 78.74000000000001 81.27999999999999 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
 			)
-			(justify right bottom)
 		)
-		(uuid "45fe41ad-db50-5504-925b-75ad754b6184")
+		(property "Value" "VBAT_IN"
+			(at 78.74000000000001 83.82 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "TestPoint:TestPoint_Pad_D1.5mm"
+			(at 76.2 83.82 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 76.2 83.82 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Test point battery input (before fuse); bare copper pad, no purchased part (excluded from BOM)"
+			(at 76.2 83.82 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "6c2d1887-732d-5250-8ef3-dcb58291175c")
+		)
+		(instances
+			(project "RoverCore"
+				(path "/d069f045-7f09-4f8a-bd29-51e87a8a0808/e9c06933-c6d3-564c-ab16-c67b686c12ba"
+					(reference "TP101")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(wire
+		(pts
+			(xy 76.2 83.82) (xy 76.2 88.9)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "fd8c431c-8989-54e9-9c15-aa5a04e86ece")
 	)
 	(symbol
 		(lib_id "Device:Fuse")
-		(at 73.66 101.6 90)
+		(at 96.52 101.6 90)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -1866,7 +1932,7 @@
 		(dnp no)
 		(uuid "3ca79299-e1ee-5c5a-8f20-0b381479cbfd")
 		(property "Reference" "F101"
-			(at 73.66 97.78999999999999 90)
+			(at 96.52 97.78999999999999 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1874,7 +1940,7 @@
 			)
 		)
 		(property "Value" "15A"
-			(at 73.66 105.41 90)
+			(at 96.52 105.41 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1882,7 +1948,7 @@
 			)
 		)
 		(property "Footprint" "Fuse:Fuseholder_Blade_Mini_Keystone_3568"
-			(at 73.66 101.6 0)
+			(at 96.52 101.6 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1891,7 +1957,7 @@
 			)
 		)
 		(property "Datasheet" "https://www.keyelco.com/userAssets/file/M65p42.pdf"
-			(at 73.66 101.6 0)
+			(at 96.52 101.6 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1900,7 +1966,7 @@
 			)
 		)
 		(property "Description" "Mini blade fuse holder; insert is a candidate pending protection coordination (O-17)"
-			(at 73.66 101.6 0)
+			(at 96.52 101.6 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1909,7 +1975,7 @@
 			)
 		)
 		(property "Manufacturer" "Keystone"
-			(at 73.66 101.6 0)
+			(at 96.52 101.6 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1918,7 +1984,7 @@
 			)
 		)
 		(property "MPN" "3568"
-			(at 73.66 101.6 0)
+			(at 96.52 101.6 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1927,7 +1993,7 @@
 			)
 		)
 		(property "LCSC" "C5249699"
-			(at 73.66 101.6 0)
+			(at 96.52 101.6 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1936,7 +2002,7 @@
 			)
 		)
 		(property "Fuse_Insert" "Littelfuse 0297015.WXNV (15 A mini blade, candidate O-17)"
-			(at 73.66 101.6 0)
+			(at 96.52 101.6 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1961,47 +2027,27 @@
 	)
 	(wire
 		(pts
-			(xy 69.85 101.6) (xy 64.77 101.6)
+			(xy 92.71 101.6) (xy 87.63 101.6)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "3763756b-d1dd-5901-bf4a-2b210bf29fca")
-	)
-	(label "VBAT_IN"
-		(at 64.77 101.6 180)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right bottom)
-		)
-		(uuid "3af5b2ef-d652-5ade-b55e-98e5c2c2ac85")
+		(uuid "83a49db5-90eb-5f33-99e6-df2caa4ad6ba")
 	)
 	(wire
 		(pts
-			(xy 77.47 101.6) (xy 82.55 101.6)
+			(xy 100.33 101.6) (xy 105.41 101.6)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "394e0e29-abbb-582a-a589-2baa3ebe2049")
-	)
-	(label "VBAT_FUSED"
-		(at 82.55 101.6 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "ff06389e-2f1f-589e-ae20-e965fa1953ba")
+		(uuid "4ab71b3f-0140-528e-8167-efcf3dd95b0e")
 	)
 	(symbol
 		(lib_id "Transistor_FET:Si7141DP")
-		(at 127.0 101.6 0)
+		(at 132.08 104.14 90)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -2009,7 +2055,7 @@
 		(dnp no)
 		(uuid "6ba5bb19-1d15-5a74-a64f-7d4e31e3ba19")
 		(property "Reference" "Q101"
-			(at 133.35 100.33 0)
+			(at 127.00000000000001 92.71000000000001 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2018,7 +2064,7 @@
 			)
 		)
 		(property "Value" "SiRA99DP"
-			(at 133.35 102.86999999999999 0)
+			(at 127.00000000000001 95.25 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2027,7 +2073,7 @@
 			)
 		)
 		(property "Footprint" "Package_SO:PowerPAK_SO-8_Single"
-			(at 127.0 101.6 0)
+			(at 132.08 104.14 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2036,7 +2082,7 @@
 			)
 		)
 		(property "Datasheet" "https://www.vishay.com/docs/71023/sira99dp.pdf"
-			(at 127.0 101.6 0)
+			(at 132.08 104.14 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2045,7 +2091,7 @@
 			)
 		)
 		(property "Description" "Reverse-polarity P-MOSFET, -30 V, 2.65 mOhm max at -4.5 V; symbol Si7141DP has the same PowerPAK SO-8 pinout (S 1-3, G 4, D 5)"
-			(at 127.0 101.6 0)
+			(at 132.08 104.14 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2054,7 +2100,7 @@
 			)
 		)
 		(property "Manufacturer" "Vishay"
-			(at 127.0 101.6 0)
+			(at 132.08 104.14 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2063,7 +2109,7 @@
 			)
 		)
 		(property "MPN" "SiRA99DP-T1-GE3"
-			(at 127.0 101.6 0)
+			(at 132.08 104.14 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2072,7 +2118,7 @@
 			)
 		)
 		(property "LCSC" "C3289459"
-			(at 127.0 101.6 0)
+			(at 132.08 104.14 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2106,67 +2152,37 @@
 	)
 	(wire
 		(pts
-			(xy 129.54 106.68) (xy 129.54 111.76)
+			(xy 137.16 101.6) (xy 142.24 101.6)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "a43804d0-3b7b-5251-8221-6cb263aa3bcf")
-	)
-	(label "VBAT_PROT"
-		(at 129.54 111.76 270)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right bottom)
-		)
-		(uuid "43e0f4d6-612f-5c7d-a723-7fab44f62acf")
+		(uuid "0baa352d-b8a3-534d-9567-2a62fe2653bf")
 	)
 	(wire
 		(pts
-			(xy 121.92 101.6) (xy 116.84 101.6)
+			(xy 132.08 109.22) (xy 132.08 114.3)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "d8cdb667-6082-53e7-8dcc-41b3631f2e76")
-	)
-	(label "Q101_GATE"
-		(at 116.84 101.6 180)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right bottom)
-		)
-		(uuid "7bd12e1f-9aec-5fa6-b3bd-91ce8bdc1cb4")
+		(uuid "97fa2250-e911-53fd-8b94-61d009815da7")
 	)
 	(wire
 		(pts
-			(xy 129.54 96.52) (xy 129.54 91.44)
+			(xy 127.0 101.6) (xy 121.92 101.6)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "10ea8dc2-5f5b-5d71-adb3-a7583145d24a")
-	)
-	(label "VBAT_FUSED"
-		(at 129.54 91.44 90)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "7890a954-1ced-5ed3-a570-0db62f4cae5a")
+		(uuid "11d07363-862d-584d-8327-27646c117549")
 	)
 	(symbol
 		(lib_id "Device:R")
-		(at 116.84 134.62 0)
+		(at 132.08 134.62 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -2174,7 +2190,7 @@
 		(dnp no)
 		(uuid "7a1ef3e1-9143-5c17-986d-ae0e6eff3d5a")
 		(property "Reference" "R101"
-			(at 123.19 133.35 0)
+			(at 134.62 133.35 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2183,7 +2199,7 @@
 			)
 		)
 		(property "Value" "10k"
-			(at 123.19 135.89000000000001 0)
+			(at 134.62 135.89000000000001 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2192,7 +2208,7 @@
 			)
 		)
 		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
-			(at 116.84 134.62 0)
+			(at 132.08 134.62 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2201,7 +2217,7 @@
 			)
 		)
 		(property "Datasheet" "https://www.yageogroup.com/content/datasheet/asset/file/PYU-RC_GROUP_51_ROHS_L"
-			(at 116.84 134.62 0)
+			(at 132.08 134.62 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2210,7 +2226,7 @@
 			)
 		)
 		(property "Description" "Gate pull-down of Q101; value with D102 pending (O-17)"
-			(at 116.84 134.62 0)
+			(at 132.08 134.62 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2219,7 +2235,7 @@
 			)
 		)
 		(property "Manufacturer" "Yageo"
-			(at 116.84 134.62 0)
+			(at 132.08 134.62 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2228,7 +2244,7 @@
 			)
 		)
 		(property "MPN" "RC0603FR-0710KL"
-			(at 116.84 134.62 0)
+			(at 132.08 134.62 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2237,7 +2253,7 @@
 			)
 		)
 		(property "LCSC" "C98220"
-			(at 116.84 134.62 0)
+			(at 132.08 134.62 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2262,45 +2278,35 @@
 	)
 	(wire
 		(pts
-			(xy 116.84 130.81) (xy 116.84 125.73)
+			(xy 132.08 130.81) (xy 132.08 125.73)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "d4adf6e5-75b8-541e-86b6-6d1b3bcaefb3")
-	)
-	(label "Q101_GATE"
-		(at 116.84 125.73 90)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "2f78e71f-a5e8-530d-9ee4-abfdbad9d68c")
+		(uuid "06376525-9482-5866-9b74-eb978e014daa")
 	)
 	(wire
 		(pts
-			(xy 116.84 138.43) (xy 116.84 143.51)
+			(xy 132.08 138.43) (xy 132.08 143.51)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "d4b0fc4f-643c-5454-adb2-a86ae9587a0d")
+		(uuid "5383bd60-9b72-52f6-a8bf-070887fc2107")
 	)
 	(symbol
 		(lib_id "power:GND")
-		(at 116.84 143.51 0)
+		(at 132.08 143.51 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom no)
 		(on_board no)
 		(dnp no)
-		(uuid "26bcd600-2b31-5ed6-b50f-70504965dce2")
-		(property "Reference" "#PWR002"
-			(at 116.84 147.32 0)
+		(uuid "e746fa3c-1c04-511b-afc4-2b844a5834b2")
+		(property "Reference" "#PWRR10102"
+			(at 132.08 147.32 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2309,7 +2315,7 @@
 			)
 		)
 		(property "Value" "GND"
-			(at 116.84 148.59 0)
+			(at 132.08 148.59 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2318,7 +2324,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 116.84 143.51 0)
+			(at 132.08 143.51 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2327,7 +2333,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 116.84 143.51 0)
+			(at 132.08 143.51 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2336,7 +2342,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 116.84 143.51 0)
+			(at 132.08 143.51 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2345,12 +2351,12 @@
 			)
 		)
 		(pin "1"
-			(uuid "5686cb1f-3dce-55ee-ab6c-75eb22e4ac7f")
+			(uuid "369904d6-16b1-542e-891b-aab79074fc5a")
 		)
 		(instances
 			(project "RoverCore"
 				(path "/d069f045-7f09-4f8a-bd29-51e87a8a0808/e9c06933-c6d3-564c-ab16-c67b686c12ba"
-					(reference "#PWR002")
+					(reference "#PWRR10102")
 					(unit 1)
 				)
 			)
@@ -2358,7 +2364,7 @@
 	)
 	(symbol
 		(lib_id "Device:D_Zener")
-		(at 139.7 134.62 90)
+		(at 147.32 116.84 270)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -2366,7 +2372,7 @@
 		(dnp no)
 		(uuid "c3c041d2-1ea0-5b6a-a363-f64252de56dc")
 		(property "Reference" "D102"
-			(at 146.04999999999998 133.35 90)
+			(at 160.01999999999998 115.57000000000001 270)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2375,7 +2381,7 @@
 			)
 		)
 		(property "Value" "15V"
-			(at 146.04999999999998 135.89000000000001 90)
+			(at 160.01999999999998 118.11 270)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2384,7 +2390,7 @@
 			)
 		)
 		(property "Footprint" "Diode_SMD:D_SOD-123"
-			(at 139.7 134.62 0)
+			(at 147.32 116.84 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2393,7 +2399,7 @@
 			)
 		)
 		(property "Datasheet" "https://www.onsemi.com/pdf/datasheet/mmsz5221bt1-d.pdf"
-			(at 139.7 134.62 0)
+			(at 147.32 116.84 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2402,7 +2408,7 @@
 			)
 		)
 		(property "Description" "Gate-source clamp of Q101, Vz 14.25-15.75 V (candidate, O-17)"
-			(at 139.7 134.62 0)
+			(at 147.32 116.84 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2411,7 +2417,7 @@
 			)
 		)
 		(property "Manufacturer" "onsemi"
-			(at 139.7 134.62 0)
+			(at 147.32 116.84 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2420,7 +2426,7 @@
 			)
 		)
 		(property "MPN" "MMSZ5245BT1G"
-			(at 139.7 134.62 0)
+			(at 147.32 116.84 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2429,7 +2435,7 @@
 			)
 		)
 		(property "LCSC" "C129730"
-			(at 139.7 134.62 0)
+			(at 147.32 116.84 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2454,47 +2460,103 @@
 	)
 	(wire
 		(pts
-			(xy 139.7 138.43) (xy 139.7 143.51)
+			(xy 147.32 113.03) (xy 147.32 107.95)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "e81047f0-5d44-5d4c-b5fa-a9ba238b6a21")
-	)
-	(label "VBAT_PROT"
-		(at 139.7 143.51 270)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right bottom)
-		)
-		(uuid "befcb76a-1c17-580e-a0ac-122ae72ecbc0")
+		(uuid "b08ae1f4-844a-5b12-968a-6d5fd5b202da")
 	)
 	(wire
 		(pts
-			(xy 139.7 130.81) (xy 139.7 125.73)
+			(xy 147.32 120.65) (xy 147.32 125.73)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "c68fd3e6-e427-5172-a44b-e59c34b822b8")
+		(uuid "6e60b3b9-1907-575d-964b-ea4f3264db1d")
 	)
-	(label "Q101_GATE"
-		(at 139.7 125.73 90)
-		(effects
-			(font
-				(size 1.27 1.27)
+	(symbol
+		(lib_id "Connector:TestPoint")
+		(at 167.64 83.82 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom no)
+		(on_board yes)
+		(dnp no)
+		(uuid "a327acac-15da-5b2a-ad4c-a3b7eb69b196")
+		(property "Reference" "TP102"
+			(at 170.17999999999998 81.27999999999999 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
 			)
-			(justify left bottom)
 		)
-		(uuid "b63bc82e-75e7-500f-994c-791bd47e43a0")
+		(property "Value" "VBAT_PROT"
+			(at 170.17999999999998 83.82 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "TestPoint:TestPoint_Pad_D1.5mm"
+			(at 167.64 83.82 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 167.64 83.82 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Test point protected battery rail; bare copper pad, no purchased part (excluded from BOM)"
+			(at 167.64 83.82 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "8aac528c-a25f-5251-acf5-ae6ce5adfb8f")
+		)
+		(instances
+			(project "RoverCore"
+				(path "/d069f045-7f09-4f8a-bd29-51e87a8a0808/e9c06933-c6d3-564c-ab16-c67b686c12ba"
+					(reference "TP102")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(wire
+		(pts
+			(xy 167.64 83.82) (xy 167.64 88.9)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "ee4f0365-cdcf-5fe5-86d5-f38bf0ecd2f5")
 	)
 	(symbol
 		(lib_id "Device:D_Zener")
-		(at 165.1 134.62 270)
+		(at 185.42 116.84 270)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -2502,7 +2564,7 @@
 		(dnp no)
 		(uuid "e59d4447-6b5c-580a-ba1b-bf9166691fe6")
 		(property "Reference" "D101"
-			(at 160.02 133.35 270)
+			(at 198.11999999999998 115.57000000000001 270)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2511,7 +2573,7 @@
 			)
 		)
 		(property "Value" "SMBJ13A"
-			(at 160.02 135.89 270)
+			(at 198.11999999999998 118.11 270)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2520,7 +2582,7 @@
 			)
 		)
 		(property "Footprint" "Diode_SMD:D_SMB"
-			(at 165.1 134.62 0)
+			(at 185.42 116.84 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2529,7 +2591,7 @@
 			)
 		)
 		(property "Datasheet" "https://www.vishay.com/doc?88392"
-			(at 165.1 134.62 0)
+			(at 185.42 116.84 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2538,7 +2600,7 @@
 			)
 		)
 		(property "Description" "600 W unidirectional TVS, VRWM 13 V, VC 21.5 V at 27.9 A (10/1000 us); candidate, protection proof open (O-17)"
-			(at 165.1 134.62 0)
+			(at 185.42 116.84 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2547,7 +2609,7 @@
 			)
 		)
 		(property "Manufacturer" "Littelfuse"
-			(at 165.1 134.62 0)
+			(at 185.42 116.84 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2556,7 +2618,7 @@
 			)
 		)
 		(property "MPN" "SMBJ13A"
-			(at 165.1 134.62 0)
+			(at 185.42 116.84 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2565,7 +2627,7 @@
 			)
 		)
 		(property "LCSC" "C151252"
-			(at 165.1 134.62 0)
+			(at 185.42 116.84 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2590,45 +2652,35 @@
 	)
 	(wire
 		(pts
-			(xy 165.1 130.81) (xy 165.1 125.73)
+			(xy 185.42 113.03) (xy 185.42 107.95)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "d3a0608d-8da7-5f31-87f9-ed8fb3d1d1cc")
-	)
-	(label "VBAT_PROT"
-		(at 165.1 125.73 90)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "c5fe8031-aea4-5065-821e-8b445c04df33")
+		(uuid "7e5fd93e-903e-5d08-a36c-7590d4e1ed0a")
 	)
 	(wire
 		(pts
-			(xy 165.1 138.43) (xy 165.1 143.51)
+			(xy 185.42 120.65) (xy 185.42 125.73)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "215ce0e9-2484-5989-9114-65df474150d1")
+		(uuid "40e756a4-7b7f-5597-8a41-a25fb2921c1d")
 	)
 	(symbol
 		(lib_id "power:GND")
-		(at 165.1 143.51 0)
+		(at 185.42 125.73 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom no)
 		(on_board no)
 		(dnp no)
-		(uuid "8a8919e2-a673-5309-8361-1392c9c19311")
-		(property "Reference" "#PWR003"
-			(at 165.1 147.32 0)
+		(uuid "459ec8e2-f5b9-59c5-800c-07dec098476f")
+		(property "Reference" "#PWRD10103"
+			(at 185.42 129.54 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2637,7 +2689,7 @@
 			)
 		)
 		(property "Value" "GND"
-			(at 165.1 148.59 0)
+			(at 185.42 130.81 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2646,7 +2698,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 165.1 143.51 0)
+			(at 185.42 125.73 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2655,7 +2707,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 165.1 143.51 0)
+			(at 185.42 125.73 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2664,7 +2716,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 165.1 143.51 0)
+			(at 185.42 125.73 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2673,12 +2725,12 @@
 			)
 		)
 		(pin "1"
-			(uuid "8c287bef-85e9-576a-80a0-bd374e5273b4")
+			(uuid "f0a165a2-0425-55ac-a704-194b86807725")
 		)
 		(instances
 			(project "RoverCore"
 				(path "/d069f045-7f09-4f8a-bd29-51e87a8a0808/e9c06933-c6d3-564c-ab16-c67b686c12ba"
-					(reference "#PWR003")
+					(reference "#PWRD10103")
 					(unit 1)
 				)
 			)
@@ -2686,7 +2738,7 @@
 	)
 	(symbol
 		(lib_id "Device:C_Polarized")
-		(at 190.5 134.62 0)
+		(at 205.74 116.84 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -2694,7 +2746,7 @@
 		(dnp no)
 		(uuid "7329247a-27a8-5080-b157-32146b51e0d4")
 		(property "Reference" "C101"
-			(at 196.85 133.35 0)
+			(at 208.28 115.57000000000001 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2703,7 +2755,7 @@
 			)
 		)
 		(property "Value" "330u 35V"
-			(at 196.85 135.89000000000001 0)
+			(at 208.28 118.11 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2712,7 +2764,7 @@
 			)
 		)
 		(property "Footprint" "Capacitor_SMD:CP_Elec_10x10.5"
-			(at 190.5 134.62 0)
+			(at 205.74 116.84 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2721,7 +2773,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 190.5 134.62 0)
+			(at 205.74 116.84 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2730,7 +2782,7 @@
 			)
 		)
 		(property "Description" "Input bulk, hybrid polymer, ESR max 20 mOhm, 2.8 A ripple (candidate); datasheet source open (O-22): no verified manufacturer link yet"
-			(at 190.5 134.62 0)
+			(at 205.74 116.84 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2739,7 +2791,7 @@
 			)
 		)
 		(property "Manufacturer" "Rubycon"
-			(at 190.5 134.62 0)
+			(at 205.74 116.84 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2748,7 +2800,7 @@
 			)
 		)
 		(property "MPN" "35PJV330M10X10.5"
-			(at 190.5 134.62 0)
+			(at 205.74 116.84 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2757,7 +2809,7 @@
 			)
 		)
 		(property "LCSC" "C3274921"
-			(at 190.5 134.62 0)
+			(at 205.74 116.84 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2782,45 +2834,35 @@
 	)
 	(wire
 		(pts
-			(xy 190.5 130.81) (xy 190.5 125.73)
+			(xy 205.74 113.03) (xy 205.74 107.95)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "a221e1cd-2978-50de-93e3-0d7be1379256")
-	)
-	(label "VBAT_PROT"
-		(at 190.5 125.73 90)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "285909b8-e3bc-5bb2-8ada-3f2b4824f629")
+		(uuid "55ef8ab9-1f57-5432-8184-6d94352f58b4")
 	)
 	(wire
 		(pts
-			(xy 190.5 138.43) (xy 190.5 143.51)
+			(xy 205.74 120.65) (xy 205.74 125.73)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "d45aba83-88ae-56b0-b4a2-4af0e3c69845")
+		(uuid "91434f31-953e-5915-9b53-7c2979ef8dc7")
 	)
 	(symbol
 		(lib_id "power:GND")
-		(at 190.5 143.51 0)
+		(at 205.74 125.73 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom no)
 		(on_board no)
 		(dnp no)
-		(uuid "3c96223c-258b-563c-a828-b7ddedc9b51d")
-		(property "Reference" "#PWR004"
-			(at 190.5 147.32 0)
+		(uuid "7dc4c0eb-19ed-5fd9-a3a3-43ad71594a2e")
+		(property "Reference" "#PWRC10104"
+			(at 205.74 129.54 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2829,7 +2871,7 @@
 			)
 		)
 		(property "Value" "GND"
-			(at 190.5 148.59 0)
+			(at 205.74 130.81 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2838,7 +2880,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 190.5 143.51 0)
+			(at 205.74 125.73 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2847,7 +2889,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 190.5 143.51 0)
+			(at 205.74 125.73 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2856,7 +2898,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 190.5 143.51 0)
+			(at 205.74 125.73 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2865,12 +2907,12 @@
 			)
 		)
 		(pin "1"
-			(uuid "7fd4bf2f-4b04-5fee-bc39-e4f6bc5279bd")
+			(uuid "5f3e1f4a-3425-584e-8185-38de99aa8eaf")
 		)
 		(instances
 			(project "RoverCore"
 				(path "/d069f045-7f09-4f8a-bd29-51e87a8a0808/e9c06933-c6d3-564c-ab16-c67b686c12ba"
-					(reference "#PWR004")
+					(reference "#PWRC10104")
 					(unit 1)
 				)
 			)
@@ -2878,7 +2920,7 @@
 	)
 	(symbol
 		(lib_id "Device:C")
-		(at 210.82 134.62 0)
+		(at 226.06 116.84 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -2886,7 +2928,7 @@
 		(dnp no)
 		(uuid "fd398fc0-568f-50d9-a995-9d391551ccc8")
 		(property "Reference" "C102"
-			(at 217.17 133.35 0)
+			(at 228.6 115.57000000000001 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2895,7 +2937,7 @@
 			)
 		)
 		(property "Value" "10u 50V X7R"
-			(at 217.17 135.89000000000001 0)
+			(at 228.6 118.11 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2904,7 +2946,7 @@
 			)
 		)
 		(property "Footprint" "Capacitor_SMD:C_1210_3225Metric"
-			(at 210.82 134.62 0)
+			(at 226.06 116.84 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2913,7 +2955,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 210.82 134.62 0)
+			(at 226.06 116.84 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2922,7 +2964,7 @@
 			)
 		)
 		(property "Description" "Input decoupling at the protection node; regulator MLCCs sit at each regulator; datasheet source open (O-22): no verified manufacturer link yet"
-			(at 210.82 134.62 0)
+			(at 226.06 116.84 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2931,7 +2973,7 @@
 			)
 		)
 		(property "Manufacturer" "Samsung"
-			(at 210.82 134.62 0)
+			(at 226.06 116.84 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2940,7 +2982,7 @@
 			)
 		)
 		(property "MPN" "CL32B106KBJNNNE"
-			(at 210.82 134.62 0)
+			(at 226.06 116.84 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2949,7 +2991,7 @@
 			)
 		)
 		(property "LCSC" "C138687"
-			(at 210.82 134.62 0)
+			(at 226.06 116.84 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2974,45 +3016,35 @@
 	)
 	(wire
 		(pts
-			(xy 210.82 130.81) (xy 210.82 125.73)
+			(xy 226.06 113.03) (xy 226.06 107.95)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "bc0aa0bc-53ae-512c-b142-db8bbd3df61c")
-	)
-	(label "VBAT_PROT"
-		(at 210.82 125.73 90)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "ef759f32-5b0b-5abc-b042-12bb7f5b6b46")
+		(uuid "6c6164fe-57bc-5118-acc1-f799d1e71dc6")
 	)
 	(wire
 		(pts
-			(xy 210.82 138.43) (xy 210.82 143.51)
+			(xy 226.06 120.65) (xy 226.06 125.73)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "e9a34d41-4454-5951-8ccd-5add440f3cb9")
+		(uuid "27253612-6bb3-5c2c-a064-5641729c83c6")
 	)
 	(symbol
 		(lib_id "power:GND")
-		(at 210.82 143.51 0)
+		(at 226.06 125.73 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom no)
 		(on_board no)
 		(dnp no)
-		(uuid "019d04ea-fc2e-57aa-9db8-ef777ee484a5")
-		(property "Reference" "#PWR005"
-			(at 210.82 147.32 0)
+		(uuid "8292e40c-37c7-508b-9102-8161f8502108")
+		(property "Reference" "#PWRC10205"
+			(at 226.06 129.54 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3021,7 +3053,7 @@
 			)
 		)
 		(property "Value" "GND"
-			(at 210.82 148.59 0)
+			(at 226.06 130.81 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3030,7 +3062,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 210.82 143.51 0)
+			(at 226.06 125.73 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3039,7 +3071,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 210.82 143.51 0)
+			(at 226.06 125.73 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3048,7 +3080,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 210.82 143.51 0)
+			(at 226.06 125.73 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3057,12 +3089,12 @@
 			)
 		)
 		(pin "1"
-			(uuid "7eda4212-cdfd-5582-a83e-3024c54c7a6c")
+			(uuid "d8f3adbd-c472-5ba4-a6c9-72120c9ae4db")
 		)
 		(instances
 			(project "RoverCore"
 				(path "/d069f045-7f09-4f8a-bd29-51e87a8a0808/e9c06933-c6d3-564c-ab16-c67b686c12ba"
-					(reference "#PWR005")
+					(reference "#PWRC10205")
 					(unit 1)
 				)
 			)
@@ -3070,175 +3102,7 @@
 	)
 	(symbol
 		(lib_id "Connector:TestPoint")
-		(at 58.42 83.82 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom no)
-		(on_board yes)
-		(dnp no)
-		(uuid "67ff229f-20b8-551c-aa6d-c4e1dde219c7")
-		(property "Reference" "TP101"
-			(at 58.42 80.00999999999999 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Value" "VBAT_IN"
-			(at 58.42 87.63 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "TestPoint:TestPoint_Pad_D1.5mm"
-			(at 58.42 83.82 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" "~"
-			(at 58.42 83.82 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" "Test point battery input (before fuse); bare copper pad, no purchased part (excluded from BOM)"
-			(at 58.42 83.82 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "6c2d1887-732d-5250-8ef3-dcb58291175c")
-		)
-		(instances
-			(project "RoverCore"
-				(path "/d069f045-7f09-4f8a-bd29-51e87a8a0808/e9c06933-c6d3-564c-ab16-c67b686c12ba"
-					(reference "TP101")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(wire
-		(pts
-			(xy 58.42 83.82) (xy 58.42 88.9)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "4c7ed5e1-dcc6-512f-a900-73794e1b6ecd")
-	)
-	(label "VBAT_IN"
-		(at 58.42 88.9 270)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right bottom)
-		)
-		(uuid "6d0188bd-d684-5ba9-b334-e8c21a9572e2")
-	)
-	(symbol
-		(lib_id "Connector:TestPoint")
-		(at 149.86 83.82 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom no)
-		(on_board yes)
-		(dnp no)
-		(uuid "a327acac-15da-5b2a-ad4c-a3b7eb69b196")
-		(property "Reference" "TP102"
-			(at 149.86 80.00999999999999 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Value" "VBAT_PROT"
-			(at 149.86 87.63 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "TestPoint:TestPoint_Pad_D1.5mm"
-			(at 149.86 83.82 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" "~"
-			(at 149.86 83.82 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" "Test point protected battery rail; bare copper pad, no purchased part (excluded from BOM)"
-			(at 149.86 83.82 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "8aac528c-a25f-5251-acf5-ae6ce5adfb8f")
-		)
-		(instances
-			(project "RoverCore"
-				(path "/d069f045-7f09-4f8a-bd29-51e87a8a0808/e9c06933-c6d3-564c-ab16-c67b686c12ba"
-					(reference "TP102")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(wire
-		(pts
-			(xy 149.86 83.82) (xy 149.86 88.9)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "7eca1b3a-13a8-5581-baf3-65029b5ce6d4")
-	)
-	(label "VBAT_PROT"
-		(at 149.86 88.9 270)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right bottom)
-		)
-		(uuid "171421c6-c3a3-5c79-ad42-3534c2961a57")
-	)
-	(symbol
-		(lib_id "Connector:TestPoint")
-		(at 231.14 134.62 0)
+		(at 256.54 129.54 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom no)
@@ -3246,23 +3110,25 @@
 		(dnp no)
 		(uuid "5cc43269-d0af-5be3-a13f-504bd205a042")
 		(property "Reference" "TP103"
-			(at 231.14 130.81 0)
+			(at 259.08000000000004 126.99999999999999 0)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
+				(justify left)
 			)
 		)
 		(property "Value" "GND"
-			(at 231.14 138.43 0)
+			(at 259.08000000000004 129.54 0)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
+				(justify left)
 			)
 		)
 		(property "Footprint" "TestPoint:TestPoint_Pad_D1.5mm"
-			(at 231.14 134.62 0)
+			(at 256.54 129.54 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3271,7 +3137,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 231.14 134.62 0)
+			(at 256.54 129.54 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3280,7 +3146,7 @@
 			)
 		)
 		(property "Description" "Test point ground; bare copper pad, no purchased part (excluded from BOM)"
-			(at 231.14 134.62 0)
+			(at 256.54 129.54 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3302,25 +3168,25 @@
 	)
 	(wire
 		(pts
-			(xy 231.14 134.62) (xy 231.14 139.7)
+			(xy 256.54 129.54) (xy 256.54 134.62)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "0f932d0d-c0ee-596b-a66f-2dee41081a75")
+		(uuid "1f5ef735-f553-51e6-85fa-43761488e5d2")
 	)
 	(symbol
 		(lib_id "power:GND")
-		(at 231.14 139.7 0)
+		(at 256.54 134.62 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom no)
 		(on_board no)
 		(dnp no)
-		(uuid "313c56b1-fa6c-5b86-a0e4-a7a1fae23f33")
-		(property "Reference" "#PWR006"
-			(at 231.14 143.51 0)
+		(uuid "ddbecda0-60fa-510a-a188-f7cd20d91657")
+		(property "Reference" "#PWRTP10306"
+			(at 256.54 138.43 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3329,7 +3195,7 @@
 			)
 		)
 		(property "Value" "GND"
-			(at 231.14 144.78 0)
+			(at 256.54 139.70000000000002 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3338,7 +3204,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 231.14 139.7 0)
+			(at 256.54 134.62 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3347,7 +3213,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 231.14 139.7 0)
+			(at 256.54 134.62 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3356,7 +3222,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 231.14 139.7 0)
+			(at 256.54 134.62 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3365,189 +3231,486 @@
 			)
 		)
 		(pin "1"
-			(uuid "47190b87-533f-59ad-abdf-55ee584242c2")
+			(uuid "377004db-c73e-5bcc-a82e-1f40514add0c")
 		)
 		(instances
 			(project "RoverCore"
 				(path "/d069f045-7f09-4f8a-bd29-51e87a8a0808/e9c06933-c6d3-564c-ab16-c67b686c12ba"
-					(reference "#PWR006")
+					(reference "#PWRTP10306")
 					(unit 1)
 				)
 			)
 		)
-	)
-	(symbol
-		(lib_id "power:PWR_FLAG")
-		(at 30.48 104.14 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom no)
-		(on_board no)
-		(dnp no)
-		(uuid "611be98c-3529-52b5-9a28-3fb150cf394d")
-		(property "Reference" "#FLG001"
-			(at 30.48 107.95 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Value" "PWR_FLAG"
-			(at 30.48 109.22 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" ""
-			(at 30.48 104.14 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" "~"
-			(at 30.48 104.14 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" ""
-			(at 30.48 104.14 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "0df2b145-1f1a-575c-a1ff-eb01f33a1353")
-		)
-		(instances
-			(project "RoverCore"
-				(path "/d069f045-7f09-4f8a-bd29-51e87a8a0808/e9c06933-c6d3-564c-ab16-c67b686c12ba"
-					(reference "#FLG001")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "power:PWR_FLAG")
-		(at 30.48 101.6 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom no)
-		(on_board no)
-		(dnp no)
-		(uuid "5d617fda-bf2b-55f3-b811-fe53ca1edaf3")
-		(property "Reference" "#FLG002"
-			(at 30.48 105.41 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Value" "PWR_FLAG"
-			(at 30.48 106.67999999999999 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" ""
-			(at 30.48 101.6 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" "~"
-			(at 30.48 101.6 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" ""
-			(at 30.48 101.6 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "76e309dd-53be-589e-b7c5-10e81adf0e31")
-		)
-		(instances
-			(project "RoverCore"
-				(path "/d069f045-7f09-4f8a-bd29-51e87a8a0808/e9c06933-c6d3-564c-ab16-c67b686c12ba"
-					(reference "#FLG002")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(text "Battery input 3S (9.0-12.6 V): XT30 -> fuse -> reverse-polarity P-FET -> TVS -> bulk. All parts are candidates (O-17). Pin 1 = minus, pin 2 = plus per KiCad footprint silkscreen; confirm against the battery lead (O-15)."
-		(exclude_from_sim no)
-		(at 30.48 55.88 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "ae7f4776-2015-57d9-a8e1-24d88fa88b86")
-	)
-	(text "Q101 conducts when VBAT is correct (VGS = -VBAT); D102 limits |VGS| during TVS clamping. VBAT_PROT feeds the regulators (next step)."
-		(exclude_from_sim no)
-		(at 30.48 60.96 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "0c17788e-f933-55d9-a087-52e2d090b99e")
 	)
 	(wire
 		(pts
-			(xy 149.86 88.9) (xy 160.02 88.9)
+			(xy 87.63 101.6) (xy 76.2 101.6)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "55d5b648-4e40-5338-97bc-fffe5f925cd4")
+		(uuid "a26b262d-b018-5442-b80b-29044c11077d")
+	)
+	(wire
+		(pts
+			(xy 76.2 101.6) (xy 76.2 88.9)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "2081b598-7bbf-580c-92cb-1b56456baf16")
+	)
+	(wire
+		(pts
+			(xy 48.26 101.6) (xy 76.2 101.6)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "6609719c-4162-5e22-a561-b2c02b6818cf")
+	)
+	(label "VBAT_IN"
+		(at 76.2 88.9 270)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right bottom)
+		)
+		(uuid "460d8a0b-79be-55bb-bfa4-c3d57f195c85")
+	)
+	(junction
+		(at 76.2 101.6)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "d98fcc89-d16e-5a38-bbb0-50c192ad902b")
+	)
+	(wire
+		(pts
+			(xy 121.92 101.6) (xy 105.41 101.6)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "d13d10c3-32e6-5075-a1ef-e5e27431d932")
+	)
+	(label "VBAT_FUSED"
+		(at 105.41 101.6 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "94b11d94-6b83-5ffd-94c1-894d4701ab11")
+	)
+	(wire
+		(pts
+			(xy 132.08 114.3) (xy 132.08 125.73)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "ccbff88b-e034-5523-94d4-a4dffae4d89a")
+	)
+	(wire
+		(pts
+			(xy 147.32 125.73) (xy 132.08 125.73)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "8586bbcb-6343-5589-b402-2f59455ee0ad")
+	)
+	(label "Q101_GATE"
+		(at 132.08 125.73 90)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "40d25aa6-7d4d-5398-a321-2c7c39e567f4")
+	)
+	(junction
+		(at 132.08 125.73)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "31064ab7-f208-53dc-9427-61c510e3b30e")
+	)
+	(wire
+		(pts
+			(xy 185.42 107.95) (xy 167.64 107.95)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "380b525a-c385-59a9-b4d5-2acd87f3ad92")
+	)
+	(wire
+		(pts
+			(xy 167.64 107.95) (xy 167.64 88.9)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "19d8e741-4e43-5170-a0c0-14a15f0e7ad6")
+	)
+	(wire
+		(pts
+			(xy 147.32 107.95) (xy 167.64 107.95)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "cd0cb023-d246-55a1-8e09-83aaf8f63a74")
+	)
+	(wire
+		(pts
+			(xy 142.24 101.6) (xy 147.32 101.6)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "8a82f7a5-51cd-5a1b-9dec-e0ff4c6e870f")
+	)
+	(wire
+		(pts
+			(xy 147.32 101.6) (xy 147.32 107.95)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "a921858c-3cd8-5938-bdf3-eb38812b2b82")
+	)
+	(wire
+		(pts
+			(xy 205.74 107.95) (xy 185.42 107.95)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "2bfe4e12-071a-50a4-a89c-9bc4c630ce66")
+	)
+	(wire
+		(pts
+			(xy 226.06 107.95) (xy 205.74 107.95)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "59731dee-30fe-5add-895e-bf1779fc6b38")
+	)
+	(label "VBAT_PROT"
+		(at 167.64 88.9 270)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right bottom)
+		)
+		(uuid "b74a7672-5443-5f97-9ef6-2a84ae1d9226")
+	)
+	(junction
+		(at 147.32 107.95)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "03b7d07f-5e38-5b81-8726-37cae021a792")
+	)
+	(junction
+		(at 185.42 107.95)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "5e6da793-0d27-5600-b8fa-faa87180094a")
+	)
+	(junction
+		(at 205.74 107.95)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "fde106ff-e0e1-547c-b65e-f437b6b611c5")
+	)
+	(junction
+		(at 167.64 107.95)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "fb32c2e7-2fa4-5f07-abd3-12c8c5caa95a")
 	)
 	(hierarchical_label "VBAT_PROT"
 		(shape output)
-		(at 160.02 88.9 0)
+		(at 226.06 107.95 90)
 		(effects
 			(font
 				(size 1.27 1.27)
 			)
 			(justify left)
 		)
-		(uuid "163ae12e-f2fa-5887-bd63-e49925e75be3")
+		(uuid "ed9fc73e-7756-51e0-a22f-90a1b14115f4")
+	)
+	(symbol
+		(lib_id "power:PWR_FLAG")
+		(at 76.2 88.9 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom no)
+		(on_board no)
+		(dnp no)
+		(uuid "933ec1a4-1e81-5861-8995-5bf1ade3a31d")
+		(property "Reference" "#FLG101"
+			(at 76.2 92.71000000000001 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+				(hide yes)
+			)
+		)
+		(property "Value" "PWR_FLAG"
+			(at 74.93 86.36 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Footprint" ""
+			(at 76.2 88.9 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 76.2 88.9 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 76.2 88.9 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "5441a334-9655-54d0-98f7-d2cdb861a6cf")
+		)
+		(instances
+			(project "RoverCore"
+				(path "/d069f045-7f09-4f8a-bd29-51e87a8a0808/e9c06933-c6d3-564c-ab16-c67b686c12ba"
+					(reference "#FLG101")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:PWR_FLAG")
+		(at 256.54 134.62 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom no)
+		(on_board no)
+		(dnp no)
+		(uuid "6189f34a-4ff2-5591-b90c-dc82daf78731")
+		(property "Reference" "#FLG102"
+			(at 256.54 138.43 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+				(hide yes)
+			)
+		)
+		(property "Value" "PWR_FLAG"
+			(at 255.27 132.08 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Footprint" ""
+			(at 256.54 134.62 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 256.54 134.62 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 256.54 134.62 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "3743fca9-9960-52d5-aa81-3d3f2268f35c")
+		)
+		(instances
+			(project "RoverCore"
+				(path "/d069f045-7f09-4f8a-bd29-51e87a8a0808/e9c06933-c6d3-564c-ab16-c67b686c12ba"
+					(reference "#FLG102")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(rectangle
+		(start 22.86 66.04)
+		(end 116.84 152.4)
+		(stroke
+			(width 0)
+			(type dash)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "8d914eaa-274d-51c1-9378-a6353812e3f7")
+	)
+	(text "1  Battery input and fuse"
+		(exclude_from_sim no)
+		(at 24.13 69.85 0)
+		(effects
+			(font
+				(size 2 2)
+				(thickness 0.4)
+				(bold yes)
+			)
+			(justify left bottom)
+		)
+		(uuid "60c1a2e6-cd72-5c1f-946c-52d179ee2796")
+	)
+	(text "XT30 J101: pin 1 = minus, pin 2 = plus (KiCad silkscreen;\ncheck against the battery lead, O-15).\nFuse 15 A mini blade, candidate (O-17)."
+		(exclude_from_sim no)
+		(at 24.13 71.12 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left top)
+		)
+		(uuid "95893eaf-4b86-5a2c-8941-ea8021a63304")
+	)
+	(rectangle
+		(start 116.84 66.04)
+		(end 172.72 152.4)
+		(stroke
+			(width 0)
+			(type dash)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "99e8950d-7550-50ac-abfc-9b31a508e115")
+	)
+	(text "2  Reverse-polarity protection"
+		(exclude_from_sim no)
+		(at 118.11 69.85 0)
+		(effects
+			(font
+				(size 2 2)
+				(thickness 0.4)
+				(bold yes)
+			)
+			(justify left bottom)
+		)
+		(uuid "0e291db1-806f-5231-9543-5ad2470a97fd")
+	)
+	(text "Q101 conducts with correct polarity\n(VGS = -VBAT). D102 limits |VGS| during\nTVS clamping; R101 pulls the gate."
+		(exclude_from_sim no)
+		(at 118.11 71.12 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left top)
+		)
+		(uuid "cb96810b-e310-5cbd-9701-2df19c22515a")
+	)
+	(rectangle
+		(start 172.72 66.04)
+		(end 269.24 152.4)
+		(stroke
+			(width 0)
+			(type dash)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "c4220331-268c-58f8-be1b-4756dc4c43ea")
+	)
+	(text "3  TVS, bulk -> VBAT_PROT"
+		(exclude_from_sim no)
+		(at 173.99 69.85 0)
+		(effects
+			(font
+				(size 2 2)
+				(thickness 0.4)
+				(bold yes)
+			)
+			(justify left bottom)
+		)
+		(uuid "5c6982ca-a3db-53eb-8fc6-2376488eaebb")
+	)
+	(text "SMBJ13A clamp, 330 uF + 10 uF bulk.\nVBAT_PROT feeds LogicPower, ServoPower\nand Controller (hierarchical pin)."
+		(exclude_from_sim no)
+		(at 173.99 71.12 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left top)
+		)
+		(uuid "03891abc-0a3b-513b-a4fa-f7bb21365c2f")
+	)
+	(text "Battery input 3S (9.0-12.6 V): XT30 -> fuse -> reverse-polarity P-FET -> TVS -> bulk. All parts are candidates (O-17)."
+		(exclude_from_sim no)
+		(at 22.86 58.42 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "0c29679a-66ef-529e-9d44-c449010db8c8")
 	)
 	(embedded_fonts no)
 )
