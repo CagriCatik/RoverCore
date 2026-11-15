@@ -118,6 +118,36 @@ def active_3s():
           "| ADC-only error +-0.25 A")
 
 
+def logic_5v_capacitance():
+    """5 V rail output capacitance and transient checks (2026-11-15c). Estimates only."""
+    print("\n== +5V output capacitance (3 x Murata GRM32ER71E226KE15L) ==")
+    c_nom, n = 22e-6, 3
+    tol = 0.10                 # initial tolerance +-10 % (Murata)
+    bias_typ = {4.74: 0.178, 5.0: 0.201, 5.16: 0.215}  # Murata SimSurfing, typical, 25 degC, part-specific
+    temp = 0.15                # X7R bound +-15 % (guaranteed class limit; part curve at 0 V: -7 % at -20 degC)
+    aging = 0.05               # generic X7R ~2.5 %/decade, 2 decades after reference (not part-specific)
+    c_min = n * c_nom * (1 - tol) * (1 - bias_typ[5.16]) * (1 - temp) * (1 - aging)
+    c_typ = n * c_nom * (1 - bias_typ[5.0])
+    print(f"  C_eff min {c_min*1e6:.1f} uF (tol, typ. DC bias @5.16 V, X7R temp bound, generic aging), "
+          f"typ {c_typ*1e6:.1f} uF (25 degC, 5 V)")
+    vlo, vhi, vnom = 4.738, 5.161, 4.946
+    fsw_min, l_max = 290e3, 10e-6 * 1.2
+    fo_req = 5.1 / (vlo * 40e3)
+    print(f"  Eq.14 (fo < 40 kHz): needs >= {fo_req*1e6:.1f} uF; fo at C_min {5.1/(vnom*c_min)/1e3:.1f} kHz, "
+          f"at C_typ {5.1/(vnom*c_typ)/1e3:.1f} kHz")
+    for c, name in ((c_min, "C_min"), (c_typ, "C_typ")):
+        fo = 5.1 / (vnom * c)
+        print(f"  Eq.16 C6 at {name}: {1/(2*3.1416*fo*100e3)*1e12:.0f} pF (fitted 75 pF)")
+    floor, ceil = 4.5, 5.5     # design floor (margin above receiver 4.0 V); ceiling: SK6812MINI-E / LVC8T245 5.5 V
+    for di in (0.6, 1.0):
+        dv = 2 * di / (fsw_min * c_min)   # Eq.11, step faster than ~2 switching periods (worst case)
+        e = (vhi**2 + l_max * di**2 / c_min) ** 0.5 - vhi
+        print(f"  step {di} A: Eq.11 dV {dv*1e3:.0f} mV -> load increase min {vlo-dv:.3f} V (floor {floor}), "
+              f"load release max {vhi+dv:.3f} V (ceiling {ceil}); inductor-energy bound {e*1e3:.0f} mV")
+    print(f"  ripple Eq.12 at C_min: {1.31/(8*fsw_min*c_min)*1e3:.1f} mV")
+    print(f"  buzzer 0.15 A steps at 4 kHz: ~{2*0.15/(fsw_min*c_min)*1e3:.0f} mV per step (Eq.11 form)")
+
+
 def history_2s():
     """Superseded 2S numbers, kept for appendix A traceability."""
     print("== HISTORY 2S (superseded 2026-11-15) ==")
@@ -133,4 +163,8 @@ def history_2s():
 
 
 if __name__ == "__main__":
-    history_2s() if "--history-2s" in sys.argv else active_3s()
+    if "--history-2s" in sys.argv:
+        history_2s()
+    else:
+        active_3s()
+        logic_5v_capacitance()

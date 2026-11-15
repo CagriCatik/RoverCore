@@ -69,7 +69,7 @@ Firmware-Test mit einem Pegeltest bestätigt.
 | Signalgruppe | Aufbereitung | Zustand bei Reset / ohne 3,3 V |
 |---|---|---|
 | Servo/ESC (5×) | Puffer U201 3,3 → 5 V mit Ioff (3.1), Freigabe über `ACT_OE_N`; 100k Pull-downs an Ein- und Ausgang; Serienwiderstand + ESD am Stecker | Ausgang hochohmig + Pull-down → low, keine Pulse |
-| WS2812 (4×) | WS2812_1–3 über U201, WS2812_4 über U202 (ohne OE); 5-V-Ausgang (WS2812 V_IH ≈ 0,7 × VDD) | Daten low, LEDs behalten/aus |
+| WS2812 (4×) | WS2812_1–3 über U201, WS2812_4 über U202 (ohne OE); 5-V-Ausgang (SK6812MINI-E V_IH 0,65 × V_DD) | Daten low, LEDs behalten/aus |
 | i-BUS ein | U203 SN74LVC1G17 an 3,3 V (5-V-tolerant, Ioff), 2,2 kΩ Serie, 100k Pull-down | Eingang hochohmig |
 | Erweiterungs-UART | TX: Serienwiderstand; RX: Serienwiderstand + Klemmung auf 3,3 V, 10k Pull-up | definiert |
 | I²C | Pull-ups auf den Modulen (je 10k, Adafruit); Carrier-Pull-ups nur bestückungsoptional | – |
@@ -245,11 +245,11 @@ protection" ist nur als Funktion genannt) – Test am ESC ohne Motor (O-2).
 
 Pinreihenfolge am Empfänger (i-BUS-Port) ist noch nicht verifiziert (O-10).
 
-### J108–J111 – WS2812 (JST-PH 3-polig, verpolsicher)
+### J108–J111 – LEDs SK6812MINI-E (JST-PH 3-polig, verpolsicher)
 
 | Pin | Signal | Spannung | Richtung |
 |---|---|---|---|
-| 1 | +5V_LED | 5,0 V, max. 60 mA je LED | Versorgung aus |
+| 1 | +5V_LED | 4,74–5,16 V, max. ca. 44 mA je LED (Opsco SK6812MINI-E Rev B/2) | Versorgung aus |
 | 2 | WS2812_x_DIN | 0/5 V | aus |
 | 3 | GND | – | – |
 
@@ -257,7 +257,7 @@ Pinreihenfolge am Empfänger (i-BUS-Port) ist noch nicht verifiziert (O-10).
 
 | Pin | Signal | Spannung | Richtung |
 |---|---|---|---|
-| 1 | +5V_EXT | 5,0 V, max. 0,2 A | Versorgung aus |
+| 1 | +5V_EXT | 4,74–5,16 V statisch, Transienten bis 5,5 V; verbindliches Budget max. 0,2 A dauernd (Schutzelement im Schaltplan) | Versorgung aus |
 | 2 | EXT_UART_TX | 3,3 V | aus (von VCU) |
 | 3 | EXT_UART_RX | 3,3 V, nicht 5-V-tolerant | ein (zur VCU) |
 | 4 | GND | – | – |
@@ -282,7 +282,7 @@ separater INT1-Draht.
 |---|---|
 | JP101 | 5-V-Jumper Carrier → DevKit (Versorgungsdokument 3.11) |
 | SW101 | Freigabetaster |
-| BZ101 | Buzzer (5 V) |
+| BZ101 | Buzzer Same Sky CMT-8540S-SMT-TR (magnetisch, 5 V, max. 150 mA, Freilaufdiode, Low-Side-MOSFET ≥ 0,52 A) |
 | D110 | Status-LED |
 | TP | Messpunkte: VBAT_IN, VBAT_PROT, +V_SERVO, +5V, +3V3_DEVKIT, GND (mehrfach), IBUS_RX, ein Servo- und ein WS2812-Signal |
 

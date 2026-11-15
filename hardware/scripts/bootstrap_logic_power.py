@@ -38,7 +38,7 @@ CAP_100N = {"Manufacturer": "Yageo", "MPN": "CC0603KRX7R9BB104", "LCSC": "C14663
             "Description": "100 nF 50 V X7R 0603 (50 V from part-number code / distributor data)"}
 CAP_22U = {"Manufacturer": "Murata", "MPN": "GRM32ER71E226KE15L", "LCSC": "C21397",
            "Datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2308111542_Murata-Electronics-GRM32ER71E226KE15L_C21397.pdf",
-           "Description": "22 uF 25 V X7R 1210 output capacitor (Murata spec sheet); DC-bias capacitance at 5 V not yet verified"}
+           "Description": "22 uF 25 V X7R 1210 output capacitor (Murata spec sheet); Murata typical DC bias -20.1 % at 5 V (SimSurfing); not a guaranteed minimum"}
 CAP_75P = {"Manufacturer": "Yageo", "MPN": "CC0603JRNPO9BN750", "LCSC": "C282074",
            "Datasheet": "~",
            "Description": "75 pF 50 V C0G/NP0 0603 feed-forward (TI reference C6)"}
@@ -110,7 +110,7 @@ def build(root_uuid, sheet_uuid):
         ex, ey = stub_end(s, part[1], part[4], number)
         s._symbol(FLAG, "#FLG3%02d" % n, "PWR_FLAG", "", ex, ey, 0, {"1": net}, {})
     s.note("5 V logic rail from VBAT_PROT (3S, 9.0-12.6 V). TPS54302: L 10 uH, Cout 3 x 22 uF, "
-           "FB 100k/13.7k -> 4.95 V nom, 4.74-5.16 V (1 %). WS2812B abs max 5.3 V limits the upper bound.",
+           "FB 100k/13.7k -> 4.95 V nom, 4.74-5.16 V (1 %). Upper limit 5.5 V (SK6812MINI-E operating max, LVC8T245).",
            30.48, 55.88, "header")
     s.note("EN divider 69.8k/11.5k: on 8.65 V, off 8.04 V (logic stays on below the servo rail cut-off 8.8 V). "
            "R301 49.9 Ohm allows loop measurement. All parts are candidates (O-17).", 30.48, 60.96, "notes")

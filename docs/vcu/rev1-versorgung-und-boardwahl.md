@@ -116,12 +116,12 @@ Einbruch, den die VCU sieht (O-3).
 |---|---:|---|
 | DevKit (ESP32-S3 inkl. WLAN-Spitzen, über DevKit-LDO) | 0,50 A | (S) |
 | FS-iA6B Empfänger | 0,10 A | (S); Hersteller nennt nur 4,0–8,4 V |
-| 4 × WS2812, je 60 mA weiß | 0,24 A | (S) |
-| Buzzer | 0,03 A | (S) |
+| 4 × SK6812MINI-E, je max. 3 × 14,5 mA + 0,6 mA (Opsco Rev B/2) | 0,18 A | Datenblatt |
+| Buzzer CMT-8540S-SMT-TR (Same Sky): max. 150 mA bei 4 kHz, ½ Tastgrad | 0,15 A | Datenblatt |
 | Status-LED, Puffer, INA240 | 0,03 A | (S) |
 | IMU + OLED (über DevKit-3V3) | 0,03 A | (S); OLED ca. 20 mA (Adafruit) |
 | UART-Erweiterung (Budget, Grenzwert) | 0,20 A | Festlegung |
-| **Summe / Reglerauslegung** | **1,13 A / ≥ 2 A** | |
+| **Summe / Reglerauslegung** | **1,19 A / ≥ 2 A** | |
 
 **Servoschiene** (LTC7803)
 
@@ -299,8 +299,8 @@ Alle Werte sind Schätzungen; die Regelschleife ist nicht gemessen.
 |---|---|---|
 | Regler | U301 TPS54302DDCR (C311983), Footprint TSOT-23-6 | Pinbelegung GND 1, SW 2, VIN 3, FB 4, EN 5, BOOT 6 (Tab. 4-1) = KiCad-Symbol |
 | Drossel | L301 10 µH, Würth 74439346100 (C2651185) | ΔI_L worst bei 12,6 V 1,3 A, I_pk 2,7 A bei 2 A |
-| Ausgangsspannung | R302 100 kΩ / **R303 13,7 kΩ** (vorher 13,3 kΩ), 1 % | 0,596 V × (1 + 100/13,7) = 4,95 V; mit V_REF ±2,5 % und 1 %: **4,74–5,16 V** (0,1 %: 4,81–5,08 V). 13,3 kΩ hätte 4,86–5,30 V ergeben – bis an das absolute Maximum der WS2812B |
-| Ausgangskondensatoren | **3 × 22 µF / 25 V X7R 1210** (Murata GRM32ER71E226KE15L, C21397), C304/C305/C307 | siehe Kapazitätsnachweis unten; TI-Referenz nutzt 2 × 22 µF |
+| Ausgangsspannung | R302 100 kΩ / **R303 13,7 kΩ** (vorher 13,3 kΩ), 1 % | 0,596 V × (1 + 100/13,7) = 4,95 V; mit V_REF ±2,5 % und 1 %: **4,74–5,16 V** (0,1 %: 4,81–5,08 V). 13,3 kΩ hätte 4,86–5,30 V ergeben |
+| Ausgangskondensatoren | **3 × 22 µF / 25 V X7R 1210** (Murata GRM32ER71E226KE15L, C21397), C304/C305/C307 | siehe Kapazitätsabschätzung unten; TI-Referenz nutzt 2 × 22 µF |
 | Vorhaltekondensator | C306 75 pF C0G (Yageo CC0603JRNPO9BN750, C282074) | Gl. 16 für 30–56 µF wirksam: 46–86 pF; 75 pF liegt darin |
 | Messwiderstand | R301 49,9 Ω zwischen +5V und Teiler | Einspeisepunkt für die Messung der Regelschleife (TI-Referenz R1) |
 | Eingangskondensatoren | C301 10 µF / 50 V X7R 1210 + C302 100 nF / 50 V 0603 | ≥ 35 V für 3S und TVS-Klemmung |
@@ -308,35 +308,61 @@ Alle Werte sind Schätzungen; die Regelschleife ist nicht gemessen.
 | Unterspannung (EN) | R304 69,8 kΩ / R305 11,5 kΩ | ein 8,65 V, aus 8,04 V; EN bei 21,5 V ≈ 3,0 V < 7 V abs. max. |
 | Hierarchie | VBAT_PROT als Eingang vom Blatt `Power`; +5V und GND global | PWR_FLAG an VBAT_PROT und +5V, weil beide nur über passive Bauteile gespeist werden |
 
-**Verbraucherverträglichkeit +5V (4,74–5,16 V statisch):**
+**Verbraucherverträglichkeit +5V** (statisch 4,74–5,16 V; Transienten siehe
+unten). Bewertet wird gegen den **Betriebsbereich** laut Datenblatt, nicht
+gegen absolute Grenzwerte.
 
-| Verbraucher | zulässiger Bereich (Quelle) | Bewertung |
+| Verbraucher | Betriebsbereich (Quelle) | Bewertung |
 |---|---|---|
-| DevKit 5-V-Pin → LDO SGM2212-3.3 | Eingang 2,7–20 V; Dropout 240 mV typ. bei 500 mA (SG Micro) | erfüllt; 3,3 V bleiben bis ca. 3,6 V Eingang geregelt |
-| Empfänger FS-iA6B | 4,0–8,4 V (FlySky-Anleitung 2024) | erfüllt |
-| WS2812B (4 einzelne LEDs) | Datenblätter nennen **keinen empfohlenen Betriebsbereich**, nur absolute Grenzen 3,7–5,3 V (V5/V6.1) bzw. 3,5–5,3 V (ältere Fassung); elektrische Werte bei V_DD = 5 V (V5) bzw. 4,5–5,5 V (ältere Fassung) | statisch innerhalb der absoluten Grenzen, 0,14 V Abstand nach oben. Betrieb außerhalb 5,0 V ist bei V5 nicht spezifiziert → **offen**: LED-Typ und -Revision festlegen, Verhalten bei 4,74 V und 5,16 V am Muster prüfen. Datenpegel: Puffer auf derselben +5V-Schiene, V_IH 0,63 × V_DD (V5) erfüllt; Kabelabfall muss < 0,7 V bleiben (V_I max = V_DD + 0,7 V) |
+| DevKit 5-V-Pin → LDO SGM2212-3.3 | Eingang 2,7–20 V; Dropout 240 mV typ. bei 500 mA (SG Micro) | erfüllt |
+| Empfänger FS-iA6B | 4,0–8,4 V (FlySky-Anleitung 2024) | erfüllt; bestimmt die harte Untergrenze 4,0 V |
+| LED **Opsco SK6812MINI-E** (SK6812MINI-E-012, Spec Rev B/2 2025-11-22, LCSC-Kopie; LCSC C5149201) | **3,7 / 5,0 / 5,5 V** min/typ/max (§9), absolut 3,7–5,5 V (§7); V_IH 0,65 × V_DD; 800 kbit/s | erfüllt, auch für Transienten bis 5,5 V. Rückwärts montierte LED (Loch in der LED-Platine). Pinbelegung hat sich zwischen Rev 04 und Rev B/2 geändert – Footprint gegen B/2 prüfen. Worldsemi-Typen verworfen: nur absolute Grenze 5,3 V, kein Betriebsbereich |
+| Buzzer **Same Sky CMT-8540S-SMT-TR** (Rev 1.04, 2024-09-11) | Nennspannung 5,0 V, Betrieb 1,0–6,0 V; 150 mA max. bei 4 kHz; Spule 13 Ω (10–16 Ω) | erfüllt. Freilaufdiode nötig; Low-Side-MOSFET für ≥ 0,52 A (5,16 V an 10 Ω bei Dauer-Ein). LCSC-Bestand 0, bei DigiKey/Mouser/Arrow lieferbar |
 | SN74LVC8T245 / LVC1T45 (V_CCB) | 1,65–5,5 V (TI) | erfüllt |
-| Buzzer | Typ nicht gewählt | **offen** |
-| UART-Erweiterung (5-V-Ausgang, 0,2 A) | Gerät unbekannt | Anforderung an angeschlossene Geräte: 4,74–5,16 V plus Transienten zulässig |
+| UART-Erweiterung J112 | – | **verbindliches Budget:** +5V_EXT max. 0,2 A dauernd; 4,74–5,16 V statisch, Transienten bis 5,5 V; Signale 3,3 V, RX nicht 5-V-tolerant. Angeschlossene Geräte müssen diesen Bereich vertragen. Schutzelement (Strombegrenzung) im Schaltplan auswählen |
 
-**Wirksame Ausgangskapazität und Überschwingen (Schätzung):**
+Grenzen für die Transientenbewertung: **Untergrenze 4,5 V** (Auslegungsziel
+mit Reserve über den 4,0 V des Empfängers), **Obergrenze 5,5 V** (LED-
+Betriebsmaximum und LVC8T245).
 
-- DC-Bias-Kapazität des GRM32ER71E226KE15L bei 5 V ist **nicht belegt**
-  (Murata-Spezifikationsblatt enthält keine teilspezifische Kurve). Annahme
-  60–85 % von 22 µF, dazu −10 % Toleranz und −15 % Temperatur → ca. 10–17 µF
-  je Kondensator.
-- Regelschleife (Gl. 14): Durchtrittsfrequenz < 40 kHz verlangt
-  ≥ 25,8 µF wirksam bei 4,95 V. 2 × 22 µF (≈ 20–34 µF) sind damit nicht
-  sicher, 3 × 22 µF (≈ 30–51 µF) erfüllen es.
-- Laständerung (Gl. 11, 2 Schaltperioden): Damit +5V auch beim Lastabwurf
-  unter 5,3 V bleibt, darf es über 5,16 V nur 0,14 V überschwingen. Bei
-  f_SW,min 290 kHz verlangt das ≈ 30 µF wirksam für 0,6 A Laständerung und
-  ≈ 50 µF für 1 A. Mit 3 × 22 µF sind Laständerungen bis ca. 0,6 A abgedeckt;
-  größere Sprünge (z. B. alle WS2812 gleichzeitig plus WLAN-Spitze) sind am
-  Prototyp mit Oszilloskop zu messen.
-- Rippel (Gl. 12): ≥ 18,8 µF für 30 mV – erfüllt.
-- Abweichung von TIs getesteter Kombination (44 µF/75 pF): Phasenreserve
-  über R301 messen, C306 gegebenenfalls anpassen.
+**Wirksame Ausgangskapazität (Stand 2026-11-15, Schätzung):**
+
+Bauteil: 3 × **Murata GRM32ER71E226KE15L** (22 µF, 25 V, X7R, 1210, ±10 %;
+LCSC C21397). Teilspezifische DC-Bias-Kennlinie von Murata (SimSurfing,
+„25.0 degC, AC0.5Vrms", typische Werte, aus den Diagrammkoordinaten gelesen):
+−17,8 % bei 4,74 V, −20,1 % bei 5,0 V, −21,5 % bei 5,16 V.
+
+| Einfluss | Ansatz | Quelle / Art |
+|---|---|---|
+| Anfangstoleranz | −10 % | Murata, garantiert |
+| DC-Bias bei 5,16 V | −21,5 % | Murata, **typisch**, teilspezifisch, bei 25 °C |
+| Temperatur | −15 % (X7R-Klassengrenze) | Klassengrenze; die Teilekurve bei 0 V zeigt −7 % bei −20 °C, das Zusammenspiel mit DC-Bias ist nicht veröffentlicht – deshalb nur die Klassengrenze, nicht beides |
+| Alterung | −5 % (2 Dekaden nach Bezugszeit) | **generisch** für X7R, nicht teilspezifisch (Murata-Daten nur mit Login) |
+| **Ergebnis** | **≈ 37,7 µF** (3 Stück), typisch 52,7 µF bei 25 °C, 5 V | Schätzung |
+
+Die Mindestkapazität beruht auf einem **typischen** DC-Bias-Wert und
+generischer Alterung; sie ist **kein garantierter Mindestwert**. C307
+verbessert die Reserve, sichert sie aber nicht nachweislich ab. Nachweis
+durch Messung der Regelschleife (über R301) und der Lastsprünge am Prototyp.
+
+**Reglerrechnung** (TPS54302 SLVSDG6C, Gl. 11, 12, 14, 16; f_SW,min 290 kHz;
+L bis 12 µH; Rechenweg `rev1_power_calc.py`, Funktion `logic_5v_capacitance`):
+
+| Kriterium | Anforderung | Ergebnis mit 37,7 µF (typ. 52,7 µF) |
+|---|---|---|
+| Regelschleife, Gl. 14 (f_o < 40 kHz) | ≥ 26,9 µF | f_o 27,4 kHz (19,6 kHz) – erfüllt unter den Annahmen |
+| Vorhaltekondensator, Gl. 16 | 1/(2π f_o R2) | 58 pF (81 pF); **75 pF** liegt im Bereich; Phasenreserve messen |
+| Rippel, Gl. 12 (30 mV) | ≥ 18,8 µF | 15 mV |
+| **Lastzunahme** 0,6 A / 1,0 A (Gl. 11) | Minimum ≥ 4,5 V | 4,63 V / 4,56 V – bedingt erfüllt |
+| **Lastabwurf** 0,6 A / 1,0 A (Gl. 11) | Maximum ≤ 5,5 V | 5,27 V / 5,34 V – bedingt erfüllt; Energiebilanz der Drossel nur 11 / 31 mV |
+| Buzzer-Lastwechsel 0,15 A bei 4 kHz | – | ca. 27 mV je Wechsel |
+
+Bedingungen: Gl. 11 ist TIs Abschätzung „Ausgangskondensator überbrückt
+zwei Schaltperioden" und gilt für Lastanstiege schneller als ca. 7 µs
+(ungünstigster Fall); langsamere Anstiege sind günstiger. Die
+Laständerungen sind Szenarien (0,6 A ≈ WLAN-Sendespitze plus alle LEDs plus
+Buzzer; 1,0 A mit Reserve für die UART-Erweiterung). Die Rechnung ersetzt
+keine Messung von Über- und Unterschwingen.
 
 ### 3.9 Eingangsschutz und Messeingänge (3S)
 
@@ -540,7 +566,7 @@ Schutzkoordination (O-17).
 | O-20 | Fehlerreaktion: Antrieb sperren; Zeitgrenzen, Hysterese und Lenkverhalten in der Firmware-Spezifikation festlegen | Owner |
 | O-21 | Alle Messeingänge (VBAT, VSERVO, ISERVO) für „Akku an, ESP32 aus" und Transienten auslegen | Agent |
 | O-22 | Datenblattquellen ohne verifizierten Herstellerlink: C101 Rubycon 35PJV330M10X10.5, C102/C301 Samsung CL32B106KBJNNNE, L301 Würth 74439346100 (we-online antwortet 403), C306 Yageo CC0603JRNPO9BN750 (C282074). Keine URL nach Namensmuster eintragen | Agent |
-| O-23 | +5V: WS2812-Typ/Revision festlegen und Betrieb bei 4,74/5,16 V prüfen; Buzzer wählen; DC-Bias-Kapazität GRM32ER71E226KE15L belegen; Laständerung und Überschwingen am Prototyp messen | Agent / Owner |
+| O-23 | +5V: LED SK6812MINI-E und Buzzer CMT-8540S-SMT-TR gewählt (3.8); offen: Opsco-Datenblatt direkt vom Hersteller (nur LCSC-Kopie), Footprint gegen Rev B/2, Buzzer-Beschaffung (LCSC 0), Schutzelement für J112, Lastsprünge und Regelschleife am Prototyp messen | Agent / Owner |
 | O-24 | Einschaltstrom beim Einstecken (C101, C102, Reglereingänge) rechnen und messen; Q101-SOA und Sicherungs-I²t prüfen | Agent |
 
 Erledigt: O-5 (DevKit-LDO), O-6 (Lenkservos), O-9 (Projektort), O-14

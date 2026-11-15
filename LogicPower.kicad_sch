@@ -2555,7 +2555,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "22 uF 25 V X7R 1210 output capacitor (Murata spec sheet); DC-bias capacitance at 5 V not yet verified"
+		(property "Description" "22 uF 25 V X7R 1210 output capacitor (Murata spec sheet); Murata typical DC bias -20.1 % at 5 V (SimSurfing); not a guaranteed minimum"
 			(at 180.34 129.54 0)
 			(effects
 				(font
@@ -2802,7 +2802,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "22 uF 25 V X7R 1210 output capacitor (Murata spec sheet); DC-bias capacitance at 5 V not yet verified"
+		(property "Description" "22 uF 25 V X7R 1210 output capacitor (Murata spec sheet); Murata typical DC bias -20.1 % at 5 V (SimSurfing); not a guaranteed minimum"
 			(at 193.04 129.54 0)
 			(effects
 				(font
@@ -3957,11 +3957,12 @@
 			)
 		)
 		(property "Value" "PWR_FLAG"
-			(at 63.5 125.73 0)
+			(at 62.23 118.11 0)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
+				(justify right)
 			)
 		)
 		(property "Footprint" ""
@@ -4022,11 +4023,12 @@
 			)
 		)
 		(property "Value" "PWR_FLAG"
-			(at 180.34 125.73 0)
+			(at 179.07 118.11 0)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
+				(justify right)
 			)
 		)
 		(property "Footprint" ""
@@ -4068,7 +4070,7 @@
 			)
 		)
 	)
-	(text "5 V logic rail from VBAT_PROT (3S, 9.0-12.6 V). TPS54302: L 10 uH, Cout 3 x 22 uF (C307 added for DC-bias margin), FB 100k/13.7k -> 4.95 V nom, 4.74-5.16 V (1 %). WS2812B abs max 5.3 V limits the upper bound."
+	(text "5 V logic rail from VBAT_PROT (3S, 9.0-12.6 V). TPS54302: L 10 uH, Cout 3 x 22 uF (C307 added for DC-bias margin), FB 100k/13.7k -> 4.95 V nom, 4.74-5.16 V (1 %). Upper limit 5.5 V (SK6812MINI-E operating max, LVC8T245)."
 		(exclude_from_sim no)
 		(at 30.48 55.88 0)
 		(effects
@@ -4135,7 +4137,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "22 uF 25 V X7R 1210 output capacitor (Murata spec sheet); DC-bias capacitance at 5 V not yet verified; third output capacitor added for DC-bias margin (Eq. 14, 11)"
+		(property "Description" "22 uF 25 V X7R 1210 output capacitor (Murata spec sheet); Murata typical DC bias -20.1 % at 5 V (SimSurfing); not a guaranteed minimum; third output capacitor added for DC-bias margin (Eq. 14, 11)"
 			(at 180.34 157.48 0)
 			(effects
 				(font
