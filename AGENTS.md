@@ -32,7 +32,11 @@ Created from the Generic PCB template of PCB-Project-Template 2.0.0.
 
 ## Git ownership
 
-Only the project owner stages, commits and pushes. Agents must not run `git add`,
-`commit`, `push`, `merge`, `rebase`, `reset`, `clean`, `stash`, `tag`, `cherry-pick`
-or working-tree-changing `checkout`/`switch`. Never commit locks, `.kicad_prl`,
+Since 2026-11-15 the owner has authorized agents to stage and commit **locally**
+on `main`: stage only the reviewed files by explicit path (no `git add -A`/`.`),
+one coherent change per commit, and report each commit. Agents must not run
+`push`, `pull`, `merge`, `rebase`, `reset`, `clean`, `stash`, `tag`, `cherry-pick`,
+amend or rewrite history, or working-tree-changing `checkout`/`switch`, and must
+not create branches, pull requests or releases. `git fetch` for comparison is
+allowed. Pushing stays with the owner. Never commit locks, `.kicad_prl`,
 backups, generated QA output or unlicensed vendor assets.
