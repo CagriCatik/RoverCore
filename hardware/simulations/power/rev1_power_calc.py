@@ -94,7 +94,7 @@ def active_3s():
     p_run = vo * 6.0 / 0.90 + 5.65 / 0.85
     for name, pw in (("running 6 A", p_run), ("worst 11.2 A", p)):
         print(f"  {name}: {pw:.0f} W -> " + ", ".join(f"{k} {v} V: {pw/v:.1f} A" for k, v in VBAT.items()))
-    r_in = {"XT30": 2.4e-3, "fuse 15 A (est)": 5.5e-3, "SiRA99DP hot": 2.65e-3 * 1.5}
+    r_in = {"XT30": 2.4e-3, "fuse 15 A (0297015, 4.58 mOhm cold, mirror DS)": 4.58e-3, "SiRA99DP hot": 2.65e-3 * 1.5}
     i_in = p / 9.0
     print("  path:", ", ".join(f"{k} {i_in**2*v:.2f} W" for k, v in r_in.items()), f"@ {i_in:.1f} A")
     print(f"  fuse 15 A: {i_in/15*100:.0f} % at 9.0 V; with -0.15 %/K derating at 60 C: {i_in/(15*(1-0.0015*37))*100:.0f} %")

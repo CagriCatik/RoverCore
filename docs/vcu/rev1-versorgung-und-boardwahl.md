@@ -345,8 +345,8 @@ Datenblatt festgelegt.
   Gleichtakt prüfen) – O-21.
 
 **Eingangspfad-Verluste** bei 10,1 A (Worst Case bei 9,0 V, Schätzung):
-XT30 0,25 W, Sicherung 15 A ca. 0,57 W (Widerstand nicht belegt), SiRA99DP
-0,41 W. Sicherung: 68 % des Nennstroms, mit Temperatur-Derating bei 60 °C
+XT30 0,25 W, Sicherung 15 A ca. 0,47 W (4,58 mΩ kalt, Littelfuse 0297015 [Spiegel]),
+SiRA99DP 0,41 W. Sicherung: 68 % des Nennstroms, mit Temperatur-Derating bei 60 °C
 ca. 72 %.
 
 **Sicherung (O-17):** Der berechnete Akkustrom legt die Sicherung nicht fest.
@@ -426,20 +426,27 @@ bestückungsoptional.
 
 ### 4.1 Bauteilkandidaten Leistungsteil
 
-| Funktion | Kandidat | Kennwerte | LCSC (Bestand 2026-11-14/15) | Stand |
+Werte aus Herstellerdatenblättern, Ausnahmen markiert: [Spiegel] =
+Herstellerdokument von Drittserver, [Auszug] = nur Suchauszug, [Dist] =
+nur Distributordaten. LCSC-Bestand von JLCPCB, 2026-11-14/15, schwankend;
+alle „Extended Parts". Alle Teile bleiben **Kandidaten** bis zur
+Schutzkoordination (O-17).
+
+| Funktion | Kandidat | Kennwerte | LCSC (Bestand) | Bemerkung |
 |---|---|---|---|---|
-| FET oben + unten | Infineon BSC026N04LS | 40 V, 3,6 mΩ max @ 4,5 V, Q_g 16 nC | C3039672 (17 028) | gültig; R_DS(on) bei INTVCC ≈ 4,8 V prüfen |
-| Drossel Servo | 2,2 µH: Coilcraft XAL1010-222ME (I_sat 34 A @ −30 %, DCR max 2,80 mΩ); 3,3 µH: Recherche läuft | – | C5125746 (290) | 3,3 µH offen (O-17) |
-| Strom-Shunt LTC7803 | Vishay WSL1020, 3 mΩ, 1 % | 2 W, ESL < 1 nH | offen | O-17 |
-| Messshunt Ausgang | 2 mΩ, 1 % | ≥ 1 W | offen | O-17 |
-| Strommessverstärker | TI INA240A3 | SBOS662C | offen | O-17 |
+| FET oben + unten | Infineon BSC026N04LS | 40 V, R_DS(on) max 3,6 mΩ @ 4,5 V, Q_g 16 nC | C3039672 (17 028) | R_DS(on) bei INTVCC ≈ 4,8 V prüfen |
+| Drossel Servo, 2,2 µH | Coilcraft XAL1010-222ME | I_sat 34 A (−30 %), DCR max 2,80 mΩ | C5125746 (290) | Sense-Rippel 11,4 mV, nutzbar 12,2 A |
+| Drossel Servo, 3,3 µH | **Coilcraft XAL1010-332MED** (Dok. 804-1, 02/25/26) | I_sat 27,4 A (−30 %, 25 °C), I_rms 18,2 A (ΔT 20 K), DCR 3,70 / max 4,10 mΩ, ca. 11,3 × 10 × 10 mm | C3911672 (342) | nutzbar 13,1 A; Kupferverlust ca. 0,5 W bei 11,2 A; I_sat bei 125 °C nicht veröffentlicht. Alternative Würth 744393605033 (DCR max 3,4 mΩ, nicht bei LCSC). Verworfen: Bourns SRP1265A-3R3M (DCR 6,8 mΩ), Vishay IHLP-4040DZ-01 (I_sat 18,6 A, DCR 14,4 mΩ); XAL8080-332 existiert nicht |
+| Strom-Shunt LTC7803 | **Vishay WSL10203L000FEA** (Dok. 30183, 27-Mar-2024) | 3 mΩ, 1 %, 2,0 W bei 70 °C, TCR +100/−10 ppm/K | C844481 (7 621) | 0,38 W bei 11,2 A, ca. 1,0 W an der Stromgrenze |
+| Messshunt Ausgang | **Vishay WSL10202L000FEA** (Dok. 30183) | 2 mΩ, 1 %, 2,0 W, TCR +100/−10 ppm/K | C1711510 (23 430) | statt WSL2512 2 mΩ (nur 1 W, ±275 ppm/K) |
+| Strommessverstärker | **TI INA240A3DR** (SOIC-8) / INA240A3PWR (TSSOP-8) | SBOS662C: I_Q 1,8 mA typ., 2,6 mA max (−40 … 125 °C), V_S 2,7–5,5 V | C2060584 (1 350) / C544538 (895) | – |
 | Drossel 5 V | Würth 74439346100 | I_sat 9,7 A (−30 %), DCR max 29,2 mΩ | C2651185 (1 296) | gültig |
-| Ausgangs-Bulk Servo | 2 × Panasonic 16SVPG270MX | 270 µF / 16 V, ESR max 10 mΩ, 5,08 A | C2161621 (4 162) | gültig (16 V > 7,81 V) |
-| Eingangs-Bulk | ≥ 35 V, Hybrid/Polymer | – | offen | **neu wählen**: EEH-ZK1E471P (25 V) reicht für 3S nicht |
-| Eingangs-MLCC | ≥ 35 V X7R 1210 | – | offen | **neu wählen** |
-| TVS | SMBJ13A | 3.9 | offen | O-17 |
-| Gate-Zener | z. B. 15 V | 3.9 | offen | O-17 |
-| Sicherung | Mini-Flachsicherung 15 A | 3.9 | offen | O-17 |
+| Ausgangs-Bulk Servo | 2 × Panasonic 16SVPG270MX | 270 µF / 16 V, ESR max 10 mΩ, 5,08 A | C2161621 (4 162) | 16 V > 7,81 V (OV-Schwelle) |
+| Eingangs-Bulk | **Rubycon 35PJV330M10X10.5** (Hybrid-Katalog 06/2025) | 330 µF / 35 V, ESR max 20 mΩ, 2,8 A (125 °C, 100 kHz), D10 × 10,5 | C3274921 (1 000) | Gleichwertig Panasonic EEH-ZK1V331P (C278516, nur 68). EEH-ZK1V471P existiert nicht. Größer: 35PJV560M10X16.5 (560 µF, 11 mΩ, 4,0 A, 16,5 mm hoch) |
+| Eingangs-MLCC | **Samsung CL32B106KBJNNNE** | 10 µF / 50 V X7R 1210; typische Kurve: ca. 7,4 µF bei 12 V (−26,5 %) | C138687 (137 925) | 3–4 Stück am Leistungsteil; Eingangsrippel 5,6 A muss überwiegend in den MLCC fließen oder ein zweiter Bulk-Elko |
+| TVS | **SMBJ13A**, Littelfuse C151252 (349) oder Vishay SMBJ13A-E3/52 C968569 (138) | Vishay 88392: V_RWM 13 V, V_BR 14,4–15,9 V, V_C 21,5 V bei 27,9 A (10/1000 µs), I_R 1 µA | s. links | Littelfuse-Werte nur [Auszug]; Ladegerät-Überschwingen muss unter ca. 13 V bleiben |
+| Gate-Zener Q101 | **onsemi MMSZ5245BT1G** (Rev. 17, 03/2024) oder Diodes BZT52C15-7-F (DS18004) | 14,25–15,75 V bei 8,5 mA (±5 %) bzw. 13,8–15,6 V bei 5 mA; 500 mW | C129730 (65 890) / C177014 (52 287) | Vz min 14,25 V > 12,6 V; Auslegung mit Vorwiderstand im Schaltplan (3.9) |
+| Sicherung | **Littelfuse 0297015.WXNV** (MINI 32 V) [Spiegel] | 15 A, 4,58 mΩ kalt, 98 mV, I²t 270 A²s; 110 % ≥ 360 000 s, 135 % 0,75–600 s, 200 % 0,15–5 s, 350 % 0,08–0,5 s; 32 V, 1 kA | C151095 (13 643) | Eaton ATM-15 [Spiegel]: 4,93 mΩ, C3662566 (0). Kennlinie vor Freigabe vom Hersteller neu laden |
 
 ## 5. Grenzwerte Rev 1 (Vorschlag zur Freigabe)
 
