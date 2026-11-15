@@ -21,8 +21,9 @@ OLED. Current work package: power design and board selection, see
 GPIO and connector plan (draft):
 [docs/vcu/rev1-pin-und-anschlussplan.md](docs/vcu/rev1-pin-und-anschlussplan.md),
 machine-readable in `hardware/interfaces/pinmap.csv`.
-Schematic: sheet `Power` with battery input and input protection (draft, candidates);
-other sheets and the board are still empty. GPIOs and footprints are not frozen.
+Schematic: sheets `Power` (battery input, input protection) and `LogicPower`
+(5 V rail, TPS54302) as drafts with candidate parts; other sheets and the board
+are still empty. GPIOs and footprints are not frozen.
 
 ## Everyday commands (run from this repository)
 

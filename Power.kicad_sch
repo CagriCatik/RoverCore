@@ -2035,7 +2035,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://www.vishay.com/doc?71023"
+		(property "Datasheet" "https://www.vishay.com/docs/71023/sira99dp.pdf"
 			(at 127.0 101.6 0)
 			(effects
 				(font
@@ -2200,7 +2200,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "~"
+		(property "Datasheet" "https://www.yageogroup.com/content/datasheet/asset/file/PYU-RC_GROUP_51_ROHS_L"
 			(at 116.84 134.62 0)
 			(effects
 				(font
@@ -2210,6 +2210,33 @@
 			)
 		)
 		(property "Description" "Gate pull-down of Q101; value with D102 pending (O-17)"
+			(at 116.84 134.62 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Manufacturer" "Yageo"
+			(at 116.84 134.62 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "MPN" "RC0603FR-0710KL"
+			(at 116.84 134.62 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C98220"
 			(at 116.84 134.62 0)
 			(effects
 				(font
@@ -2475,7 +2502,7 @@
 		(dnp no)
 		(uuid "e59d4447-6b5c-580a-ba1b-bf9166691fe6")
 		(property "Reference" "D101"
-			(at 171.45 133.35 270)
+			(at 160.02 133.35 270)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2484,7 +2511,7 @@
 			)
 		)
 		(property "Value" "SMBJ13A"
-			(at 171.45 135.89000000000001 270)
+			(at 160.02 135.89 270)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2702,7 +2729,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "Input bulk, hybrid polymer, ESR max 20 mOhm, 2.8 A ripple (candidate)"
+		(property "Description" "Input bulk, hybrid polymer, ESR max 20 mOhm, 2.8 A ripple (candidate); datasheet source open (O-22): no verified manufacturer link yet"
 			(at 190.5 134.62 0)
 			(effects
 				(font
@@ -2894,7 +2921,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "Input decoupling at the protection node; regulator MLCCs sit at each regulator"
+		(property "Description" "Input decoupling at the protection node; regulator MLCCs sit at each regulator; datasheet source open (O-22): no verified manufacturer link yet"
 			(at 210.82 134.62 0)
 			(effects
 				(font
@@ -3046,7 +3073,7 @@
 		(at 58.42 83.82 0)
 		(unit 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
 		(dnp no)
 		(uuid "67ff229f-20b8-551c-aa6d-c4e1dde219c7")
@@ -3084,7 +3111,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "Test point battery input (before fuse)"
+		(property "Description" "Test point battery input (before fuse); bare copper pad, no purchased part (excluded from BOM)"
 			(at 58.42 83.82 0)
 			(effects
 				(font
@@ -3130,7 +3157,7 @@
 		(at 149.86 83.82 0)
 		(unit 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
 		(dnp no)
 		(uuid "a327acac-15da-5b2a-ad4c-a3b7eb69b196")
@@ -3168,7 +3195,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "Test point protected battery rail"
+		(property "Description" "Test point protected battery rail; bare copper pad, no purchased part (excluded from BOM)"
 			(at 149.86 83.82 0)
 			(effects
 				(font
@@ -3214,7 +3241,7 @@
 		(at 231.14 134.62 0)
 		(unit 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
 		(dnp no)
 		(uuid "5cc43269-d0af-5be3-a13f-504bd205a042")
@@ -3252,7 +3279,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "Test point ground"
+		(property "Description" "Test point ground; bare copper pad, no purchased part (excluded from BOM)"
 			(at 231.14 134.62 0)
 			(effects
 				(font
@@ -3500,6 +3527,27 @@
 			(justify left bottom)
 		)
 		(uuid "0c17788e-f933-55d9-a087-52e2d090b99e")
+	)
+	(wire
+		(pts
+			(xy 149.86 88.9) (xy 160.02 88.9)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "55d5b648-4e40-5338-97bc-fffe5f925cd4")
+	)
+	(hierarchical_label "VBAT_PROT"
+		(shape output)
+		(at 160.02 88.9 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "163ae12e-f2fa-5887-bd63-e49925e75be3")
 	)
 	(embedded_fonts no)
 )

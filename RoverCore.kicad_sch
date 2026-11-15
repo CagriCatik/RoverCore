@@ -42,6 +42,16 @@
 				(hide yes)
 			)
 		)
+		(pin "VBAT_PROT" output
+			(at 101.6 58.42 0)
+			(uuid "9fdbc170-5279-5b36-8f45-f00ef873bb2e")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
 		(instances
 			(project "RoverCore"
 				(path "/d069f045-7f09-4f8a-bd29-51e87a8a0808"
@@ -49,6 +59,69 @@
 				)
 			)
 		)
+	)
+	(sheet
+		(at 127.0 50.8)
+		(size 38.1 15.24)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0.0000)
+		)
+		(uuid "70263b16-6178-5c3f-baaf-087f426f170f")
+		(property "Sheetname" "LogicPower"
+			(at 127.0 50.0884 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "LogicPower.kicad_sch"
+			(at 127.0 66.6246 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+				(hide yes)
+			)
+		)
+		(pin "VBAT_PROT" input
+			(at 127.0 58.42 180)
+			(uuid "cf156acd-edc4-5025-a47c-22ebbf63b58a")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(instances
+			(project "RoverCore"
+				(path "/d069f045-7f09-4f8a-bd29-51e87a8a0808"
+					(page "3")
+				)
+			)
+		)
+	)
+	(wire
+		(pts
+			(xy 101.6 58.42) (xy 127.0 58.42)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "f0d52fc1-f21c-5363-a192-cfb3b5a85955")
 	)
 	(sheet_instances
 		(path "/"

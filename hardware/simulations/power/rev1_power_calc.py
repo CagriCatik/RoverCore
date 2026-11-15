@@ -79,7 +79,7 @@ def active_3s():
     print(f"  soft-start 33 nF: {33e-9*0.8/12.5e-6*1e3:.1f} ms, charge current {co*vo/(33e-9*0.8/12.5e-6):.2f} A")
 
     print("\n== TPS54302 5 V at 3S ==")
-    vo5, L5 = 0.596 * (1 + 100e3 / 13.3e3), 10e-6
+    vo5, L5 = 0.596 * (1 + 100e3 / 13.7e3), 10e-6  # R3 13.7k since 2026-11-15 (WS2812B abs max 5.3 V)
     dI5 = vo5 * (12.6 - vo5) / (12.6 * L5 * 290e3 * 0.8)
     print(f"  Vout {vo5:.3f} V; dIL worst @12.6 V {dI5:.2f} A, Ipk @2 A {2+dI5/2:.2f} A")
     Ip, Ih, Vf, Vr = 0.7e-6, 1.55e-6, 1.16, 1.23

@@ -288,16 +288,55 @@ Schwellen, Hysterese und das Lenkverhalten im Fehlerfall werden in der
 Firmware-Spezifikation festgelegt. PWM abzuschalten ist keine garantierte
 Leistungsabschaltung eines digitalen Servos.
 
-### 3.8 Dimensionierung TPS54302 (3S)
+### 3.8 Dimensionierung TPS54302 (3S) – Schaltplanblatt `LogicPower`
+
+Stand 2026-11-15. Grundlage TPS54302-Datenblatt SLVSDG6C (03/2026),
+Abschnitt 7.2. Schaltplan: `LogicPower.kicad_sch` (Bootstrap
+`hardware/scripts/bootstrap_logic_power.py`, danach KiCad-Datei maßgeblich).
+Alle Werte sind Schätzungen; die Regelschleife ist nicht gemessen.
 
 | Größe | Wahl | Rechnung / Begründung |
 |---|---|---|
-| Drossel | 10 µH, I_sat ≥ 6 A, DCR ≤ 30 mΩ (Würth 74439346100) | ΔI_L worst bei 12,6 V 1,3 A, I_pk 2,7 A bei 2 A |
-| Ausgangsspannung | R2 100 kΩ / R3 13,3 kΩ, 1 % | 5,08 V (4,86–5,30 V) |
-| Ausgangskondensatoren | 2 × 22 µF / 16 V X7R + C_FF 75 pF | TI-Referenz Abb. 7-1 |
-| Eingangskondensatoren | 10 µF ≥ 35 V X7R + 0,1 µF | Spannungsfestigkeit für 3S und TVS |
-| BOOT | 0,1 µF X7R | Datenblatt 7.2.3.2 |
-| Unterspannung (EN) | R4 69,8 kΩ / R5 11,5 kΩ | Gleichungen 1/2: ein 8,6 V, aus 8,0 V; EN bei 21,5 V ≈ 3,0 V < 7 V abs. max. |
+| Regler | U301 TPS54302DDCR (C311983), Footprint TSOT-23-6 | Pinbelegung GND 1, SW 2, VIN 3, FB 4, EN 5, BOOT 6 (Tab. 4-1) = KiCad-Symbol |
+| Drossel | L301 10 µH, Würth 74439346100 (C2651185) | ΔI_L worst bei 12,6 V 1,3 A, I_pk 2,7 A bei 2 A |
+| Ausgangsspannung | R302 100 kΩ / **R303 13,7 kΩ** (vorher 13,3 kΩ), 1 % | 0,596 V × (1 + 100/13,7) = 4,95 V; mit V_REF ±2,5 % und 1 %: **4,74–5,16 V** (0,1 %: 4,81–5,08 V). 13,3 kΩ hätte 4,86–5,30 V ergeben – bis an das absolute Maximum der WS2812B |
+| Ausgangskondensatoren | **3 × 22 µF / 25 V X7R 1210** (Murata GRM32ER71E226KE15L, C21397), C304/C305/C307 | siehe Kapazitätsnachweis unten; TI-Referenz nutzt 2 × 22 µF |
+| Vorhaltekondensator | C306 75 pF C0G (Yageo CC0603JRNPO9BN750, C282074) | Gl. 16 für 30–56 µF wirksam: 46–86 pF; 75 pF liegt darin |
+| Messwiderstand | R301 49,9 Ω zwischen +5V und Teiler | Einspeisepunkt für die Messung der Regelschleife (TI-Referenz R1) |
+| Eingangskondensatoren | C301 10 µF / 50 V X7R 1210 + C302 100 nF / 50 V 0603 | ≥ 35 V für 3S und TVS-Klemmung |
+| BOOT | C303 100 nF / 50 V X7R (Yageo CC0603KRX7R9BB104, C14663) | Datenblatt 7.2.3.2 |
+| Unterspannung (EN) | R304 69,8 kΩ / R305 11,5 kΩ | ein 8,65 V, aus 8,04 V; EN bei 21,5 V ≈ 3,0 V < 7 V abs. max. |
+| Hierarchie | VBAT_PROT als Eingang vom Blatt `Power`; +5V und GND global | PWR_FLAG an VBAT_PROT und +5V, weil beide nur über passive Bauteile gespeist werden |
+
+**Verbraucherverträglichkeit +5V (4,74–5,16 V statisch):**
+
+| Verbraucher | zulässiger Bereich (Quelle) | Bewertung |
+|---|---|---|
+| DevKit 5-V-Pin → LDO SGM2212-3.3 | Eingang 2,7–20 V; Dropout 240 mV typ. bei 500 mA (SG Micro) | erfüllt; 3,3 V bleiben bis ca. 3,6 V Eingang geregelt |
+| Empfänger FS-iA6B | 4,0–8,4 V (FlySky-Anleitung 2024) | erfüllt |
+| WS2812B (4 einzelne LEDs) | Datenblätter nennen **keinen empfohlenen Betriebsbereich**, nur absolute Grenzen 3,7–5,3 V (V5/V6.1) bzw. 3,5–5,3 V (ältere Fassung); elektrische Werte bei V_DD = 5 V (V5) bzw. 4,5–5,5 V (ältere Fassung) | statisch innerhalb der absoluten Grenzen, 0,14 V Abstand nach oben. Betrieb außerhalb 5,0 V ist bei V5 nicht spezifiziert → **offen**: LED-Typ und -Revision festlegen, Verhalten bei 4,74 V und 5,16 V am Muster prüfen. Datenpegel: Puffer auf derselben +5V-Schiene, V_IH 0,63 × V_DD (V5) erfüllt; Kabelabfall muss < 0,7 V bleiben (V_I max = V_DD + 0,7 V) |
+| SN74LVC8T245 / LVC1T45 (V_CCB) | 1,65–5,5 V (TI) | erfüllt |
+| Buzzer | Typ nicht gewählt | **offen** |
+| UART-Erweiterung (5-V-Ausgang, 0,2 A) | Gerät unbekannt | Anforderung an angeschlossene Geräte: 4,74–5,16 V plus Transienten zulässig |
+
+**Wirksame Ausgangskapazität und Überschwingen (Schätzung):**
+
+- DC-Bias-Kapazität des GRM32ER71E226KE15L bei 5 V ist **nicht belegt**
+  (Murata-Spezifikationsblatt enthält keine teilspezifische Kurve). Annahme
+  60–85 % von 22 µF, dazu −10 % Toleranz und −15 % Temperatur → ca. 10–17 µF
+  je Kondensator.
+- Regelschleife (Gl. 14): Durchtrittsfrequenz < 40 kHz verlangt
+  ≥ 25,8 µF wirksam bei 4,95 V. 2 × 22 µF (≈ 20–34 µF) sind damit nicht
+  sicher, 3 × 22 µF (≈ 30–51 µF) erfüllen es.
+- Laständerung (Gl. 11, 2 Schaltperioden): Damit +5V auch beim Lastabwurf
+  unter 5,3 V bleibt, darf es über 5,16 V nur 0,14 V überschwingen. Bei
+  f_SW,min 290 kHz verlangt das ≈ 30 µF wirksam für 0,6 A Laständerung und
+  ≈ 50 µF für 1 A. Mit 3 × 22 µF sind Laständerungen bis ca. 0,6 A abgedeckt;
+  größere Sprünge (z. B. alle WS2812 gleichzeitig plus WLAN-Spitze) sind am
+  Prototyp mit Oszilloskop zu messen.
+- Rippel (Gl. 12): ≥ 18,8 µF für 30 mV – erfüllt.
+- Abweichung von TIs getesteter Kombination (44 µF/75 pF): Phasenreserve
+  über R301 messen, C306 gegebenenfalls anpassen.
 
 ### 3.9 Eingangsschutz und Messeingänge (3S)
 
@@ -352,6 +391,20 @@ Datenblatt festgelegt.
 - Gleiches gilt für VSERVO_SENSE (Servoschiene läuft auch ohne ESP32) und
   den INA240-Ausgang (Verhalten des INA240 ohne Versorgung bei 6,8 V
   Gleichtakt prüfen) – O-21.
+
+**Einschaltstrom (offener Nachweis):** Q101 ist **keine kontrollierte
+Einschaltstrombegrenzung**. Beim Einstecken lädt der Akku C101, C102 und die
+Eingangskondensatoren beider Regler (C301, C302, Servostufe) über Kabel,
+XT30, Sicherung und den bereits leitenden P-FET. Spitzenstrom, Funkenbildung
+am XT30, Belastung von Q101 (SOA) und Sicherung (I²t) sind zu rechnen und am
+Prototyp zu messen.
+
+**Zener D102 (MMSZ5245BT1G, onsemi Rev. 17):** V_Z 14,25–15,75 V bei
+I_ZT 8,5 mA, Z_ZK 600 Ω bei 0,25 mA, Leckstrom max. 0,1 µA bei 11 V. Bei
+12,6 V Akkuspannung liegt V_GS unter V_Z,min; der Leckstrom bei 12,6 V ist
+nicht spezifiziert (Prüfspannung 11 V). Bei TVS-Klemmung (21,5 V) fließen über
+R101 10 kΩ ca. 0,6 mA; V_Z bei diesem Strom ist nicht garantiert (nur
+typische Kurven anderer Spannungen). Nachweis |V_GS| < 20 V am Muster.
 
 **Eingangspfad-Verluste** bei 10,1 A (Worst Case bei 9,0 V, Schätzung):
 XT30 0,25 W, Sicherung 15 A ca. 0,47 W (4,58 mΩ kalt, Littelfuse 0297015 [Spiegel]),
@@ -486,6 +539,9 @@ Schutzkoordination (O-17).
 | O-19 | 3S festgelegt; Servo-Sollwert 6,8 V vorläufig – Festschreibung nach Messung von Schleifenwiderstand und Überschwingen | Owner |
 | O-20 | Fehlerreaktion: Antrieb sperren; Zeitgrenzen, Hysterese und Lenkverhalten in der Firmware-Spezifikation festlegen | Owner |
 | O-21 | Alle Messeingänge (VBAT, VSERVO, ISERVO) für „Akku an, ESP32 aus" und Transienten auslegen | Agent |
+| O-22 | Datenblattquellen ohne verifizierten Herstellerlink: C101 Rubycon 35PJV330M10X10.5, C102/C301 Samsung CL32B106KBJNNNE, L301 Würth 74439346100 (we-online antwortet 403), C306 Yageo CC0603JRNPO9BN750 (C282074). Keine URL nach Namensmuster eintragen | Agent |
+| O-23 | +5V: WS2812-Typ/Revision festlegen und Betrieb bei 4,74/5,16 V prüfen; Buzzer wählen; DC-Bias-Kapazität GRM32ER71E226KE15L belegen; Laständerung und Überschwingen am Prototyp messen | Agent / Owner |
+| O-24 | Einschaltstrom beim Einstecken (C101, C102, Reglereingänge) rechnen und messen; Q101-SOA und Sicherungs-I²t prüfen | Agent |
 
 Erledigt: O-5 (DevKit-LDO), O-6 (Lenkservos), O-9 (Projektort), O-14
 (ersetzt durch O-17). O-10 bis O-13 stehen im
