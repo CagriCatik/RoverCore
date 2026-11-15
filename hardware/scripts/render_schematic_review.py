@@ -51,6 +51,12 @@ GROUPS = {
         ("supervisor-and-vbat-sense", ["U504", "C505", "R510", "Q505", "Q506", "R505", "R506", "R507", "R508", "R509",
                                        "C504", "D506", "TP505"]),
         ("operator-and-defaults", ["R501", "R502", "SW501", "R504", "D502", "TP501"]),
+        ("programming-and-restart", ["SW502", "SW503"]),
+    ],
+    "Sensors_Display": [
+        ("imu-j115", ["J115", "R803"]),
+        ("i2c-bus", ["R801", "R802", "TP801", "TP802"]),
+        ("oled-j116", ["J116"]),
     ],
     "Actuators": [
         ("buffer-u201", ["U201", "C201", "C202", "R209"]),

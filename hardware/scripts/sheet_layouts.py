@@ -98,6 +98,10 @@ LAYOUTS["Controller"] = {
         "TP501": (78.74, 210.82, 0, TPF),
         # 3 - DevKit socket
         "U501": (180.34, 162.56, 0, {"_ref_at": (-15.24, -38.1), "_val_at": (-15.24, -35.56),
+                                     "Description": "Socket = 2 x 1x22 female header 2.54 mm (part open, height O-4); "
+                                                    "pads 1-22 J1, 23-44 J3; EN (J1-3) -> RESET SW502, GPIO0 (J3-14) "
+                                                    "-> BOOT SW503; other strapping pins, USB, UART0, GPIO35-38 not "
+                                                    "connected (pinmap.csv)",
                                      "_stub": {"4": 33.02, "11": 33.02, "16": 33.02, "17": 33.02, "21": 33.02}}),
         # 4 - VBAT measurement
         "Q505": (261.62, 93.98, 180, {"_ref_at": (-10.16, -1.27), "_val_at": (-10.16, 1.27)}),
@@ -114,6 +118,22 @@ LAYOUTS["Controller"] = {
         "U504": (259.08, 215.9, 0, {"_ref_at": (-7.62, -10.16), "_val_at": (2.54, -10.16)}),
         "C505": (241.3, 215.9, 0, R),
         "R510": (297.18, 228.6, 0, R),
+        # 6 - programming and restart (added after d53365c)
+        "SW502": (345.44, 215.9, 0),
+        "SW503": (345.44, 236.22, 0),
+    },
+    # parts added after the layout review (electrical change; see docs/vcu/rev1-pin-und-anschlussplan.md 9)
+    "new": {
+        "SW502": ("Switch:SW_Push", "RESET", "Button_Switch_SMD:SW_SPST_TL3342", {"1": "DEVKIT_EN", "2": "GND"},
+                  {"Manufacturer": "E-Switch", "MPN": "TL3342F160QG", "LCSC": "C2886898",
+                   "Description": "RESET: shorts DevKit EN (CHIP_PU) to GND like DevKit SW2; DevKit keeps R5 10k pull-up "
+                                  "and C6 1 uF (schematic V1.1 20221130 sheet 2); no carrier RC. Not a power switch. "
+                                  "Candidate, JLC stock 0 on 2026-11-15 (O-28)"}),
+        "SW503": ("Switch:SW_Push", "BOOT", "Button_Switch_SMD:SW_SPST_TL3342", {"1": "STRAP_GPIO0", "2": "GND"},
+                  {"Manufacturer": "E-Switch", "MPN": "TL3342F160QG", "LCSC": "C2886898",
+                   "Description": "BOOT: GPIO0 to GND like DevKit SW1; released = strapping 1 (SPI boot) via the "
+                                  "ESP32-S3 internal pull-up, no carrier pull-up/-down. Download: hold BOOT, press "
+                                  "RESET, release BOOT. Candidate (O-28)"}),
     },
     "wire": ["+5V_DEVKIT", "LED_STAT_A", "ENABLE_BTN_N", "VBAT_PROT", "VBAT_SW", "VBAT_SW_G", "VBAT_SW_DRV",
              "VBAT_DIV", "VBAT_SENSE", "P3V3_OK"],
@@ -122,7 +142,7 @@ LAYOUTS["Controller"] = {
                "VBAT_SW_DRV": ("R509", "2"), "VBAT_DIV": ("R506", "1"), "VBAT_SENSE": ("R507", "2"),
                "P3V3_OK": ("U504", "2")},
     "label_only": [("U501", "21"), ("U501", "16"), ("U501", "4"), ("Q506", "1")],
-    "pins": {"U501": {"2": "=1"}},
+    "pins": {"U501": {"2": "=1", "3": "DEVKIT_EN", "36": "STRAP_GPIO0"}},
     "label_at": {"VBAT_PROT": (264.16, 69.85, (1, 0)), "VBAT_DIV": (281.94, 146.05, (1, 0))},
     "flags": ["+3V3"], "flag_at": {"+3V3": ("C501", "1")}, "flag_prefix": "5",
     "groups": {
@@ -134,8 +154,11 @@ LAYOUTS["Controller"] = {
                  "Original ESP32-S3-DevKitC-1-N16R8 v1.1; pads 1-22 = J1,\\n23-44 = J3. Reserved pins: no-connect (pinmap.csv).\\nSignals leave as global labels to the other sheets."),
         "vbat": ("4  VBAT measurement (O-21)", (236.22, 55.88, 370.84, 182.88),
                  "Q505 closes the divider only while P3V3_OK is high; C504 1 nF,\\nD506 holds VBAT_DIV <= +3V3 + 0.24 V. 12.6 V -> 1.80 V."),
-        "sup": ("5  3.3 V supervisor -> P3V3_OK", (236.22, 187.96, 370.84, 248.92),
+        "sup": ("5  3.3 V supervisor -> P3V3_OK", (236.22, 187.96, 309.88, 248.92),
                 "TLV809E 2.93 V: P3V3_OK high only while +3V3 is good\\n(33-67 ms delay). Drives Q506 here, Q406 (ServoPower)\\nand U602 EN (Lighting_IO)."),
+        "prog": ("6  Programmierung und Neustart", (314.96, 187.96, 370.84, 248.92),
+                 "RESET SW502: EN -> GND (DevKit R5 10k, C6 1 uF).\\nBOOT SW503: GPIO0 -> GND, internal pull-up\\n"
+                 "= SPI boot. Download: hold BOOT, press\\nRESET, release BOOT. RESET is no power switch."),
     },
     "notes": {"head": ("Controller: DevKit socket, 5 V feed, 3.3 V, defaults and protected measurement inputs "
                        "(Versorgung 3.11-3.13).", 22.86, 48.26)},

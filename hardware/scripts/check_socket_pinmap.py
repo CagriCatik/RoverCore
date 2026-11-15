@@ -4,9 +4,10 @@
 Every one of the 44 pads is classified:
   signal        - pinmap net and schematic net agree
   power         - +3V3 / +5V_DEVKIT / GND pins
-  expected NC   - pinmap direction 'reserved' (strapping, USB, UART0, PSRAM, RGB LED, CHIP_PU) and the pad
+  expected NC   - pinmap direction 'reserved' (strapping GPIO3/45/46, USB, UART0, PSRAM, RGB LED) and the pad
                   carries a no-connect (KiCad names the net 'unconnected-(U501-<pin name>-Pad<n>)')
   DEVIATION     - anything else (the script exits with status 1)
+Since 2026-11-15 EN (J1-3, RESET SW502) and GPIO0 (J3-14, BOOT SW503) are connected and checked as signals.
 The pin name embedded in the unconnected net is also checked against the pinmap GPIO, so a no-connect
 on the wrong pad is caught. Prints a Markdown table for docs/vcu/rev1-pin-und-anschlussplan.md.
 

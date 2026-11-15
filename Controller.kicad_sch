@@ -5192,7 +5192,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "Socket = 2 x 1x22 female header 2.54 mm (part open, height O-4); pads 1-22 J1, 23-44 J3; RST, strapping, USB, UART0, GPIO35-38 not connected (pinmap.csv)"
+		(property "Description" "Socket = 2 x 1x22 female header 2.54 mm (part open, height O-4); pads 1-22 J1, 23-44 J3; EN (J1-3) -> RESET SW502, GPIO0 (J3-14) -> BOOT SW503; other strapping pins, USB, UART0, GPIO35-38 not connected (pinmap.csv)"
 			(at 180.34 162.56 0)
 			(effects
 				(font
@@ -5983,9 +5983,25 @@
 			)
 		)
 	)
-	(no_connect
-		(at 162.56 137.16)
-		(uuid "8edebed5-ddb3-567a-b8c8-2ece9e16096d")
+	(wire
+		(pts
+			(xy 162.56 137.16) (xy 157.48 137.16)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "092cd414-9127-5a07-9581-21dc0a8a32b9")
+	)
+	(label "DEVKIT_EN"
+		(at 157.48 137.16 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right bottom)
+		)
+		(uuid "d8481242-4cc9-5754-933b-f6ef56e51c60")
 	)
 	(wire
 		(pts
@@ -6065,9 +6081,25 @@
 		(at 198.12 162.56)
 		(uuid "3cdf018b-eb3d-5ced-9f3b-7be29604fbd5")
 	)
-	(no_connect
-		(at 198.12 165.1)
-		(uuid "b6fe8a47-52c0-5297-bbd6-effbc2491147")
+	(wire
+		(pts
+			(xy 198.12 165.1) (xy 203.2 165.1)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "2e645a86-264f-5ef0-8962-869fd5036fc3")
+	)
+	(label "STRAP_GPIO0"
+		(at 203.2 165.1 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "dd265f3a-bd1f-5cf9-a1ba-eeda05c9fd6c")
 	)
 	(no_connect
 		(at 198.12 167.64)
@@ -8587,6 +8619,386 @@
 			)
 		)
 	)
+	(symbol
+		(lib_id "Switch:SW_Push")
+		(at 345.44 215.9 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "fe40b060-3569-5be8-99fe-e58dd44f0067")
+		(property "Reference" "SW502"
+			(at 345.44 212.09 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "RESET"
+			(at 345.44 219.71 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "Button_Switch_SMD:SW_SPST_TL3342"
+			(at 345.44 215.9 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 345.44 215.9 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "RESET: shorts DevKit EN (CHIP_PU) to GND like DevKit SW2; DevKit keeps R5 10k pull-up and C6 1 uF (schematic V1.1 20221130 sheet 2); no carrier RC. Not a power switch. Candidate, JLC stock 0 on 2026-11-15 (O-28)"
+			(at 345.44 215.9 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Manufacturer" "E-Switch"
+			(at 345.44 215.9 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "MPN" "TL3342F160QG"
+			(at 345.44 215.9 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C2886898"
+			(at 345.44 215.9 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "5a2977cc-d80f-5310-bd42-49f094f53e44")
+		)
+		(pin "2"
+			(uuid "d81fad36-14b4-5e55-8342-28bd93ef25d9")
+		)
+		(instances
+			(project "RoverCore"
+				(path "/d069f045-7f09-4f8a-bd29-51e87a8a0808/729df4ff-05c8-51ee-af10-fc9e9a2c9bdd"
+					(reference "SW502")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(wire
+		(pts
+			(xy 340.36 215.9) (xy 335.28 215.9)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "4496ac20-c37d-545f-a3d5-1bfff7cc9b37")
+	)
+	(label "DEVKIT_EN"
+		(at 335.28 215.9 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right bottom)
+		)
+		(uuid "0b340b79-0ff0-563d-9116-73a3866272d4")
+	)
+	(wire
+		(pts
+			(xy 350.52 215.9) (xy 355.6 215.9)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "d1f93cab-93c4-5d5c-a873-07eb6b36938f")
+	)
+	(symbol
+		(lib_id "power:GND")
+		(at 355.6 215.9 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom no)
+		(on_board no)
+		(dnp no)
+		(uuid "201a3f24-daa6-5b33-8b11-58ea69c36177")
+		(property "Reference" "#PWRSW50226"
+			(at 355.6 219.71 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 355.6 220.98000000000002 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Footprint" ""
+			(at 355.6 215.9 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 355.6 215.9 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 355.6 215.9 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "ecd7f9aa-957f-5e12-853b-c7719b5cf169")
+		)
+		(instances
+			(project "RoverCore"
+				(path "/d069f045-7f09-4f8a-bd29-51e87a8a0808/729df4ff-05c8-51ee-af10-fc9e9a2c9bdd"
+					(reference "#PWRSW50226")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Switch:SW_Push")
+		(at 345.44 236.22 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "4ed320f7-fbd5-556f-9e6d-f5954fe54357")
+		(property "Reference" "SW503"
+			(at 345.44 232.41 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "BOOT"
+			(at 345.44 240.03 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "Button_Switch_SMD:SW_SPST_TL3342"
+			(at 345.44 236.22 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 345.44 236.22 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "BOOT: GPIO0 to GND like DevKit SW1; released = strapping 1 (SPI boot) via the ESP32-S3 internal pull-up, no carrier pull-up/-down. Download: hold BOOT, press RESET, release BOOT. Candidate (O-28)"
+			(at 345.44 236.22 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Manufacturer" "E-Switch"
+			(at 345.44 236.22 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "MPN" "TL3342F160QG"
+			(at 345.44 236.22 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C2886898"
+			(at 345.44 236.22 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "7be3f768-7176-51bf-8d08-a6bbde6ebdf3")
+		)
+		(pin "2"
+			(uuid "3e333dac-0ea0-5023-8090-140c93582f2e")
+		)
+		(instances
+			(project "RoverCore"
+				(path "/d069f045-7f09-4f8a-bd29-51e87a8a0808/729df4ff-05c8-51ee-af10-fc9e9a2c9bdd"
+					(reference "SW503")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(wire
+		(pts
+			(xy 340.36 236.22) (xy 335.28 236.22)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "304844de-7db8-587e-8fed-ff96d6ec98e4")
+	)
+	(label "STRAP_GPIO0"
+		(at 335.28 236.22 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right bottom)
+		)
+		(uuid "f85c8b82-ba9a-576e-a734-786eabf4758c")
+	)
+	(wire
+		(pts
+			(xy 350.52 236.22) (xy 355.6 236.22)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "67b83617-a34f-5695-a3ae-51c9aa222f4e")
+	)
+	(symbol
+		(lib_id "power:GND")
+		(at 355.6 236.22 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom no)
+		(on_board no)
+		(dnp no)
+		(uuid "1fecd9bf-230e-5142-8796-31d146f60d3c")
+		(property "Reference" "#PWRSW50327"
+			(at 355.6 240.03 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 355.6 241.3 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Footprint" ""
+			(at 355.6 236.22 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 355.6 236.22 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 355.6 236.22 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "e24bb3a4-cc19-52e2-9d0a-3793c3efce29")
+		)
+		(instances
+			(project "RoverCore"
+				(path "/d069f045-7f09-4f8a-bd29-51e87a8a0808/729df4ff-05c8-51ee-af10-fc9e9a2c9bdd"
+					(reference "#PWRSW50327")
+					(unit 1)
+				)
+			)
+		)
+	)
 	(label "+5V_DEVKIT"
 		(at 129.54 182.88 180)
 		(effects
@@ -9177,7 +9589,7 @@
 	)
 	(rectangle
 		(start 236.22 187.96)
-		(end 370.84 248.92)
+		(end 309.88 248.92)
 		(stroke
 			(width 0)
 			(type dash)
@@ -9210,6 +9622,42 @@
 			(justify left top)
 		)
 		(uuid "e876d705-6149-533b-bbbe-4ec7fd44bda3")
+	)
+	(rectangle
+		(start 314.96 187.96)
+		(end 370.84 248.92)
+		(stroke
+			(width 0)
+			(type dash)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "45bbe0fa-4e01-512c-93dd-41cbd648eff2")
+	)
+	(text "6  Programmierung und Neustart"
+		(exclude_from_sim no)
+		(at 316.23 191.77 0)
+		(effects
+			(font
+				(size 2 2)
+				(thickness 0.4)
+				(bold yes)
+			)
+			(justify left bottom)
+		)
+		(uuid "953fb4fb-e995-5ef0-a70e-c2b27e83c685")
+	)
+	(text "RESET SW502: EN -> GND (DevKit R5 10k, C6 1 uF).\nBOOT SW503: GPIO0 -> GND, internal pull-up\n= SPI boot. Download: hold BOOT, press\nRESET, release BOOT. RESET is no power switch."
+		(exclude_from_sim no)
+		(at 316.23 193.04 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left top)
+		)
+		(uuid "17722744-907e-5605-9021-4763054d0c55")
 	)
 	(text "Controller: DevKit socket, 5 V feed, 3.3 V, defaults and protected measurement inputs (Versorgung 3.11-3.13)."
 		(exclude_from_sim no)

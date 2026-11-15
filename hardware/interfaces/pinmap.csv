@@ -1,10 +1,10 @@
 board_revision,reference,pin_number,schematic_net,mcu_port,mcu_pin,firmware_signal,direction,voltage_domain,boot_state,verification,source_reference
 R1,U501,J1-4,VBAT_SENSE,GPIO4,ADC1_CH3,PIN_VBAT_SENSE,in-analog,3V3,Hi-Z at reset; divider holds node,draft,ESP32-S3 DS v2.2 Tab 2-8; ADC2 excluded (Wi-Fi)
 R1,U501,J1-5,VSERVO_SENSE,GPIO5,ADC1_CH4,PIN_VSERVO_SENSE,in-analog,3V3,Hi-Z at reset; divider holds node,draft,LTC7803 has no PGOOD -> rail monitored by ADC
-R1,U501,J1-6,IMU_INT1,GPIO6,GPIO,PIN_IMU_INT1,in,3V3,Hi-Z at reset; module drives push-pull,draft,Adafruit 4438 INT1
+R1,U501,J1-6,IMU_INT1,GPIO6,GPIO,PIN_IMU_INT1,in,3V3,Hi-Z at reset; R803 100k pull-down (low without IMU); module drives push-pull,draft,Adafruit 4438 JP1-8 INT1 (Adafruit_LSM6DSOX.brd)
 R1,U501,J1-7,SERVO_PWR_EN,GPIO7,GPIO,PIN_SERVO_PWR_EN,out,3V3,Hi-Z at reset; R415 pull-down on Q404 gate -> servo rail OFF (default),draft,Active high enable via Q404 BSS138; R414/R407 keep RUN low otherwise; low-level power-up glitch keeps rail off
-R1,U501,J1-12,I2C_SDA,GPIO8,I2C0 via GPIO matrix,PIN_I2C_SDA,bidir,3V3,Hi-Z at reset; module pull-ups,draft,Shared IMU + OLED bus
-R1,U501,J1-15,I2C_SCL,GPIO9,I2C0 via GPIO matrix,PIN_I2C_SCL,out,3V3,Hi-Z at reset; module pull-ups,draft,Shared IMU + OLED bus
+R1,U501,J1-12,I2C_SDA,GPIO8,I2C0 via GPIO matrix,PIN_I2C_SDA,bidir,3V3,Hi-Z at reset; module pull-ups 10k || 10k = 5.0k to +3V3; R801 DNP,draft,Shared bus J115-5 (IMU) + J116-1 (OLED); IMU 0x6A + OLED 0x3D
+R1,U501,J1-15,I2C_SCL,GPIO9,I2C0 via GPIO matrix,PIN_I2C_SCL,out,3V3,Hi-Z at reset; module pull-ups 10k || 10k = 5.0k to +3V3; R802 DNP,draft,Shared bus J115-4 (IMU) + J116-2 (OLED)
 R1,U501,J1-16,ENABLE_BTN_N,GPIO10,GPIO,PIN_ENABLE_BTN,in,3V3,Hi-Z at reset; R502 10k pull-up -> not pressed,draft,Active low; no RC at the pin (O-21); firmware debounce
 R1,U501,J1-17,STATUS_LED,GPIO11,GPIO,PIN_STATUS_LED,out,3V3,Hi-Z at reset; LED off (D502 via R504),draft,Onboard LED via series R (not the DevKit RGB on GPIO38)
 R1,U501,J1-18,BUZZER,GPIO12,LEDC ch via GPIO matrix,PIN_BUZZER,out,3V3,Hi-Z at reset; ext pull-down on driver gate -> silent,draft,Low-side MOSFET driver; buzzer from 5V
@@ -31,11 +31,11 @@ R1,U501,J3-19,USB_DP,GPIO20,USB D+,,reserved,3V3,USB-Serial-JTAG,datasheet,Nativ
 R1,U501,J3-20,USB_DN,GPIO19,USB D-,,reserved,3V3,USB-Serial-JTAG,datasheet,Native USB on DevKit
 R1,U501,J3-2,U0TXD,GPIO43,UART0 TX,,reserved,3V3,WPU at reset,datasheet,Wired to DevKit CP2102N
 R1,U501,J3-3,U0RXD,GPIO44,UART0 RX,,reserved,3V3,WPU at reset,datasheet,Wired to DevKit CP2102N
-R1,U501,J3-14,STRAP_GPIO0,GPIO0,,,reserved,3V3,Strapping: weak pull-up = SPI boot,datasheet,DevKit BOOT button; leave NC on carrier
+R1,U501,J3-14,STRAP_GPIO0,GPIO0,,,strap-in,3V3,Strapping: internal weak pull-up = SPI boot; SW503 BOOT to GND on the carrier; no external pull,draft,DevKit SW1 and CP2102N auto-program Q2 in parallel; download: hold BOOT - press RESET - release BOOT
 R1,U501,J1-13,STRAP_GPIO3,GPIO3,,,reserved,3V3,Strapping: floating (JTAG source),datasheet,Leave NC on carrier
 R1,U501,J3-15,STRAP_GPIO45,GPIO45,,,reserved,3V3,Strapping: weak pull-down (VDD_SPI),datasheet,Leave NC on carrier
 R1,U501,J1-14,STRAP_GPIO46,GPIO46,,,reserved,3V3,Strapping: weak pull-down,datasheet,Leave NC on carrier
-R1,U501,J1-3,DEVKIT_EN,CHIP_PU,EN,,reserved,3V3,DevKit RESET button,datasheet,Leave NC on carrier
+R1,U501,J1-3,DEVKIT_EN,CHIP_PU,EN,,reset-in,3V3,DevKit R5 10k pull-up + C6 1 uF; SW502 RESET to GND on the carrier (parallel to DevKit SW2 and CP2102N auto-reset Q1),draft,DevKit schematic V1.1 20221130 sheet 2; RESET is not a power switch
 R1,U501,J1-1,+3V3,3V3,,,power-out,3V3,LDO SGM2212 output,datasheet,Carrier load <= 50 mA (IMU + OLED)
 R1,U501,J1-2,+3V3,3V3,,,power-out,3V3,LDO SGM2212 output,datasheet,Carrier load <= 50 mA (IMU + OLED)
 R1,U501,J1-21,+5V_DEVKIT,5V,,,power-in,5V,Fed from carrier +5V via Schottky D501 (diode-OR with DevKit USB diodes),datasheet,USB never feeds carrier rails; JP101 removed 2026-11-15
@@ -43,3 +43,20 @@ R1,U501,J1-22,GND,GND,,,power,GND,,datasheet,
 R1,U501,J3-1,GND,GND,,,power,GND,,datasheet,
 R1,U501,J3-21,GND,GND,,,power,GND,,datasheet,
 R1,U501,J3-22,GND,GND,,,power,GND,,datasheet,
+R1,J115,1,+3V3,,,,power-in,3V3,module VIN (AP2112K-3.3 on module; VIN 3-5 V),source-checked,Adafruit_LSM6DSOX.brd (adafruit/Adafruit-LSM6DSOX-PCB)
+R1,J115,2,NC (3Vo),,,,nc,3V3,module regulator output; not used,source-checked,Adafruit_LSM6DSOX.brd (adafruit/Adafruit-LSM6DSOX-PCB)
+R1,J115,3,GND,,,,power,GND,,source-checked,Adafruit_LSM6DSOX.brd (adafruit/Adafruit-LSM6DSOX-PCB)
+R1,J115,4,I2C_SCL,GPIO9,,PIN_I2C_SCL,in,3V3,level-shifted (BSS138); 10k pull-up to VIN,source-checked,Adafruit_LSM6DSOX.brd (adafruit/Adafruit-LSM6DSOX-PCB)
+R1,J115,5,I2C_SDA,GPIO8,,PIN_I2C_SDA,bidir,3V3,level-shifted (BSS138); 10k pull-up to VIN,source-checked,Adafruit_LSM6DSOX.brd (adafruit/Adafruit-LSM6DSOX-PCB)
+R1,J115,6,NC (DO),,,,nc,3V3,module pull-down -> address 0x6A,source-checked,Adafruit_LSM6DSOX.brd (adafruit/Adafruit-LSM6DSOX-PCB)
+R1,J115,7,NC (CS),,,,nc,3V3,module pull-up -> I2C mode,source-checked,Adafruit_LSM6DSOX.brd (adafruit/Adafruit-LSM6DSOX-PCB)
+R1,J115,8,IMU_INT1,GPIO6,,PIN_IMU_INT1,out,3V3,LSM6DSOX INT1 direct (not level-shifted); R803 100k pull-down on carrier,source-checked,Adafruit_LSM6DSOX.brd (adafruit/Adafruit-LSM6DSOX-PCB)
+R1,J115,9,NC (INT2),,,,nc,3V3,not used,source-checked,Adafruit_LSM6DSOX.brd (adafruit/Adafruit-LSM6DSOX-PCB)
+R1,J116,1,I2C_SDA,GPIO8,,PIN_I2C_SDA,bidir,3V3,Data; level-shifted (BSS138); 10k pull-up to Vin,source-checked,Adafruit 0.96in 128x64 OLED STEMMA QT.brd (adafruit/Adafruit-128x64-Monochrome-OLED-PCB)
+R1,J116,2,I2C_SCL,GPIO9,,PIN_I2C_SCL,in,3V3,Clk; level-shifted (BSS138); 10k pull-up to Vin,source-checked,Adafruit 0.96in 128x64 OLED STEMMA QT.brd (adafruit/Adafruit-128x64-Monochrome-OLED-PCB)
+R1,J116,3,NC (DC/A0),,,,nc,3V3,module pull-up -> address 0x3D (SJ3 open),source-checked,Adafruit 0.96in 128x64 OLED STEMMA QT.brd (adafruit/Adafruit-128x64-Monochrome-OLED-PCB)
+R1,J116,4,NC (Rst),,,,nc,3V3,on-module reset supervisor APX803,source-checked,Adafruit 0.96in 128x64 OLED STEMMA QT.brd (adafruit/Adafruit-128x64-Monochrome-OLED-PCB)
+R1,J116,5,NC (CS),,,,nc,3V3,module pull-up; SPI only,source-checked,Adafruit 0.96in 128x64 OLED STEMMA QT.brd (adafruit/Adafruit-128x64-Monochrome-OLED-PCB)
+R1,J116,6,NC (3Vo),,,,nc,3V3,module regulator output; not used,source-checked,Adafruit 0.96in 128x64 OLED STEMMA QT.brd (adafruit/Adafruit-128x64-Monochrome-OLED-PCB)
+R1,J116,7,+3V3,,,,power-in,3V3,module Vin (AP2112K-3.3 on module),source-checked,Adafruit 0.96in 128x64 OLED STEMMA QT.brd (adafruit/Adafruit-128x64-Monochrome-OLED-PCB)
+R1,J116,8,GND,,,,power,GND,,source-checked,Adafruit 0.96in 128x64 OLED STEMMA QT.brd (adafruit/Adafruit-128x64-Monochrome-OLED-PCB)
