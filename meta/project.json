@@ -1,0 +1,16 @@
+{
+  "schema": 1,
+  "name": "RoverCore",
+  "template": "generic-pcb",
+  "template_title": "Generic PCB",
+  "kit_version": "2.0.0",
+  "kicad_version": "10.0.7",
+  "created": "2026-11-14T19:10:24.258518+00:00",
+  "firmware": "none",
+  "profile": "4-layer",
+  "kicad_base": {
+    "type": "native-defaults",
+    "profile": "4-layer",
+    "source": "hardware/native-defaults (KiCad 10.0.7 blank schematic; board/project authored by pcbnew from meta/templates/profiles/4-layer.json)"
+  }
+}

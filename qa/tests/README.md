@@ -1,12 +1,5 @@
-# Kit test suite
+# Verification test cases
 
-Automated tests for the PCB-Project-Template tooling. Run everything with
-`python3 test_template.py` (or `python3 -m unittest discover -s qa/tests -v`).
-
-- Native KiCad integration tests run automatically when KiCad 10.0.7 is
-  installed; set `KICAD_NATIVE_TESTS=0` to skip them.
-- Tests never touch real user state: `kit_test_support.py` redirects the kit
-  state and KiCad user-template directories into a temporary sandbox whose path
-  contains spaces.
-- Board-level verification test cases for generated projects live in
-  `qa/project-template/tests/README.md` (copied to each project's `qa/tests/`).
+Capture edge/failure cases: reversed connectors, undervoltage, overcurrent,
+UART/I2C/SPI faults, MCU reset, watchdog, boot pin strapping, temperature
+and supply sequencing. Tie test IDs back to requirements.
