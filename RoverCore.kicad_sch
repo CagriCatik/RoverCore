@@ -202,6 +202,85 @@
 		(color 0 0 0 0)
 		(uuid "9401eae2-7c87-5aec-8a01-08caebdee7f8")
 	)
+	(sheet
+		(at 127.0 121.92)
+		(size 38.1 15.24)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0.0000)
+		)
+		(uuid "729df4ff-05c8-51ee-af10-fc9e9a2c9bdd")
+		(property "Sheetname" "Controller"
+			(at 127.0 121.2084 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "Controller.kicad_sch"
+			(at 127.0 137.7446 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+				(hide yes)
+			)
+		)
+		(pin "VBAT_PROT" input
+			(at 127.0 129.54 180)
+			(uuid "ef26d208-9915-5aed-acd4-e54ed028e885")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(instances
+			(project "RoverCore"
+				(path "/d069f045-7f09-4f8a-bd29-51e87a8a0808"
+					(page "5")
+				)
+			)
+		)
+	)
+	(wire
+		(pts
+			(xy 114.3 93.98) (xy 114.3 129.54)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "59ff32d1-c469-563a-8dc5-c0f1b9ffc8df")
+	)
+	(wire
+		(pts
+			(xy 114.3 129.54) (xy 127.0 129.54)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "afc69df7-3796-5d87-a7ed-4a7b2e3d7d21")
+	)
+	(junction
+		(at 114.3 93.98)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "d8803dad-a8f2-531c-a8ad-d46733e01b82")
+	)
 	(sheet_instances
 		(path "/"
 			(page "1")

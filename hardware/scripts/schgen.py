@@ -175,6 +175,15 @@ class Sheet:
         for number, net in sorted(pins.items()):
             lx, ly, langle = pts[number]
             px, py = self.place(x, y, rot, lx, ly)
+            if net.startswith("="):  # "=<pin>": tie directly to another pin of the same symbol with a wire
+                ox, oy, _ = pts[net[1:]]
+                qx, qy = self.place(x, y, rot, ox, oy)
+                self.wire(px, py, qx, qy, "%s-%s-tie" % (ref, number))
+                continue
+            if net == "NC":  # deliberately unconnected pin: no-connect flag directly on the pin
+                self.items.append("\t(no_connect\n\t\t(at %s %s)\n\t\t(uuid \"%s\")\n\t)\n"
+                                  % (px, py, self.uid("nc-%s-%s" % (ref, number))))
+                continue
             self.endpoints.setdefault((px, py), set()).add(net)
             if (px, py) in done:
                 continue

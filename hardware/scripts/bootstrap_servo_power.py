@@ -6,8 +6,8 @@ Design basis: docs/vcu/rev1-versorgung-und-boardwahl.md sections 3.4-3.6 (3S,
 (Rev B not yet obtained). Kelvin sense connections and the feedback tap are
 explicit net ties (NT401-NT405) so they can be routed as separate traces.
 Writes ServoPower.kicad_sch and adds the sheet to RoverCore.kicad_sch, fed
-from the Power sheet's VBAT_PROT pin. Signals to the not-yet-drawn Controller
-sheet are global labels.
+from the Power sheet's VBAT_PROT pin. Signals to the Controller sheet are global labels. SERVO_PWR_EN (active high,
+default OFF) replaced SERVO_PWR_DIS on 2026-11-15.
 
 Usage: python3 hardware/scripts/bootstrap_servo_power.py
 """
@@ -26,7 +26,7 @@ FILE = "ServoPower.kicad_sch"
 NS = "9a4f2c1e-7b3d-4e6a-8c5f-0d2b1a3e4401"
 POWER_NETS = {"GND": "power:GND", "+3V3": "power:+3V3"}
 HIER = {"VBAT_PROT": "input"}
-GLOBAL = {"SERVO_PWR_DIS": "input", "VSERVO_SENSE": "output", "ISERVO_SENSE": "output", "+V_SERVO": "output"}
+GLOBAL = {"SERVO_PWR_EN": "input", "VSERVO_SENSE": "output", "ISERVO_SENSE": "output", "+V_SERVO": "output"}
 
 YAGEO_RC = "https://www.yageogroup.com/content/datasheet/asset/file/PYU-RC_GROUP_51_ROHS_L"
 R0603, C0603, C0805 = ("Resistor_SMD:R_0603_1608Metric", "Capacitor_SMD:C_0603_1608Metric",
@@ -70,7 +70,10 @@ PARTS_DATA = {
                "Description": "thin film 0.1 %, 25 ppm/K; " + LCSC_NOTE},
     "Q2N7002": {"Manufacturer": "onsemi", "MPN": "2N7002LT1G", "LCSC": "C16338",
                 "Datasheet": "https://www.onsemi.com/pdf/datasheet/2n7002l-d.pdf",
-                "Description": "Pulls RUN low when SERVO_PWR_DIS is high (regulator shutdown); pinout 1 G, 2 S, 3 D"},
+                "Description": "Pulls RUN low unless SERVO_PWR_EN actively enables the rail (fail-safe default off); pinout 1 G, 2 S, 3 D"},
+    "QBSS138": {"Manufacturer": "onsemi", "MPN": "BSS138LT1G", "LCSC": "open (O-22)",
+                "Datasheet": "https://www.onsemi.com/pdf/datasheet/bss138-d.pdf",
+                "Description": "Servo enable: VGS(th) 0.8-1.5 V at 1 mA, VDS 50 V, VGS +-20 V (onsemi BSS138/D Rev 7, Apr 2024); pinout 1 G, 2 S, 3 D"},
     "DBOOT": {"Value": "BAS316", "Footprint": "Diode_SMD:D_SOD-323",
               "fields": {"Manufacturer": "Nexperia", "MPN": "BAS316,115", "LCSC": "C109218",
                          "Description": "Boost diode INTVCC->BOOST; reverse voltage about VIN; fast PN chosen for low hot leakage "
@@ -142,7 +145,7 @@ def parts():
         ("D401", "Device:D", P["DBOOT"]["Value"], P["DBOOT"]["Footprint"], (132.08, 177.8, 0),
          {"1": "BOOST_SERVO", "2": "INTVCC_SERVO"}, P["DBOOT"]["fields"]),
         ("C411", "Device:C", "1u 25V", C0603, (172.72, 177.8, 0), {"1": "BOOST_SERVO", "2": "SW_SERVO"},
-         dict(P["C1U"], Description="Bootstrap capacitor CB >= 100 x top-FET Ciss (max 3.22 nF -> >= 0.32 uF)")),
+         dict(P["C1U"], Description="Bootstrap capacitor CB: datasheet requires >= 100 x top-FET input capacitance (BSC026N04LS Ciss max 3.22 nF -> >= 0.32 uF); 1 uF 25 V X7R, DC bias at 5 V not verified; manufacturer datasheet link not verified (O-22)")),
         ("C412", "Device:C", "4.7u", C0805, (124.46, 266.7, 0), {"1": "INTVCC_SERVO", "2": "GND"},
          dict(P["C4U7"], Description="INTVCC >= 4.7 uF ceramic (datasheet pin functions)")),
         ("C413", "Device:C", "1u", C0603, (139.7, 266.7, 0), {"1": "INTVCC_SERVO", "2": "GND"},
@@ -168,9 +171,16 @@ def parts():
         ("R406", "Device:R", "20k", R0603, (50.8, 210.82, 0), {"1": "RUN_SERVO", "2": "GND"},
          dict(P["R20K"], Description="RUN divider bottom; RUN at 21.5 V TVS clamp about 2.7 V")),
         ("Q403", NMOS_SMALL, "2N7002", "Package_TO_SOT_SMD:SOT-23", (81.28, 182.88, 0),
-         {"1": "SERVO_PWR_DIS", "2": "GND", "3": "RUN_SERVO"}, P["Q2N7002"]),
-        ("R407", "Device:R", "100k", R0603, (66.04, 210.82, 0), {"1": "SERVO_PWR_DIS", "2": "GND"},
-         rc("RC0603FR-07100KL", "C14675", "Gate pull-down: servo rail stays enabled while SERVO_PWR_DIS is not driven")),
+         {"1": "SERVO_RUN_INH", "2": "GND", "3": "RUN_SERVO"}, P["Q2N7002"]),
+        ("R414", "Device:R", "100k", R0603, (40.64, 71.12, 0), {"1": "VBAT_PROT", "2": "SERVO_RUN_INH"},
+         rc("RC0603FR-07100KL", "C14675", "Inhibit pull-up from VBAT_PROT: Q403 on (rail OFF) whenever SERVO_PWR_EN is not driven high; "
+            "with R407 VGS = 0.6875 x VBAT: 6.05 V at 8.8 V, 14.8 V at 21.5 V TVS clamp")),
+        ("R407", "Device:R", "220k", R0603, (60.96, 71.12, 0), {"1": "SERVO_RUN_INH", "2": "GND"},
+         rc("RC0603FR-07220KL", "open (O-22)", "Q403 gate divider bottom; limits VGS below 20 V at the TVS clamp")),
+        ("Q404", NMOS_SMALL, "BSS138", "Package_TO_SOT_SMD:SOT-23", (109.22, 71.12, 0),
+         {"1": "SERVO_PWR_EN", "2": "GND", "3": "SERVO_RUN_INH"}, P["QBSS138"]),
+        ("R415", "Device:R", "100k", R0603, (124.46, 76.2, 0), {"1": "SERVO_PWR_EN", "2": "GND"},
+         rc("RC0603FR-07100KL", "C14675", "Q404 gate pull-down: GPIO7 Hi-Z (reset, boot, DevKit missing) -> rail OFF")),
         # ---- output shunt and current sense ----
         ("RS402", "Device:R", "2m", "ProjectFootprints:R_Vishay_WSL1020", (309.88, 119.38, 90),
          {"1": "VSERVO_REG", "2": "+V_SERVO"},
@@ -217,7 +227,7 @@ def build(root_uuid, sheet_uuid):
     for ref, lib, value, fp, xyr, pins, fields in plist:
         s.part(ref, lib, value, fp, xyr, pins, fields, POWER_NETS, dict(HIER, **{k: "global:" + v for k, v in GLOBAL.items()}),
                in_bom=not ref.startswith(("TP", "NT")))
-    for n, (ref, number, net) in enumerate((("C406", "1", "VSERVO_REG"), ("C416", "1", "+3V3")), 1):
+    for n, (ref, number, net) in enumerate((("C406", "1", "VSERVO_REG"),), 1):  # +3V3 flag sits on Controller (source)
         p = next(x for x in plist if x[0] == ref)
         x, y, rot = p[4]
         lx, ly, la = s.pin_points(p[1])[number]
@@ -230,8 +240,8 @@ def build(root_uuid, sheet_uuid):
     s.note("Kelvin: NT401/NT402 (LTC7803 SENSE at RS401), NT404/NT405 (INA240 at RS402), NT403 (feedback tap). "
            "Route each pair as separate close traces from the shunt pads. Compensation and RF/CF are start values.",
            25.4, 35.56, "h2")
-    s.note("SERVO_PWR_DIS, VSERVO_SENSE, ISERVO_SENSE, +V_SERVO and +3V3 are global until the Controller and Actuators "
-           "sheets exist. SERVO_PWR_DIS high pulls RUN low: regulator shutdown, not a power disconnect.", 25.4, 40.64, "h3")
+    s.note("Default OFF: R414/R407 hold Q403 on (RUN low) from VBAT_PROT; only SERVO_PWR_EN high (Q404) releases RUN. "
+           "Regulator shutdown, not a power disconnect. VSERVO_SENSE, ISERVO_SENSE, +V_SERVO are global labels.", 25.4, 40.64, "h3")
     return s.render()
 
 

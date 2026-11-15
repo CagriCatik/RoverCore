@@ -31,7 +31,7 @@ v1.8, ESP32-S3-DevKitC-1 User Guide v1.1, ESP-IDF-Doku (GPIO, LEDC).
 | 4 | J1-4 | VBAT_SENSE | ADC1_CH3 | Analog ein |
 | 5 | J1-5 | VSERVO_SENSE | ADC1_CH4 – Ersatz für fehlendes PGOOD des LTC7803 | Analog ein |
 | 6 | J1-6 | IMU_INT1 | GPIO-Interrupt | ein |
-| 7 | J1-7 | SERVO_PWR_DIS | schaltet Servoschiene ab (RUN → GND) | aus |
+| 7 | J1-7 | SERVO_PWR_EN | gibt Servoschiene frei (aktiv high); ohne aktive Freigabe AUS (Versorgungsdokument 3.13) | aus |
 | 8 | J1-12 | I2C_SDA | I²C0 | bidirektional |
 | 9 | J1-15 | I2C_SCL | I²C0 | aus |
 | 10 | J1-16 | ENABLE_BTN_N | Freigabetaster, aktiv low | ein |
@@ -279,10 +279,11 @@ Pinreihenfolge am Empfänger (i-BUS-Port) ist noch nicht verifiziert (O-10).
 | 3 | EXT_UART_RX | 3,3 V, nicht 5-V-tolerant | ein (zur VCU) |
 | 4 | GND | – | – |
 
-### U1 – DevKit-Sockel (2 × 1×22 Buchsenleiste, 2,54 mm, Abstand 22,86 mm)
+### U501 – DevKit-Sockel (2 × 1×22 Buchsenleiste, 2,54 mm, Abstand 22,86 mm)
 
-Belegung siehe `pinmap.csv`. Silkscreen: Umriss des DevKit, Antennenseite,
-„USB →", Pin 1 der DevKit-Leisten J1 und J3.
+Belegung siehe `pinmap.csv`; Footprint-Pads 1–22 = J1-1…J1-22, 23–44 = J3-1…J3-22
+(projektlokal, `make_devkit_socket.py`). Silkscreen: Umriss des DevKit, „ANT",
+„USB" mit Pfeil, Pfeil und „J1-1"/„J3-1" an Pin 1 beider Leisten.
 
 ### J115 – IMU-Modul (Adafruit 4438), J116 – OLED-Modul (Adafruit 326)
 
@@ -297,10 +298,11 @@ separater INT1-Draht.
 
 | Ref | Funktion |
 |---|---|
-| JP101 | 5-V-Jumper Carrier → DevKit (Versorgungsdokument 3.11) |
-| SW101 | Freigabetaster |
+| U501 | DevKit-Sockel (Blatt `Controller`) |
+| D501 | Schottky Carrier-5V → DevKit-5V-Pin, ersetzt JP101 (Versorgungsdokument 3.11) |
+| SW501 | Freigabetaster |
 | BZ101 | Buzzer Same Sky CMT-8540S-SMT-TR (magnetisch, 5 V, max. 150 mA, Freilaufdiode, Low-Side-MOSFET ≥ 0,52 A) |
-| D110 | Status-LED |
+| D502 | Status-LED |
 | TP | Messpunkte: VBAT_IN, VBAT_PROT, +V_SERVO, +5V, +3V3_DEVKIT, GND (mehrfach), IBUS_RX, ein Servo- und ein LED-Signal |
 
 ## 5. Offene Punkte

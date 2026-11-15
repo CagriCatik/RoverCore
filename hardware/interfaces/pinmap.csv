@@ -1,45 +1,45 @@
 board_revision,reference,pin_number,schematic_net,mcu_port,mcu_pin,firmware_signal,direction,voltage_domain,boot_state,verification,source_reference
-R1,U1,J1-4,VBAT_SENSE,GPIO4,ADC1_CH3,PIN_VBAT_SENSE,in-analog,3V3,Hi-Z at reset; divider holds node,draft,ESP32-S3 DS v2.2 Tab 2-8; ADC2 excluded (Wi-Fi)
-R1,U1,J1-5,VSERVO_SENSE,GPIO5,ADC1_CH4,PIN_VSERVO_SENSE,in-analog,3V3,Hi-Z at reset; divider holds node,draft,LTC7803 has no PGOOD -> rail monitored by ADC
-R1,U1,J1-6,IMU_INT1,GPIO6,GPIO,PIN_IMU_INT1,in,3V3,Hi-Z at reset; module drives push-pull,draft,Adafruit 4438 INT1
-R1,U1,J1-7,SERVO_PWR_DIS,GPIO7,GPIO,PIN_SERVO_PWR_DIS,out,3V3,Hi-Z at reset; ext pull-down -> servo rail on (RUN divider active),draft,Optional open-drain RUN pull-down; low-level power-up glitch keeps rail on
-R1,U1,J1-12,I2C_SDA,GPIO8,I2C0 via GPIO matrix,PIN_I2C_SDA,bidir,3V3,Hi-Z at reset; module pull-ups,draft,Shared IMU + OLED bus
-R1,U1,J1-15,I2C_SCL,GPIO9,I2C0 via GPIO matrix,PIN_I2C_SCL,out,3V3,Hi-Z at reset; module pull-ups,draft,Shared IMU + OLED bus
-R1,U1,J1-16,ENABLE_BTN_N,GPIO10,GPIO,PIN_ENABLE_BTN,in,3V3,Hi-Z at reset; ext 10k pull-up -> not pressed,draft,Active low; RC debounce
-R1,U1,J1-17,STATUS_LED,GPIO11,GPIO,PIN_STATUS_LED,out,3V3,Hi-Z at reset; LED off,draft,Onboard LED via series R (not the DevKit RGB on GPIO38)
-R1,U1,J1-18,BUZZER,GPIO12,LEDC ch via GPIO matrix,PIN_BUZZER,out,3V3,Hi-Z at reset; ext pull-down on driver gate -> silent,draft,Low-side MOSFET driver; buzzer from 5V
-R1,U1,J1-19,ESC_PWM_3V3,GPIO13,LEDC ch via GPIO matrix,PIN_ESC,out,3V3 -> 5V buffer,Hi-Z at reset; U201 OE high + output pull-down -> no pulses,draft,Via U201 SN74LVC8T245 to carrier J106; low-level glitch only
-R1,U1,J1-20,SERVO_AUX2_PWM_3V3,GPIO14,LEDC ch via GPIO matrix,PIN_SERVO_AUX2,out,3V3 -> 5V buffer,Hi-Z at reset; buffer input pull-down -> no pulses,draft,Reserve servo 2 -> J105 (2.54 mm; 0.5 A)
-R1,U1,J1-8,SERVO_FRONT_PWM_3V3,GPIO15,LEDC ch via GPIO matrix,PIN_SERVO_FRONT,out,3V3 -> 5V buffer,Hi-Z at reset; buffer input pull-down -> no pulses,draft,No 32k crystal on DevKitC-1 v1.1; -> J102 Micro-Fit (SW-0231MG+)
-R1,U1,J1-9,SERVO_REAR_PWM_3V3,GPIO16,LEDC ch via GPIO matrix,PIN_SERVO_REAR,out,3V3 -> 5V buffer,Hi-Z at reset; buffer input pull-down -> no pulses,draft,No 32k crystal on DevKitC-1 v1.1; -> J103 Micro-Fit (SW-0231MG+)
-R1,U1,J1-10,SERVO_AUX1_PWM_3V3,GPIO17,LEDC ch via GPIO matrix,PIN_SERVO_AUX1,out,3V3 -> 5V buffer,Hi-Z at reset; buffer input pull-down -> no pulses,draft,Reserve servo 1 -> J104 (2.54 mm; 0.5 A)
-R1,U1,J1-11,SPARE_GPIO18,GPIO18,GPIO,,nc,3V3,High- and low-level power-up glitch (60 us),draft,Not used for outputs because of high-level glitch; test pad only
-R1,U1,J3-4,ISERVO_SENSE,GPIO1,ADC1_CH0,PIN_ISERVO_SENSE,in-analog,3V3,Hi-Z at reset; INA240A3 output via RC,draft,O-18: servo rail total current; 2 mOhm output shunt x100 -> 0.2 V/A; ADC ATTEN3 0..2.9 V
-R1,U1,J3-5,ACT_OE_N,GPIO2,GPIO,PIN_ACT_OE_N,out,3V3,Hi-Z at reset; ext 10k pull-up -> buffers U201 disabled,draft,SN74LVC8T245 OE (active low; VCCA-referenced); low-level power-up glitch harmless (inputs pulled low)
-R1,U1,J3-6,LED_1_3V3,GPIO42,RMT TX ch0,PIN_LED_1,out,3V3 -> 5V buffer,Hi-Z at reset; buffer input pull-down,draft,SK6812MINI-E data (WS2812-compatible); MTMS; JTAG pads only if EFUSE_DIS_PAD_JTAG/JTAG source selects them; no power-up glitch listed
-R1,U1,J3-7,LED_2_3V3,GPIO41,RMT TX ch1,PIN_LED_2,out,3V3 -> 5V buffer,Hi-Z at reset; buffer input pull-down,draft,MTDI
-R1,U1,J3-8,LED_3_3V3,GPIO40,RMT TX ch2,PIN_LED_3,out,3V3 -> 5V buffer,Hi-Z at reset; buffer input pull-down,draft,MTDO
-R1,U1,J3-9,LED_4_3V3,GPIO39,RMT TX ch3,PIN_LED_4,out,3V3 -> 5V buffer,Hi-Z at reset; buffer input pull-down,draft,MTCK; all four RMT TX channels used; via U202 SN74LVC1T45 (no OE)
-R1,U1,J3-18,IBUS_RX_3V3,GPIO21,UART1 RX via GPIO matrix,PIN_IBUS_RX,in,3V3 <- 5V-tolerant buffer,Hi-Z at reset,draft,FS-iA6B i-BUS level/baud not yet verified
-R1,U1,J3-17,EXT_UART_TX,GPIO47,UART2 TX via GPIO matrix,PIN_EXT_TX,out,3V3,Hi-Z at reset,draft,3.3 V on WROOM-1-N16R8 (1.8 V only on R16V variants)
-R1,U1,J3-16,EXT_UART_RX,GPIO48,UART2 RX via GPIO matrix,PIN_EXT_RX,in,3V3,Hi-Z at reset; ext pull-up 10k,draft,3.3 V on WROOM-1-N16R8; series R + clamp at connector
-R1,U1,J3-10,DEVKIT_RGB,GPIO38,GPIO,,reserved,3V3,DevKit v1.1 RGB LED,datasheet,Do not connect on carrier
-R1,U1,J3-11,PSRAM_GPIO37,GPIO37,,,reserved,3V3,Octal PSRAM,datasheet,WROOM-1 DS: not available on R8 modules
-R1,U1,J3-12,PSRAM_GPIO36,GPIO36,,,reserved,3V3,Octal PSRAM,datasheet,WROOM-1 DS: not available on R8 modules
-R1,U1,J3-13,PSRAM_GPIO35,GPIO35,,,reserved,3V3,Octal PSRAM,datasheet,WROOM-1 DS: not available on R8 modules
-R1,U1,J3-19,USB_DP,GPIO20,USB D+,,reserved,3V3,USB-Serial-JTAG,datasheet,Native USB on DevKit
-R1,U1,J3-20,USB_DN,GPIO19,USB D-,,reserved,3V3,USB-Serial-JTAG,datasheet,Native USB on DevKit
-R1,U1,J3-2,U0TXD,GPIO43,UART0 TX,,reserved,3V3,WPU at reset,datasheet,Wired to DevKit CP2102N
-R1,U1,J3-3,U0RXD,GPIO44,UART0 RX,,reserved,3V3,WPU at reset,datasheet,Wired to DevKit CP2102N
-R1,U1,J3-14,STRAP_GPIO0,GPIO0,,,reserved,3V3,Strapping: weak pull-up = SPI boot,datasheet,DevKit BOOT button; leave NC on carrier
-R1,U1,J1-13,STRAP_GPIO3,GPIO3,,,reserved,3V3,Strapping: floating (JTAG source),datasheet,Leave NC on carrier
-R1,U1,J3-15,STRAP_GPIO45,GPIO45,,,reserved,3V3,Strapping: weak pull-down (VDD_SPI),datasheet,Leave NC on carrier
-R1,U1,J1-14,STRAP_GPIO46,GPIO46,,,reserved,3V3,Strapping: weak pull-down,datasheet,Leave NC on carrier
-R1,U1,J1-3,DEVKIT_EN,CHIP_PU,EN,,reserved,3V3,DevKit RESET button,datasheet,Leave NC on carrier
-R1,U1,J1-1,+3V3_DEVKIT,3V3,,,power-out,3V3,LDO SGM2212 output,datasheet,Carrier load <= 50 mA (IMU + OLED)
-R1,U1,J1-2,+3V3_DEVKIT,3V3,,,power-out,3V3,LDO SGM2212 output,datasheet,Carrier load <= 50 mA (IMU + OLED)
-R1,U1,J1-21,+5V_DEVKIT,5V,,,power-in,5V,Fed from carrier +5V via JP101 only,datasheet,Mutually exclusive with USB (Espressif)
-R1,U1,J1-22,GND,GND,,,power,GND,,datasheet,
-R1,U1,J3-1,GND,GND,,,power,GND,,datasheet,
-R1,U1,J3-21,GND,GND,,,power,GND,,datasheet,
-R1,U1,J3-22,GND,GND,,,power,GND,,datasheet,
+R1,U501,J1-4,VBAT_SENSE,GPIO4,ADC1_CH3,PIN_VBAT_SENSE,in-analog,3V3,Hi-Z at reset; divider holds node,draft,ESP32-S3 DS v2.2 Tab 2-8; ADC2 excluded (Wi-Fi)
+R1,U501,J1-5,VSERVO_SENSE,GPIO5,ADC1_CH4,PIN_VSERVO_SENSE,in-analog,3V3,Hi-Z at reset; divider holds node,draft,LTC7803 has no PGOOD -> rail monitored by ADC
+R1,U501,J1-6,IMU_INT1,GPIO6,GPIO,PIN_IMU_INT1,in,3V3,Hi-Z at reset; module drives push-pull,draft,Adafruit 4438 INT1
+R1,U501,J1-7,SERVO_PWR_EN,GPIO7,GPIO,PIN_SERVO_PWR_EN,out,3V3,Hi-Z at reset; R415 pull-down on Q404 gate -> servo rail OFF (default),draft,Active high enable via Q404 BSS138; R414/R407 keep RUN low otherwise; low-level power-up glitch keeps rail off
+R1,U501,J1-12,I2C_SDA,GPIO8,I2C0 via GPIO matrix,PIN_I2C_SDA,bidir,3V3,Hi-Z at reset; module pull-ups,draft,Shared IMU + OLED bus
+R1,U501,J1-15,I2C_SCL,GPIO9,I2C0 via GPIO matrix,PIN_I2C_SCL,out,3V3,Hi-Z at reset; module pull-ups,draft,Shared IMU + OLED bus
+R1,U501,J1-16,ENABLE_BTN_N,GPIO10,GPIO,PIN_ENABLE_BTN,in,3V3,Hi-Z at reset; R502 10k pull-up -> not pressed,draft,Active low; RC debounce
+R1,U501,J1-17,STATUS_LED,GPIO11,GPIO,PIN_STATUS_LED,out,3V3,Hi-Z at reset; LED off (D502 via R504),draft,Onboard LED via series R (not the DevKit RGB on GPIO38)
+R1,U501,J1-18,BUZZER,GPIO12,LEDC ch via GPIO matrix,PIN_BUZZER,out,3V3,Hi-Z at reset; ext pull-down on driver gate -> silent,draft,Low-side MOSFET driver; buzzer from 5V
+R1,U501,J1-19,ESC_PWM_3V3,GPIO13,LEDC ch via GPIO matrix,PIN_ESC,out,3V3 -> 5V buffer,Hi-Z at reset; U201 OE high + output pull-down -> no pulses,draft,Via U201 SN74LVC8T245 to carrier J106; low-level glitch only
+R1,U501,J1-20,SERVO_AUX2_PWM_3V3,GPIO14,LEDC ch via GPIO matrix,PIN_SERVO_AUX2,out,3V3 -> 5V buffer,Hi-Z at reset; buffer input pull-down -> no pulses,draft,Reserve servo 2 -> J105 (2.54 mm; 0.5 A)
+R1,U501,J1-8,SERVO_FRONT_PWM_3V3,GPIO15,LEDC ch via GPIO matrix,PIN_SERVO_FRONT,out,3V3 -> 5V buffer,Hi-Z at reset; buffer input pull-down -> no pulses,draft,No 32k crystal on DevKitC-1 v1.1; -> J102 Micro-Fit (SW-0231MG+)
+R1,U501,J1-9,SERVO_REAR_PWM_3V3,GPIO16,LEDC ch via GPIO matrix,PIN_SERVO_REAR,out,3V3 -> 5V buffer,Hi-Z at reset; buffer input pull-down -> no pulses,draft,No 32k crystal on DevKitC-1 v1.1; -> J103 Micro-Fit (SW-0231MG+)
+R1,U501,J1-10,SERVO_AUX1_PWM_3V3,GPIO17,LEDC ch via GPIO matrix,PIN_SERVO_AUX1,out,3V3 -> 5V buffer,Hi-Z at reset; buffer input pull-down -> no pulses,draft,Reserve servo 1 -> J104 (2.54 mm; 0.5 A)
+R1,U501,J1-11,SPARE_GPIO18,GPIO18,GPIO,,nc,3V3,High- and low-level power-up glitch (60 us),draft,Not used for outputs because of high-level glitch; test pad only
+R1,U501,J3-4,ISERVO_SENSE,GPIO1,ADC1_CH0,PIN_ISERVO_SENSE,in-analog,3V3,Hi-Z at reset; INA240A3 output via RC,draft,O-18: servo rail total current; 2 mOhm output shunt x100 -> 0.2 V/A; ADC ATTEN3 0..2.9 V
+R1,U501,J3-5,ACT_OE_N,GPIO2,GPIO,PIN_ACT_OE_N,out,3V3,Hi-Z at reset; R501 10k pull-up -> buffers U201 disabled,draft,SN74LVC8T245 OE (active low; VCCA-referenced); low-level power-up glitch harmless (inputs pulled low)
+R1,U501,J3-6,LED_1_3V3,GPIO42,RMT TX ch0,PIN_LED_1,out,3V3 -> 5V buffer,Hi-Z at reset; buffer input pull-down,draft,SK6812MINI-E data (WS2812-compatible); MTMS; JTAG pads only if EFUSE_DIS_PAD_JTAG/JTAG source selects them; no power-up glitch listed
+R1,U501,J3-7,LED_2_3V3,GPIO41,RMT TX ch1,PIN_LED_2,out,3V3 -> 5V buffer,Hi-Z at reset; buffer input pull-down,draft,MTDI
+R1,U501,J3-8,LED_3_3V3,GPIO40,RMT TX ch2,PIN_LED_3,out,3V3 -> 5V buffer,Hi-Z at reset; buffer input pull-down,draft,MTDO
+R1,U501,J3-9,LED_4_3V3,GPIO39,RMT TX ch3,PIN_LED_4,out,3V3 -> 5V buffer,Hi-Z at reset; buffer input pull-down,draft,MTCK; all four RMT TX channels used; via U202 SN74LVC1T45 (no OE)
+R1,U501,J3-18,IBUS_RX_3V3,GPIO21,UART1 RX via GPIO matrix,PIN_IBUS_RX,in,3V3 <- 5V-tolerant buffer,Hi-Z at reset,draft,FS-iA6B i-BUS level/baud not yet verified
+R1,U501,J3-17,EXT_UART_TX,GPIO47,UART2 TX via GPIO matrix,PIN_EXT_TX,out,3V3,Hi-Z at reset,draft,3.3 V on WROOM-1-N16R8 (1.8 V only on R16V variants)
+R1,U501,J3-16,EXT_UART_RX,GPIO48,UART2 RX via GPIO matrix,PIN_EXT_RX,in,3V3,Hi-Z at reset; ext pull-up 10k,draft,3.3 V on WROOM-1-N16R8; series R + clamp at connector
+R1,U501,J3-10,DEVKIT_RGB,GPIO38,GPIO,,reserved,3V3,DevKit v1.1 RGB LED,datasheet,Do not connect on carrier
+R1,U501,J3-11,PSRAM_GPIO37,GPIO37,,,reserved,3V3,Octal PSRAM,datasheet,WROOM-1 DS: not available on R8 modules
+R1,U501,J3-12,PSRAM_GPIO36,GPIO36,,,reserved,3V3,Octal PSRAM,datasheet,WROOM-1 DS: not available on R8 modules
+R1,U501,J3-13,PSRAM_GPIO35,GPIO35,,,reserved,3V3,Octal PSRAM,datasheet,WROOM-1 DS: not available on R8 modules
+R1,U501,J3-19,USB_DP,GPIO20,USB D+,,reserved,3V3,USB-Serial-JTAG,datasheet,Native USB on DevKit
+R1,U501,J3-20,USB_DN,GPIO19,USB D-,,reserved,3V3,USB-Serial-JTAG,datasheet,Native USB on DevKit
+R1,U501,J3-2,U0TXD,GPIO43,UART0 TX,,reserved,3V3,WPU at reset,datasheet,Wired to DevKit CP2102N
+R1,U501,J3-3,U0RXD,GPIO44,UART0 RX,,reserved,3V3,WPU at reset,datasheet,Wired to DevKit CP2102N
+R1,U501,J3-14,STRAP_GPIO0,GPIO0,,,reserved,3V3,Strapping: weak pull-up = SPI boot,datasheet,DevKit BOOT button; leave NC on carrier
+R1,U501,J1-13,STRAP_GPIO3,GPIO3,,,reserved,3V3,Strapping: floating (JTAG source),datasheet,Leave NC on carrier
+R1,U501,J3-15,STRAP_GPIO45,GPIO45,,,reserved,3V3,Strapping: weak pull-down (VDD_SPI),datasheet,Leave NC on carrier
+R1,U501,J1-14,STRAP_GPIO46,GPIO46,,,reserved,3V3,Strapping: weak pull-down,datasheet,Leave NC on carrier
+R1,U501,J1-3,DEVKIT_EN,CHIP_PU,EN,,reserved,3V3,DevKit RESET button,datasheet,Leave NC on carrier
+R1,U501,J1-1,+3V3,3V3,,,power-out,3V3,LDO SGM2212 output,datasheet,Carrier load <= 50 mA (IMU + OLED)
+R1,U501,J1-2,+3V3,3V3,,,power-out,3V3,LDO SGM2212 output,datasheet,Carrier load <= 50 mA (IMU + OLED)
+R1,U501,J1-21,+5V_DEVKIT,5V,,,power-in,5V,Fed from carrier +5V via Schottky D501 (diode-OR with DevKit USB diodes),datasheet,USB never feeds carrier rails; JP101 removed 2026-11-15
+R1,U501,J1-22,GND,GND,,,power,GND,,datasheet,
+R1,U501,J3-1,GND,GND,,,power,GND,,datasheet,
+R1,U501,J3-21,GND,GND,,,power,GND,,datasheet,
+R1,U501,J3-22,GND,GND,,,power,GND,,datasheet,
