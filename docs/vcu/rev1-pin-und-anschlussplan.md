@@ -36,7 +36,7 @@ v1.8, ESP32-S3-DevKitC-1 User Guide v1.1, ESP-IDF-Doku (GPIO, LEDC).
 | 9 | J1-15 | I2C_SCL | I²C0 | aus |
 | 10 | J1-16 | ENABLE_BTN_N | Freigabetaster, aktiv low | ein |
 | 11 | J1-17 | STATUS_LED | GPIO | aus |
-| 12 | J1-18 | BUZZER | LEDC | aus |
+| 12 | J1-18 | BUZZER | LEDC | aus – **verbunden** (Blatt Lighting_IO) |
 | 13 | J1-19 | ESC_PWM | LEDC | aus |
 | 14 | J1-20 | SERVO_AUX2_PWM | LEDC | aus |
 | 15 | J1-8 | SERVO_FRONT_PWM | LEDC | aus |
@@ -49,8 +49,8 @@ v1.8, ESP32-S3-DevKitC-1 User Guide v1.1, ESP-IDF-Doku (GPIO, LEDC).
 | 21 | J3-18 | IBUS_RX | UART1 RX | ein |
 | 2 | J3-5 | ACT_OE_N | Freigabe der Ausgangspuffer U201 (aktiv low) | aus |
 | 1 | J3-4 | ISERVO_SENSE | ADC1_CH0 – INA240A3, Gesamtstrom Servoschiene (O-18) | Analog ein |
-| 47 | J3-17 | EXT_UART_TX | UART2 TX | aus |
-| 48 | J3-16 | EXT_UART_RX | UART2 RX | ein |
+| 47 | J3-17 | EXT_UART_TX | UART2 TX | aus – **verbunden** (Blatt Lighting_IO) |
+| 48 | J3-16 | EXT_UART_RX | UART2 RX | ein – **verbunden** (Blatt Lighting_IO) |
 
 Reserve (nur Testpunkt): GPIO18 (nur als Eingang).
 Gesperrt: GPIO0/3/45/46 (Strapping), 19/20 (USB), 35–37 (PSRAM),
@@ -373,7 +373,7 @@ selbst stammt aus dem Espressif User Guide v1.1 (Abschnitt 1).
 | 28 | J3-6 | GPIO42 | LED_1_3V3 | LED_1_3V3 | signal – **verbunden** (Blatt Actuators) |
 | 29 | J3-7 | GPIO41 | LED_2_3V3 | LED_2_3V3 | signal – **verbunden** (Blatt Actuators) |
 | 30 | J3-8 | GPIO40 | LED_3_3V3 | LED_3_3V3 | signal – **verbunden** (Blatt Actuators) |
-| 31 | J3-9 | GPIO39 | LED_4_3V3 | LED_4_3V3 | signal |
+| 31 | J3-9 | GPIO39 | LED_4_3V3 | LED_4_3V3 | signal – **verbunden** (Blatt Lighting_IO) |
 | 32 | J3-10 | GPIO38 | DEVKIT_RGB | unconnected-(U501-J3-10/GPIO38-Pad32) | expected NC |
 | 33 | J3-11 | GPIO37 | PSRAM_GPIO37 | unconnected-(U501-J3-11/GPIO37-Pad33) | expected NC |
 | 34 | J3-12 | GPIO36 | PSRAM_GPIO36 | unconnected-(U501-J3-12/GPIO36-Pad34) | expected NC |
@@ -382,13 +382,13 @@ selbst stammt aus dem Espressif User Guide v1.1 (Abschnitt 1).
 | 37 | J3-15 | GPIO45 | STRAP_GPIO45 | unconnected-(U501-J3-15/GPIO45-Pad37) | expected NC |
 | 38 | J3-16 | GPIO48 | EXT_UART_RX | EXT_UART_RX | signal |
 | 39 | J3-17 | GPIO47 | EXT_UART_TX | EXT_UART_TX | signal |
-| 40 | J3-18 | GPIO21 | IBUS_RX_3V3 | IBUS_RX_3V3 | signal |
+| 40 | J3-18 | GPIO21 | IBUS_RX_3V3 | IBUS_RX_3V3 | signal – **verbunden** (Blatt Lighting_IO) |
 | 41 | J3-19 | GPIO20 | USB_DP | unconnected-(U501-J3-19/GPIO20-Pad41) | expected NC |
 | 42 | J3-20 | GPIO19 | USB_DN | unconnected-(U501-J3-20/GPIO19-Pad42) | expected NC |
 | 43 | J3-21 | GND | GND | GND | power |
 | 44 | J3-22 | GND | GND | GND | power |
 
-**Globale Labels vom Controller (ERC „Label connected to only one pin": anfangs 16, seit dem Blatt Actuators 8).**
+**Globale Labels vom Controller (ERC „Label connected to only one pin": anfangs 16, nach Actuators 8, nach Lighting_IO 3 – nur noch Sensors_Display).**
 Sie bleiben bis zu den Verbraucherblättern offen und werden nicht
 ausgeblendet. `scripts/kit verify` meldet deshalb weiter einen Fehler.
 
@@ -434,3 +434,53 @@ Unabhängiger Abgleich: KiCad-Symbol SN74LVC8T245 gegen TI SCES584D,
 Tab. 4-1 (1 VCCA, 2 DIR, 3–10 A1–A8, 11–13 GND, 14–21 B8–B1, 22 OE, 23/24
 VCCB) – stimmt. BAT54S-Symbol (1 A, 2 K, 3 COM) gegen Nexperia BAT54S v.6
 Tab. 2 – stimmt. `scripts/kit verify`: `pin_pad_mapping` ohne Befund.
+
+## 8. Blatt `Lighting_IO` (Stand 2026-11-15)
+
+Datei `Lighting_IO.kicad_sch` (A3), einmalig erzeugt mit
+`hardware/scripts/bootstrap_lighting_io.py`. Projektbauteile:
+`make_lighting_parts.py` (Symbol TPS2553DBV, Footprint Buzzer).
+
+**Externe 5-V-Ausgänge über strombegrenzte Schalter** (TI TPS2553DBVR,
+SLVS841G, Okt. 2026). Ein Kurzschluss im Kabel schaltet nur seine Gruppe ab;
++5V für DevKit und Puffer bleibt stabil (statt Polyfuse, die erst nach einem
+Spannungseinbruch auslöst). EN fest an IN, Auto-Retry, FAULT ungenutzt. Die
+Grenzen sind aus SLVS841G Gl. 1/3 gerechnet, inklusive Temperatur- und
+Prozessstreuung, ohne Widerstandstoleranz (1 %):
+
+| Schalter | Ausgang | R_ILIM | I_OS min–max | Last |
+|---|---|---|---|---|
+| U601 | +5V_LED → J108–J111 | 93,1 kΩ | 0,25–0,32 A | 4 × 44 mA = 0,18 A |
+| U602 | +5V_EXT → J112 | 100 kΩ | 0,23–0,30 A | Budget 0,2 A dauernd |
+| U603 | +5V_RX → J107 | 150 kΩ | 0,155–0,21 A | ca. 0,1 A (Schätzung, O-10) |
+
+r_DS(on) ≤ 135 mΩ über Temperatur (DBV) → ≤ 27 mV Abfall bei 0,2 A.
+
+| Ref | Funktion |
+|---|---|
+| U202 | SN74LVC1T45DBVR (SCES515N): LED_4 3,3 → 5 V, DIR über R604 an +3V3, 100k an A und B |
+| R607–R610 | 330 Ω in den LED-Datenleitungen: Kurzschluss nach GND ≤ 16 mA; begrenzt den Strom in eine stromlose LED |
+| D601–D608 | TPD1E05U06 (SLVSBO7O, ±12 kV Kontakt, V_RWM 5,5 V) am Steckerpin – nur auf Leitungen, deren höchster Gleichpegel +5V ist |
+| J108–J111 | JST PH 3-polig: 1 +5V_LED, 2 Daten, 3 GND |
+| BZ101, Q601, D605 | Buzzer CMT-8540S an +5V; Low-Side NTR4501N (Rev 16: R_DS(on) ≤ 105 mΩ bei V_GS 2,5 V, 3,2 A); Freilaufdiode PMEG4010CEH (1 A). Fehlerfall Dauer-Ein 0,52 A: Q601 ≈ 28 mW, Diode nur im Abschaltmoment. Gate über R611 100 Ω, Pull-down R612 100k |
+| J107, U203 | i-BUS: Stiftleiste (1 Signal, 2 +5V_RX, 3 GND), 2,2 kΩ + 100k Pull-down, SN74LVC1G17 an +3V3 (SCES351Y) |
+| J112 | JST PH 4-polig: 1 +5V_EXT, 2 TX über 1 kΩ, 3 RX über 4,7 kΩ mit 10k Pull-up an +3V3 (keine Klemmdiode nach +3V3), 4 GND |
+| TP601, TP602 | i-BUS nach U203, LED-1-Daten |
+
+Buzzer-Footprint: Same Sky Datenblatt rev 1.04 (11.09.2024), vier Pads
+2,5 × 2,5 mm im Raster 7,0 mm. Draufsicht: „+" unten rechts (Pad 1), „−"
+oben rechts (Pad 2). Die Funktion der beiden linken Pads nennt das Datenblatt
+nicht. Sie sind als mechanische Pads ohne Netz angelegt; vor der Fertigung am
+Bauteil prüfen (O-23).
+
+Netzlistenprüfung (Umsetzung): Stecker, Polarität von Buzzer, Freilaufdiode
+und Q601, U202/U203 und die Schalterausgänge entsprechen dieser Tabelle;
+34 Anschlüsse geprüft, 0 Abweichungen. Unabhängiger Abgleich der Symbole:
+- TPS2553 gegen SLVS841G Tab. 5-1 (1 IN, 2 GND, 3 EN, 4 FAULT, 5 ILIM,
+  6 OUT);
+- SN74LVC1T45 gegen SCES515N Tab. 4-1;
+- 74LVC1G17 (DBV) gegen SCES351Y (1 NC, 2 A, 3 GND, 4 Y, 5 VCC);
+- TPD1E05U06 gegen SLVSBO7O Tab. 4-1 (1 I/O, 2 GND);
+- NTR4501N gegen NTR4501N/D (1 G, 2 S, 3 D).
+
+Alle stimmen. `pin_pad_mapping` ohne Befund.
