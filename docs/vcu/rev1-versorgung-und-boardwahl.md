@@ -304,6 +304,15 @@ Leistungsabschaltung eines digitalen Servos.
 Pfad: **J101 XT30 → F101 Sicherung → Q101 Verpol-P-FET → D101 TVS →
 Eingangs-Bulk → Regler**.
 
+**Schaltplan (Stand 2026-11-15):** Blatt `Power` (`Power.kicad_sch`), einmalig
+erzeugt mit `hardware/scripts/bootstrap_power_input.py`; ab jetzt ist die
+KiCad-Datei maßgeblich. Netze: VBAT_IN (J101.2, F101, TP101), VBAT_FUSED
+(F101 → Q101 Drain), VBAT_PROT (Q101 Source, D101, D102, C101, C102, TP102),
+Q101_GATE (Q101 Gate, R101 10k nach GND, D102 15 V), GND. Zusätzlich C102
+10 µF/50 V am Schutzknoten. ERC 0, Netzliste gegen den Entwurf geprüft,
+Pin/Pad-Zuordnung PASS. Offen: PCB aus dem Schaltplan aktualisieren
+(Abgleich), Bauteilakten, R101/D102-Auslegung (O-17), XT30-Polarität (O-15).
+
 | Ref | Funktion | Kandidat | Kennwerte (Quelle) |
 |---|---|---|---|
 | J101 | Akkustecker | Amass XT30PW-M30.G.Y, LCSC C431092 | 20 A (16 AWG, ΔT ≤ 85 K), 80 V DC, ≤ 1,2 mΩ (Amass 2025V0) |
