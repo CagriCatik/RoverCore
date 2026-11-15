@@ -126,20 +126,31 @@ Beschaltung:
   ESC und Servos bei hochohmigem Puffer sicher „kein Signal" sehen.
 - U202 (1T45) hat kein OE; sein Kanal ist LED_4. Bei hochohmigem
   GPIO39 hält der Eingangs-Pull-down die Datenleitung low.
-- Je Steckerausgang (ESC, 4 Servos): B-Ausgang → Knoten mit **BAT54S-Klemme
-  nach +5V/GND** und 100k Pull-down → **470 Ω** → Stecker-Pin 1. Grund
-  (TI SCES584D, Abs. Max.): Ein B-Ausgang im Zustand high/low darf höchstens
-  V_CCB + 0,5 V sehen. Für positive Klemmströme gibt es keine Angabe, nur
-  I_OK −50 mA für V_O < 0. Kurzschluss nach GND: ≤ 5,16 V / 470 Ω = 11 mA
-  (I_O abs. max. ±50 mA). Fremdspannung am Signalpin (ESC-BEC bis 7,4 V bei
-  versetztem Stecker, Schienenfehler 7,81 V): Strom ≤ (7,81 − 4,74 − 0,32) V /
-  470 Ω ≈ 6 mA in die BAT54S. Deren V_F ≤ 400 mV bei 10 mA (Nexperia BAT54S
-  v.6) hält den B-Pin unter V_CCB + 0,5 V; der Strom fließt in die
-  +5V-Schiene. 470 Ω mit ca. 200 pF Kabel ergibt τ ≈ 0,1 µs – für
-  Servo-/ESC-Pulse ohne Bedeutung.
-- ESD-TVS am Stecker: Sie muss 7,81 V dauerhaft vertragen (V_RWM ≥ 8 V).
-  TPD1E05U06 (V_RWM 5,5 V) scheidet aus; Auswahl offen (O-30). Bis dahin
-  führen 470 Ω und BAT54S einen ESD-Puls in die Schienen.
+- Je Steckerausgang (ESC, 4 Servos) – **überarbeitet nach Review, keine
+  Klemmung in die +5V-Schiene mehr**:
+  - U201-B-Ausgang steuert das Gate von Q20x (NTR4003N, Open Drain, 30 V).
+  - Drain → 470 Ω → Stecker-Pin 1.
+  - Pull-up: +5V → BAT54 (D20x) → 2,2 kΩ an den Drain.
+  - 100k Pull-down am Drain.
+- Fremdspannung am Signalpin (ESC-BEC bis 7,4 V bei versetztem Stecker,
+  Schienenfehler 7,81 V):
+  - **VCU ein, Q leitend:** 16,6 mA über 470 Ω in Q (I_D max. 0,56 A).
+  - **VCU ein, Q sperrt:** BAT54 in Sperrrichtung (3,07 V).
+  - **VCU aus (+5V = 0):** BAT54 sperrt 7,81 V (V_R 30 V); Drain verträgt 30 V.
+  - In allen Fällen erreicht die +5V-Schiene nur der BAT54-Sperrstrom
+    (≤ 2 µA bei 25 V). Die VCU wird nicht versorgt. U201 ist mit dem Pin nicht
+    verbunden.
+  - Die Ioff-Funktion des SN74LVC8T245 wird dafür nicht gebraucht; sie gilt
+    nur für den Baustein selbst.
+- **Die Stufe invertiert.** Pull-ups an A1–A5 (nach +3V3) und an den Gates
+  (nach +5V) halten die Leitung low (kein Puls), solange GPIO oder U201
+  hochohmig sind (Reset, ACT_OE_N high, VCC-Isolation).
+  **Firmware-Anforderung:** LEDC-Ausgänge für ESC und Servos invertieren
+  (Ausgangsinvertierung der GPIO-Matrix).
+- High-Pegel (Schätzung): ca. 4,5 V offen, 4,2 V an 50 kΩ, 3,6 V an 10 kΩ
+  Eingangswiderstand. Low: Q mit ≤ 1,5 Ω. Pull-up-Strom 2,2 mA je Kanal
+  bei Low.
+- ESD-TVS am Stecker: V_RWM ≥ 8 V nötig (O-30).
 - 0,1 µF an VCCA und VCCB, nah am Baustein.
 
 Pegel- und Timingreserve (Schätzung):
@@ -420,9 +431,9 @@ Datei `Actuators.kicad_sch` (A3), einmalig erzeugt mit
 |---|---|
 | U201 | SN74LVC8T245PWR, VCCA +3V3, VCCB +5V, DIR über R209 an +3V3, OE = `ACT_OE_N` (Pull-up R501 auf Controller) |
 | C201, C202 | 100 nF an VCCA bzw. VCCB |
-| R201–R208 | 100k Pull-downs an A1–A8 |
-| R211–R218 | 100k Pull-downs an B1–B8 |
-| D201–D205, R221–R225 | BAT54S-Klemme und 470 Ω je Steckerausgang (3.1) |
+| R201–R205 / R206–R208 | 100k Pull-ups (A1–A5, invertierte Stufe) / Pull-downs (A6–A8, LEDs) |
+| R211–R215 / R216–R218 | 100k Gate-Pull-ups nach +5V (B1–B5) / Pull-downs (B6–B8) |
+| Q201–Q205, D201–D205, R221–R225, R231–R235, R241–R245 | Open-Drain-Stufe je Steckerausgang: NTR4003N, BAT54 + 2,2 kΩ Pull-up, 470 Ω, 100k (3.1) |
 | J102, J103 | Molex Micro-Fit 3.0 43650-0300: 1 Signal, 2 +V_SERVO, 3 GND |
 | J104, J105 | Stiftleiste 1×3 2,54 mm: 1 Signal, 2 +V_SERVO, 3 GND (0,5 A) |
 | J106 | Stiftleiste 1×3 2,54 mm: 1 ESC-Signal, **2 nicht verbunden (BEC +)**, 3 GND |
@@ -432,7 +443,7 @@ Netzlistenprüfung (Umsetzung, nicht elektrische Richtigkeit): J102–J106
 Pin 1–3 und die U201-Anschlüsse entsprechen dieser Tabelle; 0 Abweichungen.
 Unabhängiger Abgleich: KiCad-Symbol SN74LVC8T245 gegen TI SCES584D,
 Tab. 4-1 (1 VCCA, 2 DIR, 3–10 A1–A8, 11–13 GND, 14–21 B8–B1, 22 OE, 23/24
-VCCB) – stimmt. BAT54S-Symbol (1 A, 2 K, 3 COM) gegen Nexperia BAT54S v.6
+VCCB) – stimmt. BAT54-Projektsymbol (1 A, 3 K) gegen Nexperia BAT54 (01.07.2022)
 Tab. 2 – stimmt. `scripts/kit verify`: `pin_pad_mapping` ohne Befund.
 
 ## 8. Blatt `Lighting_IO` (Stand 2026-11-15)
@@ -446,7 +457,8 @@ SLVS841G, Okt. 2026). Ein Kurzschluss im Kabel schaltet nur seine Gruppe ab;
 +5V für DevKit und Puffer bleibt stabil (statt Polyfuse, die erst nach einem
 Spannungseinbruch auslöst). EN fest an IN, Auto-Retry, FAULT ungenutzt. Die
 Grenzen sind aus SLVS841G Gl. 1/3 gerechnet, inklusive Temperatur- und
-Prozessstreuung, ohne Widerstandstoleranz (1 %):
+Prozessstreuung, ohne Widerstandstoleranz (1 %). **U602: EN = P3V3_OK** –
++5V_EXT nur bei gutem +3V3 (O-21):
 
 | Schalter | Ausgang | R_ILIM | I_OS min–max | Last |
 |---|---|---|---|---|

@@ -36,7 +36,7 @@ GLOBAL = {
     "ESC_PWM_3V3": "output", "SERVO_FRONT_PWM_3V3": "output", "SERVO_REAR_PWM_3V3": "output",
     "SERVO_AUX1_PWM_3V3": "output", "SERVO_AUX2_PWM_3V3": "output",
     "LED_1_3V3": "output", "LED_2_3V3": "output", "LED_3_3V3": "output", "LED_4_3V3": "output",
-    "IBUS_RX_3V3": "input", "EXT_UART_TX": "output", "EXT_UART_RX": "input",
+    "IBUS_RX_3V3": "input", "EXT_UART_TX": "output", "EXT_UART_RX": "input", "P3V3_OK": "output",
 }
 
 R0603, C0603, C0805 = ("Resistor_SMD:R_0603_1608Metric", "Capacitor_SMD:C_0603_1608Metric",
@@ -53,6 +53,13 @@ def rc(mpn, lcsc, desc):
 C100N = {"Manufacturer": "Yageo", "MPN": "CC0603KRX7R9BB104", "LCSC": "C14663",
          "Datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2211101700_YAGEO-CC0603KRX7R9BB104_C14663.pdf"}
 
+DBAT54 = {"Manufacturer": "Nexperia", "MPN": "BAT54,215", "LCSC": "C85084",
+          "Datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2407241045_Nexperia-BAT54-215_C85084.pdf",
+          "Description": "O-21 clamp ADC node -> +3V3: pin <= VDD + 240 mV at <= 0.1 mA (Nexperia BAT54 2022-07-01, LCSC copy)"}
+QNTR4171 = {"Manufacturer": "onsemi", "MPN": "NTR4171PT1G", "LCSC": "C146715",
+            "Datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_1810301521_onsemi-NTR4171PT1G_C146715.pdf",
+            "Description": "P-MOSFET -30 V, VGS +-12 V, IDSS <= 1 uA at -24 V, RDS(on) <= 110 mOhm at -4.5 V (NTR4171P/D Rev 2); "
+                           "pinout 1 G, 2 S, 3 D"}
 QNTR = {"Manufacturer": "onsemi", "MPN": "NTR4003NT1G", "LCSC": "C82325",
         "Datasheet": "https://www.onsemi.com/download/data-sheet/pdf/ntr4003n-d.pdf"}
 NTR_NOTE = ("30 V, VGS(th) 0.8-1.4 V, RDS(on) <= 2.0 Ohm at VGS 2.5 V, IDSS <= 1 uA at 25 degC "
@@ -106,13 +113,9 @@ def parts():
             "and the SN74LVC8T245 VCC isolation keeps both ports Hi-Z")),
         # ---- enable button ----
         ("R502", "Device:R", "10k", R0603, (63.5, 190.5, 0), {"1": "+3V3", "2": "ENABLE_BTN_N"},
-         rc("RC0603FR-0710KL", "C98220", "Button pull-up: not pressed = high")),
-        ("C503", "Device:C", "100n 50V", C0603, (78.74, 190.5, 0), {"1": "ENABLE_BTN_N", "2": "GND"},
-         dict(C100N, Description="Debounce: 10k x 100n = 1 ms rise; R503 limits the discharge current")),
-        ("R503", "Device:R", "1k", R0603, (93.98, 190.5, 0), {"1": "ENABLE_BTN_N", "2": "BTN_SW"},
-         rc("RC0603FR-071KL", "C22548", "Pressed: 3.3 V x 1k/11k = 0.30 V < VIL 0.83 V")),
+         rc("RC0603FR-0710KL", "C98220", "Button pull-up: not pressed = high; no RC at the pin (O-21) - debounce in firmware")),
         ("SW501", "Switch:SW_Push", "Enable", "Button_Switch_SMD:SW_SPST_TL3342", (116.84, 205.74, 0),
-         {"1": "BTN_SW", "2": "GND"},
+         {"1": "ENABLE_BTN_N", "2": "GND"},
          {"Manufacturer": "E-Switch", "MPN": "TL3342F160QG", "LCSC": "C2886898",
           "Description": "Enable (Freigabe) push button, active low; candidate, JLC stock 0 on 2026-11-15 (O-28)"}),
         # ---- status LED ----
@@ -122,28 +125,36 @@ def parts():
          {"1": "GND", "2": "LED_STAT_A"},
          {"Description": "Status LED, 0603, AlGaInP (VF <= 2.4 V at 2 mA required with 3.3 V drive); part open (O-28)"}),
         # ---- battery voltage measurement (candidate, protection need documented in 3.13) ----
-        ("R505", "Device:R", "120k", R0603, (297.18, 63.5, 0), {"1": "VBAT_PROT", "2": "VBAT_DIV"},
+        ("R505", "Device:R", "120k", R0603, (297.18, 76.2, 0), {"1": "VBAT_SW", "2": "VBAT_DIV"},
          rc("RC0603FR-07120KL", "C114607", "VBAT divider top: 12.6 V -> 1.80 V, 9.0 V -> 1.29 V, 21.5 V clamp -> 3.07 V")),
         ("R506", "Device:R", "20k", R0603, (312.42, 109.22, 0), {"1": "VBAT_DIV", "2": "GND"},
          rc("RC0603FR-0720KL", "C105575", "VBAT divider bottom; source impedance 17 kOhm")),
-        ("C504", "Device:C", "100n 50V", C0603, (327.66, 109.22, 0), {"1": "VBAT_DIV", "2": "GND"},
-         dict(C100N, Description="VBAT_SENSE filter, tau 1.7 ms")),
+        ("C504", "Device:C", "1n 50V C0G", C0603, (327.66, 109.22, 0), {"1": "VBAT_DIV", "2": "GND"},
+         {"Manufacturer": "Yageo", "MPN": "CC0603JRNPO9BN102", "LCSC": "C106246",
+          "Description": "VBAT_SENSE filter, tau 17 us; small so the node follows when Q505 opens (O-21); " + LCSC_NOTE}),
+        ("D506", "ProjectSymbols:BAT54_SOT23", "BAT54", "Package_TO_SOT_SMD:SOT-23", (345.44, 124.46, 90),
+         {"1": "VBAT_DIV", "3": "+3V3"}, dict(DBAT54)),
         ("R507", "Device:R", "10k", R0603, (360.68, 144.78, 0), {"1": "VBAT_DIV", "2": "VBAT_SENSE"},
-         rc("RC0603FR-0710KL", "C98220", "O-21: series resistor to GPIO4; ADC samples from C504")),
-        ("Q505", NMOS, "NTR4003N", "Package_TO_SOT_SMD:SOT-23", (340.36, 144.78, 0),
-         {"1": "VBAT_SH_G", "2": "GND", "3": "VBAT_DIV"},
-         dict(QNTR, Description="O-21 shunt: clamps VBAT_DIV to GND while +3V3 is absent; " + NTR_NOTE)),
-        ("R508", "Device:R", "100k", R0603, (284.48, 144.78, 0), {"1": "VBAT_PROT", "2": "VBAT_SH_G"},
-         rc("RC0603FR-07100KL", "C14675", "Shunt gate pull-up from VBAT_PROT: VGS = 0.5 x VBAT (4.5 V at 9 V, 10.75 V at 21.5 V)")),
-        ("R509", "Device:R", "100k", R0603, (299.72, 144.78, 0), {"1": "VBAT_SH_G", "2": "GND"},
-         rc("RC0603FR-07100KL", "C14675", "Shunt gate divider bottom")),
-        ("Q506", NMOS, "NTR4003N", "Package_TO_SOT_SMD:SOT-23", (292.1, 180.34, 0),
-         {"1": "MEAS_EN_C", "2": "GND", "3": "VBAT_SH_G"},
-         dict(QNTR, Description="O-21: +3V3 present -> shunt Q505 off; " + NTR_NOTE)),
-        ("R510", "Device:R", "10k", R0603, (312.42, 180.34, 0), {"1": "+3V3", "2": "MEAS_EN_C"},
-         rc("RC0603FR-0710KL", "C98220", "Q506 gate from +3V3: VGS = 3.251 V x 100/110 = 2.96 V")),
-        ("R511", "Device:R", "100k", R0603, (327.66, 180.34, 0), {"1": "MEAS_EN_C", "2": "GND"},
-         rc("RC0603FR-07100KL", "C14675", "Q506 gate pull-down: +3V3 absent -> shunt on")),
+         rc("RC0603FR-0710KL", "C98220", "Series resistor to GPIO4 (the voltage bound is D506)")),
+        ("Q505", "Transistor_FET:Q_PMOS_GSD", "NTR4171P", "Package_TO_SOT_SMD:SOT-23", (297.18, 50.8, 0),
+         {"1": "VBAT_SW_G", "2": "VBAT_PROT", "3": "VBAT_SW"},
+         dict(QNTR4171, Description="O-21: normally-off switch for the VBAT divider; on only while P3V3_OK is high. " + QNTR4171["Description"])),
+        ("R508", "Device:R", "100k", R0603, (271.78, 50.8, 0), {"1": "VBAT_PROT", "2": "VBAT_SW_G"},
+         rc("RC0603FR-07100KL", "C14675", "Q505 gate-source: off without drive")),
+        ("R509", "Device:R", "100k", R0603, (271.78, 81.28, 0), {"1": "VBAT_SW_G", "2": "VBAT_SW_DRV"},
+         rc("RC0603FR-07100KL", "C14675", "Q505 gate drive: VGS = -0.5 x VBAT (-4.5 V at 9 V, -10.75 V at 21.5 V; limit +-12 V)")),
+        ("Q506", NMOS, "NTR4003N", "Package_TO_SOT_SMD:SOT-23", (276.86, 111.76, 0),
+         {"1": "P3V3_OK", "2": "GND", "3": "VBAT_SW_DRV"},
+         dict(QNTR, Description="Turns Q505 on while P3V3_OK is high; " + NTR_NOTE)),
+        ("U504", "ProjectSymbols:TLV809E_DBZ", "TLV809ED29DBZR", "Package_TO_SOT_SMD:SOT-23", (276.86, 165.1, 0),
+         {"3": "+3V3", "1": "GND", "2": "P3V3_OK"},
+         {"Manufacturer": "Texas Instruments", "MPN": "TLV809ED29DBZR", "LCSC": "C2864833", "Datasheet": "https://www.ti.com/lit/pdf/SLVSES2",
+          "_ref_at": (-10.16, -7.62), "_val_at": (2.54, -7.62),
+          "Description": "P3V3_OK = +3V3 good: VIT- 2.93 V +-2 %, hysteresis 1.2 %, release delay tD 33-67 ms (variant D), "
+                         "falling detection tPD_HL <= 50 us, push-pull, defined below VDD 0.7 V (SLVSES2J)"}),
+        ("C505", "Device:C", "100n 50V", C0603, (256.54, 165.1, 0), {"1": "+3V3", "2": "GND"}, dict(C100N, Description="U504 VDD")),
+        ("R510", "Device:R", "100k", R0603, (304.8, 172.72, 0), {"1": "P3V3_OK", "2": "GND"},
+         rc("RC0603FR-07100KL", "C14675", "P3V3_OK pull-down: low while U504 is unpowered (VDD < 0.7 V) or the DevKit is missing")),
         ("TP505", "Connector:TestPoint", "VBAT_SENSE", TP, (345.44, 104.14, 0), {"1": "VBAT_SENSE"},
          {"_ref_at": (2.54, -1.27), "_val_at": (2.54, 1.27), "Description": "Test point VBAT_SENSE; bare copper pad, excluded from BOM"}),
         ("TP501", "Connector:TestPoint", "GPIO18", TP, (368.3, 104.14, 0), {"1": "SPARE_GPIO18"},
@@ -173,7 +184,7 @@ def build(root_uuid, sheet_uuid):
     s.note("Defaults with ESP32 in reset, booting or missing: servo rail OFF (ServoPower R414/Q404/R415), "
            "output buffers Hi-Z (R501), buzzer off, button reads high. Firmware: rail first, then ACT_OE_N low.",
            25.4, 40.64, "h3")
-    s.note("O-21: while +3V3 is absent, Q505 (here) and Q405 (ServoPower) clamp the VBAT/VSERVO dividers to GND; 10k series to each ADC pin.",
+    s.note("O-21: U504 (TLV809E) sets P3V3_OK only while +3V3 >= 2.93 V; it closes the divider switches Q505/Q405 and enables +5V_EXT. BAT54 clamps hold ADC pins <= VDD + 0.24 V.",
            25.4, 45.72, "h4")
     return s.render()
 

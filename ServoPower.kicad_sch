@@ -1362,6 +1362,134 @@
 			)
 			(embedded_fonts no)
 		)
+		(symbol "ProjectSymbols:BAT54_SOT23"
+			(pin_names
+				(hide yes)
+			)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "D"
+				(at 0 3.81 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Value" "BAT54_SOT23"
+				(at 0 -3.81 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" "Package_TO_SOT_SMD:SOT-23"
+				(at 0 -6.35 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Datasheet" "https://www.lcsc.com/datasheet/lcsc_datasheet_2407241045_Nexperia-BAT54-215_C85084.pdf"
+				(at 0 -8.89 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Description" "Schottky 30 V 200 mA, SOT-23 single: 1 anode, 2 n.c., 3 cathode (Nexperia BAT54, 2022-07-01)"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(symbol "BAT54_SOT23_0_1"
+				(polyline
+					(pts
+						(xy -1.27 1.27) (xy -1.27 -1.27) (xy 1.27 0) (xy -1.27 1.27)
+					)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 1.27 1.27) (xy 1.27 -1.27) (xy 1.778 -1.27)
+					)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 1.27 1.27) (xy 0.762 1.27)
+					)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+			)
+			(symbol "BAT54_SOT23_1_1"
+				(pin passive line
+					(at -3.81 0 0)
+					(length 2.54)
+					(name "A"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 3.81 0 180)
+					(length 2.54)
+					(name "K"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "3"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
 		(symbol "ProjectSymbols:LTC7803"
 			(exclude_from_sim no)
 			(in_bom yes)
@@ -2382,6 +2510,307 @@
 						)
 					)
 					(number "5"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
+		(symbol "Transistor_FET:Q_PMOS_GSD"
+			(pin_names
+				(offset 0)
+				(hide yes)
+			)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(in_pos_files yes)
+			(duplicate_pin_numbers_are_jumpers no)
+			(property "Reference" "Q"
+				(at 5.08 1.905 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(justify left)
+				)
+			)
+			(property "Value" "Q_PMOS_GSD"
+				(at 5.08 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(justify left)
+				)
+			)
+			(property "Footprint" ""
+				(at 5.08 2.54 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Datasheet" ""
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Description" "P-MOSFET transistor, gate/source/drain"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "ki_keywords" "transistor PMOS P-MOS P-MOSFET"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(symbol "Q_PMOS_GSD_0_1"
+				(polyline
+					(pts
+						(xy 0.254 1.905) (xy 0.254 -1.905)
+					)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 0.254 0) (xy -2.54 0)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 0.762 2.286) (xy 0.762 1.27)
+					)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 0.762 1.778) (xy 3.302 1.778) (xy 3.302 -1.778) (xy 0.762 -1.778)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 0.762 0.508) (xy 0.762 -0.508)
+					)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 0.762 -1.27) (xy 0.762 -2.286)
+					)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(circle
+					(center 1.651 0)
+					(radius 2.794)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 2.286 0) (xy 1.27 0.381) (xy 1.27 -0.381) (xy 2.286 0)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type outline)
+					)
+				)
+				(polyline
+					(pts
+						(xy 2.54 2.54) (xy 2.54 1.778)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(circle
+					(center 2.54 1.778)
+					(radius 0.254)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type outline)
+					)
+				)
+				(circle
+					(center 2.54 -1.778)
+					(radius 0.254)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type outline)
+					)
+				)
+				(polyline
+					(pts
+						(xy 2.54 -2.54) (xy 2.54 0) (xy 0.762 0)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 2.921 -0.381) (xy 3.683 -0.381)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 3.302 -0.381) (xy 2.921 0.254) (xy 3.683 0.254) (xy 3.302 -0.381)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+			)
+			(symbol "Q_PMOS_GSD_1_1"
+				(pin input line
+					(at -5.08 0 0)
+					(length 2.54)
+					(name "G"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 2.54 -5.08 90)
+					(length 2.54)
+					(name "S"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 2.54 5.08 270)
+					(length 2.54)
+					(name "D"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "3"
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -10883,7 +11312,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "1k"
+		(property "Value" "10k"
 			(at 387.35 120.64999999999999 0)
 			(effects
 				(font
@@ -10910,7 +11339,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "ADC RC filter with C415, about 160 Hz"
+		(property "Description" "ADC RC filter with C415: 10k x 10 nF = 0.1 ms (1.6 kHz); small C so the stored charge cannot hold the pin above VDD when +3V3 collapses (O-21)"
 			(at 381.0 119.38 0)
 			(effects
 				(font
@@ -10928,7 +11357,7 @@
 				(hide yes)
 			)
 		)
-		(property "MPN" "RC0603FR-071KL"
+		(property "MPN" "RC0603FR-0710KL"
 			(at 381.0 119.38 0)
 			(effects
 				(font
@@ -10937,7 +11366,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC" "C22548"
+		(property "LCSC" "C98220"
 			(at 381.0 119.38 0)
 			(effects
 				(font
@@ -11019,7 +11448,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "1u"
+		(property "Value" "10n 50V"
 			(at 407.67 120.64999999999999 0)
 			(effects
 				(font
@@ -11046,7 +11475,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "ADC RC filter capacitor"
+		(property "Description" "ADC RC filter capacitor (O-21: 10 nF x 10 V/ms = 0.1 mA into D404 at most)"
 			(at 401.32 119.38 0)
 			(effects
 				(font
@@ -11055,7 +11484,7 @@
 				(hide yes)
 			)
 		)
-		(property "Manufacturer" "Samsung"
+		(property "Manufacturer" "Yageo"
 			(at 401.32 119.38 0)
 			(effects
 				(font
@@ -11064,7 +11493,7 @@
 				(hide yes)
 			)
 		)
-		(property "MPN" "CL10B105KA8NNNC"
+		(property "MPN" "CC0603KRX7R9BB103"
 			(at 401.32 119.38 0)
 			(effects
 				(font
@@ -11073,7 +11502,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC" "C29936"
+		(property "LCSC" "C100042"
 			(at 401.32 119.38 0)
 			(effects
 				(font
@@ -11194,6 +11623,197 @@
 		)
 	)
 	(symbol
+		(lib_id "ProjectSymbols:BAT54_SOT23")
+		(at 370.84 160.02 90)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "f05607e2-a5ee-534b-9854-3e7260db0cf9")
+		(property "Reference" "D404"
+			(at 377.19 158.75 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "BAT54"
+			(at 377.19 161.29000000000002 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Package_TO_SOT_SMD:SOT-23"
+			(at 370.84 160.02 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "https://www.lcsc.com/datasheet/lcsc_datasheet_2407241045_Nexperia-BAT54-215_C85084.pdf"
+			(at 370.84 160.02 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "O-21 clamp ADC node -> +3V3: pin <= VDD + 240 mV at <= 0.1 mA (Nexperia BAT54 2022-07-01, LCSC copy); only charge from the small filter capacitor can flow here"
+			(at 370.84 160.02 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Manufacturer" "Nexperia"
+			(at 370.84 160.02 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "MPN" "BAT54,215"
+			(at 370.84 160.02 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C85084"
+			(at 370.84 160.02 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "f6db1715-9942-52a3-9101-b491fd17eb43")
+		)
+		(pin "3"
+			(uuid "72480a2f-8c00-57a0-a597-40f963747455")
+		)
+		(instances
+			(project "RoverCore"
+				(path "/d069f045-7f09-4f8a-bd29-51e87a8a0808/3572c06e-32ee-5f4c-a534-3f1640e128b2"
+					(reference "D404")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(wire
+		(pts
+			(xy 370.84 163.83) (xy 370.84 168.91)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "c4b2dbde-f96e-5eb3-96c0-8312c426b9a6")
+	)
+	(label "ISERVO_FILT"
+		(at 370.84 168.91 270)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right bottom)
+		)
+		(uuid "030d5c6b-4d9e-56b7-a11b-991fcb130d0f")
+	)
+	(wire
+		(pts
+			(xy 370.84 156.21) (xy 370.84 151.13)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "be5f9fd1-4a7e-5e67-b9d7-27d8b988d5d3")
+	)
+	(symbol
+		(lib_id "power:+3V3")
+		(at 370.84 151.13 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom no)
+		(on_board no)
+		(dnp no)
+		(uuid "3903aacd-8b6b-5d28-af18-a16d43833a19")
+		(property "Reference" "#PWRD40434"
+			(at 370.84 154.94 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "+3V3"
+			(at 370.84 156.21 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 370.84 151.13 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 370.84 151.13 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 370.84 151.13 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "5dbaf100-d42a-5fc9-88a8-6e8da47676c5")
+		)
+		(instances
+			(project "RoverCore"
+				(path "/d069f045-7f09-4f8a-bd29-51e87a8a0808/3572c06e-32ee-5f4c-a534-3f1640e128b2"
+					(reference "#PWRD40434")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "Device:R")
 		(at 391.16 190.5 0)
 		(unit 1)
@@ -11238,7 +11858,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "O-21: limits current from C415 into an unpowered GPIO1 (<= 0.22 mA, tau 10 ms)"
+		(property "Description" "Series resistor to GPIO1 (not counted as protection; the voltage bound is D404)"
 			(at 391.16 190.5 0)
 			(effects
 				(font
@@ -11446,26 +12066,15 @@
 		)
 		(uuid "91792a22-f876-5bc2-825a-c43ac8bb4170")
 	)
-	(global_label "+V_SERVO"
-		(shape output)
+	(label "VSERVO_SW"
 		(at 345.44 181.61 90)
-		(fields_autoplaced yes)
 		(effects
 			(font
 				(size 1.27 1.27)
 			)
-			(justify left)
+			(justify left bottom)
 		)
-		(uuid "62117b16-f41a-5142-9ba0-1dfcecf5e526")
-		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 345.44 181.61 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
+		(uuid "8d7cf233-b586-5aa8-8572-b70caf518d5a")
 	)
 	(wire
 		(pts
@@ -11532,7 +12141,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "VSERVO divider bottom; node clamped by Q405 while +3V3 is absent (O-21)"
+		(property "Description" "VSERVO divider bottom"
 			(at 345.44 238.76 0)
 			(effects
 				(font
@@ -11621,8 +12230,8 @@
 		(in_bom no)
 		(on_board no)
 		(dnp no)
-		(uuid "cb529418-b17c-5674-b1c7-a84f6255dd62")
-		(property "Reference" "#PWRR41134"
+		(uuid "80aeb152-745a-5d31-8b07-7fa3083418b3")
+		(property "Reference" "#PWRR41135"
 			(at 345.44 251.46 0)
 			(effects
 				(font
@@ -11668,12 +12277,12 @@
 			)
 		)
 		(pin "1"
-			(uuid "25c8ec91-4a7c-56d4-82f6-92729856fb6d")
+			(uuid "64b03078-13bf-502d-8af2-f8f89764703c")
 		)
 		(instances
 			(project "RoverCore"
 				(path "/d069f045-7f09-4f8a-bd29-51e87a8a0808/3572c06e-32ee-5f4c-a534-3f1640e128b2"
-					(reference "#PWRR41134")
+					(reference "#PWRR41135")
 					(unit 1)
 				)
 			)
@@ -11697,7 +12306,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "100n 50V"
+		(property "Value" "1n 50V C0G"
 			(at 367.03000000000003 240.03 0)
 			(effects
 				(font
@@ -11715,7 +12324,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://www.lcsc.com/datasheet/lcsc_datasheet_2211101700_YAGEO-CC0603KRX7R9BB104_C14663.pdf"
+		(property "Datasheet" "~"
 			(at 360.68 238.76 0)
 			(effects
 				(font
@@ -11724,7 +12333,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "VSERVO_SENSE filter"
+		(property "Description" "VSERVO_SENSE filter, tau 32 us; small so the node follows when the switch opens (O-21)"
 			(at 360.68 238.76 0)
 			(effects
 				(font
@@ -11742,7 +12351,7 @@
 				(hide yes)
 			)
 		)
-		(property "MPN" "CC0603KRX7R9BB104"
+		(property "MPN" "CC0603JRNPO9BN102"
 			(at 360.68 238.76 0)
 			(effects
 				(font
@@ -11751,7 +12360,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC" "C14663"
+		(property "LCSC" "C106246"
 			(at 360.68 238.76 0)
 			(effects
 				(font
@@ -11813,8 +12422,8 @@
 		(in_bom no)
 		(on_board no)
 		(dnp no)
-		(uuid "7a3d080b-203a-54ac-98f5-9ea7b0636c75")
-		(property "Reference" "#PWRC41735"
+		(uuid "e0662951-c6bb-541b-a1e9-e3073749b874")
+		(property "Reference" "#PWRC41736"
 			(at 360.68 251.46 0)
 			(effects
 				(font
@@ -11860,12 +12469,203 @@
 			)
 		)
 		(pin "1"
-			(uuid "8c1ceee8-67c4-5005-8d8f-662bd9f5b53f")
+			(uuid "b2b69331-6d5a-5e00-931b-86d58aa9da33")
 		)
 		(instances
 			(project "RoverCore"
 				(path "/d069f045-7f09-4f8a-bd29-51e87a8a0808/3572c06e-32ee-5f4c-a534-3f1640e128b2"
-					(reference "#PWRC41735")
+					(reference "#PWRC41736")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "ProjectSymbols:BAT54_SOT23")
+		(at 370.84 205.74 90)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "ef79f4b0-a83a-5211-9f9f-94c78cf45841")
+		(property "Reference" "D403"
+			(at 377.19 204.47 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "BAT54"
+			(at 377.19 207.01000000000002 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Package_TO_SOT_SMD:SOT-23"
+			(at 370.84 205.74 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "https://www.lcsc.com/datasheet/lcsc_datasheet_2407241045_Nexperia-BAT54-215_C85084.pdf"
+			(at 370.84 205.74 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "O-21 clamp ADC node -> +3V3: pin <= VDD + 240 mV at <= 0.1 mA (Nexperia BAT54 2022-07-01, LCSC copy); only charge from the small filter capacitor can flow here"
+			(at 370.84 205.74 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Manufacturer" "Nexperia"
+			(at 370.84 205.74 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "MPN" "BAT54,215"
+			(at 370.84 205.74 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C85084"
+			(at 370.84 205.74 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "ae6e52dc-05d5-5a7a-86fc-dd4c91814c2b")
+		)
+		(pin "3"
+			(uuid "645122cc-62db-5882-ab52-094b3c74f167")
+		)
+		(instances
+			(project "RoverCore"
+				(path "/d069f045-7f09-4f8a-bd29-51e87a8a0808/3572c06e-32ee-5f4c-a534-3f1640e128b2"
+					(reference "D403")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(wire
+		(pts
+			(xy 370.84 209.55) (xy 370.84 214.63)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "4e70cb3f-ef6c-53a7-ada2-fe83fbe45726")
+	)
+	(label "VSERVO_DIV"
+		(at 370.84 214.63 270)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right bottom)
+		)
+		(uuid "7176e7d4-aaf5-599f-b798-1c4023149546")
+	)
+	(wire
+		(pts
+			(xy 370.84 201.93) (xy 370.84 196.85)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "692deb8a-df98-53ba-8eba-4b34b7133686")
+	)
+	(symbol
+		(lib_id "power:+3V3")
+		(at 370.84 196.85 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom no)
+		(on_board no)
+		(dnp no)
+		(uuid "a66020c3-3294-5de6-b3ec-58c11f9896a8")
+		(property "Reference" "#PWRD40337"
+			(at 370.84 200.66 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "+3V3"
+			(at 370.84 201.93 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 370.84 196.85 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 370.84 196.85 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 370.84 196.85 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "5789a98e-8bfd-5d2f-8599-6eb483121359")
+		)
+		(instances
+			(project "RoverCore"
+				(path "/d069f045-7f09-4f8a-bd29-51e87a8a0808/3572c06e-32ee-5f4c-a534-3f1640e128b2"
+					(reference "#PWRD40337")
 					(unit 1)
 				)
 			)
@@ -11916,7 +12716,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "O-21: series resistor to GPIO5"
+		(property "Description" "Series resistor to GPIO5"
 			(at 383.54 220.98 0)
 			(effects
 				(font
@@ -12019,7 +12819,7 @@
 		)
 	)
 	(symbol
-		(lib_id "Transistor_FET:Q_NMOS_GSD")
+		(lib_id "Transistor_FET:Q_PMOS_GSD")
 		(at 320.04 208.28 0)
 		(unit 1)
 		(exclude_from_sim no)
@@ -12036,7 +12836,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "NTR4003N"
+		(property "Value" "NTR4171P"
 			(at 326.39000000000004 209.55 0)
 			(effects
 				(font
@@ -12054,7 +12854,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://www.onsemi.com/download/data-sheet/pdf/ntr4003n-d.pdf"
+		(property "Datasheet" "https://www.lcsc.com/datasheet/lcsc_datasheet_1810301521_onsemi-NTR4171PT1G_C146715.pdf"
 			(at 320.04 208.28 0)
 			(effects
 				(font
@@ -12063,7 +12863,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "O-21 shunt: clamps VSERVO_DIV to GND while +3V3 is absent; 30 V N-MOSFET, VGS(th) 0.8-1.4 V, RDS(on) <= 2.0 Ohm at VGS 2.5 V / 1.5 Ohm at 4.0 V, IDSS <= 1 uA at 25 degC (NTR4003N/D Rev 6, Jan 2026); pinout 1 G, 2 S, 3 D"
+		(property "Description" "O-21: normally-off switch for the VSERVO divider; on only while P3V3_OK is high. P-MOSFET -30 V, VGS +-12 V, IDSS <= 1 uA at -24 V, RDS(on) <= 110 mOhm at -4.5 V (NTR4171P/D Rev 2, LCSC copy); pinout 1 G, 2 S, 3 D"
 			(at 320.04 208.28 0)
 			(effects
 				(font
@@ -12081,7 +12881,7 @@
 				(hide yes)
 			)
 		)
-		(property "MPN" "NTR4003NT1G"
+		(property "MPN" "NTR4171PT1G"
 			(at 320.04 208.28 0)
 			(effects
 				(font
@@ -12090,7 +12890,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC" "C82325"
+		(property "LCSC" "C146715"
 			(at 320.04 208.28 0)
 			(effects
 				(font
@@ -12127,7 +12927,7 @@
 		)
 		(uuid "74bc1214-a2a5-55e1-a765-9340824502bb")
 	)
-	(label "VSERVO_SH_G"
+	(label "VSERVO_SW_G"
 		(at 309.88 208.28 180)
 		(effects
 			(font
@@ -12147,69 +12947,24 @@
 		)
 		(uuid "7f1e0a4e-8217-5a8a-8157-8127f2f45084")
 	)
-	(symbol
-		(lib_id "power:GND")
-		(at 322.58 218.44 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom no)
-		(on_board no)
-		(dnp no)
-		(uuid "c1d7cbf8-6764-5528-9834-f194a5d8c385")
-		(property "Reference" "#PWRQ40536"
-			(at 322.58 222.25 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
+	(global_label "+V_SERVO"
+		(shape output)
+		(at 322.58 218.44 270)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
 			)
+			(justify right)
 		)
-		(property "Value" "GND"
-			(at 322.58 223.52 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Footprint" ""
+		(uuid "d6df509d-0c7a-5926-b662-8539d362ad24")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 322.58 218.44 0)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
 				(hide yes)
-			)
-		)
-		(property "Datasheet" "~"
-			(at 322.58 218.44 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" ""
-			(at 322.58 218.44 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "61f3c14a-891f-5464-acae-ec8e1c955e33")
-		)
-		(instances
-			(project "RoverCore"
-				(path "/d069f045-7f09-4f8a-bd29-51e87a8a0808/3572c06e-32ee-5f4c-a534-3f1640e128b2"
-					(reference "#PWRQ40536")
-					(unit 1)
-				)
 			)
 		)
 	)
@@ -12223,7 +12978,7 @@
 		)
 		(uuid "613da7b0-4351-52d9-905f-997e0137d296")
 	)
-	(label "VSERVO_DIV"
+	(label "VSERVO_SW"
 		(at 322.58 198.12 90)
 		(effects
 			(font
@@ -12235,7 +12990,7 @@
 	)
 	(symbol
 		(lib_id "Device:R")
-		(at 259.08 208.28 0)
+		(at 297.18 195.58 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -12243,7 +12998,7 @@
 		(dnp no)
 		(uuid "a0126aa4-f9e7-5250-a912-8f4fc39710c5")
 		(property "Reference" "R418"
-			(at 265.43 207.01 0)
+			(at 303.53000000000003 194.31 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -12252,7 +13007,7 @@
 			)
 		)
 		(property "Value" "100k"
-			(at 265.43 209.55 0)
+			(at 303.53000000000003 196.85000000000002 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -12261,7 +13016,7 @@
 			)
 		)
 		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
-			(at 259.08 208.28 0)
+			(at 297.18 195.58 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -12270,7 +13025,7 @@
 			)
 		)
 		(property "Datasheet" "https://www.yageogroup.com/content/datasheet/asset/file/PYU-RC_GROUP_51_ROHS_L"
-			(at 259.08 208.28 0)
+			(at 297.18 195.58 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -12278,8 +13033,8 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "Shunt gate pull-up from the rail: VGS = 0.6875 x V_SERVO (>= 2.5 V above 3.64 V)"
-			(at 259.08 208.28 0)
+		(property "Description" "Q405 gate-source: off without drive"
+			(at 297.18 195.58 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -12288,7 +13043,7 @@
 			)
 		)
 		(property "Manufacturer" "Yageo"
-			(at 259.08 208.28 0)
+			(at 297.18 195.58 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -12297,7 +13052,7 @@
 			)
 		)
 		(property "MPN" "RC0603FR-07100KL"
-			(at 259.08 208.28 0)
+			(at 297.18 195.58 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -12306,7 +13061,7 @@
 			)
 		)
 		(property "LCSC" "C14675"
-			(at 259.08 208.28 0)
+			(at 297.18 195.58 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -12331,7 +13086,7 @@
 	)
 	(wire
 		(pts
-			(xy 259.08 204.47) (xy 259.08 199.39)
+			(xy 297.18 191.77) (xy 297.18 186.69)
 		)
 		(stroke
 			(width 0)
@@ -12341,7 +13096,7 @@
 	)
 	(global_label "+V_SERVO"
 		(shape output)
-		(at 259.08 199.39 90)
+		(at 297.18 186.69 90)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -12351,7 +13106,7 @@
 		)
 		(uuid "f31834ce-077b-566a-9768-0d807271f160")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 259.08 199.39 0)
+			(at 297.18 186.69 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -12362,7 +13117,7 @@
 	)
 	(wire
 		(pts
-			(xy 259.08 212.09) (xy 259.08 217.17)
+			(xy 297.18 199.39) (xy 297.18 204.47)
 		)
 		(stroke
 			(width 0)
@@ -12370,8 +13125,8 @@
 		)
 		(uuid "7dbfda3f-278e-5a80-a110-c38a3d52b576")
 	)
-	(label "VSERVO_SH_G"
-		(at 259.08 217.17 270)
+	(label "VSERVO_SW_G"
+		(at 297.18 204.47 270)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -12382,7 +13137,7 @@
 	)
 	(symbol
 		(lib_id "Device:R")
-		(at 271.78 208.28 0)
+		(at 297.18 226.06 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -12390,7 +13145,7 @@
 		(dnp no)
 		(uuid "15b153fd-b4ec-57fc-9193-7adc4c4b1a31")
 		(property "Reference" "R419"
-			(at 278.13 207.01 0)
+			(at 303.53000000000003 224.79 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -12398,8 +13153,8 @@
 				(justify left)
 			)
 		)
-		(property "Value" "220k"
-			(at 278.13 209.55 0)
+		(property "Value" "22k"
+			(at 303.53000000000003 227.33 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -12408,7 +13163,7 @@
 			)
 		)
 		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
-			(at 271.78 208.28 0)
+			(at 297.18 226.06 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -12417,7 +13172,7 @@
 			)
 		)
 		(property "Datasheet" "https://www.yageogroup.com/content/datasheet/asset/file/PYU-RC_GROUP_51_ROHS_L"
-			(at 271.78 208.28 0)
+			(at 297.18 226.06 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -12425,8 +13180,8 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "Shunt gate divider bottom"
-			(at 271.78 208.28 0)
+		(property "Description" "Q405 gate drive: VGS = -0.82 x V_SERVO (-5.6 V at 6.8 V, -6.4 V at 7.81 V; limit +-12 V)"
+			(at 297.18 226.06 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -12435,7 +13190,7 @@
 			)
 		)
 		(property "Manufacturer" "Yageo"
-			(at 271.78 208.28 0)
+			(at 297.18 226.06 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -12443,8 +13198,8 @@
 				(hide yes)
 			)
 		)
-		(property "MPN" "RC0603FR-07220KL"
-			(at 271.78 208.28 0)
+		(property "MPN" "RC0603FR-0722KL"
+			(at 297.18 226.06 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -12452,8 +13207,8 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC" "C123420"
-			(at 271.78 208.28 0)
+		(property "LCSC" "C114065"
+			(at 297.18 226.06 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -12478,7 +13233,7 @@
 	)
 	(wire
 		(pts
-			(xy 271.78 204.47) (xy 271.78 199.39)
+			(xy 297.18 222.25) (xy 297.18 217.17)
 		)
 		(stroke
 			(width 0)
@@ -12486,8 +13241,8 @@
 		)
 		(uuid "bab6458b-c2de-51ef-9d39-187cdbc2ce66")
 	)
-	(label "VSERVO_SH_G"
-		(at 271.78 199.39 90)
+	(label "VSERVO_SW_G"
+		(at 297.18 217.17 90)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -12498,7 +13253,7 @@
 	)
 	(wire
 		(pts
-			(xy 271.78 212.09) (xy 271.78 217.17)
+			(xy 297.18 229.87) (xy 297.18 234.95)
 		)
 		(stroke
 			(width 0)
@@ -12506,75 +13261,19 @@
 		)
 		(uuid "2cdef139-ffe8-5723-bb00-658db2810853")
 	)
-	(symbol
-		(lib_id "power:GND")
-		(at 271.78 217.17 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom no)
-		(on_board no)
-		(dnp no)
-		(uuid "1a4f44dd-5dd5-58e0-b898-ff62079c26b8")
-		(property "Reference" "#PWRR41937"
-			(at 271.78 220.98 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
+	(label "VSERVO_SW_DRV"
+		(at 297.18 234.95 270)
+		(effects
+			(font
+				(size 1.27 1.27)
 			)
+			(justify right bottom)
 		)
-		(property "Value" "GND"
-			(at 271.78 222.25 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Footprint" ""
-			(at 271.78 217.17 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" "~"
-			(at 271.78 217.17 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" ""
-			(at 271.78 217.17 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "dbe00103-ab58-503b-a748-de3b09f0c7f4")
-		)
-		(instances
-			(project "RoverCore"
-				(path "/d069f045-7f09-4f8a-bd29-51e87a8a0808/3572c06e-32ee-5f4c-a534-3f1640e128b2"
-					(reference "#PWRR41937")
-					(unit 1)
-				)
-			)
-		)
+		(uuid "88e0a69f-13c0-54a3-9515-5eb49c58bad3")
 	)
 	(symbol
 		(lib_id "Transistor_FET:Q_NMOS_GSD")
-		(at 276.86 236.22 0)
+		(at 276.86 241.3 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -12582,7 +13281,7 @@
 		(dnp no)
 		(uuid "8c1e2c60-272a-562e-b728-3853794683a4")
 		(property "Reference" "Q406"
-			(at 283.21000000000004 234.95 0)
+			(at 283.21000000000004 240.03 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -12591,7 +13290,7 @@
 			)
 		)
 		(property "Value" "NTR4003N"
-			(at 283.21000000000004 237.49 0)
+			(at 283.21000000000004 242.57000000000002 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -12600,7 +13299,7 @@
 			)
 		)
 		(property "Footprint" "Package_TO_SOT_SMD:SOT-23"
-			(at 276.86 236.22 0)
+			(at 276.86 241.3 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -12609,7 +13308,7 @@
 			)
 		)
 		(property "Datasheet" "https://www.onsemi.com/download/data-sheet/pdf/ntr4003n-d.pdf"
-			(at 276.86 236.22 0)
+			(at 276.86 241.3 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -12617,8 +13316,8 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "O-21: +3V3 present -> shunt Q405 off; 30 V N-MOSFET, VGS(th) 0.8-1.4 V, RDS(on) <= 2.0 Ohm at VGS 2.5 V / 1.5 Ohm at 4.0 V, IDSS <= 1 uA at 25 degC (NTR4003N/D Rev 6, Jan 2026); pinout 1 G, 2 S, 3 D"
-			(at 276.86 236.22 0)
+		(property "Description" "Turns Q405 on while P3V3_OK (TLV809E on Controller) is high; 30 V N-MOSFET, VGS(th) 0.8-1.4 V, RDS(on) <= 2.0 Ohm at VGS 2.5 V / 1.5 Ohm at 4.0 V, IDSS <= 1 uA at 25 degC (NTR4003N/D Rev 6, Jan 2026); pinout 1 G, 2 S, 3 D"
+			(at 276.86 241.3 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -12627,7 +13326,7 @@
 			)
 		)
 		(property "Manufacturer" "onsemi"
-			(at 276.86 236.22 0)
+			(at 276.86 241.3 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -12636,7 +13335,7 @@
 			)
 		)
 		(property "MPN" "NTR4003NT1G"
-			(at 276.86 236.22 0)
+			(at 276.86 241.3 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -12645,7 +13344,7 @@
 			)
 		)
 		(property "LCSC" "C82325"
-			(at 276.86 236.22 0)
+			(at 276.86 241.3 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -12673,7 +13372,7 @@
 	)
 	(wire
 		(pts
-			(xy 271.78 236.22) (xy 266.7 236.22)
+			(xy 271.78 241.3) (xy 266.7 241.3)
 		)
 		(stroke
 			(width 0)
@@ -12681,19 +13380,30 @@
 		)
 		(uuid "1a056197-b266-5fcf-9c9f-9c3256f2a7b5")
 	)
-	(label "MEAS_EN_SP"
-		(at 266.7 236.22 180)
+	(global_label "P3V3_OK"
+		(shape input)
+		(at 266.7 241.3 180)
+		(fields_autoplaced yes)
 		(effects
 			(font
 				(size 1.27 1.27)
 			)
-			(justify right bottom)
+			(justify right)
 		)
-		(uuid "4a9f67fd-ebd9-5890-8c77-401e6930063d")
+		(uuid "c74b2b31-c274-5501-9617-d7b250c42d62")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 266.7 241.3 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 	)
 	(wire
 		(pts
-			(xy 279.4 241.3) (xy 279.4 246.38)
+			(xy 279.4 246.38) (xy 279.4 251.46)
 		)
 		(stroke
 			(width 0)
@@ -12703,7 +13413,7 @@
 	)
 	(symbol
 		(lib_id "power:GND")
-		(at 279.4 246.38 0)
+		(at 279.4 251.46 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom no)
@@ -12711,7 +13421,7 @@
 		(dnp no)
 		(uuid "53021283-9285-5ede-904c-015398332611")
 		(property "Reference" "#PWRQ40638"
-			(at 279.4 250.19 0)
+			(at 279.4 255.27 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -12720,7 +13430,7 @@
 			)
 		)
 		(property "Value" "GND"
-			(at 279.4 251.46 0)
+			(at 279.4 256.54 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -12729,7 +13439,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 279.4 246.38 0)
+			(at 279.4 251.46 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -12738,7 +13448,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 279.4 246.38 0)
+			(at 279.4 251.46 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -12747,7 +13457,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 279.4 246.38 0)
+			(at 279.4 251.46 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -12769,7 +13479,7 @@
 	)
 	(wire
 		(pts
-			(xy 279.4 231.14) (xy 279.4 226.06)
+			(xy 279.4 236.22) (xy 279.4 231.14)
 		)
 		(stroke
 			(width 0)
@@ -12777,8 +13487,8 @@
 		)
 		(uuid "f1cb579e-3591-58ed-823b-e7e42ee7070b")
 	)
-	(label "VSERVO_SH_G"
-		(at 279.4 226.06 90)
+	(label "VSERVO_SW_DRV"
+		(at 279.4 231.14 90)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -12786,389 +13496,6 @@
 			(justify left bottom)
 		)
 		(uuid "006ea375-1375-5118-802c-6231f7b5ba74")
-	)
-	(symbol
-		(lib_id "Device:R")
-		(at 304.8 236.22 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "32b66a42-97a1-537b-bc2a-53e22f9133da")
-		(property "Reference" "R420"
-			(at 311.15000000000003 234.95 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "10k"
-			(at 311.15000000000003 237.49 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
-			(at 304.8 236.22 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" "https://www.yageogroup.com/content/datasheet/asset/file/PYU-RC_GROUP_51_ROHS_L"
-			(at 304.8 236.22 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" "Q406 gate from +3V3: VGS = 3.251 V x 100/110 = 2.96 V"
-			(at 304.8 236.22 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Manufacturer" "Yageo"
-			(at 304.8 236.22 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "MPN" "RC0603FR-0710KL"
-			(at 304.8 236.22 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "LCSC" "C98220"
-			(at 304.8 236.22 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "d2e5b753-bdad-563b-8a75-bcd0d8641f76")
-		)
-		(pin "2"
-			(uuid "7fefb27a-34e7-5952-9857-16f513344427")
-		)
-		(instances
-			(project "RoverCore"
-				(path "/d069f045-7f09-4f8a-bd29-51e87a8a0808/3572c06e-32ee-5f4c-a534-3f1640e128b2"
-					(reference "R420")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(wire
-		(pts
-			(xy 304.8 232.41) (xy 304.8 227.33)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "bf80ada0-c1b1-527d-b22a-f37a484b748e")
-	)
-	(symbol
-		(lib_id "power:+3V3")
-		(at 304.8 227.33 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom no)
-		(on_board no)
-		(dnp no)
-		(uuid "3be17070-b740-525a-abfc-d4ae898fba60")
-		(property "Reference" "#PWRR42039"
-			(at 304.8 231.14000000000001 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Value" "+3V3"
-			(at 304.8 232.41000000000003 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" ""
-			(at 304.8 227.33 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" "~"
-			(at 304.8 227.33 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" ""
-			(at 304.8 227.33 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "29800970-7c10-510f-9157-ce6cb65cfd71")
-		)
-		(instances
-			(project "RoverCore"
-				(path "/d069f045-7f09-4f8a-bd29-51e87a8a0808/3572c06e-32ee-5f4c-a534-3f1640e128b2"
-					(reference "#PWRR42039")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(wire
-		(pts
-			(xy 304.8 240.03) (xy 304.8 245.11)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "7eecb89a-c450-561e-ae5e-a99c754c81a5")
-	)
-	(label "MEAS_EN_SP"
-		(at 304.8 245.11 270)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right bottom)
-		)
-		(uuid "b48b3a8c-c87e-59cf-89fb-07868b890f0c")
-	)
-	(symbol
-		(lib_id "Device:R")
-		(at 325.12 236.22 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "f7720ab6-e9e4-5137-bfa5-e78b75c79630")
-		(property "Reference" "R421"
-			(at 331.47 234.95 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "100k"
-			(at 331.47 237.49 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
-			(at 325.12 236.22 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" "https://www.yageogroup.com/content/datasheet/asset/file/PYU-RC_GROUP_51_ROHS_L"
-			(at 325.12 236.22 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" "Q406 gate pull-down: +3V3 absent or floating (no DevKit) -> shunt on"
-			(at 325.12 236.22 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Manufacturer" "Yageo"
-			(at 325.12 236.22 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "MPN" "RC0603FR-07100KL"
-			(at 325.12 236.22 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "LCSC" "C14675"
-			(at 325.12 236.22 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "1f768f9a-05fa-56d8-bc89-b1c550837448")
-		)
-		(pin "2"
-			(uuid "319a95ae-9421-5c2f-969c-781b62a752c5")
-		)
-		(instances
-			(project "RoverCore"
-				(path "/d069f045-7f09-4f8a-bd29-51e87a8a0808/3572c06e-32ee-5f4c-a534-3f1640e128b2"
-					(reference "R421")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(wire
-		(pts
-			(xy 325.12 232.41) (xy 325.12 227.33)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "77c65965-fbf3-5d9a-81d5-df9ff5e3842b")
-	)
-	(label "MEAS_EN_SP"
-		(at 325.12 227.33 90)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "36a84b26-00c5-5981-99d6-fef92bd02144")
-	)
-	(wire
-		(pts
-			(xy 325.12 240.03) (xy 325.12 245.11)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "a91fd6e8-2525-52ea-9678-f9fdaf1d624e")
-	)
-	(symbol
-		(lib_id "power:GND")
-		(at 325.12 245.11 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom no)
-		(on_board no)
-		(dnp no)
-		(uuid "e5a01c18-9a3f-5a3d-a773-f89e2b2fd84e")
-		(property "Reference" "#PWRR42140"
-			(at 325.12 248.92000000000002 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Value" "GND"
-			(at 325.12 250.19000000000003 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Footprint" ""
-			(at 325.12 245.11 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" "~"
-			(at 325.12 245.11 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" ""
-			(at 325.12 245.11 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "2a9407ca-2e7a-5302-97b5-88f625079a81")
-		)
-		(instances
-			(project "RoverCore"
-				(path "/d069f045-7f09-4f8a-bd29-51e87a8a0808/3572c06e-32ee-5f4c-a534-3f1640e128b2"
-					(reference "#PWRR42140")
-					(unit 1)
-				)
-			)
-		)
 	)
 	(symbol
 		(lib_id "Connector:TestPoint")
@@ -13347,8 +13674,8 @@
 		(in_bom no)
 		(on_board no)
 		(dnp no)
-		(uuid "57785382-ee41-5576-ade6-b17140d0cd60")
-		(property "Reference" "#PWRTP40241"
+		(uuid "9a9c9752-093f-5566-9328-8a1556fe4a2c")
+		(property "Reference" "#PWRTP40239"
 			(at 345.44 156.21 0)
 			(effects
 				(font
@@ -13394,12 +13721,12 @@
 			)
 		)
 		(pin "1"
-			(uuid "ab250f2b-b0dd-50f7-ae73-b1ed66dbfb71")
+			(uuid "14d12241-666c-5cfa-824f-997927eef585")
 		)
 		(instances
 			(project "RoverCore"
 				(path "/d069f045-7f09-4f8a-bd29-51e87a8a0808/3572c06e-32ee-5f4c-a534-3f1640e128b2"
-					(reference "#PWRTP40241")
+					(reference "#PWRTP40239")
 					(unit 1)
 				)
 			)

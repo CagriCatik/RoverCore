@@ -3929,7 +3929,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "5 V switch for extension UART J112 (budget 0.2 A); EN tied to IN (always on), auto-retry; FAULT unused"
+		(property "Description" "5 V switch for extension UART J112 (budget 0.2 A); EN = P3V3_OK (O-21: external device powered only while +3V3 is good; EN VIH 1.1 V), auto-retry; FAULT unused"
 			(at 152.4 76.2 0)
 			(effects
 				(font
@@ -4145,13 +4145,34 @@
 	)
 	(wire
 		(pts
-			(xy 142.24 78.74) (xy 142.24 73.66)
+			(xy 142.24 78.74) (xy 137.16 78.74)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "6543d2ac-1f5b-5aef-97b3-a6a5037daa6a")
+		(uuid "60629fc7-9496-51d2-b1a0-017f76345424")
+	)
+	(global_label "P3V3_OK"
+		(shape input)
+		(at 137.16 78.74 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "26aec952-764c-5bab-bb3c-814e0869203d")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 137.16 78.74 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 	)
 	(no_connect
 		(at 162.56 76.2)

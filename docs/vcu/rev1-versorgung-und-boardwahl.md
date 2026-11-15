@@ -114,14 +114,13 @@ Einbruch, den die VCU sieht (O-3).
 
 | Verbraucher | Strom | Art |
 |---|---:|---|
-| DevKit (ESP32-S3 inkl. WLAN-Spitzen, über DevKit-LDO) | 0,50 A | (S) |
-| FS-iA6B Empfänger | 0,10 A | (S); Hersteller nennt nur 4,0–8,4 V |
-| 4 × SK6812MINI-E, je max. 3 × 14,5 mA + 0,6 mA (Opsco Rev B/2) | 0,18 A | Datenblatt |
+| DevKit über D501: Modul-Anforderung ≥ 0,5 A (WROOM-1 DS v1.8 Tab. 6-2) **plus** 50 mA Carrier-Last am 3V3-Pin (IMU, OLED, INA240, Puffer-VCCA, Status-LED, Supervisor); LDO-Eingangsstrom ≈ Ausgangsstrom | 0,55 A | Datenblatt + Festlegung; dieselbe Zahl in 3.11 |
+| FS-iA6B Empfänger (über U603) | 0,10 A | (S); Hersteller nennt nur 4,0–8,4 V |
+| 4 × SK6812MINI-E, je max. 3 × 14,5 mA + 0,6 mA (Opsco Rev B/2), über U601 | 0,18 A | Datenblatt |
 | Buzzer CMT-8540S-SMT-TR (Same Sky): max. 150 mA bei 4 kHz, 50 % Tastverhältnis (extern angesteuert) | 0,15 A | Datenblatt |
-| Status-LED, Puffer, INA240 | 0,03 A | (S) |
-| IMU + OLED (über DevKit-3V3) | 0,03 A | (S); OLED ca. 20 mA (Adafruit) |
-| UART-Erweiterung (Budget, Grenzwert) | 0,20 A | Festlegung |
-| **Summe / Reglerauslegung** | **1,19 A / ≥ 2 A** | |
+| Aktor-Ausgänge: 5 × Pull-up 2,2 kΩ bei Low (2,1 mA), Puffer-VCCB, 3 × TPS2553-Ruhestrom | 0,02 A | Rechnung (S) |
+| UART-Erweiterung (Budget, Grenzwert), über U602 | 0,20 A | Festlegung |
+| **Summe / Reglerauslegung** | **1,20 A / ≥ 2 A** | gemeinsames Lastbudget für 3.8 und 3.11 (Stand 2026-11-15) |
 
 **Servoschiene** (LTC7803)
 
@@ -167,7 +166,7 @@ beide Bausteine den Eingangsbereich abdecken.
 
 | Schiene | Baustein | Kennwerte (Datenblatt) | Bemerkung |
 |---|---|---|---|
-| Servo | ADI **LTC7803** (Controller, externe FETs), MSOP-16-EP, LCSC C1016554 | 4,5–40 V Eingang, 100 % Tastverhältnis („PassThru"), V_FB 0,788–0,812 V, V_SENSE(MAX) 45/50/55 mV, Festfrequenz 340–375–410 kHz, RUN 1,15–1,25 V / 100 mV Hysterese (Rev A) | Kein PGOOD → Schiene über VSERVO_SENSE und ISERVO_SENSE überwacht; JLC-Bestand nur 25; Rev B gegenlesen |
+| Servo | ADI **LTC7803** (Controller, externe FETs), MSOP-16-EP, LCSC C1016554 | 4,5–40 V Eingang, 100 % Tastverhältnis („PassThru"), V_FB 0,788–0,812 V, V_SENSE(MAX) 45/50/55 mV, Festfrequenz 340–375–410 kHz, RUN 1,15–1,25 V / 100 mV Hysterese (Rev A, in Rev B unverändert, 3.5a) | Kein PGOOD → Schiene über VSERVO_SENSE und ISERVO_SENSE überwacht; JLC-Bestand nur 25 |
 | 5 V | TI **TPS54302**, TSOT-23-6, LCSC C311983 | 4,5–28 V, 3 A, 400 kHz, V_REF 0,596 V ±2,5 %, EN abs. max. 7 V (SLVSDG6C) | Kein PGOOD; EN nie direkt an VIN |
 
 Verworfen bzw. verglichen: TI LM61495 (98 %, Stromgrenze sinkt bei hohem
@@ -616,7 +615,7 @@ V_OUT 3,251–3,349 V, Dropout max. 380 mV bei 500 mA und 610 mV bei 800 mA
 
 | Größe | Wert |
 |---|---|
-| Auslegungslast am LDO | 0,55 A (0,5-A-Anforderung des Moduls + 50 mA Carrier) |
+| Auslegungslast am LDO | 0,55 A – dieselbe Zeile wie in der 5-V-Bilanz (3.2) |
 | LDO-Dropout bei 0,55 A | 418 mV (linear zwischen den Max-Werten interpoliert) |
 | V_F D501 | 498 mV max. bei 25 °C (gepulst); bei −20 °C ca. 588 mV (2 mV/K angenommen, Fig. 1 typ. ≈ 1,7 mV/K; nicht spezifiziert) |
 | +5V minimal | 4,74 V statisch − 0,10 V Lastsprung-Reserve |
@@ -636,8 +635,8 @@ V_OUT 3,251–3,349 V, Dropout max. 380 mV bei 500 mA und 610 mV bei 800 mA
 | USB allein | DevKit wie von Espressif vorgesehen; D501 gesperrt (V_R ≈ 4,5–5 V), Sperrstrom in die stromlose +5V-Schiene (µA) | V_F der DevKit-Diode 1N5819HW nicht geprüft (Datenblatt fehlt) |
 | Beide | höhere Quelle versorgt, sonst Aufteilung über die Dioden; kein Querstrom außer Sperrströmen | Messung V_CC_5V und Rückstrom in VBUS |
 | USB stecken bei laufendem Akku | DevKit-Diode leitet nur, wenn USB höher ist | Messung |
-| USB ziehen bei laufendem Akku | Last wechselt ohne Unterbrechung auf D501 | Messung Einbruch V_CC_5V |
-| Akku stecken bei laufendem USB | +5V steigt mit dem TPS54302-Softstart, D501 übernimmt stoßfrei | Messung |
+| USB ziehen bei laufendem Akku | erwartet: Last wechselt auf D501; ob ohne Unterbrechung, **ist zu prüfen** | Messung Einbruch V_CC_5V |
+| Akku stecken bei laufendem USB | +5V steigt mit dem TPS54302-Softstart; erwartet ist eine Übernahme durch D501 – Stoßfreiheit **ist zu prüfen** | Messung |
 | Akku ziehen bei laufendem USB | V_CC_5V fällt auf USB-Pfad zurück; Reset nur, wenn USB-Pfad < 3,77 V | Messung, 1N5819HW-Daten offen (O-28) |
 | DevKit unter Spannung stecken/ziehen | **nicht zulässig** (keine definierte Kontaktfolge der Buchsenleisten) | Betriebsanweisung |
 
@@ -670,9 +669,10 @@ Datei `Controller.kicad_sch` (A3), einmalig erzeugt mit
 | DevKit-Sockel U501 | Original ESP32-S3-DevKitC-1-N16R8 v1.1; zwei 1×22-Buchsenleisten 2,54 mm, Reihenabstand 22,86 mm; Pads 1–22 = J1, 23–44 = J3. Silkscreen: Pfeil und „J1-1"/„J3-1" an Pin 1 beider Reihen (Antennenende), „ANT", „USB" mit Pfeil, DevKit-Umriss; Antennen-Sperrfläche auf allen Kupferlagen. x-Lage des Antennenüberstands mittig angenommen (O-4) |
 | 5 V | D501 +5V → 5-V-Pin (Dioden-ODER, 3.11); ≥ 1 cm² Kathodenkupfer; TP503 |
 | 3,3 V | +3V3 nur aus dem DevKit-LDO; C501 10 µF + C502 100 nF am Sockel; TP502, TP504 (GND) |
-| Freigabetaster | SW501 nach GND über R503 1 kΩ, R502 10 kΩ Pull-up, C503 100 nF (1 ms); gedrückt 0,30 V < V_IL 0,83 V |
+| Freigabetaster | SW501 direkt nach GND, R502 10 kΩ Pull-up; **kein Kondensator am Pin** (O-21) – Entprellung in der Firmware |
 | Status-LED | GPIO11 → R504 1 kΩ → D502 (AlGaInP, Typ offen, O-28), ca. 1,3 mA (Schätzung) |
-| Akkumessung | R505 120 kΩ / R506 20 kΩ / C504 100 nF an VBAT_PROT, Q505-Klemmung und R507 10 kΩ (O-21) |
+| Akkumessung | Q505 (NTR4171P) schaltet den Teiler R505 120 kΩ / R506 20 kΩ nur bei P3V3_OK an VBAT_PROT; C504 1 nF, D506 BAT54 nach +3V3, R507 10 kΩ (O-21) |
+| 3,3-V-Überwachung | U504 TLV809ED29 (2,93 V, Freigabe 33–67 ms) → `P3V3_OK`; R510 100k Pull-down |
 | Reserve | GPIO18 nur auf TP501 (Eingang) |
 | Nicht verbunden | RST, GPIO0/3/45/46 (Strapping), 19/20 (USB), 43/44 (UART0), 35–38 – No-Connect-Marken (Prüfbericht im Anschlussplan) |
 
@@ -733,42 +733,39 @@ mit steigender Gatespannung (2,60 V > 2,5 V Prüfpunkt).
 | ESP32 hängt ohne Reset | Zustand eingefroren | bleibt EIN → Watchdog in der Firmware verpflichtend | – | – |
 | Akku unter 8,8 V | – | AUS durch RUN-Teiler | – | – |
 
-#### O-21: Eingänge bei ausgeschaltetem oder fehlendem DevKit
+#### O-21: Eingänge bei ausgeschaltetem oder fehlendem DevKit (überarbeitet nach Review)
 
 Grundlage: ESP32-S3 DS v2.2, Tab. 5-4: V_IH max. = VDD + 0,3 V. Einen
-zulässigen Injektionsstrom nennt das Datenblatt nicht. **Auslegungsziel:**
-Solange +3V3 fehlt, liegt an keinem ESP32-Pin eine Quelle über 0,3 V an,
-oder der Strom ist durch einen Serienwiderstand begrenzt. Bei fehlendem
-DevKit gibt es keinen Pin. Relevant ist das, wenn das DevKit gesteckt, aber
-stromlos ist:
+zulässigen Injektionsstrom nennt das Datenblatt nicht. **Ein
+Serienwiderstand gilt deshalb nicht als Schutz.** Auslegungsregel: Kein
+ESP32-Pin darf über **VDD + 0,3 V** liegen – in Betrieb, bei Hochlauf, beim
+Abschalten und bei fehlendem +3V3. Die 10-kΩ-Serienwiderstände bleiben, werden
+aber nicht als Nachweis gezählt.
 
-- beim Einschalten, bevor +3V3 steht;
-- beim Abziehen des Akkus, während die Servo-Kondensatoren (ca. 606 µF)
-  noch geladen sind;
-- bei einem Defekt von LDO oder D501.
+**Gemeinsames Signal `P3V3_OK`** (U504 TLV809ED29, TI SLVSES2J):
+- high nur, solange +3V3 ≥ V_IT+ (2,87–2,99 V + 0,9–1,5 % Hysterese) –
+  frühestens 33 ms (variant D) nach Erreichen;
+- low innerhalb von 50 µs, sobald +3V3 unter 2,87–2,99 V fällt;
+- definiert low ab VDD 0,7 V, darunter und ohne DevKit über R510 auf GND.
 
-| Eingang | Quelle ohne +3V3 | Maßnahme (umgesetzt) | Ergebnis (Schätzung) |
+| Eingang | Quelle | Maßnahme | Nachweis (Schätzung, `rev1_power_calc.py --controller`) |
 |---|---|---|---|
-| VBAT_SENSE (GPIO4) | Teiler am Akku | Q505 NTR4003N klemmt VBAT_DIV auf GND. Gate über R508/R509 = 0,5 × VBAT (≥ 2,5 V ab 5 V Akku). Q506 schaltet die Klemmung ab, sobald +3V3 da ist (Gate 2,96 V über R510/R511). R507 10 kΩ in Serie zum Pin | ohne +3V3: Pin ≈ 0 V; mit +3V3: Messfehler durch Leckstrom ≤ 1 µA × 17,1 kΩ = 17 mV (25 °C max.) |
-| VSERVO_SENSE (GPIO5) | Restladung der Schiene | Q405 klemmt VSERVO_DIV. Gate über R418/R419 = 0,69 × V_SERVO (≥ 2,5 V ab 3,6 V). Q406 mit R420/R421 an +3V3. R417 10 kΩ in Serie | wie oben, Fehler ≤ 32 mV |
-| ISERVO_SENSE (GPIO1) | INA240 an +3V3 (ohne +3V3 kein Ausgang); Ladung in C415 | R416 10 kΩ zwischen C415 und Pin | Strom ≤ 0,22 mA, τ 10 ms |
-| ENABLE_BTN_N (GPIO10) | Pull-up an +3V3, C503 | Kondensator entlädt sich mit der Schiene | keine Quelle |
-| IMU_INT1, I2C | Module an +3V3 | – | keine Quelle |
-| IBUS_RX_3V3 (GPIO21) | U203 an +3V3 (Ioff am Eingang) | Vorgabe Blatt Lighting_IO | keine Quelle |
-| EXT_UART_RX (GPIO48) | externes Gerät an +5V_EXT | **Vorgabe Lighting_IO:** 4,7 kΩ in Serie am Stecker + ESD-Diode nach GND, 10 kΩ Pull-up an +3V3 | ≤ (3,3 − 0,3) V / 4,7 kΩ = 0,64 mA bei 3,3-V-Pegel |
-| Ausgänge zu U201/U202 | – | Ioff ±2 µA der Puffer | keine Rückspeisung |
-| EXT_UART_TX (GPIO47) | Rückspeisung in ein stromloses externes Gerät (USB-Betrieb) | **Vorgabe Lighting_IO:** 1 kΩ in Serie | ≤ 3,3 mA |
+| VBAT_SENSE (GPIO4) | Teiler am Akku | Q505 NTR4171P (−30 V, V_GS ±12 V, I_DSS ≤ 1 µA) schaltet den Teiler nur bei P3V3_OK ein (V_GS −0,5 × VBAT: −4,5 V bei 9 V, −10,75 V bei 21,5 V). C504 1 nF (τ 17 µs). D506 BAT54 vom Knoten nach +3V3 | Ohne P3V3_OK ist der Teiler offen: Knoten ≤ 1 µA × 17 kΩ = 20 mV. Mit P3V3_OK ist VDD ≥ 2,87 V und der Knoten ≤ 3,07 V (TVS-Klemmung) < VDD + 0,3 V = 3,17 V. Beim Abschalten fließt nur die Ladung von 1 nF über D506: ≤ 10 µA bei 10 V/ms → Pin ≤ VDD + 0,24 V |
+| VSERVO_SENSE (GPIO5) | Restladung der Servoschiene | Q405 NTR4171P (V_GS −0,82 × V_SERVO: −5,6 V bei 6,8 V), C417 1 nF, D403 BAT54 | wie oben; Leckstrom-Fehler ≤ 47 mV |
+| ISERVO_SENSE (GPIO1) | INA240 an +3V3 | C415 von 1 µF auf **10 nF** verkleinert, R412 10 kΩ (τ 0,1 ms), D404 BAT54 | ≤ 0,1 mA bei 10 V/ms Abfall → Pin ≤ VDD + 0,24 V |
+| ENABLE_BTN_N (GPIO10) | Pull-up an +3V3 | Kondensator C503 und R503 **entfernt** | keine gespeicherte Ladung am Pin |
+| EXT_UART_RX (GPIO48) | externes Gerät an J112 | U602 EN = P3V3_OK: +5V_EXT ist nur bei gutem +3V3 eingeschaltet; 4,7 kΩ, ESD nach GND, keine Klemmdiode | Ein über J112 versorgtes Gerät ist ohne P3V3_OK stromlos. **Vorgabe:** Geräte an J112 nur aus +5V_EXT versorgen; eigenversorgte Geräte brauchen eine eigene Abschaltung (Rest-Risiko, O-21) |
+| IBUS_RX_3V3 (GPIO21) | U203 an +3V3 | – | Ausgang ohne VCC hochohmig (Ioff); gleiche Schiene wie VDD |
+| IMU_INT1, I2C | Module an +3V3 (Blatt Sensors_Display) | Vorgabe: keine eigene Versorgung der Module | gleiche Schiene |
 
-Übergänge: Beim Hochlauf gibt Q506 die Klemmung frei, sobald +3V3 die
-Schwelle von Q506 überschreitet (0,8–1,4 V). VDD liegt dann noch unter 3 V.
-Den Strom begrenzt der 10-kΩ-Serienwiderstand auf ≤ (1,8 V − VDD − 0,3 V) /
-10 kΩ, also < 0,1 mA für die Dauer der Rampe. Das ist geschätzt und bleibt
-am Muster zu messen (O-21).
+Annahme: +3V3 fällt höchstens mit 10 V/ms. Geschätzt sind etwa 3 V/ms, aus
+ca. 32 µF Schienenkapazität und 0,1 A Last. Die BAT54-Grenze von 240 mV
+gilt bis 0,1 mA (Nexperia, 25 °C). Am Muster messen (O-21).
 
-ERC: 16 Hinweise „Label connected to only one pin". Jeder ist im
-Anschlussplan (Abschnitt 6) einer geplanten Gegenstelle zugeordnet. Sie
-werden nicht ausgeblendet; `scripts/kit verify` bleibt bis dahin
-fehlgeschlagen.
+ERC: anfangs 16 Hinweise „Label connected to only one pin", seit
+Actuators und Lighting_IO noch 3 (Sensors_Display). Jeder ist im Anschlussplan
+(Abschnitt 6) zugeordnet; nicht ausgeblendet, `scripts/kit verify` bleibt
+bis dahin fehlgeschlagen.
 
 ## 4. Komponentendaten (Zwischenstand)
 
@@ -836,7 +833,7 @@ Schutzkoordination (O-17).
 | O-18 | Gesamtstromüberwachung INA240A3 an 2-mΩ-Ausgangsshunt, GPIO1 (aufgenommen). Offen: Gesamtfehlerbudget, ADC-Filterung, Kalibrierung | Agent |
 | O-19 | 3S festgelegt; Servo-Sollwert 6,8 V vorläufig – Festschreibung nach Messung von Schleifenwiderstand und Überschwingen | Owner |
 | O-20 | Fehlerreaktion: Antrieb sperren; Zeitgrenzen, Hysterese und Lenkverhalten in der Firmware-Spezifikation festlegen | Owner |
-| O-21 | Eingangsschutz umgesetzt (3.13); offen: Messung der Übergänge (Hochlauf, Akku ziehen mit geladener Servoschiene), Vorgaben für EXT_UART und i-BUS auf Lighting_IO umsetzen | Agent |
+| O-21 | Eingangsschutz überarbeitet (3.13): P3V3_OK-Supervisor, geschaltete Teiler, BAT54-Spannungsgrenze, kein C am Tasterpin, +5V_EXT an P3V3_OK. Offen: Abfallrate von +3V3 und Pinspannungen beim Ab-/Einschalten messen; eigenversorgte Geräte an J112 ausschließen | Agent / Owner |
 | O-22 | Datenblattquellen ohne verifizierten Herstellerlink: C101 Rubycon 35PJV330M10X10.5, C102/C301 Samsung CL32B106KBJNNNE, L301 Würth 74439346100 (we-online antwortet 403), C306 Yageo CC0603JRNPO9BN750 (C282074). Keine URL nach Namensmuster eintragen | Agent |
 | O-23 | +5V: LED SK6812MINI-E und Buzzer CMT-8540S-SMT-TR gewählt (3.8); Schutzelement für J112 umgesetzt (TPS2553, Anschlussplan 8). Offen: Opsco-Datenblatt direkt vom Hersteller (nur LCSC-Kopie), LED-Footprint gegen Rev B/2, Buzzer-Beschaffung (LCSC 0) und Funktion der linken Buzzer-Pads, Lastsprünge und Regelschleife am Prototyp messen | Agent / Owner |
 | O-24 | Einschaltstrom beim Einstecken (C101, C102, Reglereingänge) rechnen und messen; Q101-SOA und Sicherungs-I²t prüfen | Agent |

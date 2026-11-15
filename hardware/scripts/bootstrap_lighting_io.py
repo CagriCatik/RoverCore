@@ -31,7 +31,7 @@ FILE = "Lighting_IO.kicad_sch"
 NS = "5b8d1f3a-2e6c-4a7b-9d0e-1c3f5a7b0601"
 POWER_NETS = {"GND": "power:GND", "+3V3": "power:+3V3", "+5V": "power:+5V"}
 GLOBAL = {"LED_1_5V": "input", "LED_2_5V": "input", "LED_3_5V": "input", "LED_4_3V3": "input", "BUZZER": "input",
-          "IBUS_RX_3V3": "output", "EXT_UART_TX": "input", "EXT_UART_RX": "output"}
+          "IBUS_RX_3V3": "output", "EXT_UART_TX": "input", "EXT_UART_RX": "output", "P3V3_OK": "input"}
 R0603, C0603, C0805 = ("Resistor_SMD:R_0603_1608Metric", "Capacitor_SMD:C_0603_1608Metric",
                        "Capacitor_SMD:C_0805_2012Metric")
 YAGEO_RC = "https://www.yageogroup.com/content/datasheet/asset/file/PYU-RC_GROUP_51_ROHS_L"
@@ -69,9 +69,9 @@ def parts():
         n = 601 + 2 * k
         p += [
             (ref, "ProjectSymbols:TPS2553DBV", "TPS2553", "Package_TO_SOT_SMD:SOT-23-6", (x0 + 25.4, 76.2, 0),
-             {"1": "+5V", "3": "=1", "2": "GND", "6": out, "4": "NC", "5": "ILIM_%s" % ref},
+             {"1": "+5V", "3": "P3V3_OK" if ref == "U602" else "=1", "2": "GND", "6": out, "4": "NC", "5": "ILIM_%s" % ref},
              dict(TPS, _ref_at=(-7.62, -8.89), _val_at=(2.54, -8.89),
-                  Description="5 V switch for %s; EN tied to IN (always on), auto-retry; FAULT unused" % purpose)),
+                  Description="5 V switch for %s; %s, auto-retry; FAULT unused" % (purpose, "EN = P3V3_OK (O-21: external device powered only while +3V3 is good; EN VIH 1.1 V)" if ref == "U602" else "EN tied to IN (always on)"))),
             (rref, "Device:R", rval, R0603, (x0 + 50.8, 83.82, 0), {"1": "ILIM_%s" % ref, "2": "GND"},
              rc(mpn, lcsc, "RILIM: IOS per SLVS841G eq. 1/3 (Lighting_IO docstring); keep the trace short")),
             ("C%d" % n, "Device:C", "100n 50V", C0603, (x0 - 5.08, 76.2, 0), {"1": "+5V", "2": "GND"},

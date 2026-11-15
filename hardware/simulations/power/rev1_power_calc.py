@@ -240,11 +240,28 @@ def controller_checks():
     tau_g = r_th * (42e-12 + 40e-12 + 5e-12)
     print("  transient: Q403 gate tau %.1f us; RUN tau with C420 %.2f ms" % (tau_g * 1e6, run_th * 100e-9 * 1e3))
 
-    print("\n== O-21 shunts (estimates) ==")
-    for name, rdiv, kg in (("VBAT", 1 / (1 / 120e3 + 1 / 20e3), 0.5), ("VSERVO", 1 / (1 / 100e3 + 1 / 47e3), 220 / 320)):
-        print("  %-6s divider source %.1f kOhm; shunt leakage 1 uA -> error %.1f mV; shunt gate gain %.3f"
-              % (name, rdiv / 1e3, 1e-6 * rdiv * 1e3, kg))
-    print("  inverter gate from +3V3: 3.251 x 100/110 = %.2f V >= 2.5 V" % (3.251 * 100 / 110))
+    print("\n== O-21 input protection (estimates) ==")
+    # TLV809E (SLVSES2J): VIT- 2.93 V +-2 %, hysteresis 0.9-1.5 %, tPD_HL <= 50 us, tD 33-67 ms (variant D)
+    vit_min, vit_max = 2.93 * 0.98, 2.93 * 1.02
+    print("  P3V3_OK low below %.2f-%.2f V within 50 us; high again %.0f-%.0f ms after VDD > VIT+" % (vit_min, vit_max, 33, 67))
+    print("  ADC limit while P3V3_OK high: VIH max = VDD + 0.3 >= %.2f V; VBAT_DIV max 3.07 V at the TVS clamp" % (vit_min + 0.3))
+    for name, k in (("VBAT  (Q505, 100k/100k)", 0.5), ("VSERVO (Q405, 100k/22k)", 100 / 122)):
+        for v in ((9.0, 12.6, 21.5) if "VBAT" in name else (6.8, 7.81)):
+            print("  %s: VGS at %.2f V = -%.2f V (NTR4171P: spec -4.5 V, limit -12 V)" % (name, v, v * k))
+    for name, r, c in (("VBAT_DIV", 17.1e3, 1e-9), ("VSERVO_DIV", 32e3, 1e-9), ("ISERVO_FILT", 10e3, 10e-9)):
+        i_clamp = c * 10.0 / 1e-3        # rail falling at <= 10 V/ms (assumption, 3 V/ms estimated from 32 uF and 0.1 A)
+        print("  %-11s tau %5.1f us; BAT54 current at 10 V/ms <= %.0f uA -> VF <= 240 mV (spec point 0.1 mA)"
+              % (name, r * c * 1e6, i_clamp * 1e6))
+    print("  divider switch off-leakage 1 uA (NTR4171P, 25 degC max) -> VBAT_DIV 20 mV, VSERVO_DIV 47 mV")
+
+    print("\n== Actuators open-drain outputs (estimates) ==")
+    for vext in (7.4, 7.81):
+        print("  foreign %.2f V on the signal pin: Q on -> %.1f mA through 470 Ohm into Q; Q off -> BAT54 reverse %.2f V, "
+              "current into +5V = IR only (<= 2 uA at 25 V)" % (vext, vext / 470 * 1e3, vext - 4.74))
+    for rin in (10e3, 50e3, 1e9):
+        i = (5.16 - 0.3) / (2.2e3 + 470 + rin)
+        print("  high level into a %s input: %.2f V" % ("open" if rin > 1e8 else "%.0fk" % (rin / 1e3), 4.74 - 0.32 - i * 2.2e3 if rin < 1e8 else 4.74 - 0.24))
+    print("  pull-up current while low: %.1f mA per channel, %.1f mA for 5 channels" % (4.86 / 2.2e3 * 1e3, 5 * 4.86 / 2.2e3 * 1e3))
 
 
 if __name__ == "__main__":
