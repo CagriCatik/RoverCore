@@ -137,6 +137,7 @@ def build(sheet, spec, nets):
     s.wired = list(spec.get("wire", []))
     s.anchor = {k: tuple(v) for k, v in spec.get("anchor", {}).items()}
     s.label_only = {tuple(v) for v in spec.get("label_only", [])}
+    s.label_at = dict(spec.get("label_at", {}))
     power_nets = {p: "power:" + p for p in info["power"]}
     hier = dict({k: v for k, v in info["hier"].items()}, **{k: "global:" + v for k, v in info["global"].items()})
     # nets that carry a local label as well as the hierarchical label (keeps the net name chosen by KiCad):

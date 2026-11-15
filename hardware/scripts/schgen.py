@@ -43,6 +43,7 @@ class Sheet:
         self.fallbacks = []
         self.power_nets = {}
         self.label_only = set()    # (ref, pin) of wired nets that keep a plain label (e.g. dense connector rows)
+        self.label_at = {}         # net -> (x, y, (dx, dy)): net label of a wired net at a free point on its wire
 
     def uid(self, label):
         return str(uuid.uuid5(self.ns, label))
@@ -122,9 +123,12 @@ class Sheet:
             ref_at, val_at, just = (x + rdx, y + rdy), (x + vdx, y + vdy), "left"
             angle = rot if rot in (90, 270) else 0   # KiCad draws field text relative to the symbol rotation
         elif ref.startswith("#FLG"):  # keep the flag text clear of the net symbol at the same point
-            ref_at, val_at, just, angle = (x, y + 3.81), (round(x - 1.27, 4), round(y - 2.54, 4)), "right", 0
+            ref_at, val_at, just, angle = (x, y + 3.81), (round(x - 1.27, 4), round(y - 1.27, 4)), "right", 0
         elif power:
-            ref_at, val_at, just, angle = (x, y + 3.81), (x, y + 5.08), None, 0
+            # supply symbols (arrow up): value above the arrow like KiCad's default, so it never lands on the
+            # neighbouring pin row; GND keeps its hidden value below
+            above = not lib_id.endswith(":GND")
+            ref_at, val_at, just, angle = (x, y + 3.81), (x, round(y - 3.81, 4) if above else y + 5.08), None, 0
         elif self.vertical(lib_id, rot):
             ref_at, val_at, just = (x + 6.35, y - 1.27), (x + 6.35, y + 1.27), "left"
             angle = rot if rot in (90, 270) else 0
@@ -250,6 +254,12 @@ class Sheet:
                     self.pwr += 1
                     name = self.power_nets[net].split(":")[1]
                     self._symbol(self.power_nets[net], "#PWR%s%02d" % (m[0], self.pwr), name, "", ex, ey, 0, {"1": net}, {})
+                elif m == members[0] and net in self.label_at:
+                    # name label moved off a short stub; it must lie on a wire of this net or the net would split
+                    lx, ly, d = self.label_at[net]
+                    if not any(n == net and self._on((lx, ly), a, b) for n, a, b in self.segs):
+                        raise SystemExit("label_at %s: (%s, %s) is not on a wire of the net" % (net, lx, ly))
+                    self.label(net, lx, ly, tuple(d), "%s-%s" % m, pin["hier"])
                 else:
                     self.label(net, ex, ey, pin["dir"], "%s-%s" % m, pin["hier"])
             # junctions: points with three or more wire ends, or a wire end inside another wire of the net

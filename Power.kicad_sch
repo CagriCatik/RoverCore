@@ -1674,7 +1674,7 @@
 		(dnp no)
 		(uuid "098614e4-ce40-5555-96f6-d0738259ec91")
 		(property "Reference" "J101"
-			(at 33.019999999999996 85.09 90)
+			(at 60.96 85.09 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1683,7 +1683,7 @@
 			)
 		)
 		(property "Value" "XT30PW-M"
-			(at 33.019999999999996 87.63 90)
+			(at 60.96 87.63 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2480,7 +2480,7 @@
 	)
 	(symbol
 		(lib_id "Connector:TestPoint")
-		(at 167.64 83.82 0)
+		(at 180.34 83.82 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom no)
@@ -2488,7 +2488,7 @@
 		(dnp no)
 		(uuid "a327acac-15da-5b2a-ad4c-a3b7eb69b196")
 		(property "Reference" "TP102"
-			(at 170.17999999999998 81.27999999999999 0)
+			(at 182.88 81.27999999999999 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2497,7 +2497,7 @@
 			)
 		)
 		(property "Value" "VBAT_PROT"
-			(at 170.17999999999998 83.82 0)
+			(at 182.88 83.82 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2506,7 +2506,7 @@
 			)
 		)
 		(property "Footprint" "TestPoint:TestPoint_Pad_D1.5mm"
-			(at 167.64 83.82 0)
+			(at 180.34 83.82 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2515,7 +2515,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 167.64 83.82 0)
+			(at 180.34 83.82 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2524,7 +2524,7 @@
 			)
 		)
 		(property "Description" "Test point protected battery rail; bare copper pad, no purchased part (excluded from BOM)"
-			(at 167.64 83.82 0)
+			(at 180.34 83.82 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2546,7 +2546,7 @@
 	)
 	(wire
 		(pts
-			(xy 167.64 83.82) (xy 167.64 88.9)
+			(xy 180.34 83.82) (xy 180.34 88.9)
 		)
 		(stroke
 			(width 0)
@@ -3346,7 +3346,7 @@
 	)
 	(wire
 		(pts
-			(xy 185.42 107.95) (xy 167.64 107.95)
+			(xy 185.42 107.95) (xy 180.34 107.95)
 		)
 		(stroke
 			(width 0)
@@ -3356,7 +3356,7 @@
 	)
 	(wire
 		(pts
-			(xy 167.64 107.95) (xy 167.64 88.9)
+			(xy 180.34 107.95) (xy 180.34 88.9)
 		)
 		(stroke
 			(width 0)
@@ -3366,7 +3366,27 @@
 	)
 	(wire
 		(pts
-			(xy 147.32 107.95) (xy 167.64 107.95)
+			(xy 205.74 107.95) (xy 185.42 107.95)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "2bfe4e12-071a-50a4-a89c-9bc4c630ce66")
+	)
+	(wire
+		(pts
+			(xy 226.06 107.95) (xy 205.74 107.95)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "59731dee-30fe-5add-895e-bf1779fc6b38")
+	)
+	(wire
+		(pts
+			(xy 147.32 107.95) (xy 180.34 107.95)
 		)
 		(stroke
 			(width 0)
@@ -3394,28 +3414,8 @@
 		)
 		(uuid "a921858c-3cd8-5938-bdf3-eb38812b2b82")
 	)
-	(wire
-		(pts
-			(xy 205.74 107.95) (xy 185.42 107.95)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "2bfe4e12-071a-50a4-a89c-9bc4c630ce66")
-	)
-	(wire
-		(pts
-			(xy 226.06 107.95) (xy 205.74 107.95)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "59731dee-30fe-5add-895e-bf1779fc6b38")
-	)
 	(label "VBAT_PROT"
-		(at 167.64 88.9 270)
+		(at 180.34 88.9 270)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -3443,10 +3443,10 @@
 		(uuid "fde106ff-e0e1-547c-b65e-f437b6b611c5")
 	)
 	(junction
-		(at 167.64 107.95)
+		(at 180.34 107.95)
 		(diameter 0)
 		(color 0 0 0 0)
-		(uuid "fb32c2e7-2fa4-5f07-abd3-12c8c5caa95a")
+		(uuid "0612e616-f773-5d9b-972d-7ef5ab506efb")
 	)
 	(hierarchical_label "VBAT_PROT"
 		(shape output)
@@ -3479,7 +3479,7 @@
 			)
 		)
 		(property "Value" "PWR_FLAG"
-			(at 74.93 86.36 0)
+			(at 74.93 87.63 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3546,7 +3546,7 @@
 			)
 		)
 		(property "Value" "PWR_FLAG"
-			(at 255.27 132.08 0)
+			(at 255.27 133.35 0)
 			(effects
 				(font
 					(size 1.27 1.27)

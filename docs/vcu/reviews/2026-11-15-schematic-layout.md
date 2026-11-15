@@ -53,8 +53,7 @@ MPN-Felder.
   DevKit-Sockel), an den Pull-Widerstandsreihen auf Actuators und an
   Steckerversorgungspins – bewusst so belassen.
 - LED_4_5V zwischen U202 und R610 als Label (kein kollisionsfreier Weg).
-- Restliche Textkollisionen (u. a. Buzzer) werden im Anschluss bereinigt
-  (siehe Nachtrag unten).
+- Textkollisionen (u. a. Buzzer) im Nachtrag unten bereinigt.
 
 ## Ablage
 
@@ -63,3 +62,35 @@ unter `qa/generated/schematic-review/2026-11-15_18-23/` und werden nicht
 versioniert (`.gitignore`). Erzeugt mit
 `python3 hardware/scripts/render_schematic_review.py <Ordner>`; es sind aus
 KiCad exportierte, gerenderte Ansichten (SVG → PNG), keine Bildschirmfotos.
+
+## Nachtrag: Textkollisionen
+
+Nur Textlage, Bauteilpositionen und Leitungsführung geändert; keine
+Versorgung quer über das Blatt verdrahtet.
+
+| Blatt | Änderung |
+|---|---|
+| alle | Werte von Versorgungssymbolen über dem Pfeil; PWR_FLAG-Text näher am Flag (keine Überdeckung mit dem Versorgungswert) |
+| Lighting_IO | Buzzer-Block (BZ101, D605, Q601, R611, R612) nach rechts, Feldlagen angepasst; U203-Felder über das Symbol; D608-Felder neben das Bauteil |
+| ServoPower | RUN-Block nach unten (VBAT_PROT-Label nicht mehr im Kommentar); Ausgangskondensatoren mit Platz für ihre Werte, NT403 so, dass die Steigleitung keinen Wert schneidet; L401, R412, C415, R410, R419, Q405, C417 verschoben; CF401-Felder neben das Bauteil |
+| Controller | D501-Felder; TP502 gedreht (Prüfpunkt unten, +3V3 oben); P3V3_OK an Q506 als globales Label statt Leitung durch den Gruppenkommentar |
+| Power | J101-Felder rechts vom Stecker; TP102 in Gruppe 3 (nicht mehr auf der Gruppengrenze) |
+| LogicPower | +5V-Symbol an C304 statt neben TP301 |
+| Actuators | Steckverbinder je Kanal 10,16 mm nach rechts, Steckerfelder darunter; R24x tiefer (DRV-Label kreuzt keinen Knoten); Q20x-Werte nicht mehr unter dem GND-Symbol |
+
+Neue Generator-Option `label_at` (`sheet_layouts.py`) setzt den Netznamen eines
+verdrahteten Netzes an eine freie Stelle der Leitung. Liegt der Punkt nicht auf
+einer Leitung dieses Netzes, bricht der Generator ab. Genutzt für
+VSERVO_DIV, VSERVO_SW_G, VSERVO_SW_DRV, VSENSE_5V, FB_5V, VBAT_PROT
+(Controller) und VBAT_DIV.
+
+| Prüfung | Ergebnis |
+|---|---|
+| `compare_schematic_revisions.py e473ac2` und gegen `80b497d` | identisch (129 Netze, 211 Bauteile) |
+| ERC | 3 Befunde, dieselben (isolierte Labels IMU_INT1, I2C_SDA, I2C_SCL) |
+| `scripts/kit verify` | unveränderte Befundzahlen (erc 3, drc 1, schematic_parity 199, component_metadata 42, bom 191) |
+| `check_socket_pinmap.py`, Unit-Tests | unverändert, 77 OK (1 übersprungen) |
+| Sichtprüfung | alle sechs Blätter neu gerendert und durchgesehen; Bilder lokal unter `qa/generated/schematic-review/2026-11-15_18-23/after-textfix/` (nicht versioniert) |
+
+Bleibt bewusst: LED_4_5V als Label; Labels an dichten Pinreihen. Unveränderte
+Befundzahlen bedeuten weiterhin keine Freigabe.

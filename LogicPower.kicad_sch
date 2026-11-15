@@ -3792,27 +3792,17 @@
 	)
 	(wire
 		(pts
-			(xy 236.22 96.52) (xy 236.22 88.9)
+			(xy 168.91 96.52) (xy 182.88 96.52)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "8f5cec20-6c96-5c90-b9b8-591f636f905f")
+		(uuid "28612afe-cf3d-5663-96b7-d82da3344870")
 	)
 	(wire
 		(pts
-			(xy 213.36 96.52) (xy 236.22 96.52)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "d063ac86-118b-5913-87c0-96d5b0ab6e3f")
-	)
-	(wire
-		(pts
-			(xy 198.12 96.52) (xy 213.36 96.52)
+			(xy 198.12 96.52) (xy 182.88 96.52)
 		)
 		(stroke
 			(width 0)
@@ -3822,35 +3812,45 @@
 	)
 	(wire
 		(pts
-			(xy 182.88 96.52) (xy 198.12 96.52)
+			(xy 213.36 96.52) (xy 198.12 96.52)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "09fa155c-f539-5d99-9903-f9cbe6c195a5")
+		(uuid "d063ac86-118b-5913-87c0-96d5b0ab6e3f")
 	)
 	(wire
 		(pts
-			(xy 168.91 96.52) (xy 182.88 96.52)
+			(xy 236.22 96.52) (xy 213.36 96.52)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "28612afe-cf3d-5663-96b7-d82da3344870")
+		(uuid "8f5cec20-6c96-5c90-b9b8-591f636f905f")
+	)
+	(wire
+		(pts
+			(xy 236.22 88.9) (xy 236.22 96.52)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "e7316879-edee-5877-be41-73e127e597a8")
 	)
 	(symbol
 		(lib_id "power:+5V")
-		(at 236.22 88.9 0)
+		(at 182.88 96.52 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom no)
 		(on_board no)
 		(dnp no)
-		(uuid "cb858ecc-fa8f-5d18-bc51-fe23b7923fa8")
-		(property "Reference" "#PWRTP30110"
-			(at 236.22 92.71000000000001 0)
+		(uuid "45b3734e-3c09-5a26-b418-6fcd596524ea")
+		(property "Reference" "#PWRC30410"
+			(at 182.88 100.33 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3859,7 +3859,7 @@
 			)
 		)
 		(property "Value" "+5V"
-			(at 236.22 93.98 0)
+			(at 182.88 92.71 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3867,7 +3867,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 236.22 88.9 0)
+			(at 182.88 96.52 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3876,7 +3876,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 236.22 88.9 0)
+			(at 182.88 96.52 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3885,7 +3885,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 236.22 88.9 0)
+			(at 182.88 96.52 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3894,12 +3894,12 @@
 			)
 		)
 		(pin "1"
-			(uuid "8d8ed160-d9c6-504b-838c-74d385dc1ea5")
+			(uuid "79a4c3bd-f694-5f68-9887-b88f6020c645")
 		)
 		(instances
 			(project "RoverCore"
 				(path "/d069f045-7f09-4f8a-bd29-51e87a8a0808/70263b16-6178-5c3f-baaf-087f426f170f"
-					(reference "#PWRTP30110")
+					(reference "#PWRC30410")
 					(unit 1)
 				)
 			)
@@ -3950,7 +3950,7 @@
 		(uuid "333f0e97-2670-5128-8b0f-32c244fafffe")
 	)
 	(label "VSENSE_5V"
-		(at 236.22 118.11 90)
+		(at 238.76 118.11 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -4006,7 +4006,7 @@
 		(uuid "bd7da468-f76e-5143-999f-0bf570febfab")
 	)
 	(label "FB_5V"
-		(at 236.22 138.43 90)
+		(at 205.74 135.89 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -4041,7 +4041,7 @@
 			)
 		)
 		(property "Value" "PWR_FLAG"
-			(at 49.53 91.44 0)
+			(at 49.53 92.71 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4108,7 +4108,7 @@
 			)
 		)
 		(property "Value" "PWR_FLAG"
-			(at 212.09 93.98 0)
+			(at 212.09 95.25 0)
 			(effects
 				(font
 					(size 1.27 1.27)
