@@ -123,6 +123,85 @@
 		)
 		(uuid "f0d52fc1-f21c-5363-a192-cfb3b5a85955")
 	)
+	(sheet
+		(at 127.0 86.36)
+		(size 38.1 15.24)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0.0000)
+		)
+		(uuid "3572c06e-32ee-5f4c-a534-3f1640e128b2")
+		(property "Sheetname" "ServoPower"
+			(at 127.0 85.6484 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "ServoPower.kicad_sch"
+			(at 127.0 102.1846 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+				(hide yes)
+			)
+		)
+		(pin "VBAT_PROT" input
+			(at 127.0 93.98 180)
+			(uuid "11521b75-1c3d-5492-9fda-ce35003a80ec")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(instances
+			(project "RoverCore"
+				(path "/d069f045-7f09-4f8a-bd29-51e87a8a0808"
+					(page "4")
+				)
+			)
+		)
+	)
+	(wire
+		(pts
+			(xy 114.3 58.42) (xy 114.3 93.98)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "447b30b8-3c9a-55dc-9088-5466dceb7595")
+	)
+	(wire
+		(pts
+			(xy 114.3 93.98) (xy 127.0 93.98)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "a1584892-6184-5ad7-8069-c5d1de665b1b")
+	)
+	(junction
+		(at 114.3 58.42)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "9401eae2-7c87-5aec-8a01-08caebdee7f8")
+	)
 	(sheet_instances
 		(path "/"
 			(page "1")

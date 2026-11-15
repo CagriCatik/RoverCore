@@ -250,6 +250,59 @@ wie lange die Ausgangsladung (ca. 606 µF bei 6,8 V ≈ 14 mJ) ansteht und
 welche Entladepfade es gibt, wird anhand der tatsächlichen Schaltung geprüft
 und am Prototyp gemessen.
 
+### 3.5a Schaltplanblatt `ServoPower` (Stand 2026-11-15)
+
+Datei `ServoPower.kicad_sch` (A3), einmalig erzeugt mit
+`hardware/scripts/bootstrap_servo_power.py`; danach ist die KiCad-Datei
+maßgeblich. LTC7803-Angaben aus Datenblatt **Rev A** (LCSC-Spiegel); Rev B
+konnte nicht abgerufen werden (O-7). Das LTC7803-Symbol fehlt in KiCad und
+liegt projektlokal in `hardware/libraries/symbols/ProjectSymbols.kicad_sym`
+(`sym-lib-table` mit `${KIPRJMOD}`), Pinbelegung MSOP-16E laut Rev A:
+1 TRACK/SS, 2 SENSE+, 3 SENSE−, 4 VFB, 5 ITH, 6 RUN, 7 FREQ, 8 PLLIN/SPREAD,
+9 MODE, 10 INTVCC, 11 EXTVCC, 12 VIN, 13 BG, 14 BOOST, 15 TG, 16 SW,
+17 (Exposed Pad) GND.
+
+| Funktion | Bauteil / Beschaltung | Begründung |
+|---|---|---|
+| Regler | U401 LTC7803EMSE#PBF, MSOP-16-1EP mit Thermal-Vias | FREQ = GND (375 kHz), PLLIN/SPREAD = GND (fest), MODE = INTVCC (Forced Continuous), EXTVCC = VSERVO_REG (6,8 V > 4,7 V Umschaltschwelle, abs. max. 30 V) |
+| FETs | Q401/Q402 Infineon BSC026N04LS, PG-TDSON-8 | generisches Symbol S 1–3, G 4, D 5 = Footprint-Pads |
+| Drossel | L401 Coilcraft XAL1010-332MED (3,3 µH, **Kandidat**; 2,2 µH Alternative) | siehe Rechnung unten |
+| Strom-Shunt | RS401 Vishay WSL10203L000FEA 3 mΩ, Footprint R_1020 | Land Pattern gegen Vishay prüfen (O-26) |
+| Sense-Filter | RF401 100 Ω **nur in SENSE+**, CF401 1 nF C0G über SENSE+/SENSE− | Datenblatt Abb. 2a; SENSE− zieht bei 6,8 V ca. 0,7 mA, ein Widerstand dort würde die Schwelle verschieben. Startwerte |
+| Boost | D401 Nexperia BAS316 (schnelle PN-Diode), C411 100 nF | Sperrspannung der Diode ≈ VIN; Schottky-Kandidaten überschreiten heiß den 30-µA-Mindeststrom der Ladepumpe. Preis: ca. 0,4 V weniger Gatespannung am oberen FET (O-25) |
+| INTVCC | C412 4,7 µF + C413 1 µF | Datenblatt: ≥ 4,7 µF, zusätzlich 1 µF direkt an den Pins |
+| Kompensation | R413 11 kΩ, C418 3,3 nF, C419 100 pF | Startwerte aus Abb. 13 (5 V/10 A), im Labor abstimmen |
+| Soft-Start | C414 33 nF | 2,1 ms |
+| Rückkopplung | R403 75,0 kΩ / R404 10,0 kΩ, 0,1 % Dünnfilm (Yageo RT0603) | 6,80 V (6,69–6,91 V) |
+| Rückkopplungsabgriff | **NT403**: ein Punkt an den Ausgangskondensatoren, **vor** dem Messshunt RS402 | Abfall an RS402 (22 mV bei 11,2 A) wird nicht ausgeregelt, ist im Spannungsbudget enthalten (3.4) |
+| Kelvin-Leitungen | **NT401/NT402** (SENSE+/SENSE− an RS401), **NT404/NT405** (INA240 an RS402) | Net-Ties machen die Messleitungen zu eigenen Netzen, die getrennt vom Laststrom als enges Paar ab den Shunt-Pads geführt werden |
+| RUN / Abschaltung | R405 140 kΩ / R406 20 kΩ (ein 9,60 V, aus 8,80 V); Q403 2N7002 zieht RUN bei `SERVO_PWR_DIS` = high auf GND; R407 100 kΩ Gate-Pull-down | Reglerabschaltung, keine Leistungstrennung (3.6) |
+| Ausgangskondensatoren | C406/C407 Panasonic 16SVPG270MX, C408–C410 3 × 22 µF Murata | Footprint CP_Elec_6.3x7.7 gegen SVPG (6,3 × 7,9) prüfen (O-26) |
+| Eingangskondensatoren | C401–C404 4 × 10 µF/50 V, C405 100 nF am VIN-Pin | Eingangsrippel bis ca. 5,6 A bei 12,6 V |
+| Strommessung | RS402 2 mΩ (WSL10202L000FEA), U402 INA240A3DR (Symbol INA240A1D, gleiche Pinbelegung), REF1/REF2 = GND, R412 1 kΩ / C415 1 µF zum ADC | 3.6 |
+| Spannungsmessung | R410 100 kΩ / R411 47 kΩ, C417 100 nF → VSERVO_SENSE | 6,91 V → 2,21 V, 7,81 V → 2,50 V (ADC 0–2,9 V) |
+| Messpunkte | TP401 +V_SERVO, TP402 GND, TP403 ISERVO_SENSE | Kupferpads, nicht in der BOM |
+
+Signale zum noch fehlenden Controller- bzw. Aktorblatt (`SERVO_PWR_DIS`,
+`VSERVO_SENSE`, `ISERVO_SENSE`, `+V_SERVO`, `+3V3`) sind vorerst globale
+Labels; VBAT_PROT kommt hierarchisch vom Blatt `Power`.
+
+**Auslegung mit Toleranzen** (L ±20 %, f_min 340 kHz, V_out 6,69–6,91 V,
+V_in 9,0–12,6 V, R_S +1 % und +100 ppm/K über +60 K, V_SENSE,min 45 mV;
+`rev1_power_calc.py`, Funktion `servo_stage_parts`; Schätzung):
+
+| Größe | 2,2 µH (XAL1010-222ME) | **3,3 µH (XAL1010-332MED)** |
+|---|---|---|
+| Rippel nominal / ungünstigst | 3,79 / 5,24 A | 2,53 / 3,50 A |
+| nutzbarer Ausgangsstrom min. | 12,14 A (Reserve 0,9 A zu 11,2 A) | **13,01 A (Reserve 1,8 A)** |
+| Spitzenstromgrenze max. | 18,5 A | 18,5 A |
+| I_sat (−30 %, 25 °C) | 34,0 A | 27,4 A; Wert bei 125 °C nicht veröffentlicht |
+| Sense-Rippel (Ziel 10–20 mV) | 11,4 mV | **7,6 mV – darunter** (Störabstand im Labor prüfen) |
+| Kupferverlust (DCR max., heiß) | 0,46 W | 0,67 W; Kernverlust nicht enthalten |
+| FET oben, Leitung (+ Schalten grob) | 0,49 W (+0,12) bei 9 V; 0,35 W (+0,16) bei 12,6 V | gleich |
+| FET unten, Leitung | 0,15 W (9 V) / 0,29 W (12,6 V) | gleich |
+| RS401 | 0,38 W bei 11,2 A, 1,03 W an der Stromgrenze (2 W bei 70 °C) | gleich |
+
 ### 3.6 Strommessung der Servoschiene (O-18)
 
 Gesamtstrom-Überlastindikator, keine Erkennung eines einzelnen blockierten
@@ -568,6 +621,9 @@ Schutzkoordination (O-17).
 | O-22 | Datenblattquellen ohne verifizierten Herstellerlink: C101 Rubycon 35PJV330M10X10.5, C102/C301 Samsung CL32B106KBJNNNE, L301 Würth 74439346100 (we-online antwortet 403), C306 Yageo CC0603JRNPO9BN750 (C282074). Keine URL nach Namensmuster eintragen | Agent |
 | O-23 | +5V: LED SK6812MINI-E und Buzzer CMT-8540S-SMT-TR gewählt (3.8); offen: Opsco-Datenblatt direkt vom Hersteller (nur LCSC-Kopie), Footprint gegen Rev B/2, Buzzer-Beschaffung (LCSC 0), Schutzelement für J112, Lastsprünge und Regelschleife am Prototyp messen | Agent / Owner |
 | O-24 | Einschaltstrom beim Einstecken (C101, C102, Reglereingänge) rechnen und messen; Q101-SOA und Sicherungs-I²t prüfen | Agent |
+| O-25 | Boost-Diode BAS316: Gatespannung oberer FET (INTVCC − V_F ≈ 4,3–4,6 V) gegen BOOST-UVLO des LTC7803 und R_DS(on)-Kurve des BSC026N04LS prüfen; Leckstrom heiß am Muster messen | Agent |
+| O-26 | Footprints prüfen: R_1020 gegen Vishay-WSL1020-Land-Pattern, CP_Elec_6.3x7.7 gegen Panasonic SVPG, MSOP-16-1EP gegen LTC MSE16 (0213 Rev F), PG-TDSON-8 gegen Infineon | Agent |
+| O-27 | ServoPower: Kompensation (R413/C418/C419) und Sense-Filter (RF401/CF401) im Labor abstimmen; Entscheidung 2,2 oder 3,3 µH nach Störabstand und Lastsprung; Datenblattquellen Coilcraft, Panasonic SVPG, Samsung/Yageo-MLCC und RT-Widerstände nur als LCSC-Kopie (O-22) | Agent |
 
 Erledigt: O-5 (DevKit-LDO), O-6 (Lenkservos), O-9 (Projektort), O-14
 (ersetzt durch O-17). O-10 bis O-13 stehen im

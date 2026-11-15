@@ -33,6 +33,7 @@ class Sheet:
         self.title, self.comment = title, comment
         self.libs, self.items, self.endpoints = set(), [], {}
         self.pwr = 0
+        self.paper = "A4"
 
     def uid(self, label):
         return str(uuid.uuid5(self.ns, label))
@@ -62,7 +63,9 @@ class Sheet:
     @classmethod
     def lib_symbol(cls, lib_id):
         lib, name = lib_id.split(":")
-        block = cls._block((kicad_env.shared_support() / "symbols" / (lib + ".kicad_sym")).read_text(), name)
+        path = (ROOT / "hardware/libraries/symbols" / (lib + ".kicad_sym") if lib == "ProjectSymbols"
+                else kicad_env.shared_support() / "symbols" / (lib + ".kicad_sym"))
+        block = cls._block(path.read_text(), name)
         if "(extends" in block:
             raise SystemExit("Derived symbol %s is not supported" % lib_id)
         return block.replace('(symbol "%s"' % name, '(symbol "%s"' % lib_id, 1)
@@ -105,7 +108,12 @@ class Sheet:
                 "\t\t(in_bom %s)\n\t\t(on_board %s)\n\t\t(dnp no)\n\t\t(uuid \"%s\")\n"
                 % (lib_id, x, y, rot, "yes" if (in_bom and not power) else "no", "no" if power else "yes",
                    self.uid("symbol-" + ref)))
-        if power:
+        if "_ref_at" in fields:  # explicit field offsets for large symbols
+            (rdx, rdy), (vdx, vdy) = fields["_ref_at"], fields["_val_at"]
+            ref_at, val_at, just, angle = (x + rdx, y + rdy), (x + vdx, y + vdy), "left", 0
+        elif ref.startswith("#FLG"):  # keep the flag text clear of the net symbol at the same point
+            ref_at, val_at, just, angle = (x, y + 3.81), (round(x - 1.27, 4), round(y - 2.54, 4)), "right", 0
+        elif power:
             ref_at, val_at, just, angle = (x, y + 3.81), (x, y + 5.08), None, 0
         elif self.vertical(lib_id, rot):
             ref_at, val_at, just = (x + 6.35, y - 1.27), (x + 6.35, y + 1.27), "left"
@@ -119,7 +127,8 @@ class Sheet:
         body += self.prop("Footprint", footprint, (x, y), hide=True)
         body += self.prop("Datasheet", fields.get("Datasheet", "~"), (x, y), hide=True)
         body += self.prop("Description", fields.get("Description", ""), (x, y), hide=True)
-        for key in META + tuple(k for k in fields if k not in META + ("Datasheet", "Description")):
+        for key in META + tuple(k for k in fields if k not in META + ("Datasheet", "Description")
+                                and not k.startswith("_")):
             if key in fields:
                 body += self.prop(key, fields[key], (x, y), hide=True)
         for number in sorted(pins):
@@ -135,7 +144,13 @@ class Sheet:
     def label(self, net, x, y, direction, key, hierarchical=None):
         angle, justify = {(1, 0): (0, "left"), (-1, 0): (180, "right"), (0, -1): (90, "left"),
                           (0, 1): (270, "right")}[direction]
-        if hierarchical:
+        if hierarchical and hierarchical.startswith("global:"):
+            self.items.append(("\t(global_label \"%s\"\n\t\t(shape %s)\n\t\t(at %s %s %d)\n\t\t(fields_autoplaced yes)\n"
+                               "\t\t(effects\n\t\t\t(font\n\t\t\t\t(size 1.27 1.27)\n\t\t\t)\n\t\t\t(justify %s)\n\t\t)\n"
+                               "\t\t(uuid \"%s\")\n\t\t(property \"Intersheetrefs\" \"${INTERSHEET_REFS}\"\n\t\t\t(at %s %s 0)\n"
+                               "\t\t\t(effects\n\t\t\t\t(font\n\t\t\t\t\t(size 1.27 1.27)\n\t\t\t\t)\n\t\t\t\t(hide yes)\n\t\t\t)\n\t\t)\n\t)\n")
+                              % (net, hierarchical.split(":", 1)[1], x, y, angle, justify, self.uid("glabel-" + key), x, y))
+        elif hierarchical:
             self.items.append(("\t(hierarchical_label \"%s\"\n\t\t(shape %s)\n\t\t(at %s %s %d)\n\t\t(effects\n"
                                "\t\t\t(font\n\t\t\t\t(size 1.27 1.27)\n\t\t\t)\n\t\t\t(justify %s)\n\t\t)\n"
                                "\t\t(uuid \"%s\")\n\t)\n") % (net, hierarchical, x, y, angle, justify,
@@ -184,9 +199,9 @@ class Sheet:
         self.check()
         libs = "\n".join("\n".join("\t" + l for l in self.lib_symbol(lib).splitlines()) for lib in sorted(self.libs))
         return ("(kicad_sch\n\t(version 20260306)\n\t(generator \"eeschema\")\n\t(generator_version \"10.0\")\n"
-                "\t(uuid \"%s\")\n\t(paper \"A4\")\n\t(title_block\n\t\t(title \"%s\")\n\t\t(rev \"A\")\n"
+                "\t(uuid \"%s\")\n\t(paper \"%s\")\n\t(title_block\n\t\t(title \"%s\")\n\t\t(rev \"A\")\n"
                 "\t\t(comment 1 \"%s\")\n\t)\n\t(lib_symbols\n%s\n\t)\n%s\t(embedded_fonts no)\n)\n"
-                % (self.uid("sheet-file"), self.title, self.comment, libs, "".join(self.items)))
+                % (self.uid("sheet-file"), self.paper, self.title, self.comment, libs, "".join(self.items)))
 
 
 def sheet_block(project_root_uuid, sheet_uuid, name, filename, x, y, w, h, page, pins):

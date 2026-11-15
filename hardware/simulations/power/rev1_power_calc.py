@@ -148,6 +148,42 @@ def logic_5v_capacitance():
     print(f"  buzzer 0.15 A steps at 4 kHz: ~{2*0.15/(fsw_min*c_min)*1e3:.0f} mV per step (Eq.11 form)")
 
 
+def servo_stage_parts():
+    """LTC7803 stage with the selected parts and tolerances (2026-11-15d). Estimates only."""
+    print("\n== Servo stage with selected parts ==")
+    vo_lo, vo_hi = 6.686, 6.914
+    f_min, f_nom = 340e3, 375e3
+    i_load = 11.2
+    for name, l_nom, isat_30, dcr_max in (("XAL1010-222ME 2.2 uH", 2.2e-6, 34.0, 2.80e-3),
+                                          ("XAL1010-332MED 3.3 uH", 3.3e-6, 27.4, 4.10e-3)):
+        l_min = l_nom * 0.8                         # +-20 % inductance tolerance
+        worst = max(((v, vin) for v in (vo_lo, vo_hi) for vin in (9.0, 12.6)),
+                    key=lambda p: p[0] * (1 - p[0] / p[1]))
+        di_w = worst[0] * (1 - worst[0] / worst[1]) / (f_min * l_min)
+        di_n = 6.8 * (1 - 6.8 / 12.6) / (f_nom * l_nom)
+        rs_hi = 3e-3 * 1.01 * (1 + 100e-6 * 60)      # +1 % tolerance, +100 ppm/K over +60 K (WSL1020 TCR)
+        rs_lo = 3e-3 * 0.99
+        i_out_min = 0.045 / rs_hi - di_w / 2
+        i_pk_max = 0.055 / rs_lo
+        irms = (i_load ** 2 + di_n ** 2 / 12) ** 0.5
+        p_cu = irms ** 2 * dcr_max * 1.3             # copper +30 % hot (estimate); core loss not included
+        print(f"  {name}: dIL nom {di_n:.2f} A, worst {di_w:.2f} A (Vout {worst[0]}, Vin {worst[1]}, f {f_min/1e3:.0f} kHz, L-20 %)")
+        print(f"     Iout,min {i_out_min:.2f} A vs {i_load} A load -> margin {i_out_min-i_load:+.2f} A; "
+              f"peak limit max {i_pk_max:.1f} A vs Isat(30 %, 25 degC) {isat_30} A; "
+              f"sense ripple {di_n*3e-3*1e3:.1f} mV (datasheet target 10-20 mV)")
+        print(f"     inductor Irms {irms:.2f} A, copper loss {p_cu:.2f} W (DCR max, hot)")
+    rds = 3.6e-3 * 1.4
+    for vin in (9.0, 12.6):
+        d = 6.914 / vin
+        qg, vdrv, rdr = 16e-9, 5.15, 2.0               # BSC026N04LS Qg@4.5 V typ, INTVCC, LTC driver ~2 Ohm
+        t_sw = qg / (vdrv / rdr) * 0.5                  # rough transition time estimate
+        p_sw = 0.5 * vin * i_load * 2 * t_sw * f_nom
+        print(f"  Vin {vin}: top FET cond {d*i_load**2*rds:.2f} W + switching ~{p_sw:.2f} W (rough), "
+              f"bottom cond {(1-d)*i_load**2*rds:.2f} W")
+    print(f"  RS401 3 mOhm @ {i_load} A: {i_load**2*3e-3:.2f} W, at peak limit 18.5 A: {18.5**2*3e-3:.2f} W (2 W rated at 70 degC)")
+    print(f"  RS402 2 mOhm @ {i_load} A: {i_load**2*2e-3:.2f} W; drop {i_load*2e-3*1e3:.1f} mV (outside feedback)")
+
+
 def history_2s():
     """Superseded 2S numbers, kept for appendix A traceability."""
     print("== HISTORY 2S (superseded 2026-11-15) ==")
@@ -168,3 +204,4 @@ if __name__ == "__main__":
     else:
         active_3s()
         logic_5v_capacitance()
+        servo_stage_parts()
