@@ -4352,7 +4352,7 @@
 	)
 	(wire
 		(pts
-			(xy 190.5 97.79) (xy 185.42 97.79)
+			(xy 190.5 97.79) (xy 177.8 97.79)
 		)
 		(stroke
 			(width 0)
@@ -4362,7 +4362,7 @@
 	)
 	(global_label "P3V3_OK"
 		(shape input)
-		(at 185.42 97.79 180)
+		(at 177.8 97.79 180)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -4372,7 +4372,7 @@
 		)
 		(uuid "04489069-2bf3-5e0f-a9ef-1c8fc7192216")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 185.42 97.79 0)
+			(at 177.8 97.79 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -9440,7 +9440,7 @@
 		(dnp no)
 		(uuid "0d277243-55ae-5d69-b7b8-3915d9a63033")
 		(property "Reference" "D605"
-			(at 38.1 218.44 270)
+			(at 35.56 224.79 270)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -9449,7 +9449,7 @@
 			)
 		)
 		(property "Value" "PMEG4010CEH"
-			(at 38.1 220.98 270)
+			(at 35.56 227.33 270)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -11527,7 +11527,7 @@
 	)
 	(symbol
 		(lib_id "Device:R")
-		(at 345.44 238.76 270)
+		(at 350.52 241.3 270)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -11535,7 +11535,7 @@
 		(dnp no)
 		(uuid "28d54648-838a-50f0-a571-cca7dee13898")
 		(property "Reference" "R616"
-			(at 345.44 234.95 270)
+			(at 350.52 237.49 270)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -11543,7 +11543,7 @@
 			)
 		)
 		(property "Value" "4.7k"
-			(at 345.44 242.57 270)
+			(at 350.52 245.11 270)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -11551,7 +11551,7 @@
 			)
 		)
 		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
-			(at 345.44 238.76 0)
+			(at 350.52 241.3 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -11560,7 +11560,7 @@
 			)
 		)
 		(property "Datasheet" "https://www.yageogroup.com/content/datasheet/asset/file/PYU-RC_GROUP_51_ROHS_L"
-			(at 345.44 238.76 0)
+			(at 350.52 241.3 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -11569,7 +11569,7 @@
 			)
 		)
 		(property "Description" "O-21: limits current into GPIO48 while +3V3 is absent (<= 0.64 mA at 3.3 V level)"
-			(at 345.44 238.76 0)
+			(at 350.52 241.3 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -11578,7 +11578,7 @@
 			)
 		)
 		(property "Manufacturer" "Yageo"
-			(at 345.44 238.76 0)
+			(at 350.52 241.3 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -11587,7 +11587,7 @@
 			)
 		)
 		(property "MPN" "RC0603FR-074K7L"
-			(at 345.44 238.76 0)
+			(at 350.52 241.3 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -11596,7 +11596,7 @@
 			)
 		)
 		(property "LCSC" "C99782"
-			(at 345.44 238.76 0)
+			(at 350.52 241.3 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -11621,7 +11621,7 @@
 	)
 	(wire
 		(pts
-			(xy 349.25 238.76) (xy 354.33 238.76)
+			(xy 354.33 241.3) (xy 359.41 241.3)
 		)
 		(stroke
 			(width 0)
@@ -11631,7 +11631,7 @@
 	)
 	(wire
 		(pts
-			(xy 341.63 238.76) (xy 336.55 238.76)
+			(xy 346.71 241.3) (xy 341.63 241.3)
 		)
 		(stroke
 			(width 0)
@@ -11641,7 +11641,7 @@
 	)
 	(symbol
 		(lib_id "Device:R")
-		(at 318.77 238.76 90)
+		(at 316.23 241.3 90)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -11649,7 +11649,7 @@
 		(dnp no)
 		(uuid "bcbdb573-01cd-53ec-aaad-5b1c15c04db5")
 		(property "Reference" "R617"
-			(at 318.77 234.95 90)
+			(at 316.23 237.49 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -11657,7 +11657,7 @@
 			)
 		)
 		(property "Value" "10k"
-			(at 318.77 242.57 90)
+			(at 316.23 245.11 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -11665,7 +11665,7 @@
 			)
 		)
 		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
-			(at 318.77 238.76 0)
+			(at 316.23 241.3 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -11674,7 +11674,7 @@
 			)
 		)
 		(property "Datasheet" "https://www.yageogroup.com/content/datasheet/asset/file/PYU-RC_GROUP_51_ROHS_L"
-			(at 318.77 238.76 0)
+			(at 316.23 241.3 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -11683,7 +11683,7 @@
 			)
 		)
 		(property "Description" "RX idle-high pull-up to +3V3 (no clamp diode to +3V3: it would backfeed the rail)"
-			(at 318.77 238.76 0)
+			(at 316.23 241.3 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -11692,7 +11692,7 @@
 			)
 		)
 		(property "Manufacturer" "Yageo"
-			(at 318.77 238.76 0)
+			(at 316.23 241.3 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -11701,7 +11701,7 @@
 			)
 		)
 		(property "MPN" "RC0603FR-0710KL"
-			(at 318.77 238.76 0)
+			(at 316.23 241.3 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -11710,7 +11710,7 @@
 			)
 		)
 		(property "LCSC" "C98220"
-			(at 318.77 238.76 0)
+			(at 316.23 241.3 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -11735,7 +11735,7 @@
 	)
 	(wire
 		(pts
-			(xy 314.96 238.76) (xy 309.88 238.76)
+			(xy 312.42 241.3) (xy 307.34 241.3)
 		)
 		(stroke
 			(width 0)
@@ -11745,7 +11745,7 @@
 	)
 	(symbol
 		(lib_id "power:+3V3")
-		(at 309.88 238.76 0)
+		(at 307.34 241.3 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom no)
@@ -11753,7 +11753,7 @@
 		(dnp no)
 		(uuid "dea6726e-433b-5276-be19-04b217208e3a")
 		(property "Reference" "#PWRR61748"
-			(at 309.88 242.57 0)
+			(at 307.34 245.11 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -11762,7 +11762,7 @@
 			)
 		)
 		(property "Value" "+3V3"
-			(at 309.88 243.84 0)
+			(at 307.34 246.38000000000002 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -11770,7 +11770,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 309.88 238.76 0)
+			(at 307.34 241.3 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -11779,7 +11779,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 309.88 238.76 0)
+			(at 307.34 241.3 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -11788,7 +11788,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 309.88 238.76 0)
+			(at 307.34 241.3 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -11810,7 +11810,7 @@
 	)
 	(wire
 		(pts
-			(xy 322.58 238.76) (xy 327.66 238.76)
+			(xy 320.04 241.3) (xy 325.12 241.3)
 		)
 		(stroke
 			(width 0)
@@ -11820,7 +11820,7 @@
 	)
 	(symbol
 		(lib_id "Power_Protection:TPD1E05U06DPY")
-		(at 320.04 231.14 180)
+		(at 313.69 231.14 180)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -11828,7 +11828,7 @@
 		(dnp no)
 		(uuid "43ab1ce6-af39-53c9-ae75-0c9d6a0813bc")
 		(property "Reference" "D607"
-			(at 322.58000000000004 236.22 0)
+			(at 300.99 234.95 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -11837,7 +11837,7 @@
 			)
 		)
 		(property "Value" "TPD1E05U06"
-			(at 322.58000000000004 238.76 0)
+			(at 300.99 237.48999999999998 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -11846,7 +11846,7 @@
 			)
 		)
 		(property "Footprint" "Package_SON:Texas_DPY0002A_0.6x1mm_P0.65mm"
-			(at 320.04 231.14 0)
+			(at 313.69 231.14 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -11855,7 +11855,7 @@
 			)
 		)
 		(property "Datasheet" "https://ti.com/lit/pdf/SLVSBO7"
-			(at 320.04 231.14 0)
+			(at 313.69 231.14 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -11864,7 +11864,7 @@
 			)
 		)
 		(property "Description" "ESD at the connector pin: IEC 61000-4-2 +-12 kV contact, VRWM 5.5 V, 0.5 pF (SLVSBO7O); pin 1 I/O, 2 GND; place at the connector"
-			(at 320.04 231.14 0)
+			(at 313.69 231.14 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -11873,7 +11873,7 @@
 			)
 		)
 		(property "Manufacturer" "Texas Instruments"
-			(at 320.04 231.14 0)
+			(at 313.69 231.14 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -11882,7 +11882,7 @@
 			)
 		)
 		(property "MPN" "TPD1E05U06DPYR"
-			(at 320.04 231.14 0)
+			(at 313.69 231.14 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -11891,7 +11891,7 @@
 			)
 		)
 		(property "LCSC" "C436349"
-			(at 320.04 231.14 0)
+			(at 313.69 231.14 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -11916,7 +11916,7 @@
 	)
 	(wire
 		(pts
-			(xy 320.04 226.06) (xy 320.04 220.98)
+			(xy 313.69 226.06) (xy 313.69 220.98)
 		)
 		(stroke
 			(width 0)
@@ -11926,7 +11926,7 @@
 	)
 	(wire
 		(pts
-			(xy 314.96 231.14) (xy 309.88 231.14)
+			(xy 308.61 231.14) (xy 303.53 231.14)
 		)
 		(stroke
 			(width 0)
@@ -11936,7 +11936,7 @@
 	)
 	(symbol
 		(lib_id "power:GND")
-		(at 309.88 231.14 0)
+		(at 303.53 231.14 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom no)
@@ -11944,7 +11944,7 @@
 		(dnp no)
 		(uuid "b29f933b-9a13-59ed-aee8-fa9d1531be19")
 		(property "Reference" "#PWRD60749"
-			(at 309.88 234.95 0)
+			(at 303.53 234.95 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -11953,7 +11953,7 @@
 			)
 		)
 		(property "Value" "GND"
-			(at 309.88 236.22 0)
+			(at 303.53 236.22 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -11962,7 +11962,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 309.88 231.14 0)
+			(at 303.53 231.14 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -11971,7 +11971,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 309.88 231.14 0)
+			(at 303.53 231.14 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -11980,7 +11980,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 309.88 231.14 0)
+			(at 303.53 231.14 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -12002,7 +12002,7 @@
 	)
 	(symbol
 		(lib_id "Power_Protection:TPD1E05U06DPY")
-		(at 365.76 233.68 180)
+		(at 370.84 233.68 180)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -12010,7 +12010,7 @@
 		(dnp no)
 		(uuid "a24f2b66-d63a-5694-98d8-21aa3c66d37c")
 		(property "Reference" "D608"
-			(at 368.3 238.76000000000002 0)
+			(at 373.38 238.76000000000002 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -12019,7 +12019,7 @@
 			)
 		)
 		(property "Value" "TPD1E05U06"
-			(at 368.3 241.3 0)
+			(at 373.38 241.3 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -12028,7 +12028,7 @@
 			)
 		)
 		(property "Footprint" "Package_SON:Texas_DPY0002A_0.6x1mm_P0.65mm"
-			(at 365.76 233.68 0)
+			(at 370.84 233.68 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -12037,7 +12037,7 @@
 			)
 		)
 		(property "Datasheet" "https://ti.com/lit/pdf/SLVSBO7"
-			(at 365.76 233.68 0)
+			(at 370.84 233.68 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -12046,7 +12046,7 @@
 			)
 		)
 		(property "Description" "ESD at the connector pin: IEC 61000-4-2 +-12 kV contact, VRWM 5.5 V, 0.5 pF (SLVSBO7O); pin 1 I/O, 2 GND; place at the connector"
-			(at 365.76 233.68 0)
+			(at 370.84 233.68 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -12055,7 +12055,7 @@
 			)
 		)
 		(property "Manufacturer" "Texas Instruments"
-			(at 365.76 233.68 0)
+			(at 370.84 233.68 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -12064,7 +12064,7 @@
 			)
 		)
 		(property "MPN" "TPD1E05U06DPYR"
-			(at 365.76 233.68 0)
+			(at 370.84 233.68 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -12073,7 +12073,7 @@
 			)
 		)
 		(property "LCSC" "C436349"
-			(at 365.76 233.68 0)
+			(at 370.84 233.68 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -12098,7 +12098,7 @@
 	)
 	(wire
 		(pts
-			(xy 365.76 228.6) (xy 365.76 223.52)
+			(xy 370.84 228.6) (xy 370.84 223.52)
 		)
 		(stroke
 			(width 0)
@@ -12108,7 +12108,7 @@
 	)
 	(wire
 		(pts
-			(xy 360.68 233.68) (xy 355.6 233.68)
+			(xy 365.76 233.68) (xy 360.68 233.68)
 		)
 		(stroke
 			(width 0)
@@ -12118,7 +12118,7 @@
 	)
 	(symbol
 		(lib_id "power:GND")
-		(at 355.6 233.68 0)
+		(at 360.68 233.68 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom no)
@@ -12126,7 +12126,7 @@
 		(dnp no)
 		(uuid "af0015e3-b6dd-54cd-9ab4-d1592fdd55c9")
 		(property "Reference" "#PWRD60850"
-			(at 355.6 237.49 0)
+			(at 360.68 237.49 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -12135,7 +12135,7 @@
 			)
 		)
 		(property "Value" "GND"
-			(at 355.6 238.76000000000002 0)
+			(at 360.68 238.76000000000002 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -12144,7 +12144,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 355.6 233.68 0)
+			(at 360.68 233.68 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -12153,7 +12153,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 355.6 233.68 0)
+			(at 360.68 233.68 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -12162,7 +12162,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 355.6 233.68 0)
+			(at 360.68 233.68 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -13085,7 +13085,7 @@
 	)
 	(wire
 		(pts
-			(xy 320.04 220.98) (xy 308.61 220.98)
+			(xy 313.69 220.98) (xy 308.61 220.98)
 		)
 		(stroke
 			(width 0)
@@ -13095,7 +13095,7 @@
 	)
 	(wire
 		(pts
-			(xy 383.54 220.98) (xy 320.04 220.98)
+			(xy 383.54 220.98) (xy 313.69 220.98)
 		)
 		(stroke
 			(width 0)
@@ -13114,14 +13114,14 @@
 		(uuid "543acf15-8d0e-54f1-bb12-0f2f8b8c32db")
 	)
 	(junction
-		(at 320.04 220.98)
+		(at 313.69 220.98)
 		(diameter 0)
 		(color 0 0 0 0)
-		(uuid "78eef518-8ebd-562b-9a4b-431a34ff9d80")
+		(uuid "06abd9cc-0202-5ba7-8c14-f1111dca4cbd")
 	)
 	(wire
 		(pts
-			(xy 365.76 223.52) (xy 354.33 223.52)
+			(xy 370.84 223.52) (xy 359.41 223.52)
 		)
 		(stroke
 			(width 0)
@@ -13131,7 +13131,7 @@
 	)
 	(wire
 		(pts
-			(xy 354.33 223.52) (xy 354.33 238.76)
+			(xy 359.41 223.52) (xy 359.41 241.3)
 		)
 		(stroke
 			(width 0)
@@ -13141,7 +13141,7 @@
 	)
 	(wire
 		(pts
-			(xy 383.54 223.52) (xy 365.76 223.52)
+			(xy 383.54 223.52) (xy 370.84 223.52)
 		)
 		(stroke
 			(width 0)
@@ -13150,7 +13150,7 @@
 		(uuid "d53dcf8e-a200-5516-a64b-8b395a8428b7")
 	)
 	(label "EXT_RX_C"
-		(at 354.33 238.76 0)
+		(at 359.41 241.3 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -13160,14 +13160,14 @@
 		(uuid "fbf7de47-62a3-59e1-b0f5-76c6d1777f1a")
 	)
 	(junction
-		(at 365.76 223.52)
+		(at 370.84 223.52)
 		(diameter 0)
 		(color 0 0 0 0)
-		(uuid "0751d87f-403f-5ac7-b74b-867ecafc298e")
+		(uuid "43107f6e-546a-5ba7-a815-e79c1e737a3a")
 	)
 	(wire
 		(pts
-			(xy 327.66 238.76) (xy 336.55 238.76)
+			(xy 325.12 241.3) (xy 341.63 241.3)
 		)
 		(stroke
 			(width 0)
@@ -13177,7 +13177,7 @@
 	)
 	(global_label "EXT_UART_RX"
 		(shape output)
-		(at 336.55 238.76 180)
+		(at 341.63 241.3 180)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -13187,7 +13187,7 @@
 		)
 		(uuid "263c4f9c-09e8-53e5-91b3-1ce54ba4a54a")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 336.55 238.76 0)
+			(at 341.63 241.3 0)
 			(effects
 				(font
 					(size 1.27 1.27)

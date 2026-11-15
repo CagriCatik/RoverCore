@@ -282,7 +282,7 @@
 		(uuid "d8803dad-a8f2-531c-a8ad-d46733e01b82")
 	)
 	(sheet
-		(at 127.0 157.48)
+		(at 190.5 50.8)
 		(size 38.1 15.24)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -298,7 +298,7 @@
 		)
 		(uuid "b55a5280-f16d-5b6e-8bfc-55876edbf85f")
 		(property "Sheetname" "Actuators"
-			(at 127.0 156.7684 0)
+			(at 190.5 50.0884 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -307,7 +307,7 @@
 			)
 		)
 		(property "Sheetfile" "Actuators.kicad_sch"
-			(at 127.0 173.3046 0)
+			(at 190.5 66.6246 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -325,7 +325,7 @@
 		)
 	)
 	(sheet
-		(at 190.5 50.8)
+		(at 190.5 86.36)
 		(size 38.1 15.24)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -341,7 +341,7 @@
 		)
 		(uuid "5b0f9351-540a-5175-871d-704bb5e0c504")
 		(property "Sheetname" "Lighting_IO"
-			(at 190.5 50.0884 0)
+			(at 190.5 85.6484 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -350,7 +350,7 @@
 			)
 		)
 		(property "Sheetfile" "Lighting_IO.kicad_sch"
-			(at 190.5 66.6246 0)
+			(at 190.5 102.1846 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -366,6 +366,17 @@
 				)
 			)
 		)
+	)
+	(text "Hierarchy: VBAT_PROT is the only hierarchical connection\n(Power -> LogicPower, ServoPower, Controller). All other signals\nbetween sheets use global labels (Controller GPIO <-> Actuators,\nLighting_IO, ServoPower: SERVO_PWR_EN, P3V3_OK, VSERVO_SENSE,\nISERVO_SENSE, +V_SERVO). +5V, +3V3, GND are global power symbols."
+		(exclude_from_sim no)
+		(at 38.1 144.78 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left top)
+		)
+		(uuid "9c8abab9-4599-5715-aec2-2f766f116575")
 	)
 	(sheet_instances
 		(path "/"
