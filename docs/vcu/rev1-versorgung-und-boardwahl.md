@@ -844,6 +844,7 @@ Schutzkoordination (O-17).
 | O-27 | ServoPower: Pastenöffnungen des TDSON-Drain-Pads vor Schablonenbestellung gegen Infineon Fig. 2 bzw. Bestückerregeln prüfen (3.5b); Kompensation (R413/C418/C419) und Sense-Filter (RF401/CF401) im Labor abstimmen; Entscheidung 2,2 oder 3,3 µH nach Störabstand und Lastsprung; Datenblattquellen Coilcraft, Panasonic SVPG, Samsung/Yageo-MLCC und RT-Widerstände nur als LCSC-Kopie (O-22) | Agent |
 | O-28 | Controller: 1N5819HW-Daten (USB-Pfad); Status-LED-Typ (AlGaInP, V_F ≤ 2,4 V) und Taster (TL3342, JLC-Bestand 0); Buchsenleisten 1×22 mit Bauhöhe (O-4) | Agent |
 | O-29 | Einschalttransienten der Servo-Freigabe messen: RUN, Q403-Gate und +V_SERVO beim Einstecken des Akkus und beim ESP32-Hochlauf | Owner |
+| O-30 | Actuators: ESD-TVS je Steckerausgang mit V_RWM ≥ 8 V (Schienenfehler 7,81 V, ESC-BEC 7,4 V) auswählen und Datenblatt prüfen; Stecker-Bauteil 1×3 2,54 mm festlegen | Agent |
 
 Erledigt: O-5 (DevKit-LDO), O-6 (Lenkservos), O-7 (LTC7803 Rev B, 3.5a;
 Kompensation weiter unter O-27), O-9 (Projektort), O-14 (ersetzt durch O-17),

@@ -189,7 +189,8 @@ class Sheet:
                 continue
             done.add((px, py))
             dx, dy = self.outward(rot, langle)
-            ex, ey = round(px + dx * STUB, 4), round(py + dy * STUB, 4)
+            stub = fields.get("_stub", {}).get(number, STUB)  # optional longer stub to stagger crowded labels
+            ex, ey = round(px + dx * stub, 4), round(py + dy * stub, 4)
             self.wire(px, py, ex, ey, "%s-%s" % (ref, number))
             if net in power_nets:
                 self.pwr += 1

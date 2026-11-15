@@ -88,7 +88,7 @@ von JLCPCB am selben Tag, schwankend, alle „Extended Parts".
 
 | Ref | Baustein | Kanäle | Versorgung | LCSC (Bestand) |
 |---|---|---|---|---|
-| U201 | **SN74LVC8T245PWR** (TSSOP-24), SCES584D | ESC, Servo vorne, hinten, Reserve 1, Reserve 2, LED_1–3 | VCCA = +3V3_DEVKIT, VCCB = +5V | C27643 (65 377) |
+| U201 | **SN74LVC8T245PWR** (TSSOP-24), SCES584D (Mai 2026); Kanalfolge A1/B1 ESC, A2 vorne, A3 hinten, A4 Reserve 1, A5 Reserve 2, A6–A8 LED_1–3 | ESC, Servo vorne, hinten, Reserve 1, Reserve 2, LED_1–3 | VCCA = +3V3_DEVKIT, VCCB = +5V | C27643 (65 377) |
 | U202 | **SN74LVC1T45DBVR** (SOT-23-6), SCES515N | LED_4 | VCCA = +3V3_DEVKIT, VCCB = +5V | C7843 (305 880) |
 
 Warum dieser Baustein:
@@ -114,7 +114,7 @@ Verworfen:
 
 Beschaltung:
 
-- **DIR an +3V3** → Richtung A → B (Function Table 7-1).
+- **DIR über R209 10 kΩ an +3V3** → Richtung A → B (DIR-Eingangsstrom ≤ 2 µA → 20 mV).
 - **OE (aktiv low, auf VCCA bezogen) an GPIO2 = `ACT_OE_N`**, 10k Pull-up auf
   +3V3. Bei Reset und während des Bootens sind alle Ausgänge von U201
   hochohmig; die Firmware gibt sie erst nach der Initialisierung frei. Der
@@ -126,7 +126,20 @@ Beschaltung:
   ESC und Servos bei hochohmigem Puffer sicher „kein Signal" sehen.
 - U202 (1T45) hat kein OE; sein Kanal ist LED_4. Bei hochohmigem
   GPIO39 hält der Eingangs-Pull-down die Datenleitung low.
-- Serienwiderstand 33–100 Ω je Ausgang vor dem Stecker, ESD-Diode am Stecker.
+- Je Steckerausgang (ESC, 4 Servos): B-Ausgang → Knoten mit **BAT54S-Klemme
+  nach +5V/GND** und 100k Pull-down → **470 Ω** → Stecker-Pin 1. Grund
+  (TI SCES584D, Abs. Max.): Ein B-Ausgang im Zustand high/low darf höchstens
+  V_CCB + 0,5 V sehen. Für positive Klemmströme gibt es keine Angabe, nur
+  I_OK −50 mA für V_O < 0. Kurzschluss nach GND: ≤ 5,16 V / 470 Ω = 11 mA
+  (I_O abs. max. ±50 mA). Fremdspannung am Signalpin (ESC-BEC bis 7,4 V bei
+  versetztem Stecker, Schienenfehler 7,81 V): Strom ≤ (7,81 − 4,74 − 0,32) V /
+  470 Ω ≈ 6 mA in die BAT54S. Deren V_F ≤ 400 mV bei 10 mA (Nexperia BAT54S
+  v.6) hält den B-Pin unter V_CCB + 0,5 V; der Strom fließt in die
+  +5V-Schiene. 470 Ω mit ca. 200 pF Kabel ergibt τ ≈ 0,1 µs – für
+  Servo-/ESC-Pulse ohne Bedeutung.
+- ESD-TVS am Stecker: Sie muss 7,81 V dauerhaft vertragen (V_RWM ≥ 8 V).
+  TPD1E05U06 (V_RWM 5,5 V) scheidet aus; Auswahl offen (O-30). Bis dahin
+  führen 470 Ω und BAT54S einen ESD-Puls in die Schienen.
 - 0,1 µF an VCCA und VCCB, nah am Baustein.
 
 Pegel- und Timingreserve (Schätzung):
@@ -337,9 +350,9 @@ selbst stammt aus dem Espressif User Guide v1.1 (Abschnitt 1).
 | 5 | J1-5 | GPIO5 | VSERVO_SENSE | VSERVO_SENSE | signal |
 | 6 | J1-6 | GPIO6 | IMU_INT1 | IMU_INT1 | signal |
 | 7 | J1-7 | GPIO7 | SERVO_PWR_EN | SERVO_PWR_EN | signal |
-| 8 | J1-8 | GPIO15 | SERVO_FRONT_PWM_3V3 | SERVO_FRONT_PWM_3V3 | signal |
-| 9 | J1-9 | GPIO16 | SERVO_REAR_PWM_3V3 | SERVO_REAR_PWM_3V3 | signal |
-| 10 | J1-10 | GPIO17 | SERVO_AUX1_PWM_3V3 | SERVO_AUX1_PWM_3V3 | signal |
+| 8 | J1-8 | GPIO15 | SERVO_FRONT_PWM_3V3 | SERVO_FRONT_PWM_3V3 | signal – **verbunden** (Blatt Actuators) |
+| 9 | J1-9 | GPIO16 | SERVO_REAR_PWM_3V3 | SERVO_REAR_PWM_3V3 | signal – **verbunden** (Blatt Actuators) |
+| 10 | J1-10 | GPIO17 | SERVO_AUX1_PWM_3V3 | SERVO_AUX1_PWM_3V3 | signal – **verbunden** (Blatt Actuators) |
 | 11 | J1-11 | GPIO18 | SPARE_GPIO18 | SPARE_GPIO18 | signal |
 | 12 | J1-12 | GPIO8 | I2C_SDA | I2C_SDA | signal |
 | 13 | J1-13 | GPIO3 | STRAP_GPIO3 | unconnected-(U501-J1-13/GPIO3-Pad13) | expected NC |
@@ -348,8 +361,8 @@ selbst stammt aus dem Espressif User Guide v1.1 (Abschnitt 1).
 | 16 | J1-16 | GPIO10 | ENABLE_BTN_N | ENABLE_BTN_N | signal |
 | 17 | J1-17 | GPIO11 | STATUS_LED | STATUS_LED | signal |
 | 18 | J1-18 | GPIO12 | BUZZER | BUZZER | signal |
-| 19 | J1-19 | GPIO13 | ESC_PWM_3V3 | ESC_PWM_3V3 | signal |
-| 20 | J1-20 | GPIO14 | SERVO_AUX2_PWM_3V3 | SERVO_AUX2_PWM_3V3 | signal |
+| 19 | J1-19 | GPIO13 | ESC_PWM_3V3 | ESC_PWM_3V3 | signal – **verbunden** (Blatt Actuators) |
+| 20 | J1-20 | GPIO14 | SERVO_AUX2_PWM_3V3 | SERVO_AUX2_PWM_3V3 | signal – **verbunden** (Blatt Actuators) |
 | 21 | J1-21 | 5V | +5V_DEVKIT | +5V_DEVKIT | power |
 | 22 | J1-22 | GND | GND | GND | power |
 | 23 | J3-1 | GND | GND | GND | power |
@@ -357,9 +370,9 @@ selbst stammt aus dem Espressif User Guide v1.1 (Abschnitt 1).
 | 25 | J3-3 | GPIO44 | U0RXD | unconnected-(U501-J3-3/RX-Pad25) | expected NC |
 | 26 | J3-4 | GPIO1 | ISERVO_SENSE | ISERVO_SENSE | signal |
 | 27 | J3-5 | GPIO2 | ACT_OE_N | ACT_OE_N | signal |
-| 28 | J3-6 | GPIO42 | LED_1_3V3 | LED_1_3V3 | signal |
-| 29 | J3-7 | GPIO41 | LED_2_3V3 | LED_2_3V3 | signal |
-| 30 | J3-8 | GPIO40 | LED_3_3V3 | LED_3_3V3 | signal |
+| 28 | J3-6 | GPIO42 | LED_1_3V3 | LED_1_3V3 | signal – **verbunden** (Blatt Actuators) |
+| 29 | J3-7 | GPIO41 | LED_2_3V3 | LED_2_3V3 | signal – **verbunden** (Blatt Actuators) |
+| 30 | J3-8 | GPIO40 | LED_3_3V3 | LED_3_3V3 | signal – **verbunden** (Blatt Actuators) |
 | 31 | J3-9 | GPIO39 | LED_4_3V3 | LED_4_3V3 | signal |
 | 32 | J3-10 | GPIO38 | DEVKIT_RGB | unconnected-(U501-J3-10/GPIO38-Pad32) | expected NC |
 | 33 | J3-11 | GPIO37 | PSRAM_GPIO37 | unconnected-(U501-J3-11/GPIO37-Pad33) | expected NC |
@@ -375,7 +388,7 @@ selbst stammt aus dem Espressif User Guide v1.1 (Abschnitt 1).
 | 43 | J3-21 | GND | GND | GND | power |
 | 44 | J3-22 | GND | GND | GND | power |
 
-**Offene globale Labels (ERC „Label connected to only one pin", 16 Stück).**
+**Globale Labels vom Controller (ERC „Label connected to only one pin": anfangs 16, seit dem Blatt Actuators 8).**
 Sie bleiben bis zu den Verbraucherblättern offen und werden nicht
 ausgeblendet. `scripts/kit verify` meldet deshalb weiter einen Fehler.
 
@@ -397,3 +410,27 @@ ausgeblendet. `scripts/kit verify` meldet deshalb weiter einen Fehler.
 | IMU_INT1 | GPIO6 | Sensors_Display: J115 |
 | I2C_SDA | GPIO8 | Sensors_Display: J115, J116 |
 | I2C_SCL | GPIO9 | Sensors_Display: J115, J116 |
+
+## 7. Blatt `Actuators` (Stand 2026-11-15)
+
+Datei `Actuators.kicad_sch` (A3), einmalig erzeugt mit
+`hardware/scripts/bootstrap_actuators.py`.
+
+| Ref | Funktion |
+|---|---|
+| U201 | SN74LVC8T245PWR, VCCA +3V3, VCCB +5V, DIR über R209 an +3V3, OE = `ACT_OE_N` (Pull-up R501 auf Controller) |
+| C201, C202 | 100 nF an VCCA bzw. VCCB |
+| R201–R208 | 100k Pull-downs an A1–A8 |
+| R211–R218 | 100k Pull-downs an B1–B8 |
+| D201–D205, R221–R225 | BAT54S-Klemme und 470 Ω je Steckerausgang (3.1) |
+| J102, J103 | Molex Micro-Fit 3.0 43650-0300: 1 Signal, 2 +V_SERVO, 3 GND |
+| J104, J105 | Stiftleiste 1×3 2,54 mm: 1 Signal, 2 +V_SERVO, 3 GND (0,5 A) |
+| J106 | Stiftleiste 1×3 2,54 mm: 1 ESC-Signal, **2 nicht verbunden (BEC +)**, 3 GND |
+| LED_1_5V…LED_3_5V | globale Ausgänge zu Lighting_IO (Steckerschutz dort) |
+
+Netzlistenprüfung (Umsetzung, nicht elektrische Richtigkeit): J102–J106
+Pin 1–3 und die U201-Anschlüsse entsprechen dieser Tabelle; 0 Abweichungen.
+Unabhängiger Abgleich: KiCad-Symbol SN74LVC8T245 gegen TI SCES584D,
+Tab. 4-1 (1 VCCA, 2 DIR, 3–10 A1–A8, 11–13 GND, 14–21 B8–B1, 22 OE, 23/24
+VCCB) – stimmt. BAT54S-Symbol (1 A, 2 K, 3 COM) gegen Nexperia BAT54S v.6
+Tab. 2 – stimmt. `scripts/kit verify`: `pin_pad_mapping` ohne Befund.
