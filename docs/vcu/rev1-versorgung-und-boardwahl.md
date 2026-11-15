@@ -11,8 +11,8 @@ geschlossen sind. Die frühere 2S-Rechnung steht im historischen Anhang A.
 
 ## 1. Bestandsaufnahme
 
-- Im Repository `RoverCore` liegt bisher nur das PCB-Project-Template; es gibt
-  **keine ESP32-Firmware** und kein Boardprojekt. Die im Plan genannte
+- Im Repository `RoverCore` liegt ein natives KiCad-Projekt mit noch leerem
+  Schaltplan und PCB. Es gibt **keine ESP32-Anwendungsfirmware**. Die im Plan genannte
   „vorhandene Firmware" muss noch benannt werden (Abschnitt 6, O-1).
 - Die Vorgängerprojekte `~/Desktop/pcb/rc-vcu-v2` und `rc-control-shield` sind
   STM32-basiert. Lehre aus `rc-vcu-v2`: Buck-Boost-Servostufe (LM5176, vier
@@ -49,7 +49,7 @@ Bestellnummern bei Distributoren (Mouser/DigiKey) sind **noch nicht geprüft**.
 
 Frei nutzbar bleiben damit 24 GPIOs (1, 2, 4–18, 21, 39–42, 47, 48); GPIO18
 scheidet wegen seines High-Glitches beim Einschalten für Ausgänge aus.
-Belegt sind 22 GPIOs – Zuordnung im
+Belegt sind 23 GPIOs – Zuordnung im
 [GPIO- und Anschlussplan](rev1-pin-und-anschlussplan.md).
 
 Hinweis: Die Revision v1.0 ist noch im Handel. Weil sich die RGB-LED-Pins

@@ -34,3 +34,7 @@ scripts/kit open    "<this project>" --kicad         # or --vscode
 Or double-click `project-manager.command` in the kit. A clean ERC/DRC run is a
 tooling result only; it does not establish electrical, thermal or fabrication
 readiness. See `AGENTS.md` for the rules that apply to automated edits.
+
+## VCU-Review und lokale Werkzeuge
+
+[Review](docs/vcu/rev1-review-2026-11-15.md) · [Werkzeuge](docs/vcu/tooling-integration.md)

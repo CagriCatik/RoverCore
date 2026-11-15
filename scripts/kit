@@ -1,0 +1,14 @@
+#!/bin/bash
+# Delegate to a separately maintained PCB-Project-Template checkout.
+set -euo pipefail
+if [[ -z "${ROVERCORE_KIT_ROOT:-}" ]]; then
+  echo 'Set ROVERCORE_KIT_ROOT to your PCB-Project-Template checkout.' >&2
+  exit 2
+fi
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd -P)"
+KIT_ROOT="$(cd "$ROVERCORE_KIT_ROOT" && pwd -P)"
+if [[ "$KIT_ROOT" == "$ROOT" || ! -f "$KIT_ROOT/tools/cli/main.py" || ! -x "$KIT_ROOT/scripts/kit" ]]; then
+  echo 'ROVERCORE_KIT_ROOT must point to the external kit, not RoverCore.' >&2
+  exit 2
+fi
+exec "$KIT_ROOT/scripts/kit" "$@"
