@@ -370,3 +370,35 @@ LAYOUTS["Lighting_IO"] = {
     },
     "notes": {"head": ("Lighting_IO: external 5 V outputs, LED data, buzzer, i-BUS input and extension UART (Pinplan 3, 4, 8).", 22.86, 48.26)},
 }
+
+
+LAYOUTS["Sensors_Display"] = {
+    # J115 rotated 180 (pins right) faces J116 (pins left): SDA and SCL run as two straight wires, no crossing
+    "parts": {
+        "J115": (50.8, 101.6, 180, {"_ref_at": (5.08, -15.24), "_val_at": (5.08, 15.24), "_stub": {"1": 10.16}}),
+        "J116": (246.38, 111.76, 0, {"_ref_at": (-5.08, -15.24), "_val_at": (-5.08, 15.24)}),
+        "R803": (76.2, 93.98, 90),
+        "R801": (127.0, 92.71, 0, R),
+        "R802": (139.7, 113.03, 0, dict(R, _pwr_rot={"2": 180})),
+        "TP801": (152.4, 96.52, 0, TPF),
+        "TP802": (165.1, 109.22, 180, {"_ref_at": (8.89, 1.27), "_val_at": (8.89, 3.81)}),
+    },
+    "wire": ["I2C_SDA", "I2C_SCL", "IMU_INT1"],
+    "anchor": {"I2C_SDA": ("J115", "5"), "I2C_SCL": ("J115", "4"), "IMU_INT1": ("J115", "8")},
+    "label_at": {"I2C_SDA": (190.5, 101.6, (0, -1)), "I2C_SCL": (203.2, 104.14, (0, 1)),
+                 "IMU_INT1": (66.04, 93.98, (0, -1))},
+    "groups": {
+        "imu": ("1  IMU J115 - Adafruit 4438", (22.86, 63.5, 101.6, 132.08),
+                "LSM6DSOX module, component side up, JP1 1x9 only\\n(aux JP2 unused). VIN = +3V3 (AP2112K on module).\\n"
+                "Addr 0x6A (DO open: module pull-down, SJ1 open).\\nINT1 push-pull 3.3 V. Two M2.5 standoffs."),
+        "bus": ("2  Shared I2C bus", (106.68, 63.5, 210.82, 132.08),
+                "Module pull-ups 10k to VIN (= +3V3) each: 10k || 10k = 5.0k.\\n"
+                "Rise time approx. 0.21 us at 50 pF (estimate; 400 kHz: <= 0.3 us).\\n"
+                "R801/R802 DNP option. R803 holds IMU_INT1 low without IMU."),
+        "oled": ("3  OLED J116 - Adafruit 326", (215.9, 63.5, 274.32, 132.08),
+                 "SSD1306 128x64, STEMMA QT rev.:\\nI2C default (SJ1/SJ2 closed).\\n"
+                 "Addr 0x3D (A0 high, SJ3 open).\\nRst/CS/DC/3Vo open. Vin = +3V3."),
+    },
+    "notes": {"head": ("Sensors_Display: plug-in IMU and OLED on I2C0 (GPIO8 SDA, GPIO9 SCL) and IMU_INT1 (GPIO6). "
+                       "No STEMMA QT cables. Both modules run from +3V3 (DevKit LDO).", 22.86, 58.42)},
+}

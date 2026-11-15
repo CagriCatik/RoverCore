@@ -367,7 +367,7 @@
 			)
 		)
 	)
-	(text "Hierarchy: VBAT_PROT is the only hierarchical connection\n(Power -> LogicPower, ServoPower, Controller). All other signals\nbetween sheets use global labels (Controller GPIO <-> Actuators,\nLighting_IO, ServoPower: SERVO_PWR_EN, P3V3_OK, VSERVO_SENSE,\nISERVO_SENSE, +V_SERVO). +5V, +3V3, GND are global power symbols."
+	(text "Hierarchy: VBAT_PROT is the only hierarchical connection\n(Power -> LogicPower, ServoPower, Controller). All other signals\nbetween sheets use global labels (Controller GPIO <-> Actuators,\nLighting_IO, ServoPower: SERVO_PWR_EN, P3V3_OK, VSERVO_SENSE,\nISERVO_SENSE, +V_SERVO; Sensors_Display: I2C_SDA, I2C_SCL, IMU_INT1).\n+5V, +3V3, GND are global power symbols."
 		(exclude_from_sim no)
 		(at 38.1 144.78 0)
 		(effects
@@ -377,6 +377,49 @@
 			(justify left top)
 		)
 		(uuid "9c8abab9-4599-5715-aec2-2f766f116575")
+	)
+	(sheet
+		(at 190.5 121.92)
+		(size 38.1 15.24)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0.0000)
+		)
+		(uuid "b768b169-bcbd-518d-b53d-d324a48dc60a")
+		(property "Sheetname" "Sensors_Display"
+			(at 190.5 121.2084 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "Sensors_Display.kicad_sch"
+			(at 190.5 137.7446 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "RoverCore"
+				(path "/d069f045-7f09-4f8a-bd29-51e87a8a0808"
+					(page "8")
+				)
+			)
+		)
 	)
 	(sheet_instances
 		(path "/"
