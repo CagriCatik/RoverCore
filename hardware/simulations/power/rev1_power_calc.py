@@ -198,9 +198,60 @@ def history_2s():
     print("worst input:", ", ".join(f"{v} V: {p/v:.1f} A" for v in (7.4, 6.6, 6.0)))
 
 
+def controller_checks():
+    """Controller sheet: DevKit 5 V feed via D501, Q403/Q404 default OFF, O-21 shunts (all estimates).
+
+    Sources: PMEG4010CEH Nexperia v.3 (2023-10-12; VF max at 25 degC, pulsed), SGM2212
+    Rev A.2 (07/2023, LCSC copy), ESP32-S3-WROOM-1 DS v1.8, ESP32-S3 DS v2.2, NTR4003N/D Rev 6,
+    LTC7803 Rev B, DevKitC-1 v1.1 schematic.
+    """
+    print("\n== Controller: DevKit 5 V feed (estimates) ==")
+    i_load = 0.50 + 0.05            # module supply requirement >= 0.5 A (WROOM-1 Tab 6-2) + carrier 3V3 budget
+    vdrop = 0.380 + (i_load - 0.5) / 0.3 * (0.610 - 0.380)   # SGM2212-3.3 max over temp, linear interpolation
+    vf25 = 0.490 + (i_load - 0.5) / 0.2 * (0.520 - 0.490)    # PMEG4010CEH max at 25 degC, pulsed
+    vf_cold = vf25 + 45 * 0.002                               # -20 degC, generic Schottky TC 2 mV/K (assumption)
+    v5_min, v5_dip, path = 4.74, 0.02 * 5.0, 0.05            # +5V static min, load-step allowance, socket + traces
+    vin = v5_min - v5_dip - vf_cold - path
+    need_reg = 3.349 + vdrop
+    need_module = 3.0 + vdrop
+    print("  design load %.2f A, LDO dropout max %.0f mV, D501 VF %.0f mV (25 degC) / %.0f mV (-20 degC)"
+          % (i_load, vdrop * 1e3, vf25 * 1e3, vf_cold * 1e3))
+    print("  LDO input min %.2f V; needed for regulation %.2f V (margin %.2f V), for VDD >= 3.0 V %.2f V"
+          % (vin, need_reg, vin - need_reg, need_module))
+    for name, i, vf, rth in (("average 0.20 A, 1 cm2 pad", 0.20, 0.45, 150), ("continuous 0.55 A, 1 cm2 pad", 0.55, vf25, 150),
+                             ("continuous 0.55 A, standard pad", 0.55, vf25, 330)):
+        pd = i * vf
+        print("  D501 %-32s P = %.0f mW, dT = %.0f K, Tj at 65 degC = %.0f degC" % (name, pd * 1e3, pd * rth, 65 + pd * rth))
+
+    print("\n== Q403/Q404 default OFF (static, estimates) ==")
+    tol = 0.02                                                # 1 % + 100 ppm/K over 85 K
+    r414, r407 = 100e3, 220e3
+    k_min = r407 * (1 - tol) / (r414 * (1 + tol) + r407 * (1 - tol))
+    r_th = 1 / (1 / (r414 * (1 + tol)) + 1 / (r407 * (1 - tol)))
+    for vbat in (9.2, 12.6, 21.5):
+        vg = vbat * k_min - 1e-6 * r_th                       # Q404 IDSS 1 uA (25 degC max) + Q403 IGSS
+        print("  rail OFF: VBAT %.1f V -> Q403 VGS min %.2f V (needs >= 4.0 V for the 1.5 Ohm spec)" % (vbat, vg))
+    i_on = 21.5 / (r414 * (1 - tol))
+    rds_hot = 2.0 * 1.6                                       # 2.0 Ohm at 2.5 V, x1.6 at 125 degC (Fig. 5, typical)
+    print("  rail ON: GPIO VOH min 0.8 x 3.251 = %.2f V >= 2.5 V; Q404 current max %.0f uA; Q403 VGS <= %.2f mV"
+          % (0.8 * 3.251, i_on * 1e6, i_on * rds_hot * 1e3))
+    run_th = 17.5e3
+    print("  Q403 off-leakage 1 uA (25 degC max) shifts RUN by %.1f mV (RUN thresholds 1.2 V level)" % (1e-6 * run_th * 1e3))
+    tau_g = r_th * (42e-12 + 40e-12 + 5e-12)
+    print("  transient: Q403 gate tau %.1f us; RUN tau with C420 %.2f ms" % (tau_g * 1e6, run_th * 100e-9 * 1e3))
+
+    print("\n== O-21 shunts (estimates) ==")
+    for name, rdiv, kg in (("VBAT", 1 / (1 / 120e3 + 1 / 20e3), 0.5), ("VSERVO", 1 / (1 / 100e3 + 1 / 47e3), 220 / 320)):
+        print("  %-6s divider source %.1f kOhm; shunt leakage 1 uA -> error %.1f mV; shunt gate gain %.3f"
+              % (name, rdiv / 1e3, 1e-6 * rdiv * 1e3, kg))
+    print("  inverter gate from +3V3: 3.251 x 100/110 = %.2f V >= 2.5 V" % (3.251 * 100 / 110))
+
+
 if __name__ == "__main__":
     if "--history-2s" in sys.argv:
         history_2s()
+    elif "--controller" in sys.argv:
+        controller_checks()
     else:
         active_3s()
         logic_5v_capacitance()

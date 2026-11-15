@@ -1826,6 +1826,307 @@
 			)
 			(embedded_fonts no)
 		)
+		(symbol "Transistor_FET:Q_NMOS_GSD"
+			(pin_names
+				(offset 0)
+				(hide yes)
+			)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(in_pos_files yes)
+			(duplicate_pin_numbers_are_jumpers no)
+			(property "Reference" "Q"
+				(at 5.08 1.905 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(justify left)
+				)
+			)
+			(property "Value" "Q_NMOS_GSD"
+				(at 5.08 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(justify left)
+				)
+			)
+			(property "Footprint" ""
+				(at 5.08 2.54 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Datasheet" ""
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Description" "N-MOSFET transistor, gate/source/drain"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "ki_keywords" "transistor NMOS N-MOS N-MOSFET"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(symbol "Q_NMOS_GSD_0_1"
+				(polyline
+					(pts
+						(xy 0.254 1.905) (xy 0.254 -1.905)
+					)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 0.254 0) (xy -2.54 0)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 0.762 2.286) (xy 0.762 1.27)
+					)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 0.762 0.508) (xy 0.762 -0.508)
+					)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 0.762 -1.27) (xy 0.762 -2.286)
+					)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 0.762 -1.778) (xy 3.302 -1.778) (xy 3.302 1.778) (xy 0.762 1.778)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 1.016 0) (xy 2.032 0.381) (xy 2.032 -0.381) (xy 1.016 0)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type outline)
+					)
+				)
+				(circle
+					(center 1.651 0)
+					(radius 2.794)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 2.54 2.54) (xy 2.54 1.778)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(circle
+					(center 2.54 1.778)
+					(radius 0.254)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type outline)
+					)
+				)
+				(circle
+					(center 2.54 -1.778)
+					(radius 0.254)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type outline)
+					)
+				)
+				(polyline
+					(pts
+						(xy 2.54 -2.54) (xy 2.54 0) (xy 0.762 0)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 2.921 0.381) (xy 3.683 0.381)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 3.302 0.381) (xy 2.921 -0.254) (xy 3.683 -0.254) (xy 3.302 0.381)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+			)
+			(symbol "Q_NMOS_GSD_1_1"
+				(pin input line
+					(at -5.08 0 0)
+					(length 2.54)
+					(name "G"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 2.54 -5.08 90)
+					(length 2.54)
+					(name "S"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 2.54 5.08 270)
+					(length 2.54)
+					(name "D"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "3"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
 		(symbol "power:+3V3"
 			(power global)
 			(pin_numbers
@@ -3743,7 +4044,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://www.nexperia.com/products/diodes/schottky-diodes-and-rectifiers/schottky-diodes-and-rectifiers-if-1-a/series/PMEG4010CEH-PMEG4010CEJ.html"
+		(property "Datasheet" "https://assets.nexperia.com/documents/data-sheet/PMEG4010CEH.pdf"
 			(at 63.5 63.5 0)
 			(effects
 				(font
@@ -3752,7 +4053,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "Carrier +5V -> DevKit 5V pin; diode-OR with the DevKit USB diodes (no backfeed either way). 40 V 1 A candidate; datasheet PDF not yet obtained, VF/IR to verify (O-28)"
+		(property "Description" "Carrier +5V -> DevKit 5V pin; diode-OR with the DevKit USB diodes (no backfeed either way). 40 V 1 A; VF max 490 mV at 0.5 A (25 degC, pulsed; Nexperia v.3 2023-10-12); cathode copper >= 1 cm2 (Rth(j-a) 150 K/W)"
 			(at 63.5 63.5 0)
 			(effects
 				(font
@@ -6098,7 +6399,7 @@
 		)
 		(uuid "5f22e969-ed99-5c96-ba7e-b61eaba32158")
 	)
-	(label "VBAT_SENSE"
+	(label "VBAT_DIV"
 		(at 297.18 72.39 270)
 		(effects
 			(font
@@ -6214,7 +6515,7 @@
 		)
 		(uuid "e6c0437b-0d78-5833-ac4f-c0efd5ca0549")
 	)
-	(label "VBAT_SENSE"
+	(label "VBAT_DIV"
 		(at 312.42 100.33 90)
 		(effects
 			(font
@@ -6406,7 +6707,7 @@
 		)
 		(uuid "f42c5d9e-40df-5165-9cbe-647392ced92d")
 	)
-	(label "VBAT_SENSE"
+	(label "VBAT_DIV"
 		(at 327.66 100.33 90)
 		(effects
 			(font
@@ -6487,6 +6788,1284 @@
 			(project "RoverCore"
 				(path "/d069f045-7f09-4f8a-bd29-51e87a8a0808/729df4ff-05c8-51ee-af10-fc9e9a2c9bdd"
 					(reference "#PWRC50419")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:R")
+		(at 360.68 144.78 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "ca73bf87-601b-501f-9d1e-667bc9c61503")
+		(property "Reference" "R507"
+			(at 367.03000000000003 143.51 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "10k"
+			(at 367.03000000000003 146.05 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
+			(at 360.68 144.78 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "https://www.yageogroup.com/content/datasheet/asset/file/PYU-RC_GROUP_51_ROHS_L"
+			(at 360.68 144.78 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "O-21: series resistor to GPIO4; ADC samples from C504"
+			(at 360.68 144.78 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Manufacturer" "Yageo"
+			(at 360.68 144.78 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "MPN" "RC0603FR-0710KL"
+			(at 360.68 144.78 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C98220"
+			(at 360.68 144.78 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "d2eb65c6-ca5f-5a57-8d6c-9a012ce148cc")
+		)
+		(pin "2"
+			(uuid "fe5e2454-1567-5016-8314-58421b79a4f4")
+		)
+		(instances
+			(project "RoverCore"
+				(path "/d069f045-7f09-4f8a-bd29-51e87a8a0808/729df4ff-05c8-51ee-af10-fc9e9a2c9bdd"
+					(reference "R507")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(wire
+		(pts
+			(xy 360.68 140.97) (xy 360.68 135.89)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "3514ce36-8f3e-5609-a5ad-0a41f9f1a2b7")
+	)
+	(label "VBAT_DIV"
+		(at 360.68 135.89 90)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "6c405054-4568-5133-ba71-095b6dda3d47")
+	)
+	(wire
+		(pts
+			(xy 360.68 148.59) (xy 360.68 153.67)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "b2e0b6a3-e753-5ce1-9e2b-fbd161cf97d0")
+	)
+	(label "VBAT_SENSE"
+		(at 360.68 153.67 270)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right bottom)
+		)
+		(uuid "a25cf261-72f3-54d2-a227-a0759bd8754b")
+	)
+	(symbol
+		(lib_id "Transistor_FET:Q_NMOS_GSD")
+		(at 340.36 144.78 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "f7f99cb4-2902-5ea1-a0e7-92bae612ec2b")
+		(property "Reference" "Q505"
+			(at 346.71000000000004 143.51 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "NTR4003N"
+			(at 346.71000000000004 146.05 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Package_TO_SOT_SMD:SOT-23"
+			(at 340.36 144.78 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "https://www.onsemi.com/download/data-sheet/pdf/ntr4003n-d.pdf"
+			(at 340.36 144.78 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "O-21 shunt: clamps VBAT_DIV to GND while +3V3 is absent; 30 V, VGS(th) 0.8-1.4 V, RDS(on) <= 2.0 Ohm at VGS 2.5 V, IDSS <= 1 uA at 25 degC (NTR4003N/D Rev 6); pinout 1 G, 2 S, 3 D"
+			(at 340.36 144.78 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Manufacturer" "onsemi"
+			(at 340.36 144.78 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "MPN" "NTR4003NT1G"
+			(at 340.36 144.78 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C82325"
+			(at 340.36 144.78 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "1549eb78-86db-5ee6-89f5-03a2e0dec38d")
+		)
+		(pin "2"
+			(uuid "148d630e-d1e9-557b-98fe-001626a1d5f7")
+		)
+		(pin "3"
+			(uuid "bf526ebd-262b-542a-a5c1-cec854b4bb03")
+		)
+		(instances
+			(project "RoverCore"
+				(path "/d069f045-7f09-4f8a-bd29-51e87a8a0808/729df4ff-05c8-51ee-af10-fc9e9a2c9bdd"
+					(reference "Q505")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(wire
+		(pts
+			(xy 335.28 144.78) (xy 330.2 144.78)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "5348e79d-57f4-55ca-b599-c079b57c2ecf")
+	)
+	(label "VBAT_SH_G"
+		(at 330.2 144.78 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right bottom)
+		)
+		(uuid "00e9cd3a-13b9-54c9-bf43-b020583e25aa")
+	)
+	(wire
+		(pts
+			(xy 342.9 149.86) (xy 342.9 154.94)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "219ceefe-fe81-511b-9d8b-3b5a8e62c9b3")
+	)
+	(symbol
+		(lib_id "power:GND")
+		(at 342.9 154.94 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom no)
+		(on_board no)
+		(dnp no)
+		(uuid "68cfe7c5-4719-56ab-83f9-1e6c1c7f5f2c")
+		(property "Reference" "#PWRQ50520"
+			(at 342.9 158.75 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 342.9 160.02 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Footprint" ""
+			(at 342.9 154.94 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 342.9 154.94 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 342.9 154.94 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "706315a2-f98e-583c-9e63-1e52dba0a6bd")
+		)
+		(instances
+			(project "RoverCore"
+				(path "/d069f045-7f09-4f8a-bd29-51e87a8a0808/729df4ff-05c8-51ee-af10-fc9e9a2c9bdd"
+					(reference "#PWRQ50520")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(wire
+		(pts
+			(xy 342.9 139.7) (xy 342.9 134.62)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "21cb3c1e-e8ea-5d16-bae8-251b5886b1d0")
+	)
+	(label "VBAT_DIV"
+		(at 342.9 134.62 90)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "716c1038-7473-553c-bcba-b278789f49db")
+	)
+	(symbol
+		(lib_id "Device:R")
+		(at 284.48 144.78 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "2048d2ba-d48e-5a92-b1d0-bbbc454ce98e")
+		(property "Reference" "R508"
+			(at 290.83000000000004 143.51 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "100k"
+			(at 290.83000000000004 146.05 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
+			(at 284.48 144.78 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "https://www.yageogroup.com/content/datasheet/asset/file/PYU-RC_GROUP_51_ROHS_L"
+			(at 284.48 144.78 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Shunt gate pull-up from VBAT_PROT: VGS = 0.5 x VBAT (4.5 V at 9 V, 10.75 V at 21.5 V)"
+			(at 284.48 144.78 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Manufacturer" "Yageo"
+			(at 284.48 144.78 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "MPN" "RC0603FR-07100KL"
+			(at 284.48 144.78 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C14675"
+			(at 284.48 144.78 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "270cad7e-ac8d-5afa-91f4-c6e7e806787a")
+		)
+		(pin "2"
+			(uuid "d0d64ebb-87f0-54bc-ae37-33cfd207dd99")
+		)
+		(instances
+			(project "RoverCore"
+				(path "/d069f045-7f09-4f8a-bd29-51e87a8a0808/729df4ff-05c8-51ee-af10-fc9e9a2c9bdd"
+					(reference "R508")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(wire
+		(pts
+			(xy 284.48 140.97) (xy 284.48 135.89)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "bf410c93-abdf-5b14-8bef-17d3a1968d8c")
+	)
+	(hierarchical_label "VBAT_PROT"
+		(shape input)
+		(at 284.48 135.89 90)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "afbd6f2e-a77d-5d49-a97e-fbb2b2f5db02")
+	)
+	(wire
+		(pts
+			(xy 284.48 148.59) (xy 284.48 153.67)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "8c210e93-3615-5111-86ad-bfa86d53119c")
+	)
+	(label "VBAT_SH_G"
+		(at 284.48 153.67 270)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right bottom)
+		)
+		(uuid "d882f707-f221-5207-a9c7-027f21124e08")
+	)
+	(symbol
+		(lib_id "Device:R")
+		(at 299.72 144.78 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "436368b9-c0cd-5bda-9a36-cdc66882caf0")
+		(property "Reference" "R509"
+			(at 306.07000000000005 143.51 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "100k"
+			(at 306.07000000000005 146.05 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
+			(at 299.72 144.78 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "https://www.yageogroup.com/content/datasheet/asset/file/PYU-RC_GROUP_51_ROHS_L"
+			(at 299.72 144.78 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Shunt gate divider bottom"
+			(at 299.72 144.78 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Manufacturer" "Yageo"
+			(at 299.72 144.78 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "MPN" "RC0603FR-07100KL"
+			(at 299.72 144.78 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C14675"
+			(at 299.72 144.78 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "b083818b-38d8-5250-8127-86eb940e0390")
+		)
+		(pin "2"
+			(uuid "efe7dfc8-9cd4-5f71-86db-1e9a3ca08ece")
+		)
+		(instances
+			(project "RoverCore"
+				(path "/d069f045-7f09-4f8a-bd29-51e87a8a0808/729df4ff-05c8-51ee-af10-fc9e9a2c9bdd"
+					(reference "R509")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(wire
+		(pts
+			(xy 299.72 140.97) (xy 299.72 135.89)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "cde3572c-d399-5e8b-9a7a-fa08965aef3f")
+	)
+	(label "VBAT_SH_G"
+		(at 299.72 135.89 90)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "abd6d9e4-bd5a-5c4e-bf39-2efc90d3198b")
+	)
+	(wire
+		(pts
+			(xy 299.72 148.59) (xy 299.72 153.67)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "422d5638-03f3-52d5-8a7c-84661fab8f47")
+	)
+	(symbol
+		(lib_id "power:GND")
+		(at 299.72 153.67 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom no)
+		(on_board no)
+		(dnp no)
+		(uuid "6bceac8e-4f8d-58be-9600-f8a087e2e525")
+		(property "Reference" "#PWRR50921"
+			(at 299.72 157.48 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 299.72 158.75 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Footprint" ""
+			(at 299.72 153.67 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 299.72 153.67 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 299.72 153.67 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "73c1219d-7b8a-543f-9aff-9e2142d5f675")
+		)
+		(instances
+			(project "RoverCore"
+				(path "/d069f045-7f09-4f8a-bd29-51e87a8a0808/729df4ff-05c8-51ee-af10-fc9e9a2c9bdd"
+					(reference "#PWRR50921")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Transistor_FET:Q_NMOS_GSD")
+		(at 292.1 180.34 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "3c65c0b2-6c79-5e4f-9f97-1ca90ce469ac")
+		(property "Reference" "Q506"
+			(at 298.45000000000005 179.07 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "NTR4003N"
+			(at 298.45000000000005 181.61 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Package_TO_SOT_SMD:SOT-23"
+			(at 292.1 180.34 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "https://www.onsemi.com/download/data-sheet/pdf/ntr4003n-d.pdf"
+			(at 292.1 180.34 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "O-21: +3V3 present -> shunt Q505 off; 30 V, VGS(th) 0.8-1.4 V, RDS(on) <= 2.0 Ohm at VGS 2.5 V, IDSS <= 1 uA at 25 degC (NTR4003N/D Rev 6); pinout 1 G, 2 S, 3 D"
+			(at 292.1 180.34 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Manufacturer" "onsemi"
+			(at 292.1 180.34 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "MPN" "NTR4003NT1G"
+			(at 292.1 180.34 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C82325"
+			(at 292.1 180.34 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "ade8a030-d813-596b-bb1e-c102ab26ceb8")
+		)
+		(pin "2"
+			(uuid "1e173c54-9da0-5612-92a8-5cd9f15d5811")
+		)
+		(pin "3"
+			(uuid "a2a530b0-9b43-599f-8506-d993ebc6ec26")
+		)
+		(instances
+			(project "RoverCore"
+				(path "/d069f045-7f09-4f8a-bd29-51e87a8a0808/729df4ff-05c8-51ee-af10-fc9e9a2c9bdd"
+					(reference "Q506")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(wire
+		(pts
+			(xy 287.02 180.34) (xy 281.94 180.34)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "53c82a74-d1b8-5865-b13f-5bb6c348215a")
+	)
+	(label "MEAS_EN_C"
+		(at 281.94 180.34 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right bottom)
+		)
+		(uuid "f44e2796-3fd6-5adb-a55a-192a73c2563b")
+	)
+	(wire
+		(pts
+			(xy 294.64 185.42) (xy 294.64 190.5)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "4aa54cd4-8ef2-5c95-a418-bca4357525f4")
+	)
+	(symbol
+		(lib_id "power:GND")
+		(at 294.64 190.5 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom no)
+		(on_board no)
+		(dnp no)
+		(uuid "8f295932-f856-5f7e-9e0f-706ba44dd58f")
+		(property "Reference" "#PWRQ50622"
+			(at 294.64 194.31 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 294.64 195.58 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Footprint" ""
+			(at 294.64 190.5 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 294.64 190.5 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 294.64 190.5 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "64ee3394-0200-5e52-abd5-d3d23f22cf38")
+		)
+		(instances
+			(project "RoverCore"
+				(path "/d069f045-7f09-4f8a-bd29-51e87a8a0808/729df4ff-05c8-51ee-af10-fc9e9a2c9bdd"
+					(reference "#PWRQ50622")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(wire
+		(pts
+			(xy 294.64 175.26) (xy 294.64 170.18)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "5c4db93d-c22d-501f-af8f-02e9f762014a")
+	)
+	(label "VBAT_SH_G"
+		(at 294.64 170.18 90)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "77ca66f0-ef8e-5b9e-8385-66775dad5c10")
+	)
+	(symbol
+		(lib_id "Device:R")
+		(at 312.42 180.34 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "f1507696-f6bf-58b5-b46d-91560c2ab98c")
+		(property "Reference" "R510"
+			(at 318.77000000000004 179.07 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "10k"
+			(at 318.77000000000004 181.61 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
+			(at 312.42 180.34 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "https://www.yageogroup.com/content/datasheet/asset/file/PYU-RC_GROUP_51_ROHS_L"
+			(at 312.42 180.34 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Q506 gate from +3V3: VGS = 3.251 V x 100/110 = 2.96 V"
+			(at 312.42 180.34 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Manufacturer" "Yageo"
+			(at 312.42 180.34 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "MPN" "RC0603FR-0710KL"
+			(at 312.42 180.34 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C98220"
+			(at 312.42 180.34 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "49354d00-0592-5e19-833a-e622355f76f5")
+		)
+		(pin "2"
+			(uuid "97a7015e-eafd-52af-843a-862fad382981")
+		)
+		(instances
+			(project "RoverCore"
+				(path "/d069f045-7f09-4f8a-bd29-51e87a8a0808/729df4ff-05c8-51ee-af10-fc9e9a2c9bdd"
+					(reference "R510")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(wire
+		(pts
+			(xy 312.42 176.53) (xy 312.42 171.45)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "efe5c7cb-d114-5f0c-9d59-cf84661ade68")
+	)
+	(symbol
+		(lib_id "power:+3V3")
+		(at 312.42 171.45 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom no)
+		(on_board no)
+		(dnp no)
+		(uuid "362f17a1-ac79-5d59-8ed0-bc532cac45e4")
+		(property "Reference" "#PWRR51023"
+			(at 312.42 175.26 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "+3V3"
+			(at 312.42 176.53 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 312.42 171.45 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 312.42 171.45 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 312.42 171.45 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "f5f157cc-2802-577a-aefc-d000db401987")
+		)
+		(instances
+			(project "RoverCore"
+				(path "/d069f045-7f09-4f8a-bd29-51e87a8a0808/729df4ff-05c8-51ee-af10-fc9e9a2c9bdd"
+					(reference "#PWRR51023")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(wire
+		(pts
+			(xy 312.42 184.15) (xy 312.42 189.23)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "40b2cbe1-a61e-5047-ac4a-6b2b37604d1c")
+	)
+	(label "MEAS_EN_C"
+		(at 312.42 189.23 270)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right bottom)
+		)
+		(uuid "1e01fd89-5c3c-579b-ae0b-49b29dca06fa")
+	)
+	(symbol
+		(lib_id "Device:R")
+		(at 327.66 180.34 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "db2be4fd-7647-558f-a3bb-e9035948fb1a")
+		(property "Reference" "R511"
+			(at 334.01000000000005 179.07 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "100k"
+			(at 334.01000000000005 181.61 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
+			(at 327.66 180.34 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "https://www.yageogroup.com/content/datasheet/asset/file/PYU-RC_GROUP_51_ROHS_L"
+			(at 327.66 180.34 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Q506 gate pull-down: +3V3 absent -> shunt on"
+			(at 327.66 180.34 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Manufacturer" "Yageo"
+			(at 327.66 180.34 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "MPN" "RC0603FR-07100KL"
+			(at 327.66 180.34 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C14675"
+			(at 327.66 180.34 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "5312c0af-2512-5a42-9924-e9cd5cfb66c8")
+		)
+		(pin "2"
+			(uuid "7d64812a-6f84-52a6-8df2-6684a75dc4f2")
+		)
+		(instances
+			(project "RoverCore"
+				(path "/d069f045-7f09-4f8a-bd29-51e87a8a0808/729df4ff-05c8-51ee-af10-fc9e9a2c9bdd"
+					(reference "R511")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(wire
+		(pts
+			(xy 327.66 176.53) (xy 327.66 171.45)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "22d7f1ea-9f59-58db-88df-a439a1c75d58")
+	)
+	(label "MEAS_EN_C"
+		(at 327.66 171.45 90)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "b2e34cc1-6174-5a2f-a531-8a00fce15801")
+	)
+	(wire
+		(pts
+			(xy 327.66 184.15) (xy 327.66 189.23)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "08664fc9-b35b-5e38-8e42-d5972f8c79ea")
+	)
+	(symbol
+		(lib_id "power:GND")
+		(at 327.66 189.23 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom no)
+		(on_board no)
+		(dnp no)
+		(uuid "1145e012-37ad-5fc1-b854-a6ef5a58503a")
+		(property "Reference" "#PWRR51124"
+			(at 327.66 193.04 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 327.66 194.31 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Footprint" ""
+			(at 327.66 189.23 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 327.66 189.23 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 327.66 189.23 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "88505386-ed92-5dec-a93d-1f6bee8005d6")
+		)
+		(instances
+			(project "RoverCore"
+				(path "/d069f045-7f09-4f8a-bd29-51e87a8a0808/729df4ff-05c8-51ee-af10-fc9e9a2c9bdd"
+					(reference "#PWRR51124")
 					(unit 1)
 				)
 			)
@@ -6764,7 +8343,7 @@
 		)
 		(uuid "3f3dca97-5941-551f-a54e-02c725ad7ef3")
 	)
-	(text "ADC inputs VBAT/VSERVO/ISERVO: protection need documented in 3.13 (O-21); values are candidates."
+	(text "O-21: while +3V3 is absent, Q505 (here) and Q405 (ServoPower) clamp the VBAT/VSERVO dividers to GND; 10k series to each ADC pin."
 		(exclude_from_sim no)
 		(at 25.4 45.72 0)
 		(effects

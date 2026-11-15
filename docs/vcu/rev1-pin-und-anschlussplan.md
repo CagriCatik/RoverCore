@@ -71,13 +71,13 @@ Firmware-Test mit einem Pegeltest bestätigt.
 | Servo/ESC (5×) | Puffer U201 3,3 → 5 V mit Ioff (3.1), Freigabe über `ACT_OE_N`; 100k Pull-downs an Ein- und Ausgang; Serienwiderstand + ESD am Stecker | Ausgang hochohmig + Pull-down → low, keine Pulse |
 | LED SK6812MINI-E (4×) | LED_1–3 über U201, LED_4 über U202 (ohne OE); 5-V-Ausgang (SK6812MINI-E V_IH 0,65 × V_DD) | Daten low, LEDs behalten/aus |
 | i-BUS ein | U203 SN74LVC1G17 an 3,3 V (5-V-tolerant, Ioff), 2,2 kΩ Serie, 100k Pull-down | Eingang hochohmig |
-| Erweiterungs-UART | TX: Serienwiderstand; RX: Serienwiderstand + Klemmung auf 3,3 V, 10k Pull-up | definiert |
+| Erweiterungs-UART | TX: 1 kΩ in Serie; RX: 4,7 kΩ in Serie am Stecker, ESD-Diode nach GND, 10k Pull-up an +3V3 (keine Klemmdiode nach +3V3 – sie würde die Schiene rückspeisen; Versorgungsdokument 3.13) | definiert |
 | I²C | Pull-ups auf den Modulen (je 10k, Adafruit); Carrier-Pull-ups nur bestückungsoptional | – |
 | Taster | 10k Pull-up, RC-Entprellung | nicht gedrückt |
 | Buzzer | Low-Side-MOSFET, Gate-Pull-down, Freilaufdiode bei magnetischem Buzzer | aus |
-| Akkumessung | Kandidat 120k/20k + RC + Serienwiderstand/Klemmung; Fall „Akku an, ESP32 aus" offen (Versorgungsdokument 3.9, O-21) | – |
-| Servoschienen-Messung | Teiler auf < 2,9 V (ADC ATTEN3) + RC | – |
-| Servostrom-Messung | INA240A3 an 2-mΩ-Ausgangsshunt, RC zum ADC (Versorgungsdokument 3.6) | – |
+| Akkumessung | 120k/20k + 100 nF, 10 kΩ in Serie zum Pin; Q505 klemmt den Teiler ohne +3V3 auf GND (Versorgungsdokument 3.13) | 0 V am Pin ohne +3V3 |
+| Servoschienen-Messung | Teiler auf < 2,9 V (ADC ATTEN3) + RC, 10 kΩ in Serie, Klemmung Q405 ohne +3V3 | 0 V am Pin ohne +3V3 |
+| Servostrom-Messung | INA240A3 an 2-mΩ-Ausgangsshunt, RC und 10 kΩ in Serie zum ADC (Versorgungsdokument 3.6) | INA240 an +3V3: ohne +3V3 kein Ausgang |
 
 ### 3.1 Pufferauswahl (Stand 2026-11-15)
 
@@ -313,3 +313,87 @@ separater INT1-Draht.
 | O-11 | Pinreihenfolge der Stiftleisten von Adafruit 4438 und 326 (oder Wahl STEMMA QT) |
 | O-12 | ~~Pufferbausteine~~ – erledigt 2026-11-15: SN74LVC8T245 + SN74LVC1T45 (Ausgänge), SN74LVC1G17 (i-BUS), Abschnitt 3.1 |
 | O-13 | Arduino-ESP32-Core-Version festlegen und prüfen, dass LEDC/RMT/UART auf den gewählten Pins wie vorgesehen funktionieren (Bring-up-Test) |
+
+
+## 6. Prüfbericht DevKit-Sockel U501 und offene Labels (Stand 2026-11-15)
+
+Erzeugt mit `python3 hardware/scripts/check_socket_pinmap.py`. Das Skript
+exportiert die Netzliste mit kicad-cli und vergleicht alle 44 Pads mit
+`pinmap.csv`. Abweichungen führen zu Exit-Status 1. Die 13 in `pinmap.csv`
+als `reserved` geführten Pins sind **erwartete No-Connects**. Geprüft wird
+dabei auch, dass der Pinname im Netz `unconnected-(…)` zum GPIO und zur
+Padnummer passt.
+
+Ergebnis: **24 Signal, 7 Versorgung, 13 erwartete No-Connects, 0 unerklärte
+Abweichungen.** Das bestätigt die Umsetzung von `pinmap.csv`. Die Pinbelegung
+selbst stammt aus dem Espressif User Guide v1.1 (Abschnitt 1).
+
+| Pad | DevKit-Pin | Port | pinmap.csv | Netz im Schaltplan | Einstufung |
+|---:|---|---|---|---|---|
+| 1 | J1-1 | 3V3 | +3V3 | +3V3 | power |
+| 2 | J1-2 | 3V3 | +3V3 | +3V3 | power |
+| 3 | J1-3 | CHIP_PU | DEVKIT_EN | unconnected-(U501-J1-3/RST-Pad3) | expected NC |
+| 4 | J1-4 | GPIO4 | VBAT_SENSE | VBAT_SENSE | signal |
+| 5 | J1-5 | GPIO5 | VSERVO_SENSE | VSERVO_SENSE | signal |
+| 6 | J1-6 | GPIO6 | IMU_INT1 | IMU_INT1 | signal |
+| 7 | J1-7 | GPIO7 | SERVO_PWR_EN | SERVO_PWR_EN | signal |
+| 8 | J1-8 | GPIO15 | SERVO_FRONT_PWM_3V3 | SERVO_FRONT_PWM_3V3 | signal |
+| 9 | J1-9 | GPIO16 | SERVO_REAR_PWM_3V3 | SERVO_REAR_PWM_3V3 | signal |
+| 10 | J1-10 | GPIO17 | SERVO_AUX1_PWM_3V3 | SERVO_AUX1_PWM_3V3 | signal |
+| 11 | J1-11 | GPIO18 | SPARE_GPIO18 | SPARE_GPIO18 | signal |
+| 12 | J1-12 | GPIO8 | I2C_SDA | I2C_SDA | signal |
+| 13 | J1-13 | GPIO3 | STRAP_GPIO3 | unconnected-(U501-J1-13/GPIO3-Pad13) | expected NC |
+| 14 | J1-14 | GPIO46 | STRAP_GPIO46 | unconnected-(U501-J1-14/GPIO46-Pad14) | expected NC |
+| 15 | J1-15 | GPIO9 | I2C_SCL | I2C_SCL | signal |
+| 16 | J1-16 | GPIO10 | ENABLE_BTN_N | ENABLE_BTN_N | signal |
+| 17 | J1-17 | GPIO11 | STATUS_LED | STATUS_LED | signal |
+| 18 | J1-18 | GPIO12 | BUZZER | BUZZER | signal |
+| 19 | J1-19 | GPIO13 | ESC_PWM_3V3 | ESC_PWM_3V3 | signal |
+| 20 | J1-20 | GPIO14 | SERVO_AUX2_PWM_3V3 | SERVO_AUX2_PWM_3V3 | signal |
+| 21 | J1-21 | 5V | +5V_DEVKIT | +5V_DEVKIT | power |
+| 22 | J1-22 | GND | GND | GND | power |
+| 23 | J3-1 | GND | GND | GND | power |
+| 24 | J3-2 | GPIO43 | U0TXD | unconnected-(U501-J3-2/TX-Pad24) | expected NC |
+| 25 | J3-3 | GPIO44 | U0RXD | unconnected-(U501-J3-3/RX-Pad25) | expected NC |
+| 26 | J3-4 | GPIO1 | ISERVO_SENSE | ISERVO_SENSE | signal |
+| 27 | J3-5 | GPIO2 | ACT_OE_N | ACT_OE_N | signal |
+| 28 | J3-6 | GPIO42 | LED_1_3V3 | LED_1_3V3 | signal |
+| 29 | J3-7 | GPIO41 | LED_2_3V3 | LED_2_3V3 | signal |
+| 30 | J3-8 | GPIO40 | LED_3_3V3 | LED_3_3V3 | signal |
+| 31 | J3-9 | GPIO39 | LED_4_3V3 | LED_4_3V3 | signal |
+| 32 | J3-10 | GPIO38 | DEVKIT_RGB | unconnected-(U501-J3-10/GPIO38-Pad32) | expected NC |
+| 33 | J3-11 | GPIO37 | PSRAM_GPIO37 | unconnected-(U501-J3-11/GPIO37-Pad33) | expected NC |
+| 34 | J3-12 | GPIO36 | PSRAM_GPIO36 | unconnected-(U501-J3-12/GPIO36-Pad34) | expected NC |
+| 35 | J3-13 | GPIO35 | PSRAM_GPIO35 | unconnected-(U501-J3-13/GPIO35-Pad35) | expected NC |
+| 36 | J3-14 | GPIO0 | STRAP_GPIO0 | unconnected-(U501-J3-14/GPIO0-Pad36) | expected NC |
+| 37 | J3-15 | GPIO45 | STRAP_GPIO45 | unconnected-(U501-J3-15/GPIO45-Pad37) | expected NC |
+| 38 | J3-16 | GPIO48 | EXT_UART_RX | EXT_UART_RX | signal |
+| 39 | J3-17 | GPIO47 | EXT_UART_TX | EXT_UART_TX | signal |
+| 40 | J3-18 | GPIO21 | IBUS_RX_3V3 | IBUS_RX_3V3 | signal |
+| 41 | J3-19 | GPIO20 | USB_DP | unconnected-(U501-J3-19/GPIO20-Pad41) | expected NC |
+| 42 | J3-20 | GPIO19 | USB_DN | unconnected-(U501-J3-20/GPIO19-Pad42) | expected NC |
+| 43 | J3-21 | GND | GND | GND | power |
+| 44 | J3-22 | GND | GND | GND | power |
+
+**Offene globale Labels (ERC „Label connected to only one pin", 16 Stück).**
+Sie bleiben bis zu den Verbraucherblättern offen und werden nicht
+ausgeblendet. `scripts/kit verify` meldet deshalb weiter einen Fehler.
+
+| Label | Quelle | Geplantes Gegenstück |
+|---|---|---|
+| SERVO_FRONT_PWM_3V3 | GPIO15 | Actuators: U201 A-Eingang → J102 |
+| SERVO_REAR_PWM_3V3 | GPIO16 | Actuators: U201 → J103 |
+| SERVO_AUX1_PWM_3V3 | GPIO17 | Actuators: U201 → J104 |
+| SERVO_AUX2_PWM_3V3 | GPIO14 | Actuators: U201 → J105 |
+| ESC_PWM_3V3 | GPIO13 | Actuators: U201 → J106 |
+| LED_1_3V3 | GPIO42 | Actuators: U201 → LED_1_5V → Lighting_IO J108 |
+| LED_2_3V3 | GPIO41 | Actuators: U201 → LED_2_5V → Lighting_IO J109 |
+| LED_3_3V3 | GPIO40 | Actuators: U201 → LED_3_5V → Lighting_IO J110 |
+| LED_4_3V3 | GPIO39 | Lighting_IO: U202 SN74LVC1T45 → J111 |
+| BUZZER | GPIO12 | Lighting_IO: Low-Side-Treiber BZ101 |
+| EXT_UART_TX | GPIO47 | Lighting_IO: 1 kΩ → J112 |
+| EXT_UART_RX | GPIO48 | Lighting_IO: 4,7 kΩ, ESD, 10 kΩ Pull-up → J112 |
+| IBUS_RX_3V3 | GPIO21 | Lighting_IO: U203 SN74LVC1G17 → J107 |
+| IMU_INT1 | GPIO6 | Sensors_Display: J115 |
+| I2C_SDA | GPIO8 | Sensors_Display: J115, J116 |
+| I2C_SCL | GPIO9 | Sensors_Display: J115, J116 |

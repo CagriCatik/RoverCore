@@ -53,6 +53,12 @@ def rc(mpn, lcsc, desc):
 C100N = {"Manufacturer": "Yageo", "MPN": "CC0603KRX7R9BB104", "LCSC": "C14663",
          "Datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2211101700_YAGEO-CC0603KRX7R9BB104_C14663.pdf"}
 
+QNTR = {"Manufacturer": "onsemi", "MPN": "NTR4003NT1G", "LCSC": "C82325",
+        "Datasheet": "https://www.onsemi.com/download/data-sheet/pdf/ntr4003n-d.pdf"}
+NTR_NOTE = ("30 V, VGS(th) 0.8-1.4 V, RDS(on) <= 2.0 Ohm at VGS 2.5 V, IDSS <= 1 uA at 25 degC "
+            "(NTR4003N/D Rev 6); pinout 1 G, 2 S, 3 D")
+NMOS = "Transistor_FET:Q_NMOS_GSD"
+
 # DevKit socket pin -> net (pads 1-22 = J1-1..22, 23-44 = J3-1..22); "NC" = reserved, see pinmap.csv
 SOCKET = {
     1: "+3V3", 2: "=1", 3: "NC", 4: "VBAT_SENSE", 5: "VSERVO_SENSE", 6: "IMU_INT1", 7: "SERVO_PWR_EN",
@@ -79,9 +85,10 @@ def parts():
         ("D501", "Device:D_Schottky", "PMEG4010CEH", "Diode_SMD:D_SOD-123F", (63.5, 63.5, 180),
          {"1": "+5V_DEVKIT", "2": "+5V"},
          {"Manufacturer": "Nexperia", "MPN": "PMEG4010CEH,115", "LCSC": "C193342",
-          "Datasheet": "https://www.nexperia.com/products/diodes/schottky-diodes-and-rectifiers/schottky-diodes-and-rectifiers-if-1-a/series/PMEG4010CEH-PMEG4010CEJ.html",
+          "Datasheet": "https://assets.nexperia.com/documents/data-sheet/PMEG4010CEH.pdf",
           "Description": "Carrier +5V -> DevKit 5V pin; diode-OR with the DevKit USB diodes (no backfeed either way). "
-                         "40 V 1 A candidate; datasheet PDF not yet obtained, VF/IR to verify (O-28)"}),
+                         "40 V 1 A; VF max 490 mV at 0.5 A (25 degC, pulsed; Nexperia v.3 2023-10-12); "
+                         "cathode copper >= 1 cm2 (Rth(j-a) 150 K/W)"}),
         ("TP503", "Connector:TestPoint", "+5V_DEVKIT", TP, (91.44, 63.5, 0), {"1": "+5V_DEVKIT"},
          {"_ref_at": (2.54, -1.27), "_val_at": (2.54, 1.27), "Description": "Test point DevKit 5V pin; bare copper pad, excluded from BOM"}),
         ("C501", "Device:C", "10u 25V", C0805, (63.5, 101.6, 0), {"1": "+3V3", "2": "GND"},
@@ -115,12 +122,28 @@ def parts():
          {"1": "GND", "2": "LED_STAT_A"},
          {"Description": "Status LED, 0603, AlGaInP (VF <= 2.4 V at 2 mA required with 3.3 V drive); part open (O-28)"}),
         # ---- battery voltage measurement (candidate, protection need documented in 3.13) ----
-        ("R505", "Device:R", "120k", R0603, (297.18, 63.5, 0), {"1": "VBAT_PROT", "2": "VBAT_SENSE"},
+        ("R505", "Device:R", "120k", R0603, (297.18, 63.5, 0), {"1": "VBAT_PROT", "2": "VBAT_DIV"},
          rc("RC0603FR-07120KL", "C114607", "VBAT divider top: 12.6 V -> 1.80 V, 9.0 V -> 1.29 V, 21.5 V clamp -> 3.07 V")),
-        ("R506", "Device:R", "20k", R0603, (312.42, 109.22, 0), {"1": "VBAT_SENSE", "2": "GND"},
+        ("R506", "Device:R", "20k", R0603, (312.42, 109.22, 0), {"1": "VBAT_DIV", "2": "GND"},
          rc("RC0603FR-0720KL", "C105575", "VBAT divider bottom; source impedance 17 kOhm")),
-        ("C504", "Device:C", "100n 50V", C0603, (327.66, 109.22, 0), {"1": "VBAT_SENSE", "2": "GND"},
+        ("C504", "Device:C", "100n 50V", C0603, (327.66, 109.22, 0), {"1": "VBAT_DIV", "2": "GND"},
          dict(C100N, Description="VBAT_SENSE filter, tau 1.7 ms")),
+        ("R507", "Device:R", "10k", R0603, (360.68, 144.78, 0), {"1": "VBAT_DIV", "2": "VBAT_SENSE"},
+         rc("RC0603FR-0710KL", "C98220", "O-21: series resistor to GPIO4; ADC samples from C504")),
+        ("Q505", NMOS, "NTR4003N", "Package_TO_SOT_SMD:SOT-23", (340.36, 144.78, 0),
+         {"1": "VBAT_SH_G", "2": "GND", "3": "VBAT_DIV"},
+         dict(QNTR, Description="O-21 shunt: clamps VBAT_DIV to GND while +3V3 is absent; " + NTR_NOTE)),
+        ("R508", "Device:R", "100k", R0603, (284.48, 144.78, 0), {"1": "VBAT_PROT", "2": "VBAT_SH_G"},
+         rc("RC0603FR-07100KL", "C14675", "Shunt gate pull-up from VBAT_PROT: VGS = 0.5 x VBAT (4.5 V at 9 V, 10.75 V at 21.5 V)")),
+        ("R509", "Device:R", "100k", R0603, (299.72, 144.78, 0), {"1": "VBAT_SH_G", "2": "GND"},
+         rc("RC0603FR-07100KL", "C14675", "Shunt gate divider bottom")),
+        ("Q506", NMOS, "NTR4003N", "Package_TO_SOT_SMD:SOT-23", (292.1, 180.34, 0),
+         {"1": "MEAS_EN_C", "2": "GND", "3": "VBAT_SH_G"},
+         dict(QNTR, Description="O-21: +3V3 present -> shunt Q505 off; " + NTR_NOTE)),
+        ("R510", "Device:R", "10k", R0603, (312.42, 180.34, 0), {"1": "+3V3", "2": "MEAS_EN_C"},
+         rc("RC0603FR-0710KL", "C98220", "Q506 gate from +3V3: VGS = 3.251 V x 100/110 = 2.96 V")),
+        ("R511", "Device:R", "100k", R0603, (327.66, 180.34, 0), {"1": "MEAS_EN_C", "2": "GND"},
+         rc("RC0603FR-07100KL", "C14675", "Q506 gate pull-down: +3V3 absent -> shunt on")),
         ("TP505", "Connector:TestPoint", "VBAT_SENSE", TP, (345.44, 104.14, 0), {"1": "VBAT_SENSE"},
          {"_ref_at": (2.54, -1.27), "_val_at": (2.54, 1.27), "Description": "Test point VBAT_SENSE; bare copper pad, excluded from BOM"}),
         ("TP501", "Connector:TestPoint", "GPIO18", TP, (368.3, 104.14, 0), {"1": "SPARE_GPIO18"},
@@ -150,7 +173,7 @@ def build(root_uuid, sheet_uuid):
     s.note("Defaults with ESP32 in reset, booting or missing: servo rail OFF (ServoPower R414/Q404/R415), "
            "output buffers Hi-Z (R501), buzzer off, button reads high. Firmware: rail first, then ACT_OE_N low.",
            25.4, 40.64, "h3")
-    s.note("ADC inputs VBAT/VSERVO/ISERVO: protection need documented in 3.13 (O-21); values are candidates.",
+    s.note("O-21: while +3V3 is absent, Q505 (here) and Q405 (ServoPower) clamp the VBAT/VSERVO dividers to GND; 10k series to each ADC pin.",
            25.4, 45.72, "h4")
     return s.render()
 
