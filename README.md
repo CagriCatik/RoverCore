@@ -23,17 +23,20 @@ GPIO and connector plan (draft):
 machine-readable in `hardware/interfaces/pinmap.csv`.
 Schematic and board are still blank; GPIOs and footprints are not frozen.
 
-## Everyday commands (run from the kit checkout)
+## Everyday commands (run from this repository)
 
 ```sh
-scripts/kit verify  "<this project>"                 # ERC, DRC, parity, libraries, metadata, 3D, BOM
-scripts/kit export  "<this project>" --revision A1   # NO-GO draft manufacturing outputs
-scripts/kit open    "<this project>" --kicad         # or --vscode
+scripts/kit install                       # once: local .venv (kicad-python, numpy, scipy)
+scripts/kit doctor                        # read-only environment diagnostics
+scripts/kit verify .                      # ERC, DRC, parity, libraries, metadata, 3D, BOM
+scripts/kit export . --revision A1        # NO-GO draft manufacturing outputs
+scripts/kit thermal analyze .             # steady-state thermal estimate
 ```
 
-Or double-click `project-manager.command` in the kit. A clean ERC/DRC run is a
-tooling result only; it does not establish electrical, thermal or fabrication
-readiness. See `AGENTS.md` for the rules that apply to automated edits.
+The tooling is vendored from PCB-Project-Template; source commit, license and
+local changes are in [`tools/VENDORED.md`](tools/VENDORED.md). A clean ERC/DRC
+run is a tooling result only; it does not establish electrical, thermal or
+fabrication readiness. See `AGENTS.md` for the rules that apply to automated edits.
 
 ## VCU-Review und lokale Werkzeuge
 

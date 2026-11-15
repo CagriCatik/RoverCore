@@ -1,37 +1,36 @@
-# VCU-Werkzeuge und Übernahme aus PCB-Project-Template
+# VCU-Werkzeuge in RoverCore
 
-## Herkunft und Integration, Stand 2026-11-15
+## Herkunft, Stand 2026-11-15
 
-Geprüfte Quelle: `CagriCatik/PCB-Project-Template`, Commit
-`65486a57c34182e49e1d76b4ed9779de235f1fb9`.
-RoverCore wurde während dieser Arbeit vom Owner auf `b2d1831` aktualisiert.
-Dieser Stand ist ein eigenständiges Boardprojekt; die früher vollständig
-enthaltenen Kit-Werkzeuge wurden dabei entfernt. Er enthält jetzt die zwei
-VCU-Dokumente, den aktiven Leistungsrechner und das native, noch leere Board.
+Die Board-Werkzeuge aus `CagriCatik/PCB-Project-Template` (Commit
+`65486a57c34182e49e1d76b4ed9779de235f1fb9`, MIT-Lizenz) liegen **direkt in
+RoverCore** unter `tools/`; `scripts/kit` ist ein lokaler Launcher. Ein
+zweiter Repository-Checkout und `ROVERCORE_KIT_ROOT` werden nicht mehr
+benötigt. Übernommen sind KiCad-Diagnose, ERC/DRC mit Schaltplanabgleich,
+Bibliotheksprüfung, Fertigungsexport und thermische Analyse samt
+Abhängigkeiten, Konfiguration, Fixtures und Tests. Nicht übernommen sind
+Projektgenerator, Vorlagen, GUI und Paketierung. Umfang, Lizenz und lokale
+Änderungen: [`tools/VENDORED.md`](../../tools/VENDORED.md).
 
-Wir übernehmen **den Werkzeugzugriff**, nicht erneut das gesamte Template:
-`scripts/kit` delegiert an einen explizit angegebenen externen Kit-Checkout.
-Dadurch bleiben Generator, GUI, Fixtures und Installer außerhalb des
-Fahrzeugprojekts. Kein Download, keine Installation und kein Update erfolgen
-automatisch. Das Template-Repository wird nicht geändert.
+Historie: `b2d1831` hatte die damals vollständig enthaltenen Kit-Werkzeuge
+entfernt, `762bea3` sie durch einen Wrapper auf einen externen Checkout
+ersetzt. Dieser Wrapper ist durch den lokalen Launcher abgelöst.
 
-## Lokale Verwendung auf dem Rechner mit KiCad 10.0.7
+## Lokale Verwendung (KiCad 10.0.7)
 
 ```sh
-export ROVERCORE_KIT_ROOT="/absoluter/pfad/PCB-Project-Template"
+scripts/kit install          # einmalig: .venv aus requirements.txt (pip braucht Netz)
 scripts/kit doctor
 scripts/kit verify .
-scripts/kit thermal analyze . --help
-scripts/kit firmware . --help
 scripts/kit export . --revision A1
+scripts/kit thermal analyze .
+.venv/bin/python -m unittest discover -s qa/tests -t qa/tests
 ```
 
-Die Befehle laufen aus dem RoverCore-Verzeichnis; relative Projektpfade bleiben
-erhalten. Zum Reproduzieren den oben genannten Kit-Commit verwenden. Für andere
-Kit-Stände Tests und Kompatibilität erneut prüfen. Exporte bleiben DRAFT/NO-GO;
-keine Fertigungsfreigabe ist Bestandteil dieser Änderung. Das Kit liest die
-projektlokale `qa/verification.json`. Thermik braucht reales Layout und explizite
-Verlustleistungen, Firmware eine tatsächlich vorhandene Anwendung/BSP.
+Exporte bleiben DRAFT/NO-GO; eine Fertigungsfreigabe ist nicht Bestandteil.
+Thermik braucht reales Layout und explizite Verlustleistungen
+(`hardware/simulations/thermal/power_sources.csv` oder `--power REF=W`),
+Firmware eine tatsächlich vorhandene Anwendung/BSP.
 
 ## Ergänzter unabhängiger Spannungsbudget-Check
 
@@ -57,22 +56,17 @@ Lenkservoanschlüssen. Der Rechner modelliert keine dynamische Servolast,
 Strombegrenzung, Temperatur, TVS oder Sicherung und erzeugt keine Freigabe.
 Er ergänzt den vorhandenen `rev1_power_calc.py`, ersetzt ihn nicht.
 
-## Verifikation und Grenzen
+## Verifikation und Grenzen (Lauf am 2026-11-15, macOS arm64, KiCad 10.0.7)
 
-- Fünf neue Budgettests bestanden, einschließlich unabhängiger Zweigströme,
-  gemeinsamer Reservelast, unbelastetem Zweig und ungültigen Eingaben.
-- Wrapper: Shell-Syntax, Weiterleitung zu Kit-Hilfe sowie Ablehnung eines
-  fehlenden oder auf RoverCore zeigenden Kit-Pfads geprüft.
-- Vor Integration des Owner-Pushs: Gesamtsuite 210 Tests, 85 übersprungen,
-  zwei Umgebungsfehler (PySide6 fehlt; thermischer Gate-Test verlangt
-  KiCad 10.0.7, installiert ist 9.0.2). Unverändertes Template: 205 Tests mit
-  denselben zwei Fehlern und 85 übersprungenen Tests. Das ist ein Kit-
-  Vergleichslauf, keine Hardwarevalidierung des inzwischen neuen Boardprojekts.
-- Der delegierte Projekt-Verify-Lauf wird bei KiCad 9.0.2 korrekt abgelehnt.
-- Native ERC/DRC unter 10.0.7, Firmware auf ESP32 und physische Prüfungen
-  nicht durchgeführt. Keine nativen KiCad-Dateien geändert, keine
-  Fertigungsdaten erzeugt.
+| Befehl | Ergebnis |
+| --- | --- |
+| `scripts/kit doctor` | WARN: KiCad 10.0.7 PASS, Bibliotheken 223/155 PASS, Plugins PASS (InteractiveHtmlBom, Freerouting, KiKit installiert, nicht verifiziert); IPC nicht erreichbar (KiCad läuft nicht, API-Server aus) |
+| `scripts/kit install --no-plugin-verify` | `.venv` angelegt (numpy 2.5.4, scipy 1.18.1, kicad-python) |
+| `scripts/kit verify .` | FAIL, blockierend nur DRC `invalid_outline` (leere Platine ohne Kontur); ERC, Abgleich, Bibliotheken, Footprints, Pin/Pad PASS |
+| `scripts/kit export . --revision A0-tooling` | DRAFT / NO-GO erzeugt (Gerber, Bohr, BOM, Positionen, STEP, PDF, Netzliste); Interactive HTML BOM FAILED, weil keine Platinenkontur |
+| `scripts/kit thermal analyze .` | Abbruch: keine Verlustleistungen angegeben (erwartet bei leerer Platine) |
+| `scripts/kit thermal analyze <Fixture-Kopie> --power R1=0.2 --power R2=0.1` | PASS (Schätzung) |
+| Tests | 77 Tests OK, 1 übersprungen (IPC-Live-Test, KiCad nicht gestartet) |
 
-Nächster Schritt: lokale Kit-Installation mit KiCad 10.0.7 verwenden, aktive
-Schaltung erstellen, Pinmap gegen diese abgleichen und die offenen Nachweise
-in den VCU-Dokumenten schließen. Der Schaltplan bleibt Hardware-Wahrheit.
+Keine nativen KiCad-Dateien geändert, keine Fertigungsfreigabe. Der
+Schaltplan bleibt Hardware-Wahrheit.
