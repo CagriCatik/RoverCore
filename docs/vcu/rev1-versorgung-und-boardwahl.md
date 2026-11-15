@@ -117,7 +117,7 @@ Einbruch, den die VCU sieht (O-3).
 | DevKit (ESP32-S3 inkl. WLAN-Spitzen, über DevKit-LDO) | 0,50 A | (S) |
 | FS-iA6B Empfänger | 0,10 A | (S); Hersteller nennt nur 4,0–8,4 V |
 | 4 × SK6812MINI-E, je max. 3 × 14,5 mA + 0,6 mA (Opsco Rev B/2) | 0,18 A | Datenblatt |
-| Buzzer CMT-8540S-SMT-TR (Same Sky): max. 150 mA bei 4 kHz, ½ Tastgrad | 0,15 A | Datenblatt |
+| Buzzer CMT-8540S-SMT-TR (Same Sky): max. 150 mA bei 4 kHz, 50 % Tastverhältnis (extern angesteuert) | 0,15 A | Datenblatt |
 | Status-LED, Puffer, INA240 | 0,03 A | (S) |
 | IMU + OLED (über DevKit-3V3) | 0,03 A | (S); OLED ca. 20 mA (Adafruit) |
 | UART-Erweiterung (Budget, Grenzwert) | 0,20 A | Festlegung |
@@ -317,9 +317,9 @@ gegen absolute Grenzwerte.
 | DevKit 5-V-Pin → LDO SGM2212-3.3 | Eingang 2,7–20 V; Dropout 240 mV typ. bei 500 mA (SG Micro) | erfüllt |
 | Empfänger FS-iA6B | 4,0–8,4 V (FlySky-Anleitung 2024) | erfüllt; bestimmt die harte Untergrenze 4,0 V |
 | LED **Opsco SK6812MINI-E** (SK6812MINI-E-012, Spec Rev B/2 2025-11-22, LCSC-Kopie; LCSC C5149201) | **3,7 / 5,0 / 5,5 V** min/typ/max (§9), absolut 3,7–5,5 V (§7); V_IH 0,65 × V_DD; 800 kbit/s | erfüllt, auch für Transienten bis 5,5 V. Rückwärts montierte LED (Loch in der LED-Platine). Pinbelegung hat sich zwischen Rev 04 und Rev B/2 geändert – Footprint gegen B/2 prüfen. Worldsemi-Typen verworfen: nur absolute Grenze 5,3 V, kein Betriebsbereich |
-| Buzzer **Same Sky CMT-8540S-SMT-TR** (Rev 1.04, 2024-09-11) | Nennspannung 5,0 V, Betrieb 1,0–6,0 V; 150 mA max. bei 4 kHz; Spule 13 Ω (10–16 Ω) | erfüllt. Freilaufdiode nötig; Low-Side-MOSFET für ≥ 0,52 A (5,16 V an 10 Ω bei Dauer-Ein). LCSC-Bestand 0, bei DigiKey/Mouser/Arrow lieferbar |
+| Buzzer **Same Sky CMT-8540S-SMT-TR** (Rev 1.04, 2024-09-11) | **extern angesteuerter** magnetischer Wandler; Nennspannung 5,0 V, Betrieb 1,0–6,0 V; max. 150 mA **bei 4 kHz und 50 % Tastverhältnis** (Messbedingung, kein allgemeiner Spitzenstrom); Spule 10–16 Ω | Spannungsbereich erfüllt. Ansteuerung nur per LEDC mit 4 kHz/50 %; **kein dauerhaftes Einschalten** per GPIO (Firmware-Regel, Gate-Pull-down). Freilaufdiode nötig. MOSFET und Freilaufpfad für den tatsächlichen Schaltstrom auslegen: Spitzenstrom am Ende jeder Einschaltphase und Fehlerfall Dauer-Ein (bis 5,16 V / 10 Ω ≈ 0,52 A) – Werte im Schaltplanschritt. LCSC-Bestand 0, bei DigiKey/Mouser/Arrow lieferbar |
 | SN74LVC8T245 / LVC1T45 (V_CCB) | 1,65–5,5 V (TI) | erfüllt |
-| UART-Erweiterung J112 | – | **verbindliches Budget:** +5V_EXT max. 0,2 A dauernd; 4,74–5,16 V statisch, Transienten bis 5,5 V; Signale 3,3 V, RX nicht 5-V-tolerant. Angeschlossene Geräte müssen diesen Bereich vertragen. Schutzelement (Strombegrenzung) im Schaltplan auswählen |
+| UART-Erweiterung J112 | – | **verbindliches Budget:** +5V_EXT max. 0,2 A dauernd; 4,74–5,16 V statisch; **dynamisches Fenster 4,56–5,34 V** (berechnete Lastsprünge bis 1 A, siehe Reglerrechnung) innerhalb der Auslegungsgrenzen 4,5–5,5 V; Signale 3,3 V, RX nicht 5-V-tolerant. Angeschlossene Geräte müssen diesen Bereich vertragen. Schutzelement (Strombegrenzung) im Schaltplan auswählen |
 
 Grenzen für die Transientenbewertung: **Untergrenze 4,5 V** (Auslegungsziel
 mit Reserve über den 4,0 V des Empfängers), **Obergrenze 5,5 V** (LED-
@@ -350,12 +350,12 @@ L bis 12 µH; Rechenweg `rev1_power_calc.py`, Funktion `logic_5v_capacitance`):
 
 | Kriterium | Anforderung | Ergebnis mit 37,7 µF (typ. 52,7 µF) |
 |---|---|---|
-| Regelschleife, Gl. 14 (f_o < 40 kHz) | ≥ 26,9 µF | f_o 27,4 kHz (19,6 kHz) – erfüllt unter den Annahmen |
+| Regelschleife, Gl. 14 (f_o < 40 kHz) | ≥ 26,9 µF | f_o 27,4 kHz (19,6 kHz) – rechnerisches Kriterium unter den dokumentierten Kapazitätsannahmen erfüllt; Regelkreisstabilität nicht gemessen |
 | Vorhaltekondensator, Gl. 16 | 1/(2π f_o R2) | 58 pF (81 pF); **75 pF** liegt im Bereich; Phasenreserve messen |
 | Rippel, Gl. 12 (30 mV) | ≥ 18,8 µF | 15 mV |
 | **Lastzunahme** 0,6 A / 1,0 A (Gl. 11) | Minimum ≥ 4,5 V | 4,63 V / 4,56 V – bedingt erfüllt |
 | **Lastabwurf** 0,6 A / 1,0 A (Gl. 11) | Maximum ≤ 5,5 V | 5,27 V / 5,34 V – bedingt erfüllt; Energiebilanz der Drossel nur 11 / 31 mV |
-| Buzzer-Lastwechsel 0,15 A bei 4 kHz | – | ca. 27 mV je Wechsel |
+| Buzzer-Lastwechsel bei 4 kHz (bis 0,15 A unter Datenblattbedingung) | – | ca. 27 mV je Wechsel |
 
 Bedingungen: Gl. 11 ist TIs Abschätzung „Ausgangskondensator überbrückt
 zwei Schaltperioden" und gilt für Lastanstiege schneller als ca. 7 µs

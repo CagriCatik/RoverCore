@@ -16,10 +16,10 @@ R1,U1,J1-10,SERVO_AUX1_PWM_3V3,GPIO17,LEDC ch via GPIO matrix,PIN_SERVO_AUX1,out
 R1,U1,J1-11,SPARE_GPIO18,GPIO18,GPIO,,nc,3V3,High- and low-level power-up glitch (60 us),draft,Not used for outputs because of high-level glitch; test pad only
 R1,U1,J3-4,ISERVO_SENSE,GPIO1,ADC1_CH0,PIN_ISERVO_SENSE,in-analog,3V3,Hi-Z at reset; INA240A3 output via RC,draft,O-18: servo rail total current; 2 mOhm output shunt x100 -> 0.2 V/A; ADC ATTEN3 0..2.9 V
 R1,U1,J3-5,ACT_OE_N,GPIO2,GPIO,PIN_ACT_OE_N,out,3V3,Hi-Z at reset; ext 10k pull-up -> buffers U201 disabled,draft,SN74LVC8T245 OE (active low; VCCA-referenced); low-level power-up glitch harmless (inputs pulled low)
-R1,U1,J3-6,WS2812_1_3V3,GPIO42,RMT TX ch0,PIN_WS2812_1,out,3V3 -> 5V buffer,Hi-Z at reset; buffer input pull-down,draft,MTMS; JTAG pads only if EFUSE_DIS_PAD_JTAG/JTAG source selects them; no power-up glitch listed
-R1,U1,J3-7,WS2812_2_3V3,GPIO41,RMT TX ch1,PIN_WS2812_2,out,3V3 -> 5V buffer,Hi-Z at reset; buffer input pull-down,draft,MTDI
-R1,U1,J3-8,WS2812_3_3V3,GPIO40,RMT TX ch2,PIN_WS2812_3,out,3V3 -> 5V buffer,Hi-Z at reset; buffer input pull-down,draft,MTDO
-R1,U1,J3-9,WS2812_4_3V3,GPIO39,RMT TX ch3,PIN_WS2812_4,out,3V3 -> 5V buffer,Hi-Z at reset; buffer input pull-down,draft,MTCK; all four RMT TX channels used; via U202 SN74LVC1T45 (no OE)
+R1,U1,J3-6,LED_1_3V3,GPIO42,RMT TX ch0,PIN_LED_1,out,3V3 -> 5V buffer,Hi-Z at reset; buffer input pull-down,draft,SK6812MINI-E data (WS2812-compatible); MTMS; JTAG pads only if EFUSE_DIS_PAD_JTAG/JTAG source selects them; no power-up glitch listed
+R1,U1,J3-7,LED_2_3V3,GPIO41,RMT TX ch1,PIN_LED_2,out,3V3 -> 5V buffer,Hi-Z at reset; buffer input pull-down,draft,MTDI
+R1,U1,J3-8,LED_3_3V3,GPIO40,RMT TX ch2,PIN_LED_3,out,3V3 -> 5V buffer,Hi-Z at reset; buffer input pull-down,draft,MTDO
+R1,U1,J3-9,LED_4_3V3,GPIO39,RMT TX ch3,PIN_LED_4,out,3V3 -> 5V buffer,Hi-Z at reset; buffer input pull-down,draft,MTCK; all four RMT TX channels used; via U202 SN74LVC1T45 (no OE)
 R1,U1,J3-18,IBUS_RX_3V3,GPIO21,UART1 RX via GPIO matrix,PIN_IBUS_RX,in,3V3 <- 5V-tolerant buffer,Hi-Z at reset,draft,FS-iA6B i-BUS level/baud not yet verified
 R1,U1,J3-17,EXT_UART_TX,GPIO47,UART2 TX via GPIO matrix,PIN_EXT_TX,out,3V3,Hi-Z at reset,draft,3.3 V on WROOM-1-N16R8 (1.8 V only on R16V variants)
 R1,U1,J3-16,EXT_UART_RX,GPIO48,UART2 RX via GPIO matrix,PIN_EXT_RX,in,3V3,Hi-Z at reset; ext pull-up 10k,draft,3.3 V on WROOM-1-N16R8; series R + clamp at connector

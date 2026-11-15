@@ -14,7 +14,7 @@ v1.8, ESP32-S3-DevKitC-1 User Guide v1.1, ESP-IDF-Doku (GPIO, LEDC).
 | Thema | Fakt | Quelle | Folge |
 |---|---|---|---|
 | Peripherie-Routing | LEDC, RMT, UART und I²C sind über die GPIO-Matrix auf jeden GPIO legbar | ESP-IDF GPIO-Übersicht | Zuordnung nach Layout und Boot-Verhalten statt nach Funktion |
-| RMT | 4 TX-Kanäle | DS v2.2, Abschnitt RMT | Alle 4 TX-Kanäle für die 4 WS2812-Ausgänge; keiner frei |
+| RMT | 4 TX-Kanäle | DS v2.2, Abschnitt RMT | Alle 4 TX-Kanäle für die 4 LED-Ausgänge (SK6812MINI-E, WS2812-kompatibles Protokoll); keiner frei |
 | LEDC | 8 Kanäle, 4 Timer, nur Low-Speed-Modus | ESP-IDF LEDC | 5 × Servo/ESC + Buzzer = 6 Kanäle |
 | ADC | ADC1 = GPIO1–10, ADC2 = GPIO11–20; ADC2 nicht zusammen mit Wi-Fi | DS v2.2 Tab. 2-8 und Hinweis | Messungen nur auf ADC1 |
 | Einschaltstörungen | GPIO1–17: Low-Pegel-Glitch 60 µs; **GPIO18: High- und Low-Glitch**; GPIO19/20: High-Glitches | DS v2.2 Tab. 2-2 | Keine Ausgänge auf GPIO18; Low-Glitches sind bei Servo-/ESC-Signalen (Ruhepegel low) unkritisch |
@@ -42,10 +42,10 @@ v1.8, ESP32-S3-DevKitC-1 User Guide v1.1, ESP-IDF-Doku (GPIO, LEDC).
 | 15 | J1-8 | SERVO_FRONT_PWM | LEDC | aus |
 | 16 | J1-9 | SERVO_REAR_PWM | LEDC | aus |
 | 17 | J1-10 | SERVO_AUX1_PWM | LEDC | aus |
-| 39 | J3-9 | WS2812_4 | RMT TX | aus |
-| 40 | J3-8 | WS2812_3 | RMT TX | aus |
-| 41 | J3-7 | WS2812_2 | RMT TX | aus |
-| 42 | J3-6 | WS2812_1 | RMT TX | aus |
+| 39 | J3-9 | LED_4 | RMT TX | aus |
+| 40 | J3-8 | LED_3 | RMT TX | aus |
+| 41 | J3-7 | LED_2 | RMT TX | aus |
+| 42 | J3-6 | LED_1 | RMT TX | aus |
 | 21 | J3-18 | IBUS_RX | UART1 RX | ein |
 | 2 | J3-5 | ACT_OE_N | Freigabe der Ausgangspuffer U201 (aktiv low) | aus |
 | 1 | J3-4 | ISERVO_SENSE | ADC1_CH0 – INA240A3, Gesamtstrom Servoschiene (O-18) | Analog ein |
@@ -69,7 +69,7 @@ Firmware-Test mit einem Pegeltest bestätigt.
 | Signalgruppe | Aufbereitung | Zustand bei Reset / ohne 3,3 V |
 |---|---|---|
 | Servo/ESC (5×) | Puffer U201 3,3 → 5 V mit Ioff (3.1), Freigabe über `ACT_OE_N`; 100k Pull-downs an Ein- und Ausgang; Serienwiderstand + ESD am Stecker | Ausgang hochohmig + Pull-down → low, keine Pulse |
-| WS2812 (4×) | WS2812_1–3 über U201, WS2812_4 über U202 (ohne OE); 5-V-Ausgang (SK6812MINI-E V_IH 0,65 × V_DD) | Daten low, LEDs behalten/aus |
+| LED SK6812MINI-E (4×) | LED_1–3 über U201, LED_4 über U202 (ohne OE); 5-V-Ausgang (SK6812MINI-E V_IH 0,65 × V_DD) | Daten low, LEDs behalten/aus |
 | i-BUS ein | U203 SN74LVC1G17 an 3,3 V (5-V-tolerant, Ioff), 2,2 kΩ Serie, 100k Pull-down | Eingang hochohmig |
 | Erweiterungs-UART | TX: Serienwiderstand; RX: Serienwiderstand + Klemmung auf 3,3 V, 10k Pull-up | definiert |
 | I²C | Pull-ups auf den Modulen (je 10k, Adafruit); Carrier-Pull-ups nur bestückungsoptional | – |
@@ -88,8 +88,8 @@ von JLCPCB am selben Tag, schwankend, alle „Extended Parts".
 
 | Ref | Baustein | Kanäle | Versorgung | LCSC (Bestand) |
 |---|---|---|---|---|
-| U201 | **SN74LVC8T245PWR** (TSSOP-24), SCES584D | ESC, Servo vorne, hinten, Reserve 1, Reserve 2, WS2812_1–3 | VCCA = +3V3_DEVKIT, VCCB = +5V | C27643 (65 377) |
-| U202 | **SN74LVC1T45DBVR** (SOT-23-6), SCES515N | WS2812_4 | VCCA = +3V3_DEVKIT, VCCB = +5V | C7843 (305 880) |
+| U201 | **SN74LVC8T245PWR** (TSSOP-24), SCES584D | ESC, Servo vorne, hinten, Reserve 1, Reserve 2, LED_1–3 | VCCA = +3V3_DEVKIT, VCCB = +5V | C27643 (65 377) |
+| U202 | **SN74LVC1T45DBVR** (SOT-23-6), SCES515N | LED_4 | VCCA = +3V3_DEVKIT, VCCB = +5V | C7843 (305 880) |
 
 Warum dieser Baustein:
 
@@ -124,7 +124,7 @@ Beschaltung:
 - **Pull-downs 100k an allen A-Eingängen** (Datenblatt verlangt definierte
   Pegel an nicht getriebenen Eingängen) und **100k an allen B-Ausgängen**, damit
   ESC und Servos bei hochohmigem Puffer sicher „kein Signal" sehen.
-- U202 (1T45) hat kein OE; sein Kanal ist WS2812_4. Bei hochohmigem
+- U202 (1T45) hat kein OE; sein Kanal ist LED_4. Bei hochohmigem
   GPIO39 hält der Eingangs-Pull-down die Datenleitung low.
 - Serienwiderstand 33–100 Ω je Ausgang vor dem Stecker, ESD-Diode am Stecker.
 - 0,1 µF an VCCA und VCCB, nah am Baustein.
@@ -134,8 +134,8 @@ Pegel- und Timingreserve (Schätzung):
 | Prüfung | Wert | Reserve |
 |---|---|---|
 | ESP32 V_OH min → A-Eingang V_IH | 0,8 × 3,3 V = 2,64 V ≥ 2,0 V (VCCA 3,0–3,6 V) | 0,64 V |
-| B-Ausgang → WS2812 V_IH | V_OH ≥ 3,8 V bei −32 mA / 4,5 V; bei der kleinen Datenlast nahe +5V. Benötigt 0,7 × 5,30 V = 3,71 V (5-V-Schiene maximal) | WS2812 und Puffer hängen an derselben +5V-Schiene, die Schwelle wandert mit |
-| Laufzeit A → B | 4,4 ns max (VCCA 3,3 V, VCCB 5 V) | ≪ 1,25 µs Bitperiode der WS2812, ≪ Servo-Auflösung |
+| B-Ausgang → LED V_IH | V_OH ≥ 3,8 V bei −32 mA / 4,5 V; bei der kleinen Datenlast nahe +5V. Benötigt V_IH 0,65 × V_DD = 3,35 V bei 5,16 V (SK6812MINI-E Rev B/2) | LED und Puffer hängen an derselben +5V-Schiene, die Schwelle wandert mit |
+| Laufzeit A → B | 4,4 ns max (VCCA 3,3 V, VCCB 5 V) | ≪ 1,2 µs Mindest-Bitperiode der SK6812MINI-E, ≪ Servo-Auflösung |
 | Servo/ESC | 5-V-Puls 1–2 ms, 50–400 Hz | unkritisch |
 
 **Eingang i-BUS**
@@ -164,6 +164,23 @@ einer Herstellerquelle belegt. Die Aufbereitung oben deckt 3,3 V und 5 V ab;
 Baudrate und Polarität werden beim Bring-up gemessen. Am Sender muss am
 Servo-Port i-BUS (nicht S.BUS, invertiertes anderes Protokoll) eingestellt
 sein.
+
+### 3.2 Firmware-Anforderungen LEDs (SK6812MINI-E)
+
+Quelle: Opsco SK6812MINI-E Spec Rev B/2 (2025-11-22, LCSC-Kopie, §10). Werte
+vor der Implementierung gegen das Herstellerdokument prüfen (O-23).
+
+| Anforderung | Wert |
+|---|---|
+| Protokoll | WS2812-kompatibel, 800 kbit/s, ein RMT-TX-Kanal je LED (GPIO39–42) |
+| 0-Bit | T0H 0,25–0,40 µs, T0L ≥ 0,80 µs |
+| 1-Bit | T1H 0,70–1,00 µs, T1L ≥ 0,2 µs |
+| Bitperiode | ≥ 1,2 µs |
+| Reset | low > 200 µs (ältere Rev 04: > 80 µs) – Firmware hält > 280 µs ein |
+| Farbreihenfolge | laut Datenblatt prüfen, nicht aus WS2812B-Bibliotheken übernehmen |
+| Strom | max. ca. 44 mA je LED (3 × 14,5 mA + IC) bei voller Helligkeit |
+| Start | Ausgänge erst nach `ACT_OE_N`-Freigabe treiben; beim Booten bleiben die Datenleitungen low |
+
 
 ## 4. Steckerbelegungen
 
@@ -250,7 +267,7 @@ Pinreihenfolge am Empfänger (i-BUS-Port) ist noch nicht verifiziert (O-10).
 | Pin | Signal | Spannung | Richtung |
 |---|---|---|---|
 | 1 | +5V_LED | 4,74–5,16 V, max. ca. 44 mA je LED (Opsco SK6812MINI-E Rev B/2) | Versorgung aus |
-| 2 | WS2812_x_DIN | 0/5 V | aus |
+| 2 | LED_x_DIN | 0/5 V | aus |
 | 3 | GND | – | – |
 
 ### J112 – Erweiterungs-UART (JST-PH 4-polig)
@@ -284,7 +301,7 @@ separater INT1-Draht.
 | SW101 | Freigabetaster |
 | BZ101 | Buzzer Same Sky CMT-8540S-SMT-TR (magnetisch, 5 V, max. 150 mA, Freilaufdiode, Low-Side-MOSFET ≥ 0,52 A) |
 | D110 | Status-LED |
-| TP | Messpunkte: VBAT_IN, VBAT_PROT, +V_SERVO, +5V, +3V3_DEVKIT, GND (mehrfach), IBUS_RX, ein Servo- und ein WS2812-Signal |
+| TP | Messpunkte: VBAT_IN, VBAT_PROT, +V_SERVO, +5V, +3V3_DEVKIT, GND (mehrfach), IBUS_RX, ein Servo- und ein LED-Signal |
 
 ## 5. Offene Punkte
 
