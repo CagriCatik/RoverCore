@@ -648,12 +648,12 @@ V_OUT 3,251–3,349 V, Dropout max. 380 mV bei 500 mA und 610 mV bei 800 mA
   | Verbraucher an +3V3 | Strom |
   |---|---|
   | OLED Adafruit 326 | ca. 20 mA typ. (Adafruit, abhängig von leuchtenden Pixeln), angesetzt **30 mA** |
-  | IMU Adafruit 4438 | LSM6DSOX ca. 0,55 mA (Accel + Gyro, ST-Wert, Datenblatt nicht gelesen, O-33) + Regler + Modul-LED ≈ 0,2 mA, angesetzt **1,5 mA** |
+  | IMU Adafruit 4438 | LSM6DSOX 0,55 mA typ. (Accel + Gyro High-Performance, ST DS12814 Rev 4, Typwert nicht garantiert) + AP2112K + Modul-LED ≈ 0,2 mA, angesetzt **1,5 mA** |
   | I²C-Pull-ups bei Low | bis 1,3 mA (Anschlussplan 9.4), angesetzt 0,7 mA Mittel |
   | INA240A3 | 2,6 mA max. (SBOS662C) |
   | Status-LED D502 | 1,3 mA |
   | Pull-ups R501/R502/R617, Teiler-Pull-ups R201–R205, R604, R803 | zusammen ≤ 1,5 mA (je 0,33 mA bzw. 33 µA, nur bei Low) |
-  | U201/U202/U203/U504 statisch | < 0,1 mA |
+  | U201/U202/U203/U204/U504/U505/U506 statisch | < 0,1 mA (TPS3808 ≤ 5 µA, LVC1G74/1G32 je ≤ 10 µA; R517 33 µA bei Low) |
   | **Summe** | **≈ 38 mA** von 50 mA Zuteilung → Reserve ca. 12 mA |
 
 - Ideal-Diode LM66100 verworfen: Mit CE an VOUT schaltet sie erst ab, wenn
@@ -815,8 +815,8 @@ Aussagen sind aus der Schaltung abgeleitet, **nicht gemessen**.
 | Akku allein | +5V aus TPS54302, D501 → DevKit, +3V3 aus LDO | bis zur Freigabe Hi-Z (R501), Ausgänge low | AUS bis SERVO_PWR_EN | versorgt | Normalbetrieb (3.11) |
 | USB allein | +5V **aus** (D501 sperrt, µA Sperrstrom), +3V3 aus USB | U201/U202: V_CCB = 0 → VCC-Isolation, alle Ausgänge Hi-Z; Servo-/ESC-Leitungen ohne Versorgung | AUS (LTC7803 ohne VIN) | versorgt, funktionsfähig | J112-TX treibt bei Ruhepegel High bis ca. 3 mA über 1 kΩ in ein ungespeistes Gerät → Firmware hält TX ohne Akku inaktiv (O-35) |
 | Akku und USB | Dioden-ODER (3.11) | wie Akku allein | wie Akku allein | versorgt | kein Querstrom außer Sperrströmen |
-| Hauptabschaltung AUS, USB bleibt | wie USB allein; ESC ebenfalls stromlos | wie USB allein | fällt mit VBAT (RUN-Schwelle 8,8 V aus) | versorgt | Controller läuft weiter. **Wiedereinschalten:** SERVO_PWR_EN/ACT_OE_N/LEDC-Zustand der Firmware gelten sofort → Firmware muss bei VBAT-Verlust (VBAT_SENSE) SERVO_PWR_EN low, ACT_OE_N high setzen und erst nach bewusster Freigabe (SW501) wieder aktivieren (O-35) |
-| RESET im Betrieb | unverändert | ESP32-GPIOs hochohmig: ACT_OE_N über R501 high → U201 Hi-Z, Gate-Pull-ups → Q20x leiten → Leitungen low (keine Pulse); LED_4 über U202-Eingangs-Pull-down low; Buzzer-Gate-Pull-down → still | SERVO_PWR_EN hochohmig → R415 → Q404 aus, Q403 hält RUN low → **AUS** | bleibt versorgt (OLED zeigt letztes Bild) | P3V3_OK bleibt high → +5V_EXT bleibt an. RESET ist **keine Leistungsabschaltung**: der ESC bleibt aus dem Akku versorgt und sieht keine Pulse – Verhalten nachzuweisen (O-2) |
+| Hauptabschaltung AUS, USB bleibt | wie USB allein; ESC ebenfalls stromlos | wie USB allein; Latch U506 wird bei VBAT_PROT < 10,0 V gelöscht und bleibt über USB gelöscht | fällt mit VBAT | versorgt | Controller läuft weiter. **Wiedereinschalten:** Servoschiene und Puffer bleiben gesperrt, auch bei weiter aktiven GPIOs, bis SW501 betätigt wird (Wiederanlaufsperre 3.16). Firmware setzt zusätzlich SERVO_PWR_EN low und ACT_OE_N high (O-35) |
+| RESET im Betrieb (Latch bleibt gesetzt) | unverändert | ESP32-GPIOs hochohmig: ACT_OE_N über R501 high → U201 Hi-Z, Gate-Pull-ups → Q20x leiten → Leitungen low (keine Pulse); LED_4 über U202-Eingangs-Pull-down low; Buzzer-Gate-Pull-down → still | SERVO_PWR_EN hochohmig → R415 → Q404 aus, Q403 hält RUN low → **AUS** | bleibt versorgt (OLED zeigt letztes Bild) | P3V3_OK bleibt high → +5V_EXT bleibt an. RESET ist **keine Leistungsabschaltung**: der ESC bleibt aus dem Akku versorgt und sieht keine Pulse – Verhalten nachzuweisen (O-2) |
 | BOOT/Download | wie RESET | wie RESET (Anwendungs-GPIOs hochohmig; ROM nutzt nur UART0/USB, auf dem Carrier offen) | AUS | versorgt | Einschaltstörungen GPIO1–17/18 wie Anschlussplan 1 |
 | DevKit fehlt | +5V an, **+3V3 stromlos** | U201/U202: V_CCA = 0 → Hi-Z; Q20x-Gates über Pull-ups an +5V → Leitungen low | SERVO_PWR_EN offen → R415 → AUS | stromlos; Pull-ups an +3V3 → keine Rückspeisung | P3V3_OK über R510 low → U602 (+5V_EXT) aus, Teiler Q505/Q405 offen. U601/U603 (LED, Empfänger) bleiben an. Externes Gerät an J112 kann über R616 4,7 kΩ + R617 10 kΩ ca. 0,2 mA in die stromlose +3V3 speisen (bekannt, O-21) |
 | IMU fehlt | – | – | – | IMU_INT1 über R803 low; Bus mit 10 kΩ (OLED) → nur 100 kHz | Firmware erkennt fehlendes Gerät an NACK auf 0x6A |
@@ -831,8 +831,79 @@ Gesperrte Zustände bleiben in allen Fällen erhalten:
 - Puffer Hi-Z ohne aktive Freigabe;
 - Servoschiene AUS ohne SERVO_PWR_EN.
 
-Einzige firmwareabhängige Lücke ist das Wiedereinschalten des Akkus bei
-laufendem Controller (O-35).
+Das Wiedereinschalten des Akkus bei laufendem Controller ist seit 2026-11-16 in
+Hardware gesperrt (3.16). Offen bleiben Unterbrechungen, die kürzer sind als
+die Haltezeit der VCU-Kondensatoren (3.16, O-36).
+
+### 3.16 Wiederanlaufsperre (O-35, Stand 2026-11-16)
+
+**Anforderung:** Nach Verlust der LiPo-Versorgung ist eine erneute bewusste
+Freigabe nötig. Das gilt auch bei weiterlaufendem USB und dauerhaft hohen
+Freigabe-GPIOs. Eine reine Firmware-Lösung reicht nicht, weil ein kurzer Ausfall
+zwischen zwei Abtastungen liegen kann.
+
+**Lösung:** Freigabe-Latch in Hardware, versorgt aus +3V3. Damit überlebt der
+Zustand „gesperrt“ jeden USB-Dauerbetrieb.
+
+1. **Wächter U505 (TPS3808G01):** misst VBAT_PROT über R515 237 kΩ / R516 10 kΩ.
+   Seine VBAT_OK-Leitung (Open-Drain, R517 100 kΩ) löscht U506 asynchron, sobald
+   VBAT_PROT unter 10,0 V fällt (U506 Funktionstabelle: CLR low → Q low unabhängig
+   von CLK und D).
+2. **Latch U506 (SN74LVC1G74):** D und PRE fest auf 1. Gesetzt wird er nur durch
+   eine **steigende Flanke am Tasterknoten** von SW501, also beim Loslassen oder
+   beim Prellen während des Drückens, und nur, solange VBAT_OK high ist.
+3. **Firmware kann den Latch nicht setzen:** GPIO10 liest den Taster über R518
+   47 kΩ. Treibt die Firmware GPIO10 low, bleibt der Takt auf
+   3,3 V × 47/(47+10) = 2,72 V > V_IH 2,0 V (SCES794G). Ein Taster mit Dauerschluss
+   erzeugt keine Flanke.
+4. **Wirkung:**
+   - ACT_ARMED → Q407 in Reihe zu Q404: Q403 gibt RUN nur frei, wenn
+     SERVO_PWR_EN **und** ACT_ARMED anliegen.
+   - ACT_DISARMED → U204 (OR) → U201 OE high: Servo-, ESC- und LED-1–3-Ausgänge
+     hochohmig. Die Ausgangsstufen ziehen die Leitungen low, es entstehen keine Pulse.
+5. **Einschalten:** U505 hält VBAT_OK nach Erreichen von V_DD ≥ 0,8 V low und
+   gibt erst 12–28 ms nach gültigem SENSE frei (CT offen). U506 startet daher
+   immer gelöscht.
+6. **Fehlender DevKit (+3V3 stromlos):** U506 und U204 sind unversorgt (Ioff).
+   R420 hält Q407 aus, U201 ist über V_CCA = 0 hochohmig.
+
+**Schwelle (Schätzung aus Datenblattgrenzen):**
+
+| Größe | Wert |
+|---|---|
+| U505 V_IT | 0,405 V ± 2 % (−40…125 °C), Hysterese 1,5 % typ., 3 % max. (SBVS050N) |
+| Teiler | (237 k + 10 k)/10 k = 24,7 → **10,0 V fallend**, mit ±1 % Widerständen ca. **9,61–10,40 V** |
+| steigend | + Hysterese → ca. 10,15 V typ., bis 10,71 V |
+| Servo-Aus (LTC7803 RUN) | RUN steigend 1,15–1,25 V, Hysterese 100 mV typ. → fallend ca. 1,05–1,15 V × 8 = 8,4–9,2 V, mit Widerstandstoleranz bis ca. 9,36 V |
+| Abstand | 9,61 − 9,36 ≈ **0,25 V**: der Latch löscht vor jeder Unterspannungsabschaltung der Servoschiene. Eine Rückkehr über die RUN-Schwelle kann daher nie selbst wieder anlaufen |
+| Filter | 237 k ∥ 10 k = 9,6 kΩ × 47 nF = **0,45 ms** (+ 20 µs U505), kürzer als das RUN-Filter (1,75 ms) |
+
+Folgen und Grenzen (zu messen):
+- **Einbrüche unter Last:** Fällt VBAT_PROT länger als ca. 0,5 ms unter 9,6–10,4 V,
+  wird alles gesperrt und muss neu freigegeben werden. Das liegt unter der
+  Firmware-Sperre (10,5 V) und bei der ESC-Abschaltung (9,75 V). Ein gesunder
+  Akku sollte nicht so tief einbrechen. Ist das am Fahrzeug doch der Fall (O-3),
+  werden Schwelle und Filter neu bewertet.
+- **Kurze Unterbrechungen werden nicht erkannt:** Die VCU-Kondensatoren an
+  VBAT_PROT (ca. 0,39 mF: C101, C102, C401–C405, C301/C302) halten die Spannung
+  bei 12,6 V Start:
+  - ca. 7 ms bei 0,15 A Grundlast;
+  - ca. 0,9 ms bei 1,2 A mit belasteter Servoschiene.
+
+  In dieser Zeit bleiben auch die VCU-Schienen an, die Sperre ist also nicht
+  nötig. Der **ESC** liegt aber parallel am Y-Verteiler und kann in dieser Zeit
+  neu starten, während die VCU weiter Pulse sendet. Sein Verhalten muss
+  nachgewiesen werden (O-2, O-36).
+- **RESET/Watchdog** löschen den Latch nicht (kein LiPo-Verlust). Nach jedem
+  Neustart sind die Ausgänge durch die Ruhepegel ohnehin gesperrt. Ob die
+  Firmware nach einem Neustart ohne Taster wieder freigeben darf, regelt O-35.
+  Option: MR von U505 an DEVKIT_EN legen (belastet EN zusätzlich mit 90 kΩ,
+  nicht umgesetzt).
+- **Rücklesen:** Die Firmware kann den Latch nicht direkt lesen. Erkennbar ist
+  der Zustand indirekt an VSERVO_SENSE ≈ 0 trotz SERVO_PWR_EN. Option: GPIO18
+  als Lese-Eingang mit Serienwiderstand (nicht umgesetzt, GPIO18 bleibt Reserve).
+
+
 
 ## 4. Komponentendaten (Zwischenstand)
 
@@ -909,11 +980,12 @@ Schutzkoordination (O-17).
 | O-28 | Controller: 1N5819HW-Daten (USB-Pfad); Status-LED-Typ (AlGaInP, V_F ≤ 2,4 V) und Taster (TL3342, JLC-Bestand 0); Buchsenleisten 1×22 mit Bauhöhe (O-4) | Agent |
 | O-29 | Einschalttransienten der Servo-Freigabe messen: RUN, Q403-Gate und +V_SERVO beim Einstecken des Akkus und beim ESP32-Hochlauf | Owner |
 | O-30 | Actuators: ESD-TVS je Steckerausgang mit V_RWM ≥ 8 V (Schienenfehler 7,81 V, ESC-BEC 7,4 V) auswählen und Datenblatt prüfen; Stecker-Bauteil 1×3 2,54 mm festlegen | Agent |
-| O-31 | Sensors_Display: Buchsenleisten 1×9/1×8 (Typ, Höhe), Abstandshalter M2,5 (Länge ≈ Buchse + Stiftleistenträger, ca. 11 mm Schätzung), Lage und Freiraum unter den Modulen im Gehäuse prüfen; Modul-Achsen der IMU (Silkscreen) für die Firmware festhalten | Agent / Owner |
+| O-31 | Sensors_Display: Buchsen Samtec SSW-109/108-01-T-S gewählt (8,51 mm); offen: Bohrung 1,0 mm gegen Samtec-Footprint prüfen, Stiftleistenträger der Module messen, Abstandshalter M2,5 (ca. 11 mm, Schätzung) auswählen, 1:1-Ausdruck an echten Modulen prüfen, Achsen der IMU für die Firmware festhalten | Agent / Owner |
 | O-32 | I²C-Anstiegszeit an TP801/TP802 und OLED-Strom bei Vollbild messen; 400 kHz erst danach | Owner |
-| O-33 | ST-Datenblatt LSM6DSOX lesen (Abruf am 2026-11-15 zweimal abgebrochen): INT1-Hinweise beim Einschalten, Standardpolarität (Push-Pull, aktiv high), Stromaufnahme | Agent |
+| O-33 | ~~ST-Datenblatt LSM6DSOX~~ – erledigt 2026-11-16 (DS12814 Rev 4, Anschlussplan 9.3): INT1 beim Einschalten 0 (R803), Push-Pull aktiv high, 0,55 mA typ. | – |
 | O-34 | Hauptabschaltung außerhalb der VCU auswählen (3.14): Dauer-/Spitzenstrom, DC-Schaltvermögen bei 12,6 V, Einschaltstrom; bei elektronischer Lösung Body-Dioden, Rückspeisung, AUS-Zustand | Owner |
-| O-35 | Firmware-Regeln: bei VBAT-Verlust SERVO_PWR_EN low, ACT_OE_N high, ESC neutral; Wiederfreigabe nur über SW501; J112-TX ohne Akku inaktiv; GPIO0 nie als Ausgang (3.15) | Agent |
+| O-35 | Wiederanlaufsperre in Hardware umgesetzt (3.16). Firmware zusätzlich: bei VBAT-Verlust SERVO_PWR_EN low, ACT_OE_N high, ESC neutral; Freigabe nach Neustart nur über SW501; GPIO10 ohne interne Pull-ups; J112-TX ohne Akku inaktiv; GPIO0 und GPIO6 nie als Ausgang. Messen: Schwelle, Löschen bei langsamem und schnellem Abfall, kein Setzen durch GPIO10 | Agent / Owner |
+| O-36 | Unterbrechungen kürzer als die Haltezeit der VCU-Kondensatoren (ca. 0,9–7 ms, Schätzung) erkennt die Sperre nicht; ESC-Verhalten bei kurzer eigener Versorgungsunterbrechung mit anliegenden Pulsen nachweisen (mit O-2) | Owner |
 
 Erledigt: O-5 (DevKit-LDO), O-6 (Lenkservos), O-7 (LTC7803 Rev B, 3.5a;
 Kompensation weiter unter O-27), O-9 (Projektort), O-14 (ersetzt durch O-17),

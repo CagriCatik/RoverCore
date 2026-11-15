@@ -540,12 +540,31 @@ Dreieck markiert, die Pinnamen stehen neben den Pads.
 | Unterseite | nur Lötjumper SJ1 (Adresse) und Silkscreen | Flexkabel des Displays umgeschlagen, Lötpads bei Y ≈ 11 |
 | INT1 auf der Steckleiste | ja, JP1-8, direkt vom Sensor (nicht pegelgewandelt) | – |
 
+**Buchsen (Auswahl 2026-11-16):** Samtec **SSW-109-01-T-S** (J115) und
+**SSW-108-01-T-S** (J116), einreihig, 2,54 mm, Zinn. Samtec-Zeichnung
+SSW-1XX-XX-XXX-X-XX-XXX-XX Rev CJ, Blatt 1:
+- Körperhöhe 8,51 mm über der Platine, Körper 2,41 mm breit, Länge N × 2,54 + 0,51 mm;
+- Anschluss 0,79 × 0,41 mm, 2,64 mm lang (Bauform -01);
+- 4,7 A je Kontakt (nur aus dem DigiKey-Eintrag; Samtec-Seiten am 2026-11-16 mit 429 bzw. 403 abgewiesen).
+
+Samtec nennt keine Leiterplattenbohrung. 1,0 mm im Footprint lässt
+0,11 mm zur Diagonale des Anschlusses (0,89 mm); vor der Fertigung prüfen.
+Der Buchsenkörper ist im Footprint auf F.Fab eingezeichnet.
+
+**Abstandsprüfung OLED:** Der SSW-108-Körper endet bei X = 25,02 mm (Modulkoordinaten),
+der Rand des Modullochs liegt bei 25,42 mm. Ein Abstandshalter (M2,5, Sechskant
+ca. 5 mm) passt dort nicht; das bestätigt die Beschränkung auf die Eckfahnen-Löcher.
+
 **Freiraum und Zugänglichkeit (Schätzung):** Abstand Carrier → Modulunterseite
-≈ Buchsenhöhe + Kunststoffträger der Stiftleiste, typisch ca. 11 mm. Unter
-beiden Modulen nur flache SMD-Bauteile, keine Prüfpunkte und keine Bedienelemente.
-Die Courtyards der Footprints entsprechen dem Modulumriss. Lötjumper der
-Module sind gesteckt nicht erreichbar; benötigt wird keiner (Werkszustand).
-Buchsentyp, Höhe und Abstandshalterlänge sind offen (O-31).
+= 8,51 mm Buchse + Kunststoffträger der Modul-Stiftleiste (typ. 2,5 mm, Adafruit
+nennt keinen Wert) ≈ 11 mm. Unter beiden Modulen nur flache SMD-Bauteile,
+keine Prüfpunkte und keine Bedienelemente. Die Courtyards entsprechen dem
+Modulumriss. Lötjumper der Module sind gesteckt nicht erreichbar; benötigt
+wird keiner (Werkszustand).
+
+**1:1-Prüfung:** `qa/generated/footprint-print/2026-11-16/sensor_sockets_1to1_A4.pdf`
+(A4, Vektor, 50-mm-Maßstab; nicht versioniert). Ausdruck mit 100 %, an echten
+Modulen und Buchsen anhalten. Erst danach gelten die Footprints als bestätigt (O-31).
 
 ### 9.3 Versorgung, Pegel, Adressen
 
@@ -556,19 +575,50 @@ Buchsentyp, Höhe und Abstandshalterlänge sind offen (O-31).
 | Adresse | **0x6A** (DO über Modulwiderstand nach GND, SJ1 offen); DO auf dem Carrier offen | **0x3D** (DC/A0 über 10 kΩ hoch, SJ3 offen); DC auf dem Carrier offen |
 | Weitere Pins | CS mit Modul-Pull-up hoch → I²C-Modus; INT2, 3Vo offen | Rst: Reset-IC APX803 auf dem Modul; CS, 3Vo offen |
 
-Bei VIN = 3,3 V liegt der AP2112K im Dropout; der Ausgang folgt dem Eingang
-mit wenigen mV Abfall (Schätzung: Dropout 250 mV bei 600 mA → ca. 8 mV bei 20 mA).
-Der Bus hängt nur an +3V3. Die Modul-Pull-ups gehen an VIN = +3V3, also an
-dieselbe Schiene wie der ESP32. Bei fehlendem oder stromlosem DevKit gibt es
-deshalb keine Rückspeisung über SDA, SCL oder INT1.
+**Netze auf den Modulen (aus den Eagle-Schaltplänen, je Widerstandsgatter):**
+
+| Netz | 4438 LSM6DSOX | 326 OLED |
+|---|---|---|
+| VIN-Netz (`VCC`) = Carrier +3V3 | J1-1; AP2112K IN und EN; Bus-Pull-ups | J2-7; AP2112K IN und EN; Bus-Pull-ups |
+| Modul-3,3 V (`3.3V`) = **Ausgang AP2112K** | Sensor VDD/VDDIO, Gates Q2 (BSS138), sensorseitige Pull-ups, J1-2 3Vo | Display VDD/VBAT, Gates Q2, displayseitige Pull-ups, Reset-IC, J2-6 3Vo |
+| Busseite SCL/SDA | R3 G$2/G$1 10 kΩ → **VIN** | R3 G$1/G$3 10 kΩ → **VIN** |
+| Sensor-/Displayseite | SCL_3V/SDA_3V: R2 G$1/G$2 10 kΩ → **Modul-3,3 V** | D0/D1_3.3V: R3 G$2/G$4 10 kΩ → **Modul-3,3 V** |
+| Adresse | SDO: R2 G$4 10 kΩ → GND (0x6A); SJ1 → 3,3 V | DC/SA0: R2 G$2 10 kΩ → Modul-3,3 V (0x3D); SJ3 → GND |
+| weitere | CS_3V: R3 G$3 → Modul-3,3 V; LED D1 über R2 G$3 | RST/CS: R2 G$3/G$4 → Modul-3,3 V; BS1: R2 G$1 → GND, SJ2 → 3,3 V; LED über R1 |
+
+Folgerungen:
+- **Busseitige Pull-ups:** Am Carrier-Bus wirken nur die Pull-ups an VIN = +3V3.
+  Die Pull-ups hinter Q2 liegen an der Modul-3,3 V. Sie belasten den Bus nur,
+  solange Q2 leitet, also bei Low (Senkstrom 9.4).
+- **Reglerausgang:** Bei VIN = 3,3 V arbeitet der AP2112K im Dropout; die
+  Modul-3,3 V liegt wenige mV unter VIN (Schätzung: 250 mV bei 600 mA → ca.
+  8 mV bei 20 mA). VDD des LSM6DSOX (max. 3,6 V) und die Gate-Spannung der
+  BSS138 (3,3 V, ausreichend über V_th) bleiben eingehalten.
+- **Keine Rückspeisung:** VIN, die Bus-Pull-ups und damit beide Modulnetze
+  hängen nur an +3V3, der Schiene des ESP32. Über SDA, SCL oder INT1 kann
+  deshalb keine Quelle in einen stromlosen ESP32 speisen. INT1 kommt
+  ungewandelt aus der Modul-3,3 V (Push-Pull, V_OH = VDDIO − 0,2 V bei 4 mA).
+
+**LSM6DSOX-Datenblatt (O-33, geschlossen 2026-11-16)** – ST DS12814 Rev 4 (Juni 2024),
+lokal `components/datasheets/DS_lsm6dsox.pdf` (vom Owner abgelegt, nicht versioniert):
+
+| Punkt | Datenblatt | Folge |
+|---|---|---|
+| INT1 nach Reset | „Default: input with pull-down“; Fußnote 2: „INT1 must be set to 0 or left unconnected during power-on if the I²C/SPI interfaces are used“ | R803 100 kΩ nach GND erfüllt das; GPIO6 nie treiben |
+| INT1-Ausgang | CTRL3_C: PP_OD = 0 (Push-Pull), H_LACTIVE = 0 (aktiv high), INT1_CTRL = 00h (nichts geroutet) | Firmware routet nur die benötigten Ereignisse; Pegel aktiv high |
+| Pegel | V_OH = VDDIO − 0,2 V, V_OL ≤ 0,2 V bei 4 mA | ESP32 V_IH 0,75 × VDD erfüllt |
+| Strom (Sensor) | 0,55 mA typ. kombiniert High-Performance, 170 µA nur Accel, 3 µA Power-down; Typwerte „not guaranteed“ | Breakout-Strom = Sensor + AP2112K + LED (ca. 0,13 mA); Budget 1,5 mA bleibt Schätzung |
+| Versorgung | VDD 1,71–3,6 V, VDDIO 1,62–3,6 V; Einschaltzeit 35 ms | Firmware wartet ≥ 35 ms nach +3V3, bevor sie den Sensor anspricht |
+| Adresse | 110101xb, SA0 = 0 → 0x6A | wie 9.3 |
 
 ### 9.4 Pull-up-Auslegung (Schätzung)
 
 | Größe | Wert |
 |---|---|
 | Busseitige Pull-ups | 10 kΩ ∥ 10 kΩ = **5,0 kΩ** an +3V3 (beide Module gesteckt) |
-| Anstiegszeit 30→70 % | 0,847 · 5,0 kΩ · 50 pF ≈ **0,21 µs** (C_b 50 pF angenommen) → Fast Mode (≤ 0,3 µs) erfüllt |
-| nur ein Modul | 10 kΩ → ≈ 0,42 µs → nur Standard Mode (≤ 1 µs); Firmware: 100 kHz, 400 kHz erst nach Messung |
+| Anstiegszeit 30→70 % | 0,847 · 5,0 kΩ · 50 pF ≈ **0,21 µs** bei **angenommenen** 50 pF → 400 kHz (≤ 0,3 µs) ist nur **rechnerisch plausibel** |
+| Festlegung Firmware | erste Firmware **100 kHz**; 400 kHz erst nach Messung an TP801/TP802 (O-32) |
+| nur ein Modul | 10 kΩ → ≈ 0,42 µs → nur Standard Mode (≤ 1 µs) |
 | Senkstrom bei Low | je Modul 0,33 mA (Busseite) + 0,33 mA (Sensorseite über BSS138) = 0,66 mA → 1,32 mA gesamt ≪ 3 mA |
 | Carrier-Pull-ups | R801/R802 4,7 kΩ **DNP** (Option, wenn ein Modul ohne Pull-ups eingesetzt wird; dann 1,9 kΩ gesamt, 1,7 mA + 1,32 mA) |
 | IMU_INT1 | R803 100 kΩ Pull-down **bestückt**: definiert Low ohne IMU und während GPIO6 hochohmig ist; 33 µA Last am Push-Pull-Ausgang |
@@ -619,4 +669,37 @@ hier aufgeführt). Alle übrigen Netze und Bauteile sind unverändert.
 | STRAP_GPIO0 (neu) | U501.36 (vorher No-Connect), SW503.1 |
 | Unbelegte Modulpins | J115.2/6/7/9, J116.3/4/5/6 mit No-Connect |
 | Felder | U501 Beschreibung (EN/GPIO0 verbunden) |
+
+## 12. Wiederanlaufsperre (O-35, Stand 2026-11-16)
+
+Anforderung: Nach einem Verlust der LiPo-Versorgung ist eine **erneute bewusste
+Freigabe** nötig. Das gilt auch bei weiterlaufendem USB und unverändert hohen
+GPIO-Pegeln. Umsetzung in Hardware, Blatt `Controller`, Gruppe 7; Begründung und
+Rechnung im Versorgungsdokument 3.16.
+
+| Ref | Funktion |
+|---|---|
+| U505 TPS3808G01 | VBAT_PROT-Wächter, Schwelle 10,0 V über R515 237 kΩ / R516 10 kΩ, Filter C506 47 nF; versorgt aus +3V3 |
+| U506 SN74LVC1G74 | Freigabe-Latch an +3V3: CLR = VBAT_OK, D = 1, PRE = 1, CLK = Tasterknoten SW501 |
+| R518 47 kΩ | trennt GPIO10 vom Takt: Firmware kann den Latch nicht setzen |
+| Q407 (ServoPower) | in Reihe zu Q404: RUN nur mit SERVO_PWR_EN **und** ACT_ARMED |
+| U204 (Actuators) | U201-OE = ACT_OE_N **oder** ACT_DISARMED |
+
+Bedienung: Nach jedem Anstecken bzw. Einschalten des Akkus und nach jedem
+Akkuverlust bleiben Servoschiene und Puffer gesperrt, bis SW501 gedrückt und
+losgelassen wird. Das gilt auch, wenn die Firmware die Freigabe-GPIOs bereits
+auf aktiv gesetzt hat. Der Freigabetaster bleibt zugleich Firmware-Eingang
+(GPIO10, ohne interne Pull-ups).
+
+Elektrische Änderungen gegenüber `fea128b` (`compare_schematic_revisions.py`,
+45 Unterschiede: die 43 hier aufgeführten elektrischen plus die Felder MPN/Beschreibung von J115/J116; übrige Netze unverändert):
+
+| Änderung | Netze / Bauteile |
+|---|---|
+| neu Controller | U505, U506, R515–R518, C506–C508; Netze VBAT_LOSS_SENSE, VBAT_OK, ENABLE_BTN_RAW, ACT_ARMED, ACT_DISARMED (global) |
+| ENABLE_BTN_N | vorher R502.2, SW501.1, U501.16 → jetzt R518.2, U501.16; SW501.1 und R502.2 am neuen Netz ENABLE_BTN_RAW |
+| VBAT_PROT | + R515.1 |
+| neu ServoPower | Q407, R420; Q404.2 (Source) vorher GND, jetzt SERVO_EN_SRC → Q407.3 |
+| neu Actuators | U204, C203; U201.22 (OE) vorher ACT_OE_N, jetzt ACT_OE_GATED_N ← U204.4; ACT_OE_N → U204.2 |
+| +3V3 / GND | neue Versorgungs- und Massepins der genannten Bauteile; U505.3 (MR) und U505.4 (CT) offen |
 
