@@ -4713,72 +4713,6 @@
 		)
 		(uuid "8c0c4e18-b83a-5167-92c7-e3f661d70b52")
 	)
-	(symbol
-		(lib_id "power:GND")
-		(at 43.18 210.82 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom no)
-		(on_board no)
-		(dnp no)
-		(uuid "78a23b00-7b88-5a66-a62d-7011ac824536")
-		(property "Reference" "#PWRQ40408"
-			(at 43.18 214.63 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Value" "GND"
-			(at 43.18 215.9 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Footprint" ""
-			(at 43.18 210.82 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" "~"
-			(at 43.18 210.82 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" ""
-			(at 43.18 210.82 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "fa418b5a-d7d9-5ee5-84a3-ccb085a96c40")
-		)
-		(instances
-			(project "RoverCore"
-				(path "/d069f045-7f09-4f8a-bd29-51e87a8a0808/3572c06e-32ee-5f4c-a534-3f1640e128b2"
-					(reference "#PWRQ40408")
-					(unit 1)
-				)
-			)
-		)
-	)
 	(wire
 		(pts
 			(xy 43.18 195.58) (xy 43.18 190.5)
@@ -4913,8 +4847,8 @@
 		(in_bom no)
 		(on_board no)
 		(dnp no)
-		(uuid "45855134-317d-5f4b-aeed-1c4217567163")
-		(property "Reference" "#PWRR41509"
+		(uuid "fc4b95f9-fb28-5d45-b7e4-8aacd7a765b2")
+		(property "Reference" "#PWRR41508"
 			(at 30.48 236.22 0)
 			(effects
 				(font
@@ -4960,12 +4894,389 @@
 			)
 		)
 		(pin "1"
-			(uuid "0f661e8b-6dde-5b29-a64a-3990b5759d76")
+			(uuid "9180c106-8d06-5c9c-9d30-ae9f801356aa")
 		)
 		(instances
 			(project "RoverCore"
 				(path "/d069f045-7f09-4f8a-bd29-51e87a8a0808/3572c06e-32ee-5f4c-a534-3f1640e128b2"
-					(reference "#PWRR41509")
+					(reference "#PWRR41508")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Transistor_FET:Q_NMOS_GSD")
+		(at 66.04 220.98 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "9afea797-1792-59b1-8910-1cbe11ff63b7")
+		(property "Reference" "Q407"
+			(at 71.12 219.70999999999998 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "NTR4003N"
+			(at 71.12 222.25 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Package_TO_SOT_SMD:SOT-23"
+			(at 66.04 220.98 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "https://www.onsemi.com/download/data-sheet/pdf/ntr4003n-d.pdf"
+			(at 66.04 220.98 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "O-35: in series with Q404 - RUN is released only with SERVO_PWR_EN AND ACT_ARMED (latch U506 on Controller); 30 V, VGS(th) 0.8-1.4 V (NTR4003N/D Rev 6); 1 G, 2 S, 3 D"
+			(at 66.04 220.98 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Manufacturer" "onsemi"
+			(at 66.04 220.98 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "MPN" "NTR4003NT1G"
+			(at 66.04 220.98 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C82325"
+			(at 66.04 220.98 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "b08f1a52-f0d8-528f-966d-89ce14b6683c")
+		)
+		(pin "2"
+			(uuid "c74d1f7c-6199-58a6-ac66-cdc8fbd24d97")
+		)
+		(pin "3"
+			(uuid "589b1ba6-ca06-52f4-8ab4-30915ea1a167")
+		)
+		(instances
+			(project "RoverCore"
+				(path "/d069f045-7f09-4f8a-bd29-51e87a8a0808/3572c06e-32ee-5f4c-a534-3f1640e128b2"
+					(reference "Q407")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(wire
+		(pts
+			(xy 60.96 220.98) (xy 55.88 220.98)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "bf8519ed-e959-5941-858b-f2b1f3225db5")
+	)
+	(wire
+		(pts
+			(xy 68.58 226.06) (xy 68.58 231.14)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "515e27da-166d-5fc5-964a-69bb33b32226")
+	)
+	(symbol
+		(lib_id "power:GND")
+		(at 68.58 231.14 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom no)
+		(on_board no)
+		(dnp no)
+		(uuid "72557c40-fb6a-5690-aefe-48f93c5ffe8d")
+		(property "Reference" "#PWRQ40709"
+			(at 68.58 234.95 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 68.58 236.22 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Footprint" ""
+			(at 68.58 231.14 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 68.58 231.14 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 68.58 231.14 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "d63119c1-5da5-509c-85e0-d1c7751b5fd8")
+		)
+		(instances
+			(project "RoverCore"
+				(path "/d069f045-7f09-4f8a-bd29-51e87a8a0808/3572c06e-32ee-5f4c-a534-3f1640e128b2"
+					(reference "#PWRQ40709")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(wire
+		(pts
+			(xy 68.58 215.9) (xy 68.58 210.82)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "1727e4a9-1bbf-5e73-8933-62e60daa7cd8")
+	)
+	(symbol
+		(lib_id "Device:R")
+		(at 55.88 229.87 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "8f51fb55-e4a3-5b5d-b406-366863ea5c74")
+		(property "Reference" "R420"
+			(at 58.42 228.6 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "100k"
+			(at 58.42 231.14000000000001 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
+			(at 55.88 229.87 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "https://www.yageogroup.com/content/datasheet/asset/file/PYU-RC_GROUP_51_ROHS_L"
+			(at 55.88 229.87 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Q407 gate pull-down: off without +3V3 / DevKit (latch unpowered, Ioff)"
+			(at 55.88 229.87 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Manufacturer" "Yageo"
+			(at 55.88 229.87 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "MPN" "RC0603FR-07100KL"
+			(at 55.88 229.87 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C14675"
+			(at 55.88 229.87 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "f4c9abf4-b781-5e52-91ec-2c566cbd6738")
+		)
+		(pin "2"
+			(uuid "7ee255c0-fa14-5077-9a80-d3a9e3759532")
+		)
+		(instances
+			(project "RoverCore"
+				(path "/d069f045-7f09-4f8a-bd29-51e87a8a0808/3572c06e-32ee-5f4c-a534-3f1640e128b2"
+					(reference "R420")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(wire
+		(pts
+			(xy 55.88 226.06) (xy 55.88 220.98)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "2a572c35-05c0-5176-a030-37bbc6d2734e")
+	)
+	(wire
+		(pts
+			(xy 55.88 233.68) (xy 55.88 238.76)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "e876eff8-1d85-57e8-a507-1a8d653865b5")
+	)
+	(symbol
+		(lib_id "power:GND")
+		(at 55.88 238.76 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom no)
+		(on_board no)
+		(dnp no)
+		(uuid "3fa4f789-8800-50a1-8a89-053f89eb66e3")
+		(property "Reference" "#PWRR42010"
+			(at 55.88 242.57 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 55.88 243.84 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Footprint" ""
+			(at 55.88 238.76 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 55.88 238.76 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 55.88 238.76 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "50f7b7f8-62c3-53f5-bdf7-ee278f9b5431")
+		)
+		(instances
+			(project "RoverCore"
+				(path "/d069f045-7f09-4f8a-bd29-51e87a8a0808/3572c06e-32ee-5f4c-a534-3f1640e128b2"
+					(reference "#PWRR42010")
 					(unit 1)
 				)
 			)
@@ -5211,8 +5522,8 @@
 		(in_bom no)
 		(on_board no)
 		(dnp no)
-		(uuid "9566a0d2-8028-5f39-a0b9-1c648cc2452f")
-		(property "Reference" "#PWRR40610"
+		(uuid "613a9f1b-8e06-5975-8b1a-2e9b956c3f00")
+		(property "Reference" "#PWRR40611"
 			(at 93.98 185.42000000000002 0)
 			(effects
 				(font
@@ -5258,12 +5569,12 @@
 			)
 		)
 		(pin "1"
-			(uuid "662773a7-6742-558e-bef0-93fa2005550e")
+			(uuid "ed79b39d-b9f0-5f8e-a195-37161483376f")
 		)
 		(instances
 			(project "RoverCore"
 				(path "/d069f045-7f09-4f8a-bd29-51e87a8a0808/3572c06e-32ee-5f4c-a534-3f1640e128b2"
-					(reference "#PWRR40610")
+					(reference "#PWRR40611")
 					(unit 1)
 				)
 			)
@@ -5393,8 +5704,8 @@
 		(in_bom no)
 		(on_board no)
 		(dnp no)
-		(uuid "ad876cb7-005f-5ece-a95d-36cd5a3e5e24")
-		(property "Reference" "#PWRC42011"
+		(uuid "a99c810d-a18d-5d9f-b01d-e19a6f7f3318")
+		(property "Reference" "#PWRC42012"
 			(at 106.68 185.42000000000002 0)
 			(effects
 				(font
@@ -5440,12 +5751,12 @@
 			)
 		)
 		(pin "1"
-			(uuid "cf41233c-5524-51bb-83d7-62397771e18c")
+			(uuid "58654725-e9dd-5f6e-888d-53d399485087")
 		)
 		(instances
 			(project "RoverCore"
 				(path "/d069f045-7f09-4f8a-bd29-51e87a8a0808/3572c06e-32ee-5f4c-a534-3f1640e128b2"
-					(reference "#PWRC42011")
+					(reference "#PWRC42012")
 					(unit 1)
 				)
 			)
@@ -5720,8 +6031,8 @@
 		(in_bom no)
 		(on_board no)
 		(dnp no)
-		(uuid "c538def5-1ff2-504b-a7dc-c764e498876a")
-		(property "Reference" "#PWRU40112"
+		(uuid "a7df9afa-b3d8-5434-85d5-02ec45ba0254")
+		(property "Reference" "#PWRU40113"
 			(at 165.1 171.45 0)
 			(effects
 				(font
@@ -5767,12 +6078,12 @@
 			)
 		)
 		(pin "1"
-			(uuid "95638969-f115-5588-9125-5e50c98e67ca")
+			(uuid "e070c926-dee8-5c6f-b931-49bc51d58531")
 		)
 		(instances
 			(project "RoverCore"
 				(path "/d069f045-7f09-4f8a-bd29-51e87a8a0808/3572c06e-32ee-5f4c-a534-3f1640e128b2"
-					(reference "#PWRU40112")
+					(reference "#PWRU40113")
 					(unit 1)
 				)
 			)
@@ -5846,8 +6157,8 @@
 		(in_bom no)
 		(on_board no)
 		(dnp no)
-		(uuid "a7df9afa-b3d8-5434-85d5-02ec45ba0254")
-		(property "Reference" "#PWRU40113"
+		(uuid "7dd5f617-b5ae-5c7a-b9cb-851adb3ec930")
+		(property "Reference" "#PWRU40114"
 			(at 144.78 151.13 0)
 			(effects
 				(font
@@ -5893,12 +6204,12 @@
 			)
 		)
 		(pin "1"
-			(uuid "e070c926-dee8-5c6f-b931-49bc51d58531")
+			(uuid "4df0a601-cf4f-5041-b60f-7504d240bc3a")
 		)
 		(instances
 			(project "RoverCore"
 				(path "/d069f045-7f09-4f8a-bd29-51e87a8a0808/3572c06e-32ee-5f4c-a534-3f1640e128b2"
-					(reference "#PWRU40113")
+					(reference "#PWRU40114")
 					(unit 1)
 				)
 			)
@@ -6058,8 +6369,8 @@
 		(in_bom no)
 		(on_board no)
 		(dnp no)
-		(uuid "61b46df9-481f-53ec-80d7-7205e7d2cb19")
-		(property "Reference" "#PWRC41414"
+		(uuid "95118187-31c3-599b-b133-b8add82aad37")
+		(property "Reference" "#PWRC41415"
 			(at 129.54 200.66 0)
 			(effects
 				(font
@@ -6105,12 +6416,12 @@
 			)
 		)
 		(pin "1"
-			(uuid "a1cbd619-c633-553b-b0a9-67ff0844845b")
+			(uuid "9de9a56a-17b6-5de9-9cd9-d187df8c1db3")
 		)
 		(instances
 			(project "RoverCore"
 				(path "/d069f045-7f09-4f8a-bd29-51e87a8a0808/3572c06e-32ee-5f4c-a534-3f1640e128b2"
-					(reference "#PWRC41414")
+					(reference "#PWRC41415")
 					(unit 1)
 				)
 			)
@@ -6240,8 +6551,8 @@
 		(in_bom no)
 		(on_board no)
 		(dnp no)
-		(uuid "c9a70200-60d9-51e8-b622-5ead4b87b500")
-		(property "Reference" "#PWRC41915"
+		(uuid "7ac261b3-a9a3-518b-a9c3-fea6736f383c")
+		(property "Reference" "#PWRC41916"
 			(at 147.32 213.36 0)
 			(effects
 				(font
@@ -6287,12 +6598,12 @@
 			)
 		)
 		(pin "1"
-			(uuid "68c6c8a8-a758-5fdd-9691-b70ba854d531")
+			(uuid "853f9dba-2b30-589d-82e7-ef8a5150fe68")
 		)
 		(instances
 			(project "RoverCore"
 				(path "/d069f045-7f09-4f8a-bd29-51e87a8a0808/3572c06e-32ee-5f4c-a534-3f1640e128b2"
-					(reference "#PWRC41915")
+					(reference "#PWRC41916")
 					(unit 1)
 				)
 			)
@@ -6538,8 +6849,8 @@
 		(in_bom no)
 		(on_board no)
 		(dnp no)
-		(uuid "598c56ae-984f-5b58-866f-8020ed94c2ee")
-		(property "Reference" "#PWRC41816"
+		(uuid "f15d3fde-84b5-5e03-8615-edacdc640b04")
+		(property "Reference" "#PWRC41817"
 			(at 165.1 238.76 0)
 			(effects
 				(font
@@ -6585,12 +6896,12 @@
 			)
 		)
 		(pin "1"
-			(uuid "25c0d9af-9ea6-5377-bae7-3f1d546b6df9")
+			(uuid "69578562-cd11-5a76-9f02-589ec4eff48d")
 		)
 		(instances
 			(project "RoverCore"
 				(path "/d069f045-7f09-4f8a-bd29-51e87a8a0808/3572c06e-32ee-5f4c-a534-3f1640e128b2"
-					(reference "#PWRC41816")
+					(reference "#PWRC41817")
 					(unit 1)
 				)
 			)
@@ -6720,8 +7031,8 @@
 		(in_bom no)
 		(on_board no)
 		(dnp no)
-		(uuid "a09f7e2e-8cbb-5f62-957a-fdee12b7ece9")
-		(property "Reference" "#PWRC41217"
+		(uuid "4a950a5b-fb38-5a56-b272-85b50d3289bd")
+		(property "Reference" "#PWRC41218"
 			(at 200.66 200.66 0)
 			(effects
 				(font
@@ -6767,12 +7078,12 @@
 			)
 		)
 		(pin "1"
-			(uuid "dc175725-fbb7-52a5-9c64-552b56c70f8f")
+			(uuid "5c1450e3-5d8c-5695-a32c-58d714e00418")
 		)
 		(instances
 			(project "RoverCore"
 				(path "/d069f045-7f09-4f8a-bd29-51e87a8a0808/3572c06e-32ee-5f4c-a534-3f1640e128b2"
-					(reference "#PWRC41217")
+					(reference "#PWRC41218")
 					(unit 1)
 				)
 			)
@@ -6902,8 +7213,8 @@
 		(in_bom no)
 		(on_board no)
 		(dnp no)
-		(uuid "42332823-6a11-587f-bdd1-e94ab8d9799c")
-		(property "Reference" "#PWRC41318"
+		(uuid "82982a9d-0feb-5210-aee0-22529eda6201")
+		(property "Reference" "#PWRC41319"
 			(at 215.9 200.66 0)
 			(effects
 				(font
@@ -6949,12 +7260,12 @@
 			)
 		)
 		(pin "1"
-			(uuid "e8ffba48-591e-5c65-853b-d9c44b21821e")
+			(uuid "9bc9dfba-2794-55a2-ab6f-d4047aee3857")
 		)
 		(instances
 			(project "RoverCore"
 				(path "/d069f045-7f09-4f8a-bd29-51e87a8a0808/3572c06e-32ee-5f4c-a534-3f1640e128b2"
-					(reference "#PWRC41318")
+					(reference "#PWRC41319")
 					(unit 1)
 				)
 			)
@@ -7460,8 +7771,8 @@
 		(in_bom no)
 		(on_board no)
 		(dnp no)
-		(uuid "219768f0-d267-577d-a117-6ad0d94e445d")
-		(property "Reference" "#PWRQ40219"
+		(uuid "49f00c86-538c-5377-8bab-0653f63f3f8c")
+		(property "Reference" "#PWRQ40220"
 			(at 256.54 133.35 0)
 			(effects
 				(font
@@ -7507,12 +7818,12 @@
 			)
 		)
 		(pin "1"
-			(uuid "03ac3ba0-32e2-5947-a976-8037e968b588")
+			(uuid "66835f58-cd4c-5dfc-b7d9-eb46a86b5913")
 		)
 		(instances
 			(project "RoverCore"
 				(path "/d069f045-7f09-4f8a-bd29-51e87a8a0808/3572c06e-32ee-5f4c-a534-3f1640e128b2"
-					(reference "#PWRQ40219")
+					(reference "#PWRQ40220")
 					(unit 1)
 				)
 			)
@@ -8306,8 +8617,8 @@
 		(in_bom no)
 		(on_board no)
 		(dnp no)
-		(uuid "3c502e24-3610-540d-b4f4-e917c3a0f7c3")
-		(property "Reference" "#PWRC40620"
+		(uuid "fd210243-c63c-53c3-a553-7090b31a95ee")
+		(property "Reference" "#PWRC40621"
 			(at 336.55 101.60000000000001 0)
 			(effects
 				(font
@@ -8353,12 +8664,12 @@
 			)
 		)
 		(pin "1"
-			(uuid "cb1db9de-667f-59a5-b48c-c09010b09814")
+			(uuid "4b102231-aa66-5b07-a559-12743c30510d")
 		)
 		(instances
 			(project "RoverCore"
 				(path "/d069f045-7f09-4f8a-bd29-51e87a8a0808/3572c06e-32ee-5f4c-a534-3f1640e128b2"
-					(reference "#PWRC40620")
+					(reference "#PWRC40621")
 					(unit 1)
 				)
 			)
@@ -8488,8 +8799,8 @@
 		(in_bom no)
 		(on_board no)
 		(dnp no)
-		(uuid "3b109106-8594-5a17-94b5-f918c9f7f456")
-		(property "Reference" "#PWRC40721"
+		(uuid "e2ae5a33-0867-5d39-9da3-cedb013a5a08")
+		(property "Reference" "#PWRC40722"
 			(at 351.79 101.60000000000001 0)
 			(effects
 				(font
@@ -8535,12 +8846,12 @@
 			)
 		)
 		(pin "1"
-			(uuid "092da8c1-aa4c-5855-b821-887a9fb6e0b8")
+			(uuid "55b529bc-1912-5a02-8316-6ddabc56c95b")
 		)
 		(instances
 			(project "RoverCore"
 				(path "/d069f045-7f09-4f8a-bd29-51e87a8a0808/3572c06e-32ee-5f4c-a534-3f1640e128b2"
-					(reference "#PWRC40721")
+					(reference "#PWRC40722")
 					(unit 1)
 				)
 			)
@@ -8670,8 +8981,8 @@
 		(in_bom no)
 		(on_board no)
 		(dnp no)
-		(uuid "76d9592b-d2a6-553b-af3d-9e533b2da847")
-		(property "Reference" "#PWRC40822"
+		(uuid "42764e09-a7ac-546d-9644-66cfee1a551e")
+		(property "Reference" "#PWRC40823"
 			(at 368.3 101.60000000000001 0)
 			(effects
 				(font
@@ -8717,12 +9028,12 @@
 			)
 		)
 		(pin "1"
-			(uuid "941c1baa-78f0-520e-ba1f-b103c1880988")
+			(uuid "a8c5bd27-496b-5687-92a5-9c7837acd85e")
 		)
 		(instances
 			(project "RoverCore"
 				(path "/d069f045-7f09-4f8a-bd29-51e87a8a0808/3572c06e-32ee-5f4c-a534-3f1640e128b2"
-					(reference "#PWRC40822")
+					(reference "#PWRC40823")
 					(unit 1)
 				)
 			)
@@ -8852,8 +9163,8 @@
 		(in_bom no)
 		(on_board no)
 		(dnp no)
-		(uuid "beabeec4-48ce-51ce-a3f1-b46e037e6969")
-		(property "Reference" "#PWRC40923"
+		(uuid "a6fd6836-ed6d-5441-a80b-05f6aed52b84")
+		(property "Reference" "#PWRC40924"
 			(at 382.27 101.60000000000001 0)
 			(effects
 				(font
@@ -8899,12 +9210,12 @@
 			)
 		)
 		(pin "1"
-			(uuid "a5f41164-2c20-5cec-b6cc-3b2bb66a18b9")
+			(uuid "904e16b9-1028-5c49-a4aa-89fb06856510")
 		)
 		(instances
 			(project "RoverCore"
 				(path "/d069f045-7f09-4f8a-bd29-51e87a8a0808/3572c06e-32ee-5f4c-a534-3f1640e128b2"
-					(reference "#PWRC40923")
+					(reference "#PWRC40924")
 					(unit 1)
 				)
 			)
@@ -9034,8 +9345,8 @@
 		(in_bom no)
 		(on_board no)
 		(dnp no)
-		(uuid "e12d9e77-c300-5a7c-a106-384638d505d0")
-		(property "Reference" "#PWRC41024"
+		(uuid "77ef7913-3ffd-55ce-907e-8b3779c00ec0")
+		(property "Reference" "#PWRC41025"
 			(at 396.24 101.60000000000001 0)
 			(effects
 				(font
@@ -9081,12 +9392,12 @@
 			)
 		)
 		(pin "1"
-			(uuid "9ebd7c28-62e6-529b-846b-b88755487fe9")
+			(uuid "574487a1-d95f-501f-b8c4-de6442049b63")
 		)
 		(instances
 			(project "RoverCore"
 				(path "/d069f045-7f09-4f8a-bd29-51e87a8a0808/3572c06e-32ee-5f4c-a534-3f1640e128b2"
-					(reference "#PWRC41024")
+					(reference "#PWRC41025")
 					(unit 1)
 				)
 			)
@@ -9562,8 +9873,8 @@
 		(in_bom no)
 		(on_board no)
 		(dnp no)
-		(uuid "549ba5ff-d339-5468-a99a-0537538077d8")
-		(property "Reference" "#PWRTP40225"
+		(uuid "427c8a4c-4266-587f-ad70-26fa9bfcf13c")
+		(property "Reference" "#PWRTP40226"
 			(at 398.78 156.21 0)
 			(effects
 				(font
@@ -9609,12 +9920,12 @@
 			)
 		)
 		(pin "1"
-			(uuid "8a05be02-0bb9-5007-b530-14d0574d8dc7")
+			(uuid "57e4fccc-e553-502e-9d0a-a430967f51e5")
 		)
 		(instances
 			(project "RoverCore"
 				(path "/d069f045-7f09-4f8a-bd29-51e87a8a0808/3572c06e-32ee-5f4c-a534-3f1640e128b2"
-					(reference "#PWRTP40225")
+					(reference "#PWRTP40226")
 					(unit 1)
 				)
 			)
@@ -9947,8 +10258,8 @@
 		(in_bom no)
 		(on_board no)
 		(dnp no)
-		(uuid "4b23353d-a9de-56a6-9367-1fb7f7c3a4a0")
-		(property "Reference" "#PWRR40426"
+		(uuid "be673c29-db3f-581e-9d3f-c044862e30b9")
+		(property "Reference" "#PWRR40427"
 			(at 386.08 151.13 0)
 			(effects
 				(font
@@ -9994,12 +10305,12 @@
 			)
 		)
 		(pin "1"
-			(uuid "d7e8be0b-cfbd-5e6f-9aa7-329565eee374")
+			(uuid "6e4639f0-060e-5c78-af55-f0de76546b7d")
 		)
 		(instances
 			(project "RoverCore"
 				(path "/d069f045-7f09-4f8a-bd29-51e87a8a0808/3572c06e-32ee-5f4c-a534-3f1640e128b2"
-					(reference "#PWRR40426")
+					(reference "#PWRR40427")
 					(unit 1)
 				)
 			)
@@ -10119,8 +10430,8 @@
 		(in_bom no)
 		(on_board no)
 		(dnp no)
-		(uuid "55ab63e6-ab46-51c4-9141-078995db5c88")
-		(property "Reference" "#PWRC41627"
+		(uuid "5dba614e-a622-561b-bdaa-52241c7e031c")
+		(property "Reference" "#PWRC41628"
 			(at 246.38 185.42000000000002 0)
 			(effects
 				(font
@@ -10165,12 +10476,12 @@
 			)
 		)
 		(pin "1"
-			(uuid "82a656ec-777d-5629-8feb-d4013adbcf1c")
+			(uuid "d65bf00d-3acc-5b6f-86c9-e1883af6ece7")
 		)
 		(instances
 			(project "RoverCore"
 				(path "/d069f045-7f09-4f8a-bd29-51e87a8a0808/3572c06e-32ee-5f4c-a534-3f1640e128b2"
-					(reference "#PWRC41627")
+					(reference "#PWRC41628")
 					(unit 1)
 				)
 			)
@@ -10194,8 +10505,8 @@
 		(in_bom no)
 		(on_board no)
 		(dnp no)
-		(uuid "5dba614e-a622-561b-bdaa-52241c7e031c")
-		(property "Reference" "#PWRC41628"
+		(uuid "9d95e65c-30b7-5a3f-8a1c-338112f0cc1a")
+		(property "Reference" "#PWRC41629"
 			(at 246.38 203.2 0)
 			(effects
 				(font
@@ -10241,12 +10552,12 @@
 			)
 		)
 		(pin "1"
-			(uuid "d65bf00d-3acc-5b6f-86c9-e1883af6ece7")
+			(uuid "1c2793e2-3225-5ecf-b951-0548520141ed")
 		)
 		(instances
 			(project "RoverCore"
 				(path "/d069f045-7f09-4f8a-bd29-51e87a8a0808/3572c06e-32ee-5f4c-a534-3f1640e128b2"
-					(reference "#PWRC41628")
+					(reference "#PWRC41629")
 					(unit 1)
 				)
 			)
@@ -10404,8 +10715,8 @@
 		(in_bom no)
 		(on_board no)
 		(dnp no)
-		(uuid "3126e23d-9102-53d5-b82f-b62b9c1dfa75")
-		(property "Reference" "#PWRU40229"
+		(uuid "7b274f42-2826-5eca-8f2b-89fe0cdd87bc")
+		(property "Reference" "#PWRU40230"
 			(at 259.08 227.33 0)
 			(effects
 				(font
@@ -10451,12 +10762,12 @@
 			)
 		)
 		(pin "1"
-			(uuid "41bef6ef-b647-5bb1-b824-cb62c95084ba")
+			(uuid "71c82b79-e6a7-5e2d-b20d-24fa0559b4c1")
 		)
 		(instances
 			(project "RoverCore"
 				(path "/d069f045-7f09-4f8a-bd29-51e87a8a0808/3572c06e-32ee-5f4c-a534-3f1640e128b2"
-					(reference "#PWRU40229")
+					(reference "#PWRU40230")
 					(unit 1)
 				)
 			)
@@ -10500,8 +10811,8 @@
 		(in_bom no)
 		(on_board no)
 		(dnp no)
-		(uuid "7b274f42-2826-5eca-8f2b-89fe0cdd87bc")
-		(property "Reference" "#PWRU40230"
+		(uuid "65be1977-e9e7-54b3-886f-1f553a00fb10")
+		(property "Reference" "#PWRU40231"
 			(at 259.08 201.93 0)
 			(effects
 				(font
@@ -10546,12 +10857,12 @@
 			)
 		)
 		(pin "1"
-			(uuid "71c82b79-e6a7-5e2d-b20d-24fa0559b4c1")
+			(uuid "23bc300c-a1af-5d9f-b961-0071a67e1fe3")
 		)
 		(instances
 			(project "RoverCore"
 				(path "/d069f045-7f09-4f8a-bd29-51e87a8a0808/3572c06e-32ee-5f4c-a534-3f1640e128b2"
-					(reference "#PWRU40230")
+					(reference "#PWRU40231")
 					(unit 1)
 				)
 			)
@@ -10825,8 +11136,8 @@
 		(in_bom no)
 		(on_board no)
 		(dnp no)
-		(uuid "bab3bc89-4600-5af7-9391-321a676f3694")
-		(property "Reference" "#PWRC41531"
+		(uuid "46787f2c-98a3-5fcb-838e-4eeaf8fb34ad")
+		(property "Reference" "#PWRC41532"
 			(at 294.64 246.38 0)
 			(effects
 				(font
@@ -10872,12 +11183,12 @@
 			)
 		)
 		(pin "1"
-			(uuid "63505670-9986-5c3d-aaf6-9037715a45e7")
+			(uuid "f34bf5f8-da7d-5fd1-b5aa-d55834602525")
 		)
 		(instances
 			(project "RoverCore"
 				(path "/d069f045-7f09-4f8a-bd29-51e87a8a0808/3572c06e-32ee-5f4c-a534-3f1640e128b2"
-					(reference "#PWRC41531")
+					(reference "#PWRC41532")
 					(unit 1)
 				)
 			)
@@ -11007,8 +11318,8 @@
 		(in_bom no)
 		(on_board no)
 		(dnp no)
-		(uuid "f2306d1a-dea8-51d9-8504-be2d4e07e3c6")
-		(property "Reference" "#PWRD40432"
+		(uuid "129dc2b0-62c2-562d-bdab-1ac3811444d1")
+		(property "Reference" "#PWRD40433"
 			(at 294.64 187.96 0)
 			(effects
 				(font
@@ -11053,12 +11364,12 @@
 			)
 		)
 		(pin "1"
-			(uuid "0e1d313a-89f0-5ae9-b156-e1029dec7671")
+			(uuid "8de0ae84-4899-5aad-9f76-5a7ddba34631")
 		)
 		(instances
 			(project "RoverCore"
 				(path "/d069f045-7f09-4f8a-bd29-51e87a8a0808/3572c06e-32ee-5f4c-a534-3f1640e128b2"
-					(reference "#PWRD40432")
+					(reference "#PWRD40433")
 					(unit 1)
 				)
 			)
@@ -11763,8 +12074,8 @@
 		(in_bom no)
 		(on_board no)
 		(dnp no)
-		(uuid "50f995ed-8bf6-5ee5-a2c6-63413cb5edaf")
-		(property "Reference" "#PWRQ40633"
+		(uuid "4549f0cd-259a-546f-94e4-e0f17c109959")
+		(property "Reference" "#PWRQ40634"
 			(at 393.7 247.65 0)
 			(effects
 				(font
@@ -11810,12 +12121,12 @@
 			)
 		)
 		(pin "1"
-			(uuid "98e1cff8-f684-5eff-b364-dd384dc20856")
+			(uuid "dc51367f-4388-5c6e-92c7-8e354482d4f3")
 		)
 		(instances
 			(project "RoverCore"
 				(path "/d069f045-7f09-4f8a-bd29-51e87a8a0808/3572c06e-32ee-5f4c-a534-3f1640e128b2"
-					(reference "#PWRQ40633")
+					(reference "#PWRQ40634")
 					(unit 1)
 				)
 			)
@@ -12071,8 +12382,8 @@
 		(in_bom no)
 		(on_board no)
 		(dnp no)
-		(uuid "3200ea97-39d2-5e6d-bbad-5d79710ddba6")
-		(property "Reference" "#PWRR41134"
+		(uuid "8f116b85-026c-5947-b894-a1f77ad50399")
+		(property "Reference" "#PWRR41135"
 			(at 360.68 248.92000000000002 0)
 			(effects
 				(font
@@ -12118,12 +12429,12 @@
 			)
 		)
 		(pin "1"
-			(uuid "db3de144-8c46-55b0-bbc0-7e1932035500")
+			(uuid "cacce8d0-7645-554e-b99d-a0da3589f849")
 		)
 		(instances
 			(project "RoverCore"
 				(path "/d069f045-7f09-4f8a-bd29-51e87a8a0808/3572c06e-32ee-5f4c-a534-3f1640e128b2"
-					(reference "#PWRR41134")
+					(reference "#PWRR41135")
 					(unit 1)
 				)
 			)
@@ -12253,8 +12564,8 @@
 		(in_bom no)
 		(on_board no)
 		(dnp no)
-		(uuid "b49d5e4b-2796-5891-af51-877abd60890b")
-		(property "Reference" "#PWRC41735"
+		(uuid "d843beb3-8817-51d0-a244-c885f3f42fba")
+		(property "Reference" "#PWRC41736"
 			(at 342.9 248.92000000000002 0)
 			(effects
 				(font
@@ -12300,12 +12611,12 @@
 			)
 		)
 		(pin "1"
-			(uuid "8e52a003-76ed-5560-bcdf-bbfb937df721")
+			(uuid "e7d90c5b-8ec5-5095-b507-0010342c598b")
 		)
 		(instances
 			(project "RoverCore"
 				(path "/d069f045-7f09-4f8a-bd29-51e87a8a0808/3572c06e-32ee-5f4c-a534-3f1640e128b2"
-					(reference "#PWRC41735")
+					(reference "#PWRC41736")
 					(unit 1)
 				)
 			)
@@ -12435,8 +12746,8 @@
 		(in_bom no)
 		(on_board no)
 		(dnp no)
-		(uuid "d41c2b8c-9e15-5489-9de4-d563d2639eb5")
-		(property "Reference" "#PWRD40336"
+		(uuid "9db1ac5c-aa71-5c0d-9b38-7abfa360c75b")
+		(property "Reference" "#PWRD40337"
 			(at 339.09 208.28 0)
 			(effects
 				(font
@@ -12481,12 +12792,12 @@
 			)
 		)
 		(pin "1"
-			(uuid "cfeb22f8-e17f-5d50-8c85-2801e0c26d54")
+			(uuid "191d1db9-f227-50a7-a48a-17499f2b8145")
 		)
 		(instances
 			(project "RoverCore"
 				(path "/d069f045-7f09-4f8a-bd29-51e87a8a0808/3572c06e-32ee-5f4c-a534-3f1640e128b2"
-					(reference "#PWRD40336")
+					(reference "#PWRD40337")
 					(unit 1)
 				)
 			)
@@ -12835,6 +13146,47 @@
 		(uuid "5fb9b867-9de7-53cc-8104-31197608ddd0")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 30.48 200.66 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+	)
+	(wire
+		(pts
+			(xy 68.58 210.82) (xy 43.18 210.82)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "1bfa8fa4-2e4e-5031-af49-9599e1c23e54")
+	)
+	(label "SERVO_EN_SRC"
+		(at 43.18 210.82 270)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right bottom)
+		)
+		(uuid "a3b7b78c-abe4-5139-ad84-1f14197c5cac")
+	)
+	(global_label "ACT_ARMED"
+		(shape input)
+		(at 55.88 220.98 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "f6b80282-f5a1-57c2-add9-2b471c9696c2")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 55.88 220.98 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -14063,7 +14415,7 @@
 		)
 		(uuid "67c01416-7fb7-5e6f-bd83-0b056ee38a5e")
 	)
-	(text "Default OFF: Q403 holds RUN low; only SERVO_PWR_EN high (Q404)\nreleases it. RUN 9.6 V on / 8.8 V off, C420 delay 1.75 ms."
+	(text "Default OFF: Q403 holds RUN low; only SERVO_PWR_EN (Q404) AND\nACT_ARMED (Q407, interlock O-35) release it.\nRUN 9.6 V on / 8.8 V off, C420 delay 1.75 ms."
 		(exclude_from_sim no)
 		(at 24.13 116.84 0)
 		(effects

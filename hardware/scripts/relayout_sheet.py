@@ -149,6 +149,8 @@ def build(sheet, spec, nets):
     s.label_at = dict(spec.get("label_at", {}))
     power_nets = {p: "power:" + p for p in info["power"]}
     hier = dict({k: v for k, v in info["hier"].items()}, **{k: "global:" + v for k, v in info["global"].items()})
+    # global labels introduced by this layout step (new inter-sheet nets), net -> shape
+    hier.update({k: "global:" + v for k, v in spec.get("globals", {}).items()})
     # nets that carry a local label as well as the hierarchical label (keeps the net name chosen by KiCad):
     # pins get local labels / wires, the hierarchical label sits at the stub end of the given pin
     hier_local = spec.get("hier_local", {})

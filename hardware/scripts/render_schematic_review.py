@@ -39,7 +39,7 @@ GROUPS = {
     "ServoPower": [
         ("input-and-power-stage", ["C401", "C402", "C403", "C404", "C405", "Q401", "Q402", "L401", "RS401"]),
         ("controller-and-bootstrap", ["U401", "D401", "C411", "C412", "C413", "C414", "C418", "C419", "R413"]),
-        ("run-and-default-off", ["R405", "R406", "C420", "Q403", "Q404", "R407", "R414", "R415"]),
+        ("run-and-default-off", ["R405", "R406", "C420", "Q403", "Q404", "R407", "R414", "R415", "Q407", "R420"]),
         ("current-sense-and-kelvin", ["NT401", "NT402", "RF401", "CF401", "NT404", "NT405", "RS402", "U402", "C416"]),
         ("output-and-feedback", ["C406", "C407", "C408", "C409", "C410", "NT403", "R403", "R404", "TP401", "TP402"]),
         ("measurement-outputs", ["R410", "R411", "C417", "D403", "R417", "Q405", "Q406", "R418", "R419",
@@ -52,6 +52,8 @@ GROUPS = {
                                        "C504", "D506", "TP505"]),
         ("operator-and-defaults", ["R501", "R502", "SW501", "R504", "D502", "TP501"]),
         ("programming-and-restart", ["SW502", "SW503"]),
+        ("restart-interlock", ["U505", "U506", "R515", "R516", "R517", "C506", "C507", "C508"]),
+        ("enable-button-node", ["R502", "R518", "SW501"]),
     ],
     "Sensors_Display": [
         ("imu-j115", ["J115", "R803"]),
@@ -60,6 +62,7 @@ GROUPS = {
     ],
     "Actuators": [
         ("buffer-u201", ["U201", "C201", "C202", "R209"]),
+        ("oe-gate-u204", ["U204", "C203"]),
         ("input-and-gate-pulls", ["R201", "R202", "R203", "R204", "R205", "R206", "R207", "R208",
                                   "R211", "R212", "R213", "R214", "R215", "R216", "R217", "R218"]),
         ("esc-and-front-servo", ["Q201", "D201", "R221", "R231", "R241", "J106", "Q202", "D202", "R222", "R232", "R242", "J102"]),
