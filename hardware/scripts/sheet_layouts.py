@@ -41,7 +41,11 @@ LAYOUTS["Power"] = {
                 "SMBJ13A clamp, 330 uF + 10 uF bulk.\\nVBAT_PROT feeds LogicPower, ServoPower\\nand Controller (hierarchical pin)."),
     },
     "notes": {"head": ("Battery input 3S (9.0-12.6 V): XT30 -> fuse -> reverse-polarity P-FET -> TVS -> bulk. "
-                       "All parts are candidates (O-17).", 22.86, 58.42)},
+                       "All parts are candidates (O-17).", 22.86, 58.42),
+              "main": ("Hauptschalter trennt die LiPo-Versorgung. USB kann den Controller weiterhin versorgen.\\n"
+                       "Main disconnect outside the VCU, independent of firmware: LiPo -> main switch -> Y splitter -> "
+                       "ESC and VCU (J101).\\nMotor current does not flow through the VCU. Switch selection open (O-34).",
+                       22.86, 165.1)},
 }
 
 LAYOUTS["LogicPower"] = {

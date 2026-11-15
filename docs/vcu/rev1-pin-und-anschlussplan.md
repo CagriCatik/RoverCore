@@ -18,7 +18,7 @@ v1.8, ESP32-S3-DevKitC-1 User Guide v1.1, ESP-IDF-Doku (GPIO, LEDC).
 | LEDC | 8 Kanäle, 4 Timer, nur Low-Speed-Modus | ESP-IDF LEDC | 5 × Servo/ESC + Buzzer = 6 Kanäle |
 | ADC | ADC1 = GPIO1–10, ADC2 = GPIO11–20; ADC2 nicht zusammen mit Wi-Fi | DS v2.2 Tab. 2-8 und Hinweis | Messungen nur auf ADC1 |
 | Einschaltstörungen | GPIO1–17: Low-Pegel-Glitch 60 µs; **GPIO18: High- und Low-Glitch**; GPIO19/20: High-Glitches | DS v2.2 Tab. 2-2 | Keine Ausgänge auf GPIO18; Low-Glitches sind bei Servo-/ESC-Signalen (Ruhepegel low) unkritisch |
-| Strapping | GPIO0 Pull-up, GPIO3 floatend, GPIO45/46 Pull-down | DS v2.2 Tab. 3-1 | Auf dem Carrier nicht beschalten |
+| Strapping | GPIO0 Pull-up, GPIO3 floatend, GPIO45/46 Pull-down | DS v2.2 Tab. 3-1 | GPIO3/45/46 auf dem Carrier nicht beschalten; GPIO0 nur mit BOOT-Taster SW503 nach GND (Abschnitt 10) |
 | PSRAM | WROOM-1-N16R8 = 16 MB Quad-Flash + 8 MB **Octal**-PSRAM; IO35–37 belegt | WROOM-1 DS v1.8 | GPIO35–37 gesperrt |
 | GPIO47/48 | 1,8 V nur bei R16V-Varianten | DS v2.2 Pin-Fußnote 4 | Bei N16R8 normale 3,3-V-GPIOs |
 | Pegel | V_IH max = VDD + 0,3 V | DS v2.2 Tab. 5-4 | **Nicht 5-V-tolerant** – jeder 5-V-Eingang braucht Pegelwandler oder Klemmung |
@@ -311,12 +311,14 @@ Belegung siehe `pinmap.csv`; Footprint-Pads 1–22 = J1-1…J1-22, 23–44 = J3-
 
 ### J115 – IMU-Modul (Adafruit 4438), J116 – OLED-Modul (Adafruit 326)
 
-Benötigte Signale: IMU – VIN (+3V3_DEVKIT), GND, SCL, SDA, INT1;
-OLED – VIN (+3V3_DEVKIT), GND, SCL, SDA. Die Pinreihenfolge der
-Stiftleisten beider Module ist **noch nicht verifiziert** (O-11) und wird
-aus den Adafruit-Platinendateien oder am Modul bestimmt, bevor der Footprint
-entsteht. Alternative: STEMMA-QT-Kabel (JST-SH 4-polig) für I²C plus
-separater INT1-Draht.
+Beide Module stecken mit ihrer Stiftleiste direkt in einer Buchsenleiste des
+Carriers (Bauteilseite oben). Keine STEMMA-QT-Kabel, keine losen Leitungen.
+Pinbelegung, Geometrie und Beschaltung aus den Original-Eagle-Dateien von
+Adafruit (Abschnitt 9).
+
+| J115 (1×9, Adafruit 4438 JP1) | 1 VIN = +3V3 · 2 3Vo (frei) · 3 GND · 4 SCL · 5 SDA · 6 DO (frei, 0x6A) · 7 CS (frei) · 8 INT1 = IMU_INT1 · 9 INT2 (frei) |
+|---|---|
+| **J116 (1×8, Adafruit 326 JP2)** | 1 Data = SDA · 2 Clk = SCL · 3 DC/A0 (frei, 0x3D) · 4 Rst (frei) · 5 CS (frei) · 6 3Vo (frei) · 7 Vin = +3V3 · 8 GND |
 
 ### Bedienelemente auf dem Carrier
 
@@ -325,6 +327,8 @@ separater INT1-Draht.
 | U501 | DevKit-Sockel (Blatt `Controller`) |
 | D501 | Schottky Carrier-5V → DevKit-5V-Pin, ersetzt JP101 (Versorgungsdokument 3.11) |
 | SW501 | Freigabetaster |
+| SW502 | `RESET`: DevKit-EN nach GND (Abschnitt 10) |
+| SW503 | `BOOT`: GPIO0 nach GND (Abschnitt 10) |
 | BZ101 | Buzzer Same Sky CMT-8540S-SMT-TR (magnetisch, 5 V, max. 150 mA, Freilaufdiode, Low-Side-MOSFET ≥ 0,52 A) |
 | D502 | Status-LED |
 | TP | Messpunkte: VBAT_IN, VBAT_PROT, +V_SERVO, +5V, +3V3_DEVKIT, GND (mehrfach), IBUS_RX, ein Servo- und ein LED-Signal |
@@ -334,21 +338,23 @@ separater INT1-Draht.
 | Nr. | Punkt |
 |---|---|
 | O-10 | FS-iA6B: i-BUS-Pegel, Baudrate und Pinreihenfolge am i-BUS-Port |
-| O-11 | Pinreihenfolge der Stiftleisten von Adafruit 4438 und 326 (oder Wahl STEMMA QT) |
+| O-11 | ~~Pinreihenfolge der Stiftleisten von Adafruit 4438 und 326~~ – erledigt 2026-11-15 aus den Adafruit-Eagle-Dateien, direkte Steckmontage (Abschnitt 9) |
 | O-12 | ~~Pufferbausteine~~ – erledigt 2026-11-15: SN74LVC8T245 + SN74LVC1T45 (Ausgänge), SN74LVC1G17 (i-BUS), Abschnitt 3.1 |
 | O-13 | Arduino-ESP32-Core-Version festlegen und prüfen, dass LEDC/RMT/UART auf den gewählten Pins wie vorgesehen funktionieren (Bring-up-Test) |
 
 
-## 6. Prüfbericht DevKit-Sockel U501 und offene Labels (Stand 2026-11-15)
+## 6. Prüfbericht DevKit-Sockel U501 und globale Labels (Stand 2026-11-15, nach RESET/BOOT)
 
 Erzeugt mit `python3 hardware/scripts/check_socket_pinmap.py`. Das Skript
 exportiert die Netzliste mit kicad-cli und vergleicht alle 44 Pads mit
-`pinmap.csv`. Abweichungen führen zu Exit-Status 1. Die 13 in `pinmap.csv`
-als `reserved` geführten Pins sind **erwartete No-Connects**. Geprüft wird
+`pinmap.csv`. Abweichungen führen zu Exit-Status 1. Die 11 in `pinmap.csv`
+als `reserved` geführten Pins sind **erwartete No-Connects**. EN (J1-3) und
+GPIO0 (J3-14) sind seit RESET/BOOT verbunden und werden als Signal geprüft
+(vorher 13 No-Connects, 24 Signal). Geprüft wird
 dabei auch, dass der Pinname im Netz `unconnected-(…)` zum GPIO und zur
 Padnummer passt.
 
-Ergebnis: **24 Signal, 7 Versorgung, 13 erwartete No-Connects, 0 unerklärte
+Ergebnis: **26 Signal, 7 Versorgung, 11 erwartete No-Connects, 0 unerklärte
 Abweichungen.** Das bestätigt die Umsetzung von `pinmap.csv`. Die Pinbelegung
 selbst stammt aus dem Espressif User Guide v1.1 (Abschnitt 1).
 
@@ -356,19 +362,19 @@ selbst stammt aus dem Espressif User Guide v1.1 (Abschnitt 1).
 |---:|---|---|---|---|---|
 | 1 | J1-1 | 3V3 | +3V3 | +3V3 | power |
 | 2 | J1-2 | 3V3 | +3V3 | +3V3 | power |
-| 3 | J1-3 | CHIP_PU | DEVKIT_EN | unconnected-(U501-J1-3/RST-Pad3) | expected NC |
+| 3 | J1-3 | CHIP_PU | DEVKIT_EN | DEVKIT_EN | signal – **neu** RESET SW502 |
 | 4 | J1-4 | GPIO4 | VBAT_SENSE | VBAT_SENSE | signal |
 | 5 | J1-5 | GPIO5 | VSERVO_SENSE | VSERVO_SENSE | signal |
-| 6 | J1-6 | GPIO6 | IMU_INT1 | IMU_INT1 | signal |
+| 6 | J1-6 | GPIO6 | IMU_INT1 | IMU_INT1 | signal – **verbunden** (Blatt Sensors_Display) |
 | 7 | J1-7 | GPIO7 | SERVO_PWR_EN | SERVO_PWR_EN | signal |
 | 8 | J1-8 | GPIO15 | SERVO_FRONT_PWM_3V3 | SERVO_FRONT_PWM_3V3 | signal – **verbunden** (Blatt Actuators) |
 | 9 | J1-9 | GPIO16 | SERVO_REAR_PWM_3V3 | SERVO_REAR_PWM_3V3 | signal – **verbunden** (Blatt Actuators) |
 | 10 | J1-10 | GPIO17 | SERVO_AUX1_PWM_3V3 | SERVO_AUX1_PWM_3V3 | signal – **verbunden** (Blatt Actuators) |
 | 11 | J1-11 | GPIO18 | SPARE_GPIO18 | SPARE_GPIO18 | signal |
-| 12 | J1-12 | GPIO8 | I2C_SDA | I2C_SDA | signal |
+| 12 | J1-12 | GPIO8 | I2C_SDA | I2C_SDA | signal – **verbunden** (Blatt Sensors_Display) |
 | 13 | J1-13 | GPIO3 | STRAP_GPIO3 | unconnected-(U501-J1-13/GPIO3-Pad13) | expected NC |
 | 14 | J1-14 | GPIO46 | STRAP_GPIO46 | unconnected-(U501-J1-14/GPIO46-Pad14) | expected NC |
-| 15 | J1-15 | GPIO9 | I2C_SCL | I2C_SCL | signal |
+| 15 | J1-15 | GPIO9 | I2C_SCL | I2C_SCL | signal – **verbunden** (Blatt Sensors_Display) |
 | 16 | J1-16 | GPIO10 | ENABLE_BTN_N | ENABLE_BTN_N | signal |
 | 17 | J1-17 | GPIO11 | STATUS_LED | STATUS_LED | signal |
 | 18 | J1-18 | GPIO12 | BUZZER | BUZZER | signal |
@@ -389,7 +395,7 @@ selbst stammt aus dem Espressif User Guide v1.1 (Abschnitt 1).
 | 33 | J3-11 | GPIO37 | PSRAM_GPIO37 | unconnected-(U501-J3-11/GPIO37-Pad33) | expected NC |
 | 34 | J3-12 | GPIO36 | PSRAM_GPIO36 | unconnected-(U501-J3-12/GPIO36-Pad34) | expected NC |
 | 35 | J3-13 | GPIO35 | PSRAM_GPIO35 | unconnected-(U501-J3-13/GPIO35-Pad35) | expected NC |
-| 36 | J3-14 | GPIO0 | STRAP_GPIO0 | unconnected-(U501-J3-14/GPIO0-Pad36) | expected NC |
+| 36 | J3-14 | GPIO0 | STRAP_GPIO0 | STRAP_GPIO0 | signal – **neu** BOOT SW503 |
 | 37 | J3-15 | GPIO45 | STRAP_GPIO45 | unconnected-(U501-J3-15/GPIO45-Pad37) | expected NC |
 | 38 | J3-16 | GPIO48 | EXT_UART_RX | EXT_UART_RX | signal |
 | 39 | J3-17 | GPIO47 | EXT_UART_TX | EXT_UART_TX | signal |
@@ -399,9 +405,8 @@ selbst stammt aus dem Espressif User Guide v1.1 (Abschnitt 1).
 | 43 | J3-21 | GND | GND | GND | power |
 | 44 | J3-22 | GND | GND | GND | power |
 
-**Globale Labels vom Controller (ERC „Label connected to only one pin": anfangs 16, nach Actuators 8, nach Lighting_IO 3 – nur noch Sensors_Display).**
-Sie bleiben bis zu den Verbraucherblättern offen und werden nicht
-ausgeblendet. `scripts/kit verify` meldet deshalb weiter einen Fehler.
+**Globale Labels vom Controller (ERC „Label connected to only one pin": anfangs 16, nach Actuators 8, nach Lighting_IO 3, nach Sensors_Display 0).**
+Alle Labels haben jetzt ein echtes Gegenstück; nichts ist ausgeblendet.
 
 | Label | Quelle | Geplantes Gegenstück |
 |---|---|---|
@@ -418,9 +423,9 @@ ausgeblendet. `scripts/kit verify` meldet deshalb weiter einen Fehler.
 | EXT_UART_TX | GPIO47 | Lighting_IO: 1 kΩ → J112 |
 | EXT_UART_RX | GPIO48 | Lighting_IO: 4,7 kΩ, ESD, 10 kΩ Pull-up → J112 |
 | IBUS_RX_3V3 | GPIO21 | Lighting_IO: U203 SN74LVC1G17 → J107 |
-| IMU_INT1 | GPIO6 | Sensors_Display: J115 |
-| I2C_SDA | GPIO8 | Sensors_Display: J115, J116 |
-| I2C_SCL | GPIO9 | Sensors_Display: J115, J116 |
+| IMU_INT1 | GPIO6 | Sensors_Display: J115-8, R803 (verbunden) |
+| I2C_SDA | GPIO8 | Sensors_Display: J115-5, J116-1, R801 (DNP), TP801 (verbunden) |
+| I2C_SCL | GPIO9 | Sensors_Display: J115-4, J116-2, R802 (DNP), TP802 (verbunden) |
 
 ## 7. Blatt `Actuators` (Stand 2026-11-15)
 
@@ -496,3 +501,122 @@ und Q601, U202/U203 und die Schalterausgänge entsprechen dieser Tabelle;
 - NTR4501N gegen NTR4501N/D (1 G, 2 S, 3 D).
 
 Alle stimmen. `pin_pad_mapping` ohne Befund.
+
+## 9. Blatt `Sensors_Display` (Stand 2026-11-15)
+
+Datei `Sensors_Display.kicad_sch` (A4), erzeugt mit
+`hardware/scripts/bootstrap_sensors_display.py`, Layout über
+`relayout_sheet.py` / `sheet_layouts.py`. Symbole und Footprints der
+Modulsockel: `hardware/scripts/make_sensor_module_sockets.py`.
+
+### 9.1 Quellen der Modulpinouts
+
+Ausgewertet wurden die **Original-Eagle-Dateien** (Board und Schaltplan,
+XML) aus den Adafruit-Repositories, nicht Fotos:
+
+| Modul | Datei | Stand | Produktseite (2026-11-15) |
+|---|---|---|---|
+| 4438 LSM6DSOX | `adafruit/Adafruit-LSM6DSOX-PCB`: `Adafruit_LSM6DSOX.brd/.sch` | Commit c05abef (2020-09-07) | 25,6 × 17,8 × 4,6 mm; Revisionen 2022-06-15 (evtl. anderer Regler ≥ 250 mA), 2023-10-27 (nur Silkscreen) |
+| 326 OLED 0,96″ | `adafruit/Adafruit-128x64-Monochrome-OLED-PCB`: `Adafruit 0.96in 128x64 OLED STEMMA QT.brd/.sch` | Boarddateien 1031d65 (2020-08-06), XML-Konvertierung 2797692 | ab 2020-08-03 I²C Standard, Auto-Reset, STEMMA QT; 2024-04-02 nur Silkscreen |
+
+**Modulrevision 326:** Verwendet wird nur die STEMMA-QT-Revision (ab
+2020-08-03). Ältere 326 stehen ab Werk auf SPI und brauchen den Reset-Pin –
+für diesen Carrier nicht zulässig (BOM-Hinweis). Der STEMMA-QT-Anschluss
+beider Module bleibt unbenutzt.
+
+### 9.2 Pinout, Geometrie, Orientierung
+
+Draufsicht, Modul mit Bauteilseite nach oben gesteckt (Carrier-Draufsicht =
+Modul-Draufsicht, keine Spiegelung). Pin 1 ist auf dem Carrier-Silkscreen mit
+Dreieck markiert, die Pinnamen stehen neben den Pads.
+
+| | 4438 (J115) | 326 (J116) |
+|---|---|---|
+| Platine | 25,40 × 17,78 mm, Ecken R 2,54 | 29,21 × 31,75 mm mit Aussparung 19,05 × 5,08 mm an der Unterkante (Produktseite „26,7 mm" = Hauptteil ohne Eckfahnen) |
+| Steckleiste | JP1 1×9, Raster 2,54 mm, an der Unterkante (Y = 2,54) | JP2 1×8, Raster 2,54 mm, an der Oberkante (Y = 29,21), Pin 1 rechts |
+| Pins | 1 VIN, 2 3Vo, 3 GND, 4 SCL, 5 SDA, 6 DO, 7 CS, 8 INT1, 9 INT2 | 1 Data, 2 Clk, 3 DC/A0, 4 Rst, 5 CS, 6 3Vo, 7 Vin, 8 GND |
+| weitere Reihe | JP2 1×5 (Aux-Bus) bei Y = 15,24, Abstand zu JP1 12,70 mm – **nicht bestücken**, keine Buchse | – |
+| Befestigung | 2 × Ø 2,5 mm bei (2,54/15,24) und (22,86/15,24) → 2 Abstandshalter M2,5, Carrier-NPTH 2,7 mm | 4 × Ø 2,5 mm; die zwei Löcher neben der Steckleiste liegen 3,18 mm von Pin 1/8 – ein Abstandshalter kollidiert dort mit dem Buchsenkörper. **Nur die zwei Eckfahnen-Löcher** erhalten Carrier-NPTH |
+| Unterseite | nur Lötjumper SJ1 (Adresse) und Silkscreen | Flexkabel des Displays umgeschlagen, Lötpads bei Y ≈ 11 |
+| INT1 auf der Steckleiste | ja, JP1-8, direkt vom Sensor (nicht pegelgewandelt) | – |
+
+**Freiraum und Zugänglichkeit (Schätzung):** Abstand Carrier → Modulunterseite
+≈ Buchsenhöhe + Kunststoffträger der Stiftleiste, typisch ca. 11 mm. Unter
+beiden Modulen nur flache SMD-Bauteile, keine Prüfpunkte und keine Bedienelemente.
+Die Courtyards der Footprints entsprechen dem Modulumriss. Lötjumper der
+Module sind gesteckt nicht erreichbar; benötigt wird keiner (Werkszustand).
+Buchsentyp, Höhe und Abstandshalterlänge sind offen (O-31).
+
+### 9.3 Versorgung, Pegel, Adressen
+
+| | 4438 | 326 |
+|---|---|---|
+| Versorgung | VIN = +3V3 (DevKit-LDO); Regler AP2112K-3.3 auf dem Modul, Adafruit: VIN 3–5 V | Vin = +3V3; AP2112K-3.3 auf dem Modul, Ladungspumpe im Display |
+| I²C-Pegelwandler | BSS138 (Q2) je Leitung, 10 kΩ an VIN (Busseite) und 10 kΩ an 3,3 V (Sensorseite) | gleiche Schaltung (Q2, R3 10 kΩ an Vin) |
+| Adresse | **0x6A** (DO über Modulwiderstand nach GND, SJ1 offen); DO auf dem Carrier offen | **0x3D** (DC/A0 über 10 kΩ hoch, SJ3 offen); DC auf dem Carrier offen |
+| Weitere Pins | CS mit Modul-Pull-up hoch → I²C-Modus; INT2, 3Vo offen | Rst: Reset-IC APX803 auf dem Modul; CS, 3Vo offen |
+
+Bei VIN = 3,3 V liegt der AP2112K im Dropout; der Ausgang folgt dem Eingang
+mit wenigen mV Abfall (Schätzung: Dropout 250 mV bei 600 mA → ca. 8 mV bei 20 mA).
+Der Bus hängt nur an +3V3. Die Modul-Pull-ups gehen an VIN = +3V3, also an
+dieselbe Schiene wie der ESP32. Bei fehlendem oder stromlosem DevKit gibt es
+deshalb keine Rückspeisung über SDA, SCL oder INT1.
+
+### 9.4 Pull-up-Auslegung (Schätzung)
+
+| Größe | Wert |
+|---|---|
+| Busseitige Pull-ups | 10 kΩ ∥ 10 kΩ = **5,0 kΩ** an +3V3 (beide Module gesteckt) |
+| Anstiegszeit 30→70 % | 0,847 · 5,0 kΩ · 50 pF ≈ **0,21 µs** (C_b 50 pF angenommen) → Fast Mode (≤ 0,3 µs) erfüllt |
+| nur ein Modul | 10 kΩ → ≈ 0,42 µs → nur Standard Mode (≤ 1 µs); Firmware: 100 kHz, 400 kHz erst nach Messung |
+| Senkstrom bei Low | je Modul 0,33 mA (Busseite) + 0,33 mA (Sensorseite über BSS138) = 0,66 mA → 1,32 mA gesamt ≪ 3 mA |
+| Carrier-Pull-ups | R801/R802 4,7 kΩ **DNP** (Option, wenn ein Modul ohne Pull-ups eingesetzt wird; dann 1,9 kΩ gesamt, 1,7 mA + 1,32 mA) |
+| IMU_INT1 | R803 100 kΩ Pull-down **bestückt**: definiert Low ohne IMU und während GPIO6 hochohmig ist; 33 µA Last am Push-Pull-Ausgang |
+
+Messung der Anstiegszeit an TP801/TP802 bleibt offen (O-32).
+
+## 10. RESET und BOOT auf dem Carrier (Blatt `Controller`, Gruppe 6)
+
+Geprüft gegen den Espressif-Schaltplan `SCH_ESP32-S3-DevKitC-1_V1.1_20221130.pdf`,
+Blatt 2, als Bild gerendert und abgelesen:
+
+| DevKit | Beschaltung |
+|---|---|
+| CHIP_PU (EN) | R5 10K(1%) nach ESP_3V3, C6 1uF/16V nach GND, SW2 nach GND (C14 0.1uF „NC"), Header J1-3 direkt |
+| GPIO0 | SW1 nach GND (C13 0.1uF „NC"), **kein externer Pull-up**, Header J3-14 direkt |
+| Auto-Reset | CP2102N DTR/RTS über R10/R12 10K(1%) an Q1/Q2 L8050QLT1G; Q1-Kollektor über R8 0 Ω an CHIP_PU, Q2-Kollektor über R13 0 Ω an GPIO0 |
+
+Carrier:
+
+- **SW502 `RESET`**: Taster zwischen DEVKIT_EN (J1-3) und GND, parallel zu SW2.
+  Kein zusätzlicher Kondensator oder Pull-up – R5/C6 sitzen auf dem DevKit.
+  Der Taster entlädt C6 (1 µF, 3,3 V) wie der DevKit-Taster.
+- **SW503 `BOOT`**: Taster zwischen STRAP_GPIO0 (J3-14) und GND, parallel zu SW1.
+  Kein Pull-up und kein Pull-down auf dem Carrier. Ungedrückt bleibt der
+  interne schwache Pull-up wirksam → Strapping 1 = SPI-Boot.
+- Beide Taster sind offene Kollektoren/Kontakte nach GND wie die
+  Auto-Reset-Transistoren. Sie können parallel betätigt werden.
+- Firmware darf GPIO0 nicht als Ausgang treiben (Kurzschluss über SW503).
+- **Download-Modus:** BOOT halten, RESET kurz drücken, BOOT loslassen.
+- RESET ist **keine Leistungsabschaltung** (Versorgungsdokument 3.15).
+- GPIO18 bleibt Reserveeingang, keine weiteren GPIOs belegt.
+- Taster TL3342F160QG (wie SW501, Bestand offen, O-28).
+
+## 11. Elektrische Änderungen gegenüber `d53365c`
+
+Ermittelt mit `compare_schematic_revisions.py d53365c` (31 Unterschiede, alle
+hier aufgeführt). Alle übrigen Netze und Bauteile sind unverändert.
+
+| Änderung | Netze / Bauteile |
+|---|---|
+| Neues Blatt `Sensors_Display` (Root-Block bei 190,5/121,92, Seite 8) | J115, J116, R801, R802 (DNP), R803, TP801, TP802 |
+| I2C_SDA | vorher nur U501.12 → + J115.5, J116.1, R801.2, TP801.1 |
+| I2C_SCL | vorher nur U501.15 → + J115.4, J116.2, R802.1, TP802.1 |
+| IMU_INT1 | vorher nur U501.6 → + J115.8, R803.1 |
+| +3V3 | + J115.1, J116.7, R801.1, R802.2 |
+| GND | + J115.3, J116.8, R803.2, SW502.2, SW503.2 |
+| DEVKIT_EN (neu) | U501.3 (vorher No-Connect), SW502.1 |
+| STRAP_GPIO0 (neu) | U501.36 (vorher No-Connect), SW503.1 |
+| Unbelegte Modulpins | J115.2/6/7/9, J116.3/4/5/6 mit No-Connect |
+| Felder | U501 Beschreibung (EN/GPIO0 verbunden) |
+

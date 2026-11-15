@@ -643,6 +643,19 @@ V_OUT 3,251–3,349 V, Dropout max. 380 mV bei 500 mA und 610 mV bei 800 mA
 - LDO-Verlust (S): (5,0 V − 3,3 V) × 0,35 A ≈ 0,6 W → ca. 70 K über Umgebung.
   Mehr als 50 mA Carrier-Last am 3V3-Pin werden nicht freigegeben.
 - IMU, OLED, INA240 und die VCCA-Seite der Puffer hängen an +3V3 (DevKit-LDO).
+  Aufstellung des Carrier-Anteils (Stand 2026-11-15, **Schätzung**, messen):
+
+  | Verbraucher an +3V3 | Strom |
+  |---|---|
+  | OLED Adafruit 326 | ca. 20 mA typ. (Adafruit, abhängig von leuchtenden Pixeln), angesetzt **30 mA** |
+  | IMU Adafruit 4438 | LSM6DSOX ca. 0,55 mA (Accel + Gyro, ST-Wert, Datenblatt nicht gelesen, O-33) + Regler + Modul-LED ≈ 0,2 mA, angesetzt **1,5 mA** |
+  | I²C-Pull-ups bei Low | bis 1,3 mA (Anschlussplan 9.4), angesetzt 0,7 mA Mittel |
+  | INA240A3 | 2,6 mA max. (SBOS662C) |
+  | Status-LED D502 | 1,3 mA |
+  | Pull-ups R501/R502/R617, Teiler-Pull-ups R201–R205, R604, R803 | zusammen ≤ 1,5 mA (je 0,33 mA bzw. 33 µA, nur bei Low) |
+  | U201/U202/U203/U504 statisch | < 0,1 mA |
+  | **Summe** | **≈ 38 mA** von 50 mA Zuteilung → Reserve ca. 12 mA |
+
 - Ideal-Diode LM66100 verworfen: Mit CE an VOUT schaltet sie erst ab, wenn
   VOUT um V_OFF (0–80 mV) über VIN liegt; bis dahin fließt Rückstrom bis
   I_RCB 0,5–1 A (TI SLVSEZ8A, 8.3.2). Die TI-ODER-Schaltung braucht Zugriff auf
@@ -767,14 +780,68 @@ Actuators und Lighting_IO noch 3 (Sensors_Display). Jeder ist im Anschlussplan
 (Abschnitt 6) zugeordnet; nicht ausgeblendet, `scripts/kit verify` bleibt
 bis dahin fehlgeschlagen.
 
+### 3.14 Gemeinsame Hauptabschaltung (Festlegung 2026-11-15)
+
+**Hauptschalter trennt die LiPo-Versorgung. USB kann den Controller weiterhin versorgen.**
+(Hinweis auch im Schaltplan, Blatt `Power`.)
+
+Versorgungspfad: **LiPo → Hauptabschaltung → Y-Verteiler → ESC und VCU (J101)**.
+
+- Die Hauptabschaltung liegt außerhalb der VCU und wirkt unabhängig von der
+  Firmware.
+- Der Motorstrom fließt nicht über die VCU-Platine. Ein kleiner Schalter auf
+  dem Carrier wird nicht mit dem Antriebsstrom belastet; die VCU hat keinen
+  eigenen Leistungsschalter.
+- Die Auswahl ist **offen (O-34)**. Kriterien:
+
+  | Kriterium | Wert / Stand |
+  |---|---|
+  | Dauerstrom | ESC 60 A (Hobbywing-Angabe) + VCU bis 10,1 A (3.10) – tatsächlicher Fahrstrom unbekannt (O-3) |
+  | Lastspitzen | ESC 200 A Burst (Hobbywing) – Dauer und Häufigkeit unbekannt |
+  | DC-Spannung | 3S: bis 12,6 V; Schaltvermögen **DC** muss angegeben sein (AC-Werte gelten nicht) |
+  | Einschaltstrom | Eingangskapazität des ESC unbekannt, VCU C101/C102 ≈ 340 µF + Reglereingänge (O-24) → Funkenbildung am Kontakt; Anti-Spark-Lösung prüfen |
+  | Elektronische Lösung | Body-Dioden: ein einzelner MOSFET sperrt nur in einer Richtung → Rückspeisung aus ESC-Kapazitäten/Motor (generatorisch) über die Body-Diode; Back-to-back-Anordnung, Ruhestrom und Zustand ohne Ansteuerung (muss AUS sein) prüfen |
+  | Ausgeschalteter Zustand | Keine Restverbindung zwischen LiPo und ESC/VCU; keine Versorgung des Schalters selbst aus der LiPo-Seite, die bei AUS weiterläuft |
+
+  Bis zur Auswahl wird keine Abschaltung als fertig dargestellt.
+
+### 3.15 Betriebszustände (Prüfung an der Schaltung, Stand 2026-11-15)
+
+Grundlage: Schaltplan nach Ergänzung von RESET/BOOT und Sensors_Display. Alle
+Aussagen sind aus der Schaltung abgeleitet, **nicht gemessen**.
+
+| Zustand | +5V / +3V3 | Aktorpuffer U201/U202, Ausgänge | Servoschiene | Sensors_Display | Bemerkung |
+|---|---|---|---|---|---|
+| Akku allein | +5V aus TPS54302, D501 → DevKit, +3V3 aus LDO | bis zur Freigabe Hi-Z (R501), Ausgänge low | AUS bis SERVO_PWR_EN | versorgt | Normalbetrieb (3.11) |
+| USB allein | +5V **aus** (D501 sperrt, µA Sperrstrom), +3V3 aus USB | U201/U202: V_CCB = 0 → VCC-Isolation, alle Ausgänge Hi-Z; Servo-/ESC-Leitungen ohne Versorgung | AUS (LTC7803 ohne VIN) | versorgt, funktionsfähig | J112-TX treibt bei Ruhepegel High bis ca. 3 mA über 1 kΩ in ein ungespeistes Gerät → Firmware hält TX ohne Akku inaktiv (O-35) |
+| Akku und USB | Dioden-ODER (3.11) | wie Akku allein | wie Akku allein | versorgt | kein Querstrom außer Sperrströmen |
+| Hauptabschaltung AUS, USB bleibt | wie USB allein; ESC ebenfalls stromlos | wie USB allein | fällt mit VBAT (RUN-Schwelle 8,8 V aus) | versorgt | Controller läuft weiter. **Wiedereinschalten:** SERVO_PWR_EN/ACT_OE_N/LEDC-Zustand der Firmware gelten sofort → Firmware muss bei VBAT-Verlust (VBAT_SENSE) SERVO_PWR_EN low, ACT_OE_N high setzen und erst nach bewusster Freigabe (SW501) wieder aktivieren (O-35) |
+| RESET im Betrieb | unverändert | ESP32-GPIOs hochohmig: ACT_OE_N über R501 high → U201 Hi-Z, Gate-Pull-ups → Q20x leiten → Leitungen low (keine Pulse); LED_4 über U202-Eingangs-Pull-down low; Buzzer-Gate-Pull-down → still | SERVO_PWR_EN hochohmig → R415 → Q404 aus, Q403 hält RUN low → **AUS** | bleibt versorgt (OLED zeigt letztes Bild) | P3V3_OK bleibt high → +5V_EXT bleibt an. RESET ist **keine Leistungsabschaltung**: der ESC bleibt aus dem Akku versorgt und sieht keine Pulse – Verhalten nachzuweisen (O-2) |
+| BOOT/Download | wie RESET | wie RESET (Anwendungs-GPIOs hochohmig; ROM nutzt nur UART0/USB, auf dem Carrier offen) | AUS | versorgt | Einschaltstörungen GPIO1–17/18 wie Anschlussplan 1 |
+| DevKit fehlt | +5V an, **+3V3 stromlos** | U201/U202: V_CCA = 0 → Hi-Z; Q20x-Gates über Pull-ups an +5V → Leitungen low | SERVO_PWR_EN offen → R415 → AUS | stromlos; Pull-ups an +3V3 → keine Rückspeisung | P3V3_OK über R510 low → U602 (+5V_EXT) aus, Teiler Q505/Q405 offen. U601/U603 (LED, Empfänger) bleiben an. Externes Gerät an J112 kann über R616 4,7 kΩ + R617 10 kΩ ca. 0,2 mA in die stromlose +3V3 speisen (bekannt, O-21) |
+| IMU fehlt | – | – | – | IMU_INT1 über R803 low; Bus mit 10 kΩ (OLED) → nur 100 kHz | Firmware erkennt fehlendes Gerät an NACK auf 0x6A |
+| OLED fehlt | – | – | – | Bus mit 10 kΩ (IMU) → nur 100 kHz | NACK auf 0x3D |
+| beide fehlen | – | – | – | SDA/SCL ohne Pull-up; interne ESP32-Pull-ups für die Erkennung, R801/R802 DNP | keine Rückspeisung |
+
+Rückspeisung über Signalleitungen: Die I²C-Pull-ups und INT1 hängen an
++3V3, also an der Schiene des ESP32 selbst. Auf diesen Leitungen ist deshalb
+keine Rückspeisung möglich. Für die übrigen Leitungen gilt O-21 (3.13).
+
+Gesperrte Zustände bleiben in allen Fällen erhalten:
+- Puffer Hi-Z ohne aktive Freigabe;
+- Servoschiene AUS ohne SERVO_PWR_EN.
+
+Einzige firmwareabhängige Lücke ist das Wiedereinschalten des Akkus bei
+laufendem Controller (O-35).
+
 ## 4. Komponentendaten (Zwischenstand)
 
 | Komponente | Bestätigt | Offen |
 |---|---|---|
 | ESP32-S3-DevKitC-1-N16R8 v1.1 | Varianten, Pinout J1/J3, PSRAM-Pins, RGB-LED GPIO38, Maße aus DXF, LDO SGM2212-3.3, USB-Dioden 1N5819HW, USB-UART CP2102N (Q) | Nachmessen am Board, Bestellnummer, Datenblatt 1N5819HW |
 | FS-iA6B | 4,0–8,4 V, 6 Kanäle, PWM/PPM/i-BUS/S-BUS, 47 × 26,2 × 15 mm (Q) | Stromaufnahme, i-BUS-Pegel und Baudrate, Pinbelegung |
-| Adafruit LSM6DSOX (4438) | Vin 3–5 V, I²C pegelgewandelt, 10 k Pull-ups, Adresse 0x6A/0x6B, 25,6 × 17,8 mm (Q) | Pinreihenfolge, Lochabstand |
-| Adafruit OLED 0,96" (326) | Vin 3–5 V, ca. 20 mA, 0x3C/0x3D, 29,2 × 26,7 mm, Lochabstand 24 mm (Q) | Pinreihenfolge; konkretes Modul |
+| Adafruit LSM6DSOX (4438) | Vin 3–5 V, I²C pegelgewandelt, 10 k Pull-ups, Adresse 0x6A/0x6B, 25,6 × 17,8 mm (Q); Pinout, Löcher und Beschaltung aus `Adafruit_LSM6DSOX.brd/.sch` (Anschlussplan 9) | Stromaufnahme (O-33), Bauhöhe gesteckt (O-31) |
+| Adafruit OLED 0,96" (326) | STEMMA-QT-Revision ab 2020-08-03: I²C Standard, Auto-Reset, ca. 20 mA, 0x3D (0x3C über SJ3), 29,21 × 31,75 mm inkl. Eckfahnen (Q); Pinout aus der Eagle-Datei (Anschlussplan 9) | Strom bei Vollbild (O-32), Bauhöhe (O-31) |
 | Hobbywing QuicRun Fusion Pro 2300 KV (Auswahl Owner) | 60 A / 200 A, 2–3S LiPo, BEC 6,0/7,4 V 6 A (nicht abschaltbar – rote Ader ziehen und isolieren), LiPo-Abschaltung aus/3,0/3,25/3,5 V je Zelle, „throttle lost protection", XT60, IP67 (Q Hobbywing) | Verhalten bei Signalverlust im Lauf, Default der LiPo-Abschaltung, Pulsgrenzen |
 | 2 × Savöx SW-0231MG+ (Auswahl Owner) | 6,0–7,4 V, Blockierstrom 4,8 A @ 6 V / 5,9 A @ 7,4 V, 1000–2000 µs, 50–360 Hz, IP67 (Q Distributor-Datenblatt, Hauptwerte von Savöx bestätigt) | Laststrom im Fahrbetrieb; Drehmoment (Savöx-Seite widersprüchlich: 15 bzw. 20 kg·cm bei 6 V); Messbezugspunkt der Datenblattwerte |
 
@@ -842,10 +909,15 @@ Schutzkoordination (O-17).
 | O-28 | Controller: 1N5819HW-Daten (USB-Pfad); Status-LED-Typ (AlGaInP, V_F ≤ 2,4 V) und Taster (TL3342, JLC-Bestand 0); Buchsenleisten 1×22 mit Bauhöhe (O-4) | Agent |
 | O-29 | Einschalttransienten der Servo-Freigabe messen: RUN, Q403-Gate und +V_SERVO beim Einstecken des Akkus und beim ESP32-Hochlauf | Owner |
 | O-30 | Actuators: ESD-TVS je Steckerausgang mit V_RWM ≥ 8 V (Schienenfehler 7,81 V, ESC-BEC 7,4 V) auswählen und Datenblatt prüfen; Stecker-Bauteil 1×3 2,54 mm festlegen | Agent |
+| O-31 | Sensors_Display: Buchsenleisten 1×9/1×8 (Typ, Höhe), Abstandshalter M2,5 (Länge ≈ Buchse + Stiftleistenträger, ca. 11 mm Schätzung), Lage und Freiraum unter den Modulen im Gehäuse prüfen; Modul-Achsen der IMU (Silkscreen) für die Firmware festhalten | Agent / Owner |
+| O-32 | I²C-Anstiegszeit an TP801/TP802 und OLED-Strom bei Vollbild messen; 400 kHz erst danach | Owner |
+| O-33 | ST-Datenblatt LSM6DSOX lesen (Abruf am 2026-11-15 zweimal abgebrochen): INT1-Hinweise beim Einschalten, Standardpolarität (Push-Pull, aktiv high), Stromaufnahme | Agent |
+| O-34 | Hauptabschaltung außerhalb der VCU auswählen (3.14): Dauer-/Spitzenstrom, DC-Schaltvermögen bei 12,6 V, Einschaltstrom; bei elektronischer Lösung Body-Dioden, Rückspeisung, AUS-Zustand | Owner |
+| O-35 | Firmware-Regeln: bei VBAT-Verlust SERVO_PWR_EN low, ACT_OE_N high, ESC neutral; Wiederfreigabe nur über SW501; J112-TX ohne Akku inaktiv; GPIO0 nie als Ausgang (3.15) | Agent |
 
 Erledigt: O-5 (DevKit-LDO), O-6 (Lenkservos), O-7 (LTC7803 Rev B, 3.5a;
 Kompensation weiter unter O-27), O-9 (Projektort), O-14 (ersetzt durch O-17),
-O-26 (Footprints, 3.5b; Rest unter O-27). O-10 bis O-13 stehen im
+O-26 (Footprints, 3.5b; Rest unter O-27), O-11 (Modulpinouts, Anschlussplan 9). O-10 bis O-13 stehen im
 [GPIO- und Anschlussplan](rev1-pin-und-anschlussplan.md#5-offene-punkte).
 
 ## Anhang A – Historische 2S-Rechnung (ersetzt am 2026-11-15)
