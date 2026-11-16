@@ -22,6 +22,46 @@
       from Schematic“ im Editor die Footprints über den Pfad zuordnet;
     - die Netze der Pads.
   - Empfehlung: im PCB-Editor einmal F8 ausführen. Erwartet: keine Änderungen.
+- **Import und Platzierung getrennt (Stand 2026-11-16, nach Owner-Review).**
+  Ein normaler Lauf ist ein reiner Abgleich und verändert nichts, was schon auf
+  der Platine liegt:
+  - Er bewegt keine Positionen, Seiten oder Drehungen.
+  - Kontur, Zonen, Leiterbahnen und Zeichnungen bleiben unverändert.
+  - Neue Footprints werden rechts außerhalb der Kontur abgelegt und gemeldet.
+  - Footprints ohne Symbol werden entfernt, ausgenommen „board only“.
+  - Bei geänderter Bibliotheks-ID wird der Footprint getauscht; Lage, Seite,
+    Drehung und Sperre bleiben.
+  - **Vollständig synchronisiert:**
+    - Netze: jedes Pad bekommt genau das Netz der Netzliste; Pads ohne Eintrag
+      (z. B. mechanische Pads) bekommen kein Netz.
+    - Felder: Symbolfelder werden gesetzt. Felder, die das Symbol nicht mehr
+      hat, werden entfernt; die Felder des Bibliotheks-Footprints bleiben.
+    - DNP und BOM-Ausschluss werden gesetzt **und** zurückgenommen.
+  - **Abbruch vor dem Speichern**, die Datei bleibt dann unverändert:
+    - Footprint nicht ladbar;
+    - Netzlistenpin ohne Pad;
+    - unbekannte Referenz im Layout;
+    - Packungsüberlauf;
+    - nicht platziertes Bauteil (bei Bootstrap).
+  - Die vorläufige Platzierung gibt es nur ausdrücklich mit `--bootstrap`,
+    auf ein Blatt begrenzbar mit `--sheet NAME`.
+    - Ihre Zeichnungen (Kontur, Gruppenrahmen, Bohrungsmarken, Hinweise)
+      liegen in der Gruppe `bootstrap_layout`. Nur diese ersetzt Bootstrap.
+    - Bootstrap überschreibt die Positionen der betroffenen Footprints, auch
+      eine manuelle Feinplatzierung. Nach Beginn der manuellen Arbeit im
+      Editor nur noch gezielt mit `--sheet` verwenden.
+  - **Tests** (`qa/tests/test_build_board.py`, auf einer Kopie der Platine):
+    - Ein Abgleich erhält eine manuelle Verschiebung, einen Seitenwechsel und
+      eine Zeichnung.
+    - Er stellt ein falsches Pad-Netz wieder her, entfernt das Netz eines
+      mechanischen Pads, nimmt DNP und BOM-Ausschluss zurück und fügt einen
+      gelöschten Footprint wieder ein.
+    - Ein Layout mit unbekannter Referenz bricht ab, ohne die Datei zu
+      verändern.
+  - Der Abgleich auf dem aktuellen Stand meldet keine Änderung.
+  - Die 22 ungruppierten Zeichnungen des ersten Laufs wurden einmalig durch
+    die Gruppe ersetzt. Die Footprint-Positionen sind dabei unverändert
+    geblieben (Positionsliste vorher/nachher verglichen).
 - **Prüfung, ob alle Bauteile vorhanden und korrekt zugeordnet sind**
   (`scripts/kit verify .`, KiCad-eigene Prüfungen):
 
@@ -79,12 +119,39 @@
 - **Kelvin-Abgriffe:**
   - NT401/NT402 sitzen an den Pad-Kanten von RS401; NT404/NT405 an RS402.
   - NT403 (Rückkopplungsabgriff vor RS402) sitzt am VSERVO_REG-Pad von RS402.
-- **Offen für die Feinplatzierung:**
-  - BG-Leitung Q402 → U401 ca. 12 mm. U401 liegt links neben Q401, damit TG
-    kurz bleibt.
-  - SENSE± von RS401 zu U401 ca. 30 mm, als Paar zu führen; RF401/CF401
-    sitzen an U401.
-  - GND-Rückweg der Ausgangskondensatoren über eine durchgehende Innenlage.
+- **Elektrische Feinplatzierung LTC7803 (2026-11-16):** Die Bauteile sitzen
+  an ihren Pins. Die Pad-Lagen sind aus der Platine ausgelesen; Abstände sind
+  Pad-Mitte zu Pad-Mitte (Schätzung für den späteren Leiterweg).
+
+| Funktion | Bauteile | Lage | Abstand zum Pin |
+|---|---|---|---|
+| Boost | C411 (BOOST–SW), D401 (INTVCC→BOOST) | rechts oben an U401, C411-SW-Pad zu den Source-Pins von Q401 | C411 BOOST ↔ Pin 14 ca. 3,1 mm; C411 SW ↔ Q401-Source ca. 4,0 mm |
+| INTVCC | C412 4,7 µF, C413 1 µF | direkt unter den Pins 9/10, GND-Pad zur GND-Seite | ca. 1,7 mm |
+| Soft-Start | C414 | links oben an Pin 1 | ca. 3,5 mm |
+| Strommessung | CF401 (SENSE+/−), RF401 (SENSE_P_K → SENSE+) | links an Pin 2/3; Filter am IC, lange Leitung vor dem Filter | CF401 ca. 3,0 mm |
+| Rückkopplung | R404 (VFB→GND), R403 (VFB_TAP→VFB) | links an Pin 4; GND-Ende neben den GND-Pins 7/8 | R404 ca. 3,0 mm |
+| Kompensation | C419 (ITH→GND), R413/C418 (ITH-RC) | unter Pin 5, abseits von SW und den Gate-Leitungen | C419 ca. 3,3 mm |
+
+- **Verbleibende Kompromisse** (aus dem Pinbild von LTC7803 und TDSON-8 mit
+  der gewählten SW-oben-Anordnung):
+  - **TG kurz:** Q401-Gate ↔ Pin 15 ca. 6,9 mm.
+  - **BG lang:** Q402-Gate ↔ Pin 13 ca. 13,8 mm. Führung auf einer Innenlage
+    direkt über der GND-Fläche, als Paar mit dem GND-Rückweg zur Source von
+    Q402.
+  - Eine Anordnung mit beiden Gates nahe am IC ergäbe eine größere
+    Leistungsschleife (Kondensatoren nicht mehr zwischen VIN-Drain und
+    GND-Source). Die Leistungsschleife hat Vorrang.
+- **SENSE± von RS401 (Kelvin NT401/NT402) zu U401:** ca. 39 mm, als enges
+  Paar abseits von SW zu führen. Filter RF401/CF401 am IC.
+- **Rückweg:**
+  - Die Luftlinienansichten zeigen jetzt GND (schwarz) aus der
+    KiCad-Konnektivität.
+  - Das zeigt Verbindungen, nicht den Stromweg. Der Rückweg der
+    Leistungsschleife ergibt sich aus der Lage: die GND-Pads von C401/C402
+    (oben) und C403/C404 (unten) liegen unter den Source-Pins von Q402,
+    ca. 5 mm.
+  - Geplant ist eine durchgehende GND-Innenlage (In1) unter der ganzen
+    Gruppe. Die Schleifenfläche ist erst mit dem Routing bestimmbar.
 
 **Logikversorgung (Gruppe 2):**
 - U301 ist um 180° gedreht, damit VIN/GND/SW zur Leistungsseite zeigen.
@@ -127,16 +194,17 @@
 | Logikversorgung | 179 mm² |
 | **Summe** | **6928 mm²** |
 
-- **Vorschlag:** 150 × 100 mm = 15 000 mm². Belegung ca. 46 %
-  (Courtyard-Summe / Fläche), Reserve für Routing, Kupferflächen und
-  Kühlflächen.
+- **Vorschlag:** 150 × 100 mm = 15 000 mm², **vorerst beibehalten**
+  (Owner-Review).
+  - Die Courtyard-Belegung von ca. 46 % ist nur eine Kennzahl. Sie belegt
+    weder eine Routingreserve noch, dass sich die Platine verkleinern lässt.
+  - Über eine kleinere Fläche wird erst nach Ausarbeitung der kritischen
+    Verbindungen entschieden.
 - Die Breite bestimmt die obere Reihe: Eingang 35 + Servoregler 57,5 +
   Aktuatoren 29 + DevKit 28,5 mm.
-- **Verkleinerung möglich** (Abstimmung mit dem Chassis), z. B.:
-  - die Sensor- und Displaymodule an Kabel oder auf eine eigene Ebene;
-  - die untere Reihe enger.
-  - Abgeschätzt sind ca. 135 × 90 mm möglich, ohne die Leistungsschleifen
-    zu verändern. Das ist eine Schätzung, nicht geprüft.
+- Mögliche spätere Verkleinerung (nicht geprüft, keine Aussage über die
+  Größe): Sensor- und Displaymodule an Kabel oder auf eine eigene Ebene, die
+  untere Reihe enger.
 - **Befestigung:** Marken für M3 (3,2 mm) bei (3,5 | 3,5), (3,5 | 96,5),
   (146,5 | 96,5) und (118 | 66).
   - Die Ecke oben rechts ist durch die Antenne belegt.
@@ -145,22 +213,41 @@
 ## 6. Ansichten
 
 Erzeugt mit `hardware/scripts/render_placement_review.py` (pcbnew-Python) und
-`kicad-cli pcb render`. Ablage `qa/generated/placement/`; das ist erzeugte
-Ausgabe und wird nicht eingecheckt.
+`kicad-cli pcb render` in `qa/generated/placement/`. Das ist erzeugte Ausgabe;
+der Agent checkt sie nicht ein.
 
-| Datei | Inhalt |
+- **Luftlinien:** KiCads eigener Ratsnest, also die `unconnected_items` aus
+  `kicad-cli pcb drc` (dieselben Linien wie im Editor), **einschließlich
+  GND** in Schwarz. Nicht mehr selbst berechnet.
+- **Seiten:** Ober- und Unterseite getrennt. Die Unterseite ist von unten
+  gesehen (gespiegelt); Teile der anderen Seite sind blass.
+
+| Datei (je `_top` und `_bottom`, `.png`/`.svg`) | Inhalt |
 |---|---|
-| `overview.png/.svg` | ganze Platine: Courtyards, Pads, Gruppenrahmen, Kontur, Bohrungsmarken, Luftlinien (kritische Netze farbig, übrige grau) |
-| `detail_input_logic.png` | Eingangsschutz und Logikversorgung |
-| `detail_servo_regulator.png` | Leistungsstufe LTC7803, Kelvin-Abgriffe, Messung |
-| `detail_devkit_usb.png` | Aktuatoren, DevKit mit Antennenrand, USB-Zugang, Controller-Peripherie |
+| `overview` | ganze Platine: Courtyards, Pads, Gruppenrahmen, Kontur, Bohrungsmarken, Ratsnest |
+| `detail_input_logic` | Eingangsschutz und Logikversorgung |
+| `detail_servo_regulator` | Leistungsstufe LTC7803 mit Feinplatzierung, Kelvin-Abgriffe, C403/C404 auf der Unterseite |
+| `detail_devkit_usb` | Aktuatoren, DevKit mit Antennenrand, USB-Zugang, Controller-Peripherie |
 | `render_3d_top.png`, `render_3d_iso.png` | 3D-Ansicht (Teile ohne Modell fehlen, siehe models_3d) |
 
-Neu erzeugen:
+- Die Dateien ohne `_top`/`_bottom` (`overview.png` usw.) stammen vom ersten
+  Renderer: GND war ausgeblendet, die Luftlinien waren selbst berechnet.
+- Sie liegen im eingecheckten Stand `a8ba76a` und sind **veraltet**. Löschen
+  oder ersetzen entscheidet der Owner.
+
+Abgleich (normal, verändert keine Platzierung):
 
 ```bash
 /Applications/KiCad/KiCad.app/Contents/Frameworks/Python.framework/Versions/Current/bin/python3 hardware/scripts/build_board.py
 ```
+
+Vorläufige Platzierung eines Blatts erneut anwenden (überschreibt dessen Positionen):
+
+```bash
+/Applications/KiCad/KiCad.app/Contents/Frameworks/Python.framework/Versions/Current/bin/python3 hardware/scripts/build_board.py --bootstrap --sheet ServoPower
+```
+
+Ansichten:
 
 ```bash
 /Applications/KiCad/KiCad.app/Contents/Frameworks/Python.framework/Versions/Current/bin/python3 hardware/scripts/render_placement_review.py
@@ -171,7 +258,11 @@ Neu erzeugen:
 - Chassis: Kontur, Bohrungen, Steckerzugang (XT30, Micro-Fit, USB), Bauhöhen
   über und unter der Platine.
 - Feinplatzierung:
-  - BG-Weg, SENSE-Paar, Kühlkupfer Q401/Q402/L401;
+  - übrige Gruppen elektrisch (bisher nach Courtyard gepackt: eine
+    Gruppierung, noch keine Feinplatzierung für Abblockung, Gate-Ansteuerung
+    und Rückkopplung);
+  - Servoregler: BG-Weg, SENSE-Paar und Kühlkupfer Q401/Q402/L401 im
+    Routing;
   - Lage der Unterseiten-Kondensatoren C403/C404 bestätigen;
   - Referenztexte (Silkscreen).
 - Thermik: `scripts/kit thermal analyze` nach der Feinplatzierung. O-16:
