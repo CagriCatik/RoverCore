@@ -818,6 +818,16 @@ geschätzt):
 - **Bauteile unter Modulen:** keine. O-37 liegt unter, nicht im
   OLED-Umriss; die IMU-Fläche ist frei.
 
+**Übernahme (2026-11-16, Owner-Entscheid):**
+- K1 ist seit Commit „Adopt K1“ die Arbeitsvariante in `RoverCore.kicad_pcb`,
+  angewendet mit `make_compact_variant.py --main`.
+- Der 150 × 100-mm-Stand ist reproduzierbar aus Commit `0b50567`
+  (`git show 0b50567:RoverCore.kicad_pcb`).
+- `fine_place_rev1.py` verweigert seitdem die Anwendung, weil seine Lagen zum
+  150 × 100-Layout gehören.
+- Die Abschnitte 3c–3e beschreiben die Feinplatzierung im 150 × 100-Layout.
+  Ihre Lagen sind für die verschobenen Blöcke durch 3h ersetzt.
+
 **Bewertung:**
 - K1 funktioniert auf Platzierungsebene: DRC wie im Ausgangsstand, alle
   Taster nach dem eigenen Kriterium zugänglich, Befestigungsmarken besser

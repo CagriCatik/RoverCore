@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-"""Compact variant K1 (trial, owner instruction 2026-11-16): a COPY of RoverCore.kicad_pcb with the outline reduced
+"""Compact variant K1 (owner instruction 2026-11-16; since then the working variant, applied with --main):
+default run: a COPY of RoverCore.kicad_pcb with the outline reduced
 to 150 x 85 mm, written to qa/generated/compact/ (generated, not versioned; RoverCore.kicad_pcb stays 150 x 100).
 
 Only unrouted blocks move: controller periphery parts, OLED, IMU, operator buttons, O-37 block, I2C pull-ups and
@@ -203,6 +204,27 @@ def drc(pcb):
     return types, len(d["unconnected_items"]), round(length)
 
 
+def adopt_main():
+    """--main: apply K1 to RoverCore.kicad_pcb itself (working variant since 2026-11-16). The 150 x 100 state stays
+    reproducible from commit 0b50567 (git show 0b50567:RoverCore.kicad_pcb)."""
+    if list(ROOT.glob("~*.lck")) + list(ROOT.glob("*.lck")):
+        raise SystemExit("ABORTED: KiCad lock files present")
+    pcb = ROOT / "RoverCore.kicad_pcb"
+    b = pcbnew.LoadBoard(str(pcb))
+    e = b.GetBoardEdgesBoundingBox()
+    if abs(T(e.GetHeight()) - 100.0) > 0.5:
+        raise SystemExit("ABORTED: board outline is not 150 x 100 mm; K1 was applied already")
+    moved = apply(b)
+    outline(b)
+    hl = holes(b)
+    pcbnew.ZONE_FILLER(b).Fill(b.Zones())
+    b.Save(str(pcb))
+    s = subprocess.run([KPY, str(ROOT / "hardware/scripts/silk_cleanup.py")], capture_output=True, text=True)
+    if s.returncode:
+        raise SystemExit("silk_cleanup failed: " + s.stdout[-300:] + s.stderr[-300:])
+    print("K1 applied to %s: %d footprints moved; M3 markers %s" % (pcb, len(moved), [(h[1], h[2]) for h in hl]))
+
+
 def main():
     if list(ROOT.glob("~*.lck")) + list(ROOT.glob("*.lck")):
         raise SystemExit("ABORTED: KiCad lock files present")
@@ -233,7 +255,9 @@ def main():
     print(json.dumps(res, indent=1, ensure_ascii=False))
 
 
-if __name__ == "__main__" and "--compare" not in sys.argv:
+if __name__ == "__main__" and "--main" in sys.argv:
+    adopt_main()
+elif __name__ == "__main__" and "--compare" not in sys.argv:
     main()
 
 

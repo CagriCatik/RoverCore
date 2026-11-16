@@ -85,7 +85,8 @@ ZONES = [
     (0.0, 76.0, 57.0, 100.0, "7 Schnittstellen (Lighting_IO)"),
 ]
 
-HOLES = [(21.0, 4.0, 3.2, "M3?"), (3.5, 96.5, 3.2, "M3?"), (146.5, 96.5, 3.2, "M3?"), (118.0, 66.0, 3.2, "M3?")]
+HOLES = [(28.0, 4.0, 3.2, "M3?"), (54.0, 4.0, 3.2, "M3?"), (4.0, 36.0, 3.2, "M3?"), (91.0, 81.0, 3.2, "M3?"),
+         (145.0, 81.0, 3.2, "M3?")]  # K1 (2026-11-16); the bootstrap outline below is the old 150 x 100
 
 NOTES = [("VORLAEUFIG: Kontur 150 x 100 mm und Befestigung nicht mit dem Chassis abgestimmt. Keine Fertigungsfreigabe.",
           1.0, -3.0)]

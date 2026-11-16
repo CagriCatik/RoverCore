@@ -34,14 +34,14 @@ COLOURS = {
     "/ServoPower/ITH_SERVO": "#bcbd22", "/LogicPower/FB_5V": "#bcbd22", "/LogicPower/BOOT_5V": "#e377c2",
 }
 VIEWS = {  # name: (x1, y1, x2, y2) in mm
-    "overview": (-8, -14, 158, 108),
+    "overview": (-8, -14, 158, 93),
     "detail_input_logic": (-2, -2, 37, 78),
     "detail_servo_regulator": (33, -2, 95, 50),
     "detail_devkit_usb": (90, -12, 152, 102),
     "detail_logic_supply": (-1, 46, 36, 66),
     "detail_output_stages": (91, 6, 123, 47),
     "detail_controller_periphery": (119, 62, 151, 101),
-    "operator_zone": (55, 36, 152, 101),
+    "operator_zone": (30, 36, 152, 88),
 }
 # Module and plug envelopes for the operator review (owner review 2026-11-16). Outlines are the footprints' F.Fab
 # module outlines; heights are ESTIMATES (socket body 8.51 mm from the footprint description, module PCB 1.6 mm
@@ -175,7 +175,7 @@ def finger_check(board, env):
     return rows
 
 
-HOLES_REV = [(21.0, 4.0), (3.5, 96.5), (146.5, 96.5), (118.0, 66.0)]  # provisional M3 markers (Cmts.User)
+HOLES_REV = [(28.0, 4.0), (54.0, 4.0), (4.0, 36.0), (91.0, 81.0), (145.0, 81.0)]  # K1 provisional M3 markers (Cmts.User)
 
 
 def svg(view, side, parts, draw, edges, copper, env=None, fingers=None):

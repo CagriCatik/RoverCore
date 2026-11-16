@@ -163,6 +163,9 @@ def main():
         if locks:
             raise Abort("KiCad lock files present: %s" % ", ".join(p.name for p in locks))
         b = pcbnew.LoadBoard(str(pcb))
+        if abs(pcbnew.ToMM(b.GetBoardEdgesBoundingBox().GetHeight()) - 100.0) > 0.5:
+            raise Abort("these positions belong to the 150 x 100 mm layout; the board is K1 "
+                        "(make_compact_variant.py) - not applying")
         fps = {f.GetReference(): f for f in b.GetFootprints()}
         moved = 0
         for name, table in GROUPS.items():
