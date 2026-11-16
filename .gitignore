@@ -39,3 +39,4 @@ firmware/build/
 site/
 # Placement review images (render_placement_review.py, kicad-cli render)
 /qa/generated/placement/
+/qa/generated/populated/

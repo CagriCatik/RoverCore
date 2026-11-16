@@ -50,15 +50,16 @@ VIEWS = {  # name: (x1, y1, x2, y2) in mm
 # rev1-versorgung-und-boardwahl.md 2.3): UART x 2.4-9.6, USB x 15.8-23.0 (DXF, origin lower left). In board
 # coordinates (footprint origin J1-1 at 125.5|2.54; x = 125.5 - 1.27 + x_dxf) the receptacle centres are at
 # x = 130.2 and 143.6 on the edge y = 63.84. Plug space per port: ESTIMATE overmold 11 mm wide, 30 mm long incl.
-# strain relief, z 7.9-14.9 mm (receptacle centre about 11.4 mm with an assumed 8.5 mm socket).
+# strain relief, z 10.4-17.4 mm (receptacle centre about 13.9 mm: socket 8.5 + header collar 2.5 + PCB 1.6
+# + half receptacle 1.3, all assumed; see render_populated_review.py).
 USB_Y, USB_W, USB_L = 63.84, 11.0, 30.0
 ENVELOPES = [  # (ref or None, label, height range mm, rect override)
-    ("U501", "DevKit (Huelle, Hoehe ca. 13 mm, Sockel O-4 offen)", (0.0, 13.3), None),
-    ("J116", "OLED-Modul (Huelle, ca. 11 mm)", (0.0, 11.1), None),
-    ("J115", "IMU-Modul (Huelle, ca. 11 mm)", (0.0, 11.1), None),
-    (None, "Micro-USB UART (Stecker+Kabel, Schaetzung)", (7.9, 14.9),
+    ("U501", "DevKit (Huelle, ca. 15,7 mm, Sockel O-4 offen)", (0.0, 15.7), None),
+    ("J116", "OLED-Modul (Huelle, ca. 14,7 mm)", (0.0, 14.7), None),
+    ("J115", "IMU-Modul (Huelle, ca. 13,1 mm)", (0.0, 13.1), None),
+    (None, "Micro-USB UART (Stecker+Kabel, Schaetzung)", (10.4, 17.4),
      (130.2 - USB_W / 2, USB_Y, 130.2 + USB_W / 2, USB_Y + USB_L)),
-    (None, "Micro-USB USB (Stecker+Kabel, Schaetzung)", (7.9, 14.9),
+    (None, "Micro-USB USB (Stecker+Kabel, Schaetzung)", (10.4, 17.4),
      (143.6 - USB_W / 2, USB_Y, 143.6 + USB_W / 2, USB_Y + USB_L)),
 ]
 TALL = ["L401", "C406", "C407", "C101", "J101", "J102", "J103", "J104", "J105", "J106", "J107", "BZ101"]

@@ -33,6 +33,13 @@ assert len(J1) == len(J3) == 22
 PITCH, ROW = 2.54, 22.86
 
 
+
+def socket_model(n, dx=0.0, rot=0):
+    """KiCad library model of a generic 2.54 mm vertical female socket (not the Samtec part; review 2026-11-16)."""
+    return ('\t(model "${KICAD10_3DMODEL_DIR}/Connector_PinSocket_2.54mm.3dshapes/PinSocket_1x%02d_P2.54mm_Vertical.step"\n'
+            '\t\t(offset\n\t\t\t(xyz %s 0 0)\n\t\t)\n\t\t(scale\n\t\t\t(xyz 1 1 1)\n\t\t)\n'
+            '\t\t(rotate\n\t\t\t(xyz 0 0 %s)\n\t\t)\n\t)\n') % (n, dx, rot)
+
 def font():
     return "(effects\n\t\t\t\t\t\t(font\n\t\t\t\t\t\t\t(size 1.27 1.27)\n\t\t\t\t\t\t)\n\t\t\t\t\t)"
 
@@ -165,6 +172,7 @@ def footprint():
         body += pad(i + 1, 0.0, i * PITCH, "rect" if i == 0 else "roundrect")
     for i in range(22):
         body += pad(23 + i, ROW, i * PITCH, "rect" if i == 0 else "roundrect")
+    body += socket_model(22, 0.0) + socket_model(22, ROW)  # J1 and J3, generic library sockets
     body += "\t(embedded_fonts no)\n)\n"
     FP_DIR.mkdir(parents=True, exist_ok=True)
     (FP_DIR / (FP_NAME + ".kicad_mod")).write_text(body)

@@ -629,6 +629,116 @@ Mitte zu Mitte, aus der Platine.
   - alle Signale;
   - GND-Vias der übrigen Bauteile.
 
+## 3g. Bestückte Ansicht, Modellstatus und Lückenanalyse (2026-11-16)
+
+**Werkzeug:** `hardware/scripts/render_populated_review.py`.
+- Es rendert mit dem KiCad-3D-Renderer eine **Kopie** der Platine in
+  `qa/generated/populated/` (erzeugt, nicht versioniert).
+- Ansichten mit Beschriftung:
+  - `populated_top`, `populated_bottom`, `populated_iso`: alle bestückten
+    Teile plus gestecktes DevKit, OLED und IMU;
+  - `without_modules_top`, `without_modules_iso`: Buchsenleisten sichtbar,
+    Module entfernt;
+  - `gap_map`.
+- **Hüllkörper** gibt es nur in dieser Kopie: einfache Quader, magenta für
+  Carrier-Teile, blau für die Module. Es sind **keine Herstellermodelle**.
+  Sie stehen nie in der Bibliothek oder in `RoverCore.kicad_pcb`.
+- **Buchsenleisten von DevKit, OLED und IMU** tragen jetzt das generische
+  KiCad-Bibliotheksmodell `PinSocket_1x22/1x09/1x08_P2.54mm_Vertical`
+  (nicht das Samtec-Teil).
+  - Gesetzt in Generator, Bibliothek und Platine; die Ausrichtung ist im
+    Rendering geprüft.
+
+**Status je Position** (`qa/generated/populated/model_status.csv`, alle 253 Footprints):
+
+| Status | Anzahl | Positionen |
+|---|---|---|
+| Bibliotheksmodell vorhanden | 213 | – |
+| generisches Buchsenleisten-Modell + Modul-Hüllkörper | 3 | U501 (DevKit), J116 (OLED), J115 (IMU) |
+| Hüllkörper, Bibliotheksdatei fehlt in dieser KiCad-Installation | 13 | J101, J102, J103, Q101, Q401, Q402, D601–D604, D606–D608 |
+| Hüllkörper, kein Modell zugewiesen | 1 | BZ101 |
+| kein Körper (Testpunkt-Pad, Net-Tie) | 23 | NT401–NT405, TP101–TP103, TP301/TP302, TP401–TP403, TP501–TP506, TP601/TP602, TP801/TP802 |
+| fehlt ohne Ersatz | 0 | – |
+
+**Maße der Hüllkörper:**
+
+| Teil | Grundfläche | Höhe | Quelle |
+|---|---|---|---|
+| DevKit | PCB 25,4 × 62,865 mm; WROOM-1 18 × 25,5 mm mit 6,31 mm Antennenüberstand; 2 × Micro-USB an den DXF-Lagen | PCB-Unterkante 11,0 mm, WROOM-Oberkante 15,7 mm | DXF v1.1; Sockel 8,5 mm (KiCad-Modell) + Stiftleistenkragen 2,5 mm = **Annahme** (O-4) |
+| OLED (Adafruit 326) | Umriss aus Adafruit-Boarddatei | 8,51–14,71 mm | Dicke 6,2 mm laut Adafruit-Produktseite; Lage auf der Buchse angenommen |
+| IMU (Adafruit 4438) | 25,4 × 17,78 mm | 8,51–13,11 mm | 4,6 mm laut Adafruit-Produktseite |
+| J101 XT30PW-M | F.Fab-Umriss (Gehäuse 9,0 × 9,9 mm laut AMASS V1.2) | 5 mm | **Annahme**: Zeichnung ohne Höhenmaß |
+| J102/J103 Micro-Fit 43650-0300 | F.Fab-Umriss | 10 mm | **Annahme**: Molex-Zeichnung nicht abrufbar (Zeitüberschreitung) |
+| BZ101 CMT-8540S | F.Fab-Umriss | 4,0 mm | aus der Typbezeichnung; Datenblatt nicht abrufbar (HTTP 403), **nicht verifiziert** |
+| Q101 / Q401 / Q402 | F.Fab-Umriss | 1,05 mm | **Annahme** |
+| D601–D604, D606–D608 | 0,6 × 1,0 mm | 0,4 mm | **Annahme** |
+
+- **Reale Modelle für die 13 Positionen:**
+  - Die Footprints verweisen auf Dateien der offiziellen
+    KiCad-3D-Bibliothek, die in dieser Installation fehlen:
+    - `AMASS_XT30PW-M_1x02_P2.50mm_Horizontal.step`;
+    - `Molex_Micro-Fit_3.0_43650-0300_1x03_P3.00mm_Horizontal.step`;
+    - `Infineon_PG-TDSON-8_6.15x5.15mm.step`;
+    - `PowerPAK_SO-8_Single.step`;
+    - `Texas_DPY0002A_0.6x1mm_P0.65mm.step`.
+  - Mit der vollständigen KiCad-3D-Bibliothek entfällt dort der Hüllkörper
+    ohne Änderung an Footprint oder Platine.
+  - Herstellermodelle für DevKit, OLED, IMU und den Summer liegen nicht im
+    Projekt.
+  - Beides braucht einen Download und ist nicht erfolgt (Freigabe offen).
+
+**Lückenanalyse** (`gap_map.png`):
+- Als belegt gelten Courtyards, Modul- und USB-Hüllen, M3-Freiraum r 4 mm und
+  die Leistungs-Kupferflächen.
+- Frei sind ca. 6 200 mm² von 15 000 mm² (41 %). Darin ist der Platz für das
+  noch ausstehende Routing enthalten; frei heißt also nicht verfügbar.
+- Größte freie Rechtecke:
+
+| Nr. | Größe | Lage |
+|---|---|---|
+| 1 | 26 × 24 mm | (34 \| 42), zwischen Servo-RUN-Gruppe und Schnittstellen |
+| 2 | 28 × 20 mm | (0 \| 60), links unter der Logikversorgung |
+| 3 | 34 × 10 mm | (60 \| 39), über ENABLE |
+| 4 | 35 × 8 mm | (26 \| 0), Oberkante |
+| 5 | 15 × 18 mm | (0 \| 30) |
+| 6 | 38 × 6 mm | (60 \| 56), über dem OLED |
+
+**Bewertung für eine kompaktere Variante** (Schätzung, noch keine Boardkopie):
+- **Was die Kontur festlegt:**
+  - Die Breite von 150 mm legt die obere Reihe fest: Eingang 37 +
+    Servostufe 59 + Ausgangsstufen 29 + DevKit 26 mm. Diese Reihe ist
+    bereits dicht und größtenteils geroutet.
+  - Die Höhe von 100 mm legen drei Spalten fest:
+    - OLED/IMU bis y 99 (unter der Bedienzone);
+    - DevKit bis y 64 plus die Controller-Peripherie darunter bis y 98;
+    - die Schnittstellen bis y 99.
+- **Warum Lücken schließen allein nicht reicht:**
+  - Das Zusammenschieben innerhalb der unteren Hälfte schließt Lücken, ändert
+    aber keine dieser drei Spalten.
+  - Die Kontur wird erst kleiner, wenn die Peripherie aus dem USB-Raum unter
+    dem DevKit herausgeht und die Micro-USB-Stecker über die Unterkante
+    ragen.
+  - Zugleich müssen OLED/IMU mit der Bedienzone in eine gemeinsame, flachere
+    Reihe.
+- **Dichte:**
+  - Die untere Hälfte (ca. 150 × 52 mm) trägt nur 2 600 mm² Courtyards
+    (34 %), die obere Hälfte ist deutlich dichter.
+  - Bei ca. 55 % Belegung in der unteren Hälfte wären ca. 150 × 85 mm
+    erreichbar, 15 % weniger Fläche (**Schätzung**).
+- **Vorteil:** Alle bisher gerouteten Blöcke (Servostufe, Eingang,
+  Logikversorgung) liegen in der oberen Hälfte. Die Verkleinerung betrifft
+  damit nur ungeroutete Gruppen.
+- **Konzept K1** für die Boardkopie:
+  - Peripherie in die Lücken 1/3;
+  - USB über die Unterkante;
+  - OLED, IMU, Bedienzone und O-37 in eine Reihe unter der Servostufe;
+  - Schnittstellen in einen Block links unten (Lücke 2);
+  - Kontur danach auf ca. 150 × 85 mm.
+  - Die Fingerkriterien aus 3d und die Befestigung werden dabei neu
+    geprüft.
+- **Stand:** Noch nicht ausgeführt. Die Freigabe des Owners für K1 auf der
+  Boardkopie ist offen.
+
 ## 4. DevKit, Antenne und USB
 
 - U501 sitzt an der rechten Kante. Die Antennen-Sperrfläche des Footprints

@@ -61,6 +61,13 @@ MODULES = {
 }
 
 
+
+def socket_model(n, dx=0.0, rot=0):
+    """KiCad library model of a generic 2.54 mm vertical female socket (not the Samtec part; review 2026-11-16)."""
+    return ('\t(model "${KICAD10_3DMODEL_DIR}/Connector_PinSocket_2.54mm.3dshapes/PinSocket_1x%02d_P2.54mm_Vertical.step"\n'
+            '\t\t(offset\n\t\t\t(xyz %s 0 0)\n\t\t)\n\t\t(scale\n\t\t\t(xyz 1 1 1)\n\t\t)\n'
+            '\t\t(rotate\n\t\t\t(xyz 0 0 %s)\n\t\t)\n\t)\n') % (n, dx, rot)
+
 def symbol(name, m):
     n = len(m["pins"])
     top = round((n - 1) * 2.54 / 2, 2)
@@ -165,6 +172,7 @@ def footprint(name, m):
         body += pad(i + 1, i * m["step"], 0.0, "rect" if i == 0 else "roundrect")
     for X, Y in m["holes"]:
         body += npth(tx(X), ty(Y))
+    body += socket_model(n, 0.0, -90 if m["step"] > 0 else 90)  # pins along +x / -x (checked in the 3D render)
     body += "\t(embedded_fonts no)\n)\n"
     FP_DIR.mkdir(parents=True, exist_ok=True)
     (FP_DIR / (m["fp"] + ".kicad_mod")).write_text(body)
