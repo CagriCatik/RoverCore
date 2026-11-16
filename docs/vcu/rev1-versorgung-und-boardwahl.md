@@ -1587,69 +1587,143 @@ Für den Vergleich muss das LTC6994-Datenblatt im Projekt liegen. Vorschlag:
   - RC-Filter und Schmitt-Verzögerung des Tasterknotens (≤ 1,5 ms) im Modell.
 
 
-**2. Ausgangssperre bei ungültiger +3V3 – Vorschlag (O-37, nicht im Schaltplan)**
+**2. Ausgangssperre O-37 – überarbeiteter Entwurf (2026-11-16, nicht im Schaltplan)**
 
-**Problem (3.19.1 Punkt 3):** Die Freigabe-FETs Q404/Q407 und U201 werden aus
-der +3V3-Domäne angesteuert.
-- Ab etwa 0,8 V Gate-Spannung kann die Reihenschaltung Q404 + Q407 RUN
-  freigeben (NTR4003N V_GS(th) 0,8–1,4 V bei 250 µA).
-- U201 ist bei 0 < V_CCA < 1,65 V nicht spezifiziert.
-- Die Firmware kann das nicht beheben.
+Der erste Vorschlag (Wächter an +5V, P-FET, Sperr-FETs) ist **verworfen**.
+Gründe:
+- Er konnte zwischen 2,86 V und 3,0 V freigeben.
+- Seine Sperrwirkung hing von einer ausreichend hohen +5V ab, gerade beim
+  Anlauf oder Ausfall von +5V nicht.
+
+**Anforderung (Owner):**
+- Bei angeschlossener Batterie ist die Sperre **standardmäßig wirksam**.
+- Sie wird erst aufgehoben, wenn die benötigten Schienen nachweislich gültig
+  sind.
+- Keine Bedien-Timer, keine READY-Logik.
 
 **Prinzip:**
-- Ein Wächter, der **nicht aus +3V3**, sondern aus +5V versorgt ist,
-  überwacht +3V3.
-- Im Fehlerfall wird die Sperre durch **eingeschaltete** Transistoren
-  hergestellt. Deren Durchlasswerte sind im Datenblatt spezifiziert.
-- Die Sperre stützt sich also nicht auf „ausgeschaltete“ Transistoren bei
-  unbestimmter Gate-Spannung.
+- Die Sperrtransistoren werden **aus VBAT_PROT eingeschaltet**, also aus
+  derselben Quelle, die Servoschiene und ESC überhaupt erst versorgt. Sie
+  hängen weder von +5V noch von +3V3 ab.
+- Freigegeben wird nur über einen Reihen-FET, dessen Gate ein Signal
+  `RAILS_OK` treibt. Dieses Signal ist nur bei gültiger +5V **und** gültiger
+  +3V3 high, mit Verzögerung.
+- Fehlt eine Schiene, fehlt `RAILS_OK`. Die Sperre bleibt dann ohne aktive
+  Ansteuerung wirksam.
+
+**Schaltung:**
 
 | Ref. (vorläufig) | Kandidat | Beschaltung |
 |---|---|---|
-| U515 | TPS3808G01DBVR | VDD = +5V (Carrier, aus VBAT über TPS54302), 100 nF; SENSE = +3V3 über 63,4 kΩ / 10 kΩ (±1 %), 1 nF; CT offen; MR offen; RESET-Pull-up 100 kΩ nach +5V → Netz `V3V3_OK_N` |
-| Q408 | BSS84 (onsemi) | P-FET, Source +5V, Gate `V3V3_OK_N`, Drain → `LOCK_3V3` |
-| R421 | 10 kΩ | `LOCK_3V3` → GND |
-| Q409 | NTR4003N | RUN → GND, Gate `LOCK_3V3`: hält RUN low |
-| Q410 | NTR4003N | Drain an Q201-Drain (ESC-Leitung, vor R221) → GND, Gate `LOCK_3V3`: hält die ESC-Leitung low |
+| U515 | TPS3808G33DBVR | VDD = +5V, SENSE = **+3V3**, CT offen, MR offen; RESET (Open Drain) → `RAILS_OK` |
+| U516 | TPS3808G33DBVR | VDD = +5V, SENSE = **+5V**, CT offen, MR offen; RESET → `RAILS_OK` (verdrahtetes UND mit U515) |
+| R421 | 100 kΩ | `RAILS_OK` → +5V |
+| C | 2 × 100 nF | VDD von U515/U516 |
+| R414 / R407 (Wertänderung) | 100 k / 220 k → **12 k / 27 k** | Q403-Gate aus VBAT_PROT. Teilerverhältnis 0,692 (vorher 0,6875), R_th 8,3 kΩ |
+| Q408 | NTR4003N | in Reihe zu Q404/Q407 (zwischen Q407-Source und GND), Gate `RAILS_OK`: RUN-Freigabe nur mit SERVO_PWR_EN ∧ ACT_ARMED ∧ RAILS_OK |
+| R422 / R423 | 12 k / 27 k | Gate `LOCK_ESC` von Q409 aus VBAT_PROT |
+| Q409 | NTR4003N | Drain an Q201-Drain (ESC-Leitung, vor R221), Source GND: hält die ESC-Leitung low |
+| Q410 | NTR4003N | `LOCK_ESC` → GND, Gate `RAILS_OK`: hebt die ESC-Sperre auf |
 
-Die Servoleitungen brauchen keine eigene Klemmung: Ohne Servoschiene sind die
-Servos stromlos. Die LED-Kanäle sind nicht sicherheitsrelevant.
+**Schaltschwellen (garantiert, SBVS050N):**
 
-**Grenzwerte und Rechnung (Datenblätter; Rechnung als Schätzung gekennzeichnet):**
-
-| Glied | Datenblatt | Folgerung |
+| Größe | Wert | Bewertung |
 |---|---|---|
-| U515 Schwelle fallend | V_IT 0,405 V ± 2 %, Teiler ± 1 % (SBVS050N) | Sperre sicher aktiv unter **2,86 V**, nominal 2,97 V |
-| U515 Schwelle steigend | + Hysterese ≤ 3 % | Freigabe spätestens bei 3,18 V < SGM2212-3.3 V_OUT min. 3,251 V (0–800 mA) → Abstand 73 mV |
-| U515 nach Wiederkehr | t_D 12–28 ms (CT offen) | Sperre hält noch 12–28 ms nach gültiger +3V3 |
-| U515 Ausgang low | V_OL ≤ 0,4 V bei 1 mA, V_DD ≥ 1,8 V; asserted für 0,8 V < V_DD < 1,7 V (7.4.2) | unabhängig vom Wert von +3V3, also auch bei 0 V |
-| Q408 ein | BSS84 V_GS(th) −0,8 bis −2,0 V bei −1 mA (V_DS = V_GS) | V_GS = −(V_5V − 0,4 V). Bei ≤ 1 mA Last (R421: 0,5 mA) ist \|V_DS\| ≤ 2 V → `LOCK_3V3` ≥ V_5V − 2 V |
-| Q409/Q410 ein | NTR4003N R_DS(on) ≤ 2,0 Ω bei V_GS 2,5 V (10 mA) | ab V_5V ≥ 4,5 V: V_GS ≥ 2,5 V |
-| RUN gehalten | RUN-Teilerstrom ≤ 21,5 V / 115 kΩ = 0,19 mA | RUN ≤ 0,4 mV ≪ 1,15 V (LTC7803 V_RUN min.) |
-| ESC-Leitung gehalten | Pull-up 2,2 kΩ von +5V | Leitung ≤ 5 V × 2 Ω / 2,2 kΩ ≈ 5 mV → „kein Signal“ |
-| Freigabe (+3V3 gültig) | U515 RESET hochohmig (I_OH ≤ 300 nA) → Q408 V_GS ≈ −30 mV; BSS84 I_DSS ≤ 15 µA (nur bei −50 V angegeben) × 10 kΩ ≤ 0,15 V an `LOCK_3V3` | Q409/Q410 aus. Das ist nur Funktion, nicht Sicherheit: Ein Leckstrom würde RUN bzw. die ESC-Leitung belasten, also in sichere Richtung wirken |
+| G33 V_IT fallend | 3,07 V ± 1,5 % (V_IT ≤ 3,3 V, −40…125 °C) = **3,024–3,116 V** | +3V3: Sperre sicher aktiv unter 3,024 V, also **oberhalb** ESP32 V_DD min. 3,0 V (Abstand 24 mV). +5V: Sperre unter 3,024 V |
+| G33 steigend | + Hysterese ≤ 2,5 % → **≤ 3,194 V** | +3V3: unter SGM2212-3.3 V_OUT min. 3,251 V (Abstand 57 mV). +5V: weit unter TPS54302 min. 4,74 V |
+| Verzögerung | t_D 12–28 ms nach gültiger SENSE | Freigabe frühestens 12 ms nach der letzten gültigen Schiene |
+| Ausgang bei 0,8 V < V_DD(+5V) < 1,7 V | asserted, niederohmig (7.4.2) | `RAILS_OK` low |
+| Ausgang bei V_DD(+5V) < 0,8 V | undefiniert | `RAILS_OK` ≤ +5V < 0,8 V über R421 (der Pull-up hängt an +5V selbst) |
+| V_OL bei V_DD ≥ 1,8 V | ≤ 0,4 V bei 1 mA | Pull-up-Strom ≤ 5,16 V / 100 kΩ = 52 µA |
+
+**Sperre wirksam (Rechnung, Schätzung):**
+- **Gate von Q403 bzw. Q409:** 0,692 × VBAT × 0,98 − I_Leck × 8,3 kΩ.
+- **I_Leck:** Strom durch Q408 bzw. Q410 bei V_GS ≤ 0,4 V (bzw. ≤ 0,8 V bei
+  +5V < 0,8 V). Angesetzt sind ≤ 250 µA. Grundlage ist die Definition von
+  V_GS(th) min. 0,8 V bei 250 µA (V_GS = V_DS, 25 °C) – **Annahme A10**,
+  siehe unten.
+- **VBAT ≥ 7,63 V** (RUN-Einschaltschwelle min.):
+  - Gate ≥ 5,18 V − 2,08 V = **3,10 V** ≥ 2,5 V, also R_DS(on) ≤ 2,0 Ω
+    (Datenblattpunkt).
+  - RUN ≤ 0,19 mA × 2 Ω × 1,6 (heiß, typ.) ≈ 0,6 mV ≪ 1,15 V.
+  - ESC-Leitung ≤ 5,16 V / 2,2 kΩ × 2 Ω ≈ 5 mV, also „kein Signal“.
+  - Fremdspannung am ESC-Pin: 16,6 mA über R221 in Q409 (I_D max. 0,56 A).
+- **VBAT < 7,63 V:**
+  - RUN bleibt über die garantierte RUN-Schwelle (≥ 1,15 V steigend) aus.
+  - Die ESC-Klemmung ist dann nicht mehr über R_DS(on) gedeckt (Restpunkt).
+- **V_GS max.:** 0,692 × 21,5 V × 1,02 = 15,2 V < 20 V.
+
+**Freigabe (beide Schienen gültig, nur Funktion):**
+- `RAILS_OK` ≥ +5V − 2 × 300 nA × 100 kΩ ≈ +5V − 60 mV ≥ 2,96 V, also
+  Q408/Q410 ≤ 2 Ω.
+- Strom der Reihenschaltung bei 21,5 V: 1,79 mA.
+  - Über ≤ 3 × 2 Ω (× 1,6 heiß) fallen ≈ 17 mV ab → Q403 sicher aus.
+  - Q410 → Q409-Gate ≈ 4 mV → Q409 aus, I_DSS ≤ 1 µA.
+- Verlustleistung R414/R422 bei 21,5 V: je 38 mW (0603: 100 mW).
+- Zusatzstrom aus dem Akku im Betrieb: ca. 2 × 1,05 mA bei 12,6 V (Schätzung).
 
 **Abdeckung:**
 
-| Zustand | Ergebnis |
+| Zustand (Batterie angeschlossen) | Ergebnis |
 |---|---|
-| +3V3 < 2,86 V (jeder Wert, auch DevKit fehlt), +5V ≥ 4,5 V | RUN und ESC-Leitung durch eingeschaltete FETs gehalten (Datenblattwerte) |
-| +3V3 2,86–3,0 V | ggf. freigegeben; LVC-Logik spezifiziert, ESP32 unter V_DD min. 3,0 V → Restpunkt |
-| +5V 3,4–4,5 V (Schätzung, nur über V_GS(th)) | wahrscheinlich gehalten, R_DS(on) nicht spezifiziert |
-| +5V < 3,4 V bei vorhandener VBAT (Anlauf oder Ausfall TPS54302) | **nicht gedeckt** (Restpunkt). +3V3 ohne USB ≤ +5V |
-| nur USB | VBAT fehlt → keine Servoschiene, ESC stromlos |
+| Batterie anstecken, +5V im Anlauf (TPS54302 Soft-Start) | Q403/Q409 leiten, sobald VBAT sie aufsteuert; `RAILS_OK` low (U516 unter 3,02 V bzw. +5V < 0,8 V) → gesperrt |
+| +5V fällt aus (unter 3,024 V) | U516 → `RAILS_OK` low → gesperrt; die Sperre wird aus VBAT gehalten |
+| +3V3 unter 3,024 V (auch DevKit fehlt, LDO-Ausfall) | U515 → gesperrt; ESP32 dabei noch im Bereich ≥ 3,0 V oder bereits gesperrt |
+| +3V3 aus USB gültig, +5V fehlt | U516 → gesperrt |
+| beide gültig, + 12–28 ms | `RAILS_OK` high; Freigabe dann nur über SERVO_PWR_EN ∧ ACT_ARMED (RUN) bzw. U201-OE (ESC) |
+| +5V zwischen 3,02 V und 4,74 V | gilt als gültig; U201 V_CCB, Q20x-Gate und `RAILS_OK` sind ab 3,0 V im Datenblattbereich. Ein Abfall von +3V3 schaltet über U515 ab |
 
-**Kosten:** 1 Supervisor, 1 P-FET, 2 N-FETs, 4 Widerstände, 2 Kondensatoren.
-Alle Typen sind bereits im Projekt (TPS3808, NTR4003N) bzw. als Datenblatt
-geprüft (BSS84).
+Die Hardware-Sperre ersetzt keine Firmware-Regel. Sie hält nur RUN und die
+ESC-Leitung bei ungültigen Schienen fest.
 
-**Offen vor der Fertigungsfreigabe:**
-- Owner-Entscheidung zum Vorschlag;
-- Restpunkte +5V < 4,5 V und +3V3 2,86–3,0 V;
-- Toleranz der +5V-Schiene (TPS54302-Sollwert);
-- Verhalten von SENSE an unversorgtem U515, also USB allein und +5V = 0
-  (Strom über 73 kΩ ≤ 45 µA; Eingangsstruktur ohne VDD nicht angegeben);
-- Messung am Muster.
+**Annahmen und Restpunkte (vor Fertigungsfreigabe klären):**
+- **A10:** Für den Aus-Zustand von Q408/Q410 bei V_GS ≤ 0,4 V gibt es nur
+  die V_GS(th)-Definition (250 µA bei V_GS = V_DS = 0,8 V, 25 °C).
+  - Höhere V_DS (Drain-induzierte Absenkung) und Temperatur sind nicht
+    spezifiziert. V_GS(th) sinkt typ. um 3,4 mV/K, bei 85 °C also auf
+    ca. 0,6 V (Schätzung); bei V_GS ≤ 0,4 V bleibt dann noch ca. 0,2 V
+    Abstand.
+  - Der Fall +5V < 0,8 V mit Gate bis 0,8 V ist dadurch nicht gedeckt. Er
+    tritt nur im Anlauf auf.
+  - Die Rechnung oben lässt bis 250 µA Leckstrom zu.
+- **VBAT < 7,63 V:** ESC-Klemmung nicht über R_DS(on) gedeckt.
+- **SENSE von U515 bei +5V = 0 und +3V3 aus USB:** Verhalten ohne VDD ist
+  nicht angegeben. Möglicher Rückstrom über den internen Teiler
+  (Größenordnung µA, Schätzung).
+- **Messung am Muster:** Anlauf und Ausfall von +5V und +3V3, RUN,
+  ESC-Leitung und `RAILS_OK` mit Oszilloskop.
+
+**Kosten:**
+- 2 × TPS3808G33, 3 × NTR4003N, 3 Widerstände, 2 Kondensatoren;
+- 2 Wertänderungen (R414, R407).
+
+Alle Typen sind im Projekt schon verwendet oder geprüft.
+
+**Servoschiene: Restladung und verbleibender Pfad (Präzisierung)**
+- „Servos sind bei ausgeschaltetem Regler unversorgt“ ist **falsch** und
+  zurückgenommen. Die Ausgangskondensatoren (C406/C407 2 × 270 µF,
+  C408–C410 3 × 22 µF, zusammen ca. 606 µF, ca. 14 mJ bei 6,8 V) entladen
+  sich nach RUN low nur über:
+  - den Rückkopplungsteiler R403/R404 (85 kΩ, ca. 80 µA);
+  - den Messteiler R410/R411 (147 kΩ);
+  - den Ruhestrom der Servos (nicht belegt).
+- Ohne Servos ergibt das τ bis ca. 50 s (Schätzung). Die Schiene kann also
+  Sekunden lang geladen bleiben.
+- **Verbleibender Pfad:** Pulse auf den Servoleitungen gelangen nur über
+  U201. Die Sperre O-37 klemmt die Servoleitungen nicht.
+- In diesem Fall (+3V3 zwischen ca. 2,7 V und 3,02 V, ESP32 ggf. noch aktiv,
+  Firmware hatte freigegeben) kann die Firmware weiter Pulse ausgeben. Die
+  Servos können dann mit der Restladung kurz bewegt werden. Begrenzt ist das
+  durch die gespeicherte Energie (≤ 14 mJ, keine Nachladung, weil RUN
+  gehalten wird).
+- Bei RESET, Neustart und fehlendem DevKit sind die Leitungen low
+  (U201 hochohmig, Q20x leiten).
+- **Bewertung:** Keine zusätzliche Signalklemme vorsorglich.
+  - Zuerst messen: Abfall von +V_SERVO mit angeschlossenen Servos im
+    Ruhezustand und Bewegung bei Restladung.
+  - Ist die Wirkung relevant, ist die kleinste Ergänzung `RAILS_OK` als
+    weiterer Sperreingang von U201-OE (U204 als 3-Eingangs-ODER) oder eine
+    aktive Entladung der Servoschiene bei Sperre. Beides ist nicht umgesetzt.
 
 **3. O-36 bleibt ein separater ESC-Prüfpunkt.** Weder die Firmware noch die
 Ausgangssperre erkennen einen alleinigen ESC-Neustart. Eine automatische
@@ -1741,7 +1815,7 @@ Schutzkoordination (O-17).
 | O-34 | Hauptabschaltung außerhalb der VCU auswählen (3.14): Dauer-/Spitzenstrom, DC-Schaltvermögen bei 12,6 V, Einschaltstrom; bei elektronischer Lösung Body-Dioden, Rückspeisung, AUS-Zustand | Owner |
 | O-35 | **Rev1-Umfang (Owner 2026-11-16, 3.20):** F2, Entprellung (S0/S1/S2, t_LOS 100 ms, t_EIN 50 ms) und Freigabe nach Versorgungswiederkehr in der ESP32-Firmware; keine garantierte Unabhängigkeit von fehlerhafter Firmware. V2 und Timervergleich geparkt (3.19). U505/U506 bleiben als zusätzliche Sperrebene (wirksam erst beim Loslassen). **Vorschlag, Entscheidung offen:** ACT_ARMED über 1 kΩ auf GPIO18, Firmware geht bei ACT_ARMED low nach S0 (sonst re-armiert U506 nach kurzem VBAT-Einbruch ohne Firmwareprüfung). Firmware: Watchdog, nach jedem Neustart S0, bei VBAT-Verlust SERVO_PWR_EN low, ACT_OE_N high, ESC neutral; erster Puls neutral; GPIO10 ohne interne Pull-ups; J112-TX ohne Akku inaktiv; GPIO0 und GPIO6 nie als Ausgang. Abschaltreihenfolge = unbestätigte Prototyp-Hypothese | Owner / Agent |
 | O-36 | **Funktionale Lücke** der gemeinsamen Wiederanlaufanforderung: Der gemeinsame Akkuanschluss bedeutet kein gemeinsames Reset-Verhalten von ESC und VCU (Puffer-C, Leitungsabfälle, ESC-Brown-out). Der Latch sieht nur VBAT_PROT. Nicht abgedeckt: ESC-Zweig allein getrennt, ESC-Neustart bei gesetztem Latch (3.17 Nr. 2.4, 2.6). ESC-Verhalten bei fehlenden und wiederkehrenden PWM-Pulsen nicht belegt (2.7). Schließen nur durch eine Maßnahme im ESC-Zweig oder ein belegtes ESC-Arming-Verhalten als begrenzte Aussage | Owner |
-| O-37 | Elektrische Ausgangssperre bei ungültiger +3V3 (3.20, Punkt 2): Vorschlag U515 TPS3808 an +5V überwacht +3V3, Q408 BSS84 + Q409/Q410 NTR4003N halten RUN und ESC-Leitung low. Restpunkte +5V < 4,5 V, +3V3 2,86–3,0 V, SENSE ohne VDD. **Vor Fertigungsfreigabe klären** | Owner / Agent |
+| O-37 | Ausgangssperre bei ungültigen Schienen (3.20, Punkt 2), **überarbeiteter Entwurf**: Sperr-FETs Q403 (RUN) und Q409 (ESC-Leitung) aus VBAT_PROT eingeschaltet (12 k/27 k), Freigabe nur über Q408/Q410 mit `RAILS_OK` = U515 (TPS3808G33, +3V3) ∧ U516 (TPS3808G33, +5V), beide an +5V. Garantiert: Sperre < 3,024 V, Freigabe ≤ 3,194 V, t_D 12–28 ms. Restpunkte: A10 (Aus-Zustand Q408/Q410 nur über V_GS(th)-Definition), VBAT < 7,63 V (ESC-Klemmung), SENSE ohne VDD, Restladung Servoschiene messen. Nicht im Schaltplan; **vor Fertigungsfreigabe klären** | Owner / Agent |
 
 Erledigt: O-5 (DevKit-LDO), O-6 (Lenkservos), O-7 (LTC7803 Rev B, 3.5a;
 Kompensation weiter unter O-27), O-9 (Projektort), O-14 (ersetzt durch O-17),
