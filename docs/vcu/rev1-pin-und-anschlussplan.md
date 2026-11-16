@@ -679,8 +679,9 @@ Rechnung im Versorgungsdokument 3.16.
 
 | Ref | Funktion |
 |---|---|
-| U505 TPS3808G01 | VBAT_PROT-Wächter, Schwelle 10,0 V über R515 237 kΩ / R516 10 kΩ, Filter C506 47 nF; versorgt aus +3V3 |
-| U506 SN74LVC1G74 | Freigabe-Latch an +3V3: CLR = VBAT_OK, D = 1, PRE = 1, CLK = Tasterknoten SW501 |
+| U505 TPS3808G01 | VBAT_PROT-Wächter, Schwelle 9,62–10,40 V über R515 237 kΩ / R516 10 kΩ, Filter C506 100 nF; MR an DEVKIT_EN (RESET löscht); versorgt aus +3V3 |
+| U506 SN74LVC1G74 | Freigabe-Latch an +3V3: CLR = VBAT_OK über Schmitt-Puffer U508, D = 1, PRE = 1, CLK = Tasterknoten SW501 über Filter C511 und Schmitt-Puffer U507 |
+| R405 (ServoPower) | 115 kΩ statt 140 kΩ: RUN-Teiler nur Rückfallebene, damit die Reihenfolge Latch → RUN beweisbar ist (Versorgung 3.16) |
 | R518 47 kΩ | trennt GPIO10 vom Takt: Firmware kann den Latch nicht setzen |
 | Q407 (ServoPower) | in Reihe zu Q404: RUN nur mit SERVO_PWR_EN **und** ACT_ARMED |
 | U204 (Actuators) | U201-OE = ACT_OE_N **oder** ACT_DISARMED |
@@ -702,4 +703,14 @@ Elektrische Änderungen gegenüber `fea128b` (`compare_schematic_revisions.py`,
 | neu ServoPower | Q407, R420; Q404.2 (Source) vorher GND, jetzt SERVO_EN_SRC → Q407.3 |
 | neu Actuators | U204, C203; U201.22 (OE) vorher ACT_OE_N, jetzt ACT_OE_GATED_N ← U204.4; ACT_OE_N → U204.2 |
 | +3V3 / GND | neue Versorgungs- und Massepins der genannten Bauteile; U505.3 (MR) und U505.4 (CT) offen |
+
+Nachtrag 2026-11-16, Prüfung nach Versorgungsdokument 3.17: Korrekturen gegenüber
+`6fc36ff` (`compare_schematic_revisions.py`):
+- neu: U507, U508 (SN74LVC1G17), C509–C511; Netze BTN_CLK (U507.4 → U506.1)
+  und VBAT_OK_BUF (U508.4 → U506.6);
+- ENABLE_BTN_RAW: + C511.1, U507.2 statt U506.1;
+- VBAT_OK: U508.2 statt U506.6;
+- DEVKIT_EN: + U505.3 (MR, vorher offen);
+- Wertänderungen: R405 140k → 115k, C506 47n → 100n;
+- übrige Netze unverändert.
 

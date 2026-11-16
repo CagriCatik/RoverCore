@@ -35,7 +35,7 @@ R1,U501,J3-14,STRAP_GPIO0,GPIO0,,,strap-in,3V3,Strapping: internal weak pull-up 
 R1,U501,J1-13,STRAP_GPIO3,GPIO3,,,reserved,3V3,Strapping: floating (JTAG source),datasheet,Leave NC on carrier
 R1,U501,J3-15,STRAP_GPIO45,GPIO45,,,reserved,3V3,Strapping: weak pull-down (VDD_SPI),datasheet,Leave NC on carrier
 R1,U501,J1-14,STRAP_GPIO46,GPIO46,,,reserved,3V3,Strapping: weak pull-down,datasheet,Leave NC on carrier
-R1,U501,J1-3,DEVKIT_EN,CHIP_PU,EN,,reset-in,3V3,DevKit R5 10k pull-up + C6 1 uF; SW502 RESET to GND on the carrier (parallel to DevKit SW2 and CP2102N auto-reset Q1),draft,DevKit schematic V1.1 20221130 sheet 2; RESET is not a power switch
+R1,U501,J1-3,DEVKIT_EN,CHIP_PU,EN,,reset-in,3V3,DevKit R5 10k pull-up + C6 1 uF; SW502 RESET to GND on the carrier (parallel to DevKit SW2 and CP2102N auto-reset Q1); U505 MR (70-90k internal pull-up) clears the restart latch,draft,DevKit schematic V1.1 20221130 sheet 2; RESET is not a power switch
 R1,U501,J1-1,+3V3,3V3,,,power-out,3V3,LDO SGM2212 output,datasheet,Carrier load <= 50 mA (IMU + OLED)
 R1,U501,J1-2,+3V3,3V3,,,power-out,3V3,LDO SGM2212 output,datasheet,Carrier load <= 50 mA (IMU + OLED)
 R1,U501,J1-21,+5V_DEVKIT,5V,,,power-in,5V,Fed from carrier +5V via Schottky D501 (diode-OR with DevKit USB diodes),datasheet,USB never feeds carrier rails; JP101 removed 2026-11-15

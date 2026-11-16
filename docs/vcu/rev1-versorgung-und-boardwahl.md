@@ -233,7 +233,7 @@ Grundlage LTC7803-Datenblatt Rev A (*Electrical Characteristics*,
 | Strom-Shunt | **3 mΩ, 1 %, ≥ 2 W, breite Bauform** | Der LTC7803 begrenzt den **Spitzenwert des Drosselstroms**. Nutzbar = V_SENSE,min / (R × 1,01) − ½ ΔI_L,worst. Spitzengrenze max. 55 mV / 2,97 mΩ = 18,5 A → I_sat der Drossel. Verlust 0,38 W bei 11,2 A. Nicht enthalten: mögliche Abhängigkeit der Schwelle vom Tastverhältnis (Rev A ohne Kurve) |
 | FETs oben/unten | Infineon BSC026N04LS, 40 V, R_DS(on) max 3,6 mΩ bei 4,5 V | Leitverluste bei 11,2 A (R_DS × 1,4): 9,0 V 0,48 / 0,15 W, 12,6 V 0,34 / 0,29 W; Schaltverluste nicht enthalten |
 | Ausgangsspannung | R_B 75,0 kΩ / R_A 10,0 kΩ, 0,1 % | 6,80 V (6,69–6,91 V), 3.4 |
-| Unterspannung (RUN) | R_B 140 kΩ (VIN → RUN) / R_A 20 kΩ | ein 9,60 V (9,20–10,00 V), aus 8,80 V; RUN bei 21,5 V = 2,7 V (abs. max. 40 V) |
+| Unterspannung (RUN) | R_B **115 kΩ** (seit 2026-11-16, vorher 140 kΩ) / R_A 20 kΩ | ein 7,63–8,58 V, nur Rückfallebene; maßgeblich ist die Wiederanlaufsperre 9,62–10,40 V (3.16); RUN bei 21,5 V = 3,2 V (abs. max. 40 V) |
 | Soft-Start | C_SS 33 nF | 2,1 ms; Ladestrom in ca. 606 µF ≈ 2,0 A |
 | Eingangskondensatoren | MLCC ≥ 35 V direkt am Leistungsteil + Eingangs-Bulk ≥ 35 V | I_RMS bei 12,6 V und 11,2 A ≈ 5,6 A – mehr MLCC als unter 2S nötig (O-17) |
 | Ausgangskondensatoren | 2 × 270 µF / 16 V Polymer (16SVPG270MX) + 3 × 22 µF / 16 V X7R | – |
@@ -278,7 +278,7 @@ liegt projektlokal in `hardware/libraries/symbols/ProjectSymbols.kicad_sym`
 | Rückkopplung | R403 75,0 kΩ / R404 10,0 kΩ, 0,1 % Dünnfilm (Yageo RT0603) | 6,80 V (6,69–6,91 V) |
 | Rückkopplungsabgriff | **NT403**: ein Punkt an den Ausgangskondensatoren, **vor** dem Messshunt RS402 | Abfall an RS402 (22 mV bei 11,2 A) wird nicht ausgeregelt, ist im Spannungsbudget enthalten (3.4) |
 | Kelvin-Leitungen | **NT401/NT402** (SENSE+/SENSE− an RS401), **NT404/NT405** (INA240 an RS402) | Net-Ties machen die Messleitungen zu eigenen Netzen, die getrennt vom Laststrom als enges Paar ab den Shunt-Pads geführt werden |
-| RUN / Freigabe | R405 140 kΩ / R406 20 kΩ (ein 9,60 V, aus 8,80 V), C420 100 nF (1,75 ms); Q403 NTR4003N hält RUN auf GND, solange sein Gate über R414 100 kΩ / R407 220 kΩ aus VBAT_PROT hochgezogen ist; Q404 NTR4003N (Gate an `SERVO_PWR_EN`, R415 100 kΩ Pull-down) zieht dieses Gate nur bei aktiver Freigabe auf GND – **Standard AUS** (3.13) | Reglerabschaltung, keine Leistungstrennung |
+| RUN / Freigabe | R405 115 kΩ / R406 20 kΩ (ein 7,63–8,58 V, Rückfallebene; 3.16), C420 100 nF (1,70 ms); Q403 NTR4003N hält RUN auf GND, solange sein Gate über R414 100 kΩ / R407 220 kΩ aus VBAT_PROT hochgezogen ist; Q404 NTR4003N (Gate an `SERVO_PWR_EN`, R415 100 kΩ Pull-down) zieht dieses Gate nur bei aktiver Freigabe auf GND – **Standard AUS** (3.13) | Reglerabschaltung, keine Leistungstrennung |
 | Ausgangskondensatoren | C406/C407 Panasonic 16SVPG270MX, C408–C410 3 × 22 µF Murata | Projekt-Footprint `CP_Panasonic_OSCON_SVPG_C8` nach Panasonic-Land-Pattern (O-26) |
 | Eingangskondensatoren | C401–C404 4 × 10 µF/50 V, C405 100 nF am VIN-Pin | Eingangsrippel bis ca. 5,6 A bei 12,6 V |
 | Strommessung | RS402 2 mΩ (WSL10202L000FEA), U402 INA240A3DR (Symbol INA240A1D, gleiche Pinbelegung), REF1/REF2 = GND, R412 1 kΩ / C415 1 µF, R416 10 kΩ zum ADC | 3.6 |
@@ -398,11 +398,12 @@ werden nicht erkannt.
 | Firmware Warnung | 10,8 V (3,6 V/Zelle) | gefiltert unter Last, Vorschlag |
 | Firmware Fehler → Antrieb gesperrt | 10,5 V (3,5 V/Zelle) | Vorschlag; Messfehler ca. ±0,35 V (3.9) |
 | ESC-LiPo-Abschaltung | 3,25 V/Zelle = 9,75 V | Rückfallebene, im ESC einstellen (Zellenzahl 3S/Auto) |
-| Hardware: Servoschiene aus (RUN) | 8,80 V | Reglergrenze, keine Akkuüberwachung |
+| Hardware: Servoschiene aus (Wiederanlaufsperre U505) | 9,62–10,40 V | löscht die Freigabe, Neustart nur über SW501 (3.16); RUN-Teiler 7,63–8,58 V nur Rückfallebene |
 | Hardware: Logik aus (EN TPS54302) | 8,0 V | Reglergrenze, keine Akkuüberwachung |
 
-Ein versehentlich gesteckter 2S-Akku (≤ 8,4 V) liegt unter beiden
-Einschaltschwellen (9,60 V und 8,6 V); die Platine bleibt aus.
+Ein versehentlich gesteckter 2S-Akku (≤ 8,4 V) liegt unter der Logik-Einschaltschwelle
+(8,65 V nominal) und sicher unter der Freigabeschwelle der Wiederanlaufsperre
+(≥ 9,62 V); die Servoschiene bleibt in jedem Fall gesperrt (3.16).
 
 Fehlerreaktion (O-20, offen): Antrieb sperren. Die Lenkversorgung wird
 **nicht** pauschal bei jeder Stromspitze abgeschaltet; zeitabhängige
@@ -845,63 +846,157 @@ zwischen zwei Abtastungen liegen kann.
 **Lösung:** Freigabe-Latch in Hardware, versorgt aus +3V3. Damit überlebt der
 Zustand „gesperrt“ jeden USB-Dauerbetrieb.
 
-1. **Wächter U505 (TPS3808G01):** misst VBAT_PROT über R515 237 kΩ / R516 10 kΩ.
-   Seine VBAT_OK-Leitung (Open-Drain, R517 100 kΩ) löscht U506 asynchron, sobald
-   VBAT_PROT unter 10,0 V fällt (U506 Funktionstabelle: CLR low → Q low unabhängig
-   von CLK und D).
+1. **Wächter U505 (TPS3808G01):** misst VBAT_PROT über R515 237 kΩ / R516 10 kΩ,
+   Filter C506 100 nF. Sein Open-Drain-Ausgang VBAT_OK (R517 100 kΩ) geht über
+   den Schmitt-Puffer U508 an CLR von U506 und löscht den Latch asynchron
+   (U506-Funktionstabelle: CLR low → Q low, unabhängig von CLK und D). MR von
+   U505 liegt an DEVKIT_EN: auch RESET löscht den Latch (3.17, Punkt 4).
 2. **Latch U506 (SN74LVC1G74):** D und PRE fest auf 1. Gesetzt wird er nur durch
-   eine **steigende Flanke am Tasterknoten** von SW501, also beim Loslassen oder
-   beim Prellen während des Drückens, und nur, solange VBAT_OK high ist.
+   eine **steigende Flanke am Tasterknoten** von SW501, über Filter R502/C511
+   (1 ms) und den Schmitt-Puffer U507, und nur, solange CLR inaktiv ist.
 3. **Firmware kann den Latch nicht setzen:** GPIO10 liest den Taster über R518
-   47 kΩ. Treibt die Firmware GPIO10 low, bleibt der Takt auf
-   3,3 V × 47/(47+10) = 2,72 V > V_IH 2,0 V (SCES794G). Ein Taster mit Dauerschluss
-   erzeugt keine Flanke.
+   47 kΩ. Treibt die Firmware GPIO10 low, sinkt der Knoten nur auf
+   3,3 V × 47/57 = 2,72 V (2,47 V bei 3,0 V). Das liegt über V_T+ max. 1,92 V von
+   U507 (SCES351Y, 3 V, −40…125 °C); der Knoten erreicht also V_T− nie, es
+   entsteht keine Flanke. Ein Taster mit Dauerschluss erzeugt ebenfalls keine
+   Flanke.
 4. **Wirkung:**
    - ACT_ARMED → Q407 in Reihe zu Q404: Q403 gibt RUN nur frei, wenn
      SERVO_PWR_EN **und** ACT_ARMED anliegen.
    - ACT_DISARMED → U204 (OR) → U201 OE high: Servo-, ESC- und LED-1–3-Ausgänge
      hochohmig. Die Ausgangsstufen ziehen die Leitungen low, es entstehen keine Pulse.
-5. **Einschalten:** U505 hält VBAT_OK nach Erreichen von V_DD ≥ 0,8 V low und
-   gibt erst 12–28 ms nach gültigem SENSE frei (CT offen). U506 startet daher
-   immer gelöscht.
-6. **Fehlender DevKit (+3V3 stromlos):** U506 und U204 sind unversorgt (Ioff).
-   R420 hält Q407 aus, U201 ist über V_CCA = 0 hochohmig.
+5. **Einschalten:** U505 hält VBAT_OK ab V_DD = 0,8 V low und gibt erst 12–28 ms
+   nach gültigem SENSE und MR frei (CT offen). U506 startet daher immer gelöscht.
+6. **Fehlender DevKit (+3V3 stromlos):**
+   - U506, U204, U507 und U508 sind unversorgt (Ioff).
+   - R420 hält Q407 aus.
+   - U201 ist über V_CCA = 0 hochohmig.
 
-**Schwelle (Schätzung aus Datenblattgrenzen):**
+**Korrekturen am 2026-11-16 (nach Prüfung 3.17):**
+- R405 140 kΩ → **115 kΩ**: Ohne diese Änderung ist die Reihenfolge nicht beweisbar.
+- C506 47 nF → **100 nF**: mehr Zeit für U505.
+- Schmitt-Puffer **U507/U508** (SN74LVC1G17) vor CLK und CLR: Der LVC1G74 verlangt
+  ≤ 10 ns/V Flankensteilheit (SCES794G), die RC-Knoten liegen weit darüber.
+- **C511** 100 nF am Tasterknoten als Störfilter.
+- **MR an DEVKIT_EN**.
+
+**Schwellen (aus Datenblattgrenzen, Widerstände ±1 %; alles VBAT-äquivalent):**
 
 | Größe | Wert |
 |---|---|
-| U505 V_IT | 0,405 V ± 2 % (−40…125 °C), Hysterese 1,5 % typ., 3 % max. (SBVS050N) |
-| Teiler | (237 k + 10 k)/10 k = 24,7 → **10,0 V fallend**, mit ±1 % Widerständen ca. **9,61–10,40 V** |
-| steigend | + Hysterese → ca. 10,15 V typ., bis 10,71 V |
-| Servo-Aus (LTC7803 RUN) | RUN steigend 1,15–1,25 V, Hysterese 100 mV typ. → fallend ca. 1,05–1,15 V × 8 = 8,4–9,2 V, mit Widerstandstoleranz bis ca. 9,36 V |
-| Abstand | 9,61 − 9,36 ≈ **0,25 V**: der Latch löscht vor jeder Unterspannungsabschaltung der Servoschiene. Eine Rückkehr über die RUN-Schwelle kann daher nie selbst wieder anlaufen |
-| Filter | 237 k ∥ 10 k = 9,6 kΩ × 47 nF = **0,45 ms** (+ 20 µs U505), kürzer als das RUN-Filter (1,75 ms) |
+| Latch-Löschschwelle fallend | U505 V_IT 0,405 V ± 2 % (SBVS050N) × Teiler 24,23–25,18 → **9,62–10,40 V** (nominal 10,0 V) |
+| Latch, steigend (VBAT_OK) | + Hysterese 1,5 % typ., 3 % max. → bis 10,71 V |
+| RUN-Einschaltschwelle (neu) | LTC7803 V_RUN steigend 1,15–1,25 V × (115 k + 20 k)/20 k = 6,64–6,87 → **7,63–8,58 V** |
+| RUN-Ausschaltschwelle | Hysterese nur typ. 100 mV angegeben, kein Min/Max. **Annahme A2:** fallend ≤ steigend → **≤ 8,58 V** |
+| vorher (R405 140 kΩ) | RUN-Aus bis 1,25 V × 8,14 = 10,18 V > 9,62 V → Reihenfolge **nicht** beweisbar |
+| Abstand | 9,62 − 8,58 = **1,04 V** |
+| Filter | SENSE: 9,59 kΩ × 100 nF = 0,96 ms (0,86–1,06 ms bei C ± 10 %); RUN: 17,0 kΩ × 100 nF = 1,70 ms (1,53–1,87 ms) |
+
+**Reihenfolge – Nachweis unter Annahmen:**
+- Beide Knoten sind Tiefpässe 1. Ordnung derselben Spannung VBAT_PROT
+  (**Annahme A1:** lineares RC-Modell, RUN-Pinstrom vernachlässigt; LTC7803 nennt
+  keinen Wert).
+- Mit τ_S < τ_R gilt H_R/H_S = α + (1 − α)/(1 + sτ_R), α = τ_S/τ_R. Der
+  RUN-Knoten ist also ein gewichteter Mittelwert früherer SENSE-Werte mit
+  positiven Gewichten.
+- Folgerung: Wenn der RUN-Knoten unter die RUN-Ausschaltschwelle (≤ 8,58 V) fällt,
+  war der SENSE-Knoten vorher mindestens genauso tief, also mindestens 1,04 V
+  unter der Löschschwelle.
+- Zeit dafür: Bei 12,6 V Hub fällt der SENSE-Knoten höchstens mit
+  12,6 V/0,86 ms = 14,7 V/ms. Er liegt deshalb mindestens **71 µs** unter der
+  Löschschwelle, bevor RUN abschalten kann.
+- U505 braucht dafür tw ≈ 20 µs und t_PD ≈ 20 µs. Beides sind nur Typwerte
+  (**Annahme A3**, kein Max. im Datenblatt). Hinzu kommen U508 und U506 im
+  ns-Bereich.
+- **Ergebnis:** Unter A1–A3 ist der Latch gelöscht, bevor die Servoschiene über
+  RUN abschaltet. Ein Wiederanlauf über RUN ist damit nur noch mit erneuter
+  Freigabe möglich.
+- Selbst wenn U505 langsamer ist: Nach RUN-Ein startet der LTC7803 mit
+  Soft-Start (ca. 2 ms), und das spätere Löschen schaltet ihn über Q403 wieder ab.
+- A1–A3 werden gemessen (3.17).
 
 Folgen und Grenzen (zu messen):
-- **Einbrüche unter Last:** Fällt VBAT_PROT länger als ca. 0,5 ms unter 9,6–10,4 V,
+- **Einbrüche unter Last:** Fällt VBAT_PROT länger als etwa 1 ms unter 9,62–10,40 V,
   wird alles gesperrt und muss neu freigegeben werden. Das liegt unter der
   Firmware-Sperre (10,5 V) und bei der ESC-Abschaltung (9,75 V). Ein gesunder
   Akku sollte nicht so tief einbrechen. Ist das am Fahrzeug doch der Fall (O-3),
   werden Schwelle und Filter neu bewertet.
-- **Kurze Unterbrechungen werden nicht erkannt:** Die VCU-Kondensatoren an
-  VBAT_PROT (ca. 0,39 mF: C101, C102, C401–C405, C301/C302) halten die Spannung
-  bei 12,6 V Start:
-  - ca. 7 ms bei 0,15 A Grundlast;
-  - ca. 0,9 ms bei 1,2 A mit belasteter Servoschiene.
-
-  In dieser Zeit bleiben auch die VCU-Schienen an, die Sperre ist also nicht
-  nötig. Der **ESC** liegt aber parallel am Y-Verteiler und kann in dieser Zeit
-  neu starten, während die VCU weiter Pulse sendet. Sein Verhalten muss
-  nachgewiesen werden (O-2, O-36).
-- **RESET/Watchdog** löschen den Latch nicht (kein LiPo-Verlust). Nach jedem
-  Neustart sind die Ausgänge durch die Ruhepegel ohnehin gesperrt. Ob die
-  Firmware nach einem Neustart ohne Taster wieder freigeben darf, regelt O-35.
-  Option: MR von U505 an DEVKIT_EN legen (belastet EN zusätzlich mit 90 kΩ,
-  nicht umgesetzt).
+- **Rückfallebene RUN:** Die Servoschiene läuft ohne Latch-Freigabe nie. Der
+  RUN-Teiler (7,63–8,58 V) ist nur noch Reserve. Ein 2S-Akku (≤ 8,4 V) erreicht
+  VBAT_OK nie, damit bleibt die Servoschiene gesperrt.
 - **Rücklesen:** Die Firmware kann den Latch nicht direkt lesen. Erkennbar ist
   der Zustand indirekt an VSERVO_SENSE ≈ 0 trotz SERVO_PWR_EN. Option: GPIO18
   als Lese-Eingang mit Serienwiderstand (nicht umgesetzt, GPIO18 bleibt Reserve).
+
+### 3.17 Zustände und Prüfungen der Wiederanlaufsperre (Stand 2026-11-16)
+
+Erwartung aus der Schaltung, **nicht gemessen**. „Gesperrt“ bedeutet:
+Servoschiene aus (Q403 hält RUN) und U201 hochohmig (keine Pulse).
+
+**Punkt 1 – Abschaltreihenfolge**
+
+| Nr. | Fall | Erwartet | Prüfung |
+|---|---|---|---|
+| 1.1 | VBAT langsam 12,6 → 9 V → 12,6 V (≤ 1 V/s) | Latch löscht bei 9,62–10,40 V; RUN bleibt über Q403 aus; kein Wiederanlauf | Netzgerät-Rampe; Schwelle an VBAT_OK, ACT_ARMED, RUN, +V_SERVO messen |
+| 1.2 | VBAT-Sprung 12,6 → 0 V und zurück (Schalter) | Latch löscht ≥ 71 µs vor RUN-Aus (A1–A3); danach gesperrt | Oszilloskop: VBAT_PROT, VBAT_OK_BUF, RUN; Abstand t(VBAT_OK) → t(RUN < 1,05 V) |
+| 1.3 | Einbruch auf 9,0 V für 0,2 / 1 / 5 ms | ≤ ca. 1 ms: keine Löschung, RUN bleibt an (Filter); länger: gelöscht, gesperrt | Pulsquelle; Löschschwelle über Dauer aufnehmen |
+| 1.4 | A2/A3 | RUN fallend < RUN steigend; U505 tw + t_PD ≪ 71 µs | an 3 Mustern bei −20 / 25 / 65 °C |
+
+**Punkt 2 – kurze Akkuunterbrechungen (O-36)**
+
+VBAT_PROT und der ESC-Eingang sind über Q101 (leitet in beide Richtungen),
+F101, J101 und den Y-Verteiler **dasselbe Netz**:
+- Bei offenem Hauptschalter speisen die VCU-Kondensatoren auch den ESC, und
+  umgekehrt; beide Spannungen fallen gemeinsam.
+- Bricht der ESC-Eingang so weit ein, dass der ESC neu startet, fällt
+  VBAT_PROT ebenso (minus Spannungsabfall im Kabelbaum).
+- Damit löscht der Latch, solange die Neustartspannung des ESC unter der
+  Löschschwelle liegt.
+
+**Annahme A4:** ESC-Neustart (Controller-Reset) bei < 9,62 V am ESC. Hobbywing
+nennt keinen Wert. Die Lücke der gemeinsamen Anforderung bleibt deshalb **offen**,
+bis A4 gemessen ist (O-36). Bei Verletzung braucht es eine Abschaltung im
+ESC-Zweig oder eine ESC-seitige Messung.
+
+| Nr. | Fall | Erwartet | Prüfung |
+|---|---|---|---|
+| 2.1 | Hauptschalter aus/ein für 1, 5, 20, 100 ms, ESC und VCU angeschlossen, Firmware sendet Neutralpulse | Neustart des ESC (Töne, Arming) nur zusammen mit gelöschtem Latch | VBAT_PROT, ESC-Eingang, ACT_ARMED aufzeichnen; ESC-Verhalten protokollieren |
+| 2.2 | wie 2.1 mit Vollgas-Kommando | ESC fährt nicht an (Latch gelöscht oder ESC-Arming verweigert) | **nur ohne Motor bzw. Rad frei** |
+| 2.3 | ESC-Neustartspannung | Netzgerät am ESC langsam absenken | A4 bestätigen |
+
+**Punkt 3 – Enable-Taster als Taktquelle**
+
+Taktpfad: SW501-Knoten (R502 10 kΩ, C511 100 nF, τ = 1 ms) → U507
+(Schmitt, V_T+ 1,48–1,92 V, V_T− 0,89–1,20 V) → U506 CLK.
+
+| Nr. | Fall | Erwartet | Grundlage |
+|---|---|---|---|
+| 3.1 | Prellen beim Drücken/Loslassen | C511 glättet; Restflanken erzeugen mehrere Takte mit D = 1 → Ergebnis „gesetzt“, kein anderer Zustand | Funktionstabelle; U507-Ausgang ≪ 10 ns/V |
+| 3.2 | Mindestimpulsbreiten | CLK und CLR je ≥ 2,7 ns, CLR inaktiv vor CLK ≥ 1,2 ns (3,3 V); erfüllt durch Puffer und ms-Zeitkonstanten | SCES794G Tab. Timing |
+| 3.3 | Taster beim Einschalten gehalten | CLR 12–28 ms aktiv; erst das **Loslassen** nach dieser Zeit setzt den Latch | Bewertung: Loslassen ist eine Bedienhandlung; ein **klemmender** Taster setzt nie |
+| 3.4 | Während Unterspannung gedrückt, kurz nach deren Ende losgelassen | Loslassen innerhalb 12–28 ms nach Ende: CLR noch aktiv → **nicht** gesetzt; später: gesetzt | U505 t_D |
+| 3.5 | Flanke genau beim Freigeben von CLR | Ergebnis unbestimmt (gesetzt oder nicht); beides ist sicher, da eine Bedienhandlung vorlag | SCES794G tsu 1,2 ns |
+| 3.6 | Firmware treibt GPIO10 low/high | kein Takt: Knoten ≥ 2,47 V > V_T+ max. | 3.16 Punkt 3 |
+| 3.7 | Einstreuung, ESD am Taster | 1 ms Filter + Hysterese 0,51–0,83 V; Restrisiko → EMV-/ESD-Prüfung | Messung |
+
+**Punkt 4 – RESET löscht den Latch (MR von U505 an DEVKIT_EN)**
+
+Geprüft gegen den DevKit-Schaltplan V1.1 (3.13):
+- **Pegel:** EN wird von SW2/SW502 bzw. Q1 (L8050) auf nahezu 0 V gezogen.
+  MR schaltet sicher (V_IL ≤ 0,3 × V_DD), MR-Laufzeit 150 ns.
+- **Belastung:** Der interne MR-Pull-up von 70–90 kΩ liegt an derselben +3V3
+  wie R5. EN-Pull-up 10 k ∥ 70 k = 8,75 kΩ, die EN-Zeitkonstante sinkt von
+  10 ms auf 8,75 ms. Q1 senkt zusätzlich ≤ 47 µA.
+- **Versorgung:** Fehlt der DevKit, sind EN und U505 gleichermaßen stromlos.
+  Zwischen MR und EN gibt es keine zweite Quelle, also keine Rückspeisung.
+
+| Nr. | Fall | Erwartet |
+|---|---|---|
+| 4.1 | RESET (SW502) im Betrieb | MR low → VBAT_OK low ≥ 12–28 ms → Latch gelöscht; nach dem Hochlauf gesperrt bis SW501 |
+| 4.2 | BOOT/Download und USB-Auto-Reset (Flashen, DTR/RTS) | EN-Puls → Latch gelöscht |
+| 4.3 | Watchdog, Brown-out, Software-Reset des ESP32 | EN bleibt high → Latch **nicht** gelöscht; Ausgänge durch Ruhepegel gesperrt; Firmware gibt nach Neustart nur über SW501 frei (O-35) |
+| 4.4 | ESP32-Hochlauf | EN-RC 8,75 ms ≫ tSTBL; Hochlauf unverändert |
+
 
 
 
@@ -984,8 +1079,8 @@ Schutzkoordination (O-17).
 | O-32 | I²C-Anstiegszeit an TP801/TP802 und OLED-Strom bei Vollbild messen; 400 kHz erst danach | Owner |
 | O-33 | ~~ST-Datenblatt LSM6DSOX~~ – erledigt 2026-11-16 (DS12814 Rev 4, Anschlussplan 9.3): INT1 beim Einschalten 0 (R803), Push-Pull aktiv high, 0,55 mA typ. | – |
 | O-34 | Hauptabschaltung außerhalb der VCU auswählen (3.14): Dauer-/Spitzenstrom, DC-Schaltvermögen bei 12,6 V, Einschaltstrom; bei elektronischer Lösung Body-Dioden, Rückspeisung, AUS-Zustand | Owner |
-| O-35 | Wiederanlaufsperre in Hardware umgesetzt (3.16). Firmware zusätzlich: bei VBAT-Verlust SERVO_PWR_EN low, ACT_OE_N high, ESC neutral; Freigabe nach Neustart nur über SW501; GPIO10 ohne interne Pull-ups; J112-TX ohne Akku inaktiv; GPIO0 und GPIO6 nie als Ausgang. Messen: Schwelle, Löschen bei langsamem und schnellem Abfall, kein Setzen durch GPIO10 | Agent / Owner |
-| O-36 | Unterbrechungen kürzer als die Haltezeit der VCU-Kondensatoren (ca. 0,9–7 ms, Schätzung) erkennt die Sperre nicht; ESC-Verhalten bei kurzer eigener Versorgungsunterbrechung mit anliegenden Pulsen nachweisen (mit O-2) | Owner |
+| O-35 | Wiederanlaufsperre in Hardware umgesetzt und am 2026-11-16 korrigiert (3.16, Prüftabelle 3.17: Annahmen A1–A3 messen). Firmware zusätzlich: bei VBAT-Verlust SERVO_PWR_EN low, ACT_OE_N high, ESC neutral; Freigabe nach Neustart nur über SW501; GPIO10 ohne interne Pull-ups; J112-TX ohne Akku inaktiv; GPIO0 und GPIO6 nie als Ausgang. Messen: Schwelle, Löschen bei langsamem und schnellem Abfall, kein Setzen durch GPIO10 | Agent / Owner |
+| O-36 | Lücke der gemeinsamen Wiederanlaufanforderung: VCU und ESC hängen am selben Netz; die Sperre greift für den ESC nur, wenn dessen Neustartspannung unter 9,62 V liegt (Annahme A4, 3.17 Punkt 2). Messen; bei Verletzung Abschaltung oder Messung im ESC-Zweig nötig | Owner |
 
 Erledigt: O-5 (DevKit-LDO), O-6 (Lenkservos), O-7 (LTC7803 Rev B, 3.5a;
 Kompensation weiter unter O-27), O-9 (Projektort), O-14 (ersetzt durch O-17),
