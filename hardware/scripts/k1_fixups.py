@@ -37,6 +37,24 @@ STEPS = {
         (B, [(40.1, 31.75), (40.1, 34.4), (39.6, 34.9), (39.6, 35.84)]), ("via", (39.6, 35.84))],
         ("in_vbat_prot_b",))]),
     # VBAT_PROT: R405's island (pad 1, via, B stub) to R414 pad 1 (main VBAT_PROT island) with one via.
+    # RUN_SERVO, take back the pre-route of k1_links: it ran 4 mm inside the F VBAT_PROT pour (U401 -> Q403) and
+    # split in_vbat_prot_f into two islands (113 mm2 -> 72 + 36 mm2). Replacement in "run_reroute" (added below).
+    "run_unroute": ([("V", RUN, (43.0, 21.0)), ("T", RUN, B, (39.95, 19.0, 39.95, 20.6)),
+                     ("T", RUN, B, (39.95, 20.6, 43.0, 20.6)), ("T", RUN, B, (43.0, 20.6, 43.0, 21.0)),
+                     ("T", RUN, F, (43.0, 21.0, 43.0, 28.0)), ("T", RUN, F, (43.0, 28.0, 40.3, 28.0)),
+                     ("T", RUN, F, (40.3, 28.0, 39.3, 29.0)), ("T", RUN, F, (39.3, 29.0, 39.3, 31.0)),
+                     ("T", RUN, F, (39.3, 31.0, 38.91, 31.45)), ("T", RUN, F, (38.91, 31.74, 38.91, 31.45))], []),
+    # RUN_SERVO replacement: the hand-routed VFB_TAP (B, y 28.3) lies under the whole F VBAT band, so RUN cannot cross
+    # the band on B. It leaves U401 on B under the servo VBAT column (corridor between servo_vbat_b and VFB_TAP), hops
+    # over VFB_TAP on F east of the band, runs down on B along the east edge of the B VBAT pour and joins the RUN
+    # network at C420 (RUN filter). Both VBAT pours stay whole; 3 vias. Found with the grid search on the copper.
+    "run_reroute": ([], [(RUN, 0.2, (0.45, 0.25), [
+        (B, [(39.95, 19.0), (40.55, 19.6), (41.4, 19.6), (45.2, 23.4), (46.0, 23.6), (48.6, 26.2), (49.4, 26.2),
+             (51.0, 27.8), (58.8, 27.8)]), ("via", (58.8, 27.8)),
+        (F, [(58.8, 27.8), (58.0, 28.6), (56.4, 28.6), (54.4, 30.6), (54.2, 30.6)]), ("via", (54.2, 30.6)),
+        (B, [(54.2, 30.6), (53.9, 30.9), (53.9, 36.7), (53.6, 37.0), (51.0, 37.0), (50.6, 37.4), (50.0, 37.4),
+             (49.4, 38.0), (48.8, 38.0)]), ("via", (48.8, 38.0)),
+        (F, [(48.8, 38.0), (47.7, 38.95)])])]),
     "vbat_r414": ([], [(VBAT, 0.4, (0.6, 0.3), [
         ("via", (40.4, 35.0)), (F, [(40.4, 35.0), (41.25, 34.87)])])]),
     # GND of R407 pad 2 / Q407 pin 2 lies above the B VBAT pour: one GND via on the existing trace (the pour leaves

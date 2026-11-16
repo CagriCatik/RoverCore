@@ -49,7 +49,9 @@ def main():
     for net, w, (vd, dr), parts in links:
         ni = b.FindNet(net)
         cu = sg.Copper(b, ni.GetNetCode())
-        if net.endswith("RUN_SERVO"):  # crossing the corridor pour is intended: its fill pulls back
+        # RUN_SERVO: ignoring the pour here was a mistake - the route split in_vbat_prot_f into two islands. Kept so
+        # the autorouting run stays reproducible; k1_fixups.py run_unroute/run_reroute replace it afterwards.
+        if net.endswith("RUN_SERVO"):
             cu.zones = [z for z in cu.zones if z.GetZoneName() != "in_vbat_prot_f"]
         sg.STUB = w
         bad = []
