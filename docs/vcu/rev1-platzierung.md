@@ -910,6 +910,60 @@ der Luftlinienzahl):
   den Ausgangsstufen außerhalb der Schiene. Dort liegen die meisten der
   engen F-Gassen aus 3h.
 
+**Schritte 4–5 – übrige Verbindungen** (`autoroute_k1.py`, reproduzierbar):
+1. Zuerst ausdrückliche Verbindungen für die Engpässe (`route_k1_links.py`):
+   - RUN-Ausbruch von U401 Pin 6 über eine kurze B-Strecke zu einer freien
+     F-Spalte bei x 43, dann durch die VBAT-Korridorfläche zu Q403 Pin 3;
+   - VBAT_PROT zum RUN-Teiler über ein Via in die B-Fläche.
+2. Specctra-Export mit festgesetztem Bestandskupfer. Im DSN sind In1/In2
+   **Versorgungsebenen**, also kein Signalrouting auf den GND-Ebenen, und
+   alle Außenlagen-Flächen **Sperrflächen**, damit Signale sie nicht
+   zerteilen.
+3. Freerouting 2.4.1 (Jar des installierten KiCad-Plugins), ohne Oberfläche.
+4. Import nur des neuen Kupfers in die Gruppe `autoroute_k1`; die
+   vorhandenen Gruppen bleiben unverändert.
+5. Restlücken mit kurzen B-Verbindungen (`close_gaps.py`, Gruppe
+   `gap_links_k1`), dann je GND-Pad ein eigenes Via zu den GND-Ebenen
+   (`stitch_gnd_vias.py`, Gruppe `gnd_stitch_k1`).
+   - Beide prüfen 0,2 mm Abstand zu fremdem Kupfer und den Lochabstand zu
+     allen Bohrungen.
+
+**Warum so:** Ein erster Lauf mit allen vier Lagen schloss alle
+Verbindungen. Er legte aber ca. 3,5 m Leitung auf In1/In2 und zerschnitt
+damit beide GND-Ebenen; verworfen. Ein zweiter Lauf nur mit F/B zerteilte
+die Leistungsflächen; deshalb die Sperrflächen.
+
+**Ergebnis** (KiCad-DRC, `scripts/kit verify`):
+- ERC und Parität PASS.
+- Geroutet: F 3 298 mm, B 1 933 mm, 287 Vias. In1/In2 enthalten nur die
+  GND-Flächen.
+- **Offen: 5 Verbindungen, 1 Abstandsbefund, 2 lose Vias.** Die Gesamt-DRC
+  ist damit **nicht bestanden**.
+
+| Nr. | Offene Stelle | Ursache | Vorgesehene lokale Lösung |
+|---|---|---|---|
+| 1 | RUN_SERVO: Q403 Pin 3 ↔ RUN-Netz um Q408 (x 38,9, y 31,7–35,8) | Die autoroutete SERVO_RUN_INH-Leitung von Q403 Pin 1 umschließt Pin 3 | diese zwei Segmente neu führen (Q403/Q408 liegen 4 mm auseinander) |
+| 2 | +V_SERVO-Abzweig: R418/Q405/TP401 ↔ NT405 | Durchgang zwischen U402 und den VSERVO-Flächen auf F zu, auf B die Rückkopplungsleitung (y 28,4) | Anschluss an die B-Schiene südlich von RS402 oder eine eigene Abgriff-Leitung von der Schienenfläche |
+| 3 | VBAT_PROT: die Verbraucher der unteren Hälfte (R520/O-37, Q505/VBAT-Messung, Controller-Teiler) ↔ Quelle | ca. 40 mm durch die dichte untere Hälfte, kein freier Weg gefunden | eigene Leitung entlang der linken Unterkante vom C101-Zweig aus |
+| 4 | SERVO_PWR_EN: DevKit Pin 7 ↔ Freigabe der Servo-RUN-Gruppe | ca. 77 mm quer über die Platine; Schiene, Ausgangsstufen und Servo-Riegel auf B im Weg | Führung unter der IMU auf B und durch die 1,3-mm-F-Gasse; sonst eine Lageänderung im Aktuatorblock |
+| 5 | GND von R407 Pad 2 (46,5 \| 34,9) | Pad liegt über der VBAT-B-Fläche, kein Via-Platz | F-Stich zu einem Via außerhalb der Fläche |
+| – | Abstand: autoroutete IMU_INT1-Leitung auf B zu DevKit Pin 12 | Leitung zwischen zwei Buchsenpins | neu führen; ein Ersatz unter dem DevKit scheiterte an Nachbarleitungen |
+| – | zwei lose VBAT-Vias (41,2 \| 35,9), (39,6 \| 37,3) aus Lückenversuchen | – | entfernen |
+
+**Bewertung:**
+- Die engen Übergänge aus 3h (Ausgangsstufen–IMU, OLED–IMU) sind geroutet.
+  Die offenen Stellen liegen bei **langen Querverbindungen** und an zwei
+  lokalen Knoten im Servo-Steuerbereich.
+- Eine Vergrößerung der Kontur ist daraus **nicht** begründet. Alle fünf
+  Stellen haben eine lokale Lösung, die noch auszuführen und zu prüfen ist.
+- Das Autorouter-Kupfer ist **nicht optimiert**: lange parallele Bündel
+  auf F in der unteren Hälfte, Umwege. Vor einer Freigabe ist es zu
+  sichten und nachzuarbeiten.
+- Die Rückwege der Signale entsprechen der Festlegung in 3a: F über In1, B
+  über In2, GND-Ebenen ohne Signalschlitze.
+- Die Breite der Versorgungsleitungen (0,4 mm) und deren Erwärmung sind
+  nicht nachgewiesen.
+
 ## 4. DevKit, Antenne und USB
 
 - U501 sitzt an der rechten Kante. Die Antennen-Sperrfläche des Footprints

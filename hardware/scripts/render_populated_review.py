@@ -200,7 +200,9 @@ def gap_map(step=0.5):
     sys.path.insert(0, str(Path(__file__).resolve().parent))
     from render_placement_review import ENVELOPES as ENV_REV, HOLES_REV, fab_rect
     b = pcbnew.LoadBoard(str(ROOT / "RoverCore.kicad_pcb"))
-    W, H = int(150 / step), int(100 / step)
+    e = b.GetBoardEdgesBoundingBox()
+    BW, BH = round(T(e.GetWidth())), round(T(e.GetHeight()))
+    W, H = int(BW / step), int(BH / step)
     occ = [[0] * W for _ in range(H)]
 
     def mark(x1, y1, x2, y2, v=1):
@@ -252,7 +254,7 @@ def gap_map(step=0.5):
                 work[j][i] = 9
     cols = {0: "#ffffff", 1: "#c9c2a0", 2: "#7fa6e8", 3: "#e07070", 4: "#e7b9b9", 9: "#ffffff"}
     s = ['<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="1100" viewBox="0 -2 150 110">',
-         '<rect x="0" y="0" width="150" height="100" fill="white" stroke="black" stroke-width="0.3"/>']
+         '<rect x="0" y="0" width="%s" height="%s" fill="white" stroke="black" stroke-width="0.3"/>' % (BW, BH)]
     for j in range(H):
         for i in range(W):
             if occ[j][i]:
@@ -264,7 +266,7 @@ def gap_map(step=0.5):
                  % (x1, y1, x2 - x1, y2 - y1, x1 + 0.5, y1 + 2.4, k + 1, x2 - x1, y2 - y1))
     s.append('<text x="0" y="104" font-size="2.4" font-family="Helvetica">Lueckenkarte: beige = Courtyards, blau = '
              'Modul-/USB-Huellen, rot = M3-Freiraum r 4 mm, rosa = Leistungs-Kupferflaechen; gruen = groesste freie '
-             'Rechtecke. Frei gesamt %.0f mm2 von 15000 mm2</text>' % free)
+             'Rechtecke. Frei gesamt %.0f mm2 von %d mm2</text>' % (free, BW * BH))
     s.append("</svg>")
     (OUT / "gap_map.svg").write_text("\n".join(s))
     subprocess.run(["rsvg-convert", "-o", str(OUT / "gap_map.png"), str(OUT / "gap_map.svg")], check=True)
