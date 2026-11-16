@@ -52,8 +52,8 @@ GROUPS = {
                                        "C504", "D506", "TP505"]),
         ("operator-and-defaults", ["R501", "R502", "SW501", "R504", "D502", "TP501"]),
         ("programming-and-restart", ["SW502", "SW503"]),
-        ("restart-interlock", ["U505", "U506", "R515", "R516", "R517", "C506", "C507", "C508"]),
-        ("enable-button-node", ["R502", "R518", "SW501"]),
+        ("restart-interlock", ["U505", "U506", "U508", "R515", "R516", "R517", "C506", "C507", "C508", "C509"]),
+        ("enable-button-node", ["R502", "R518", "SW501", "C511", "U507", "C510"]),
     ],
     "Sensors_Display": [
         ("imu-j115", ["J115", "R803"]),

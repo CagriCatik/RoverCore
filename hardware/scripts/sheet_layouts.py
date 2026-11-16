@@ -102,9 +102,9 @@ LAYOUTS["Controller"] = {
         "SW501": (78.74, 177.8, 0),
         "R504": (35.56, 205.74, 0, R),
         "D502": (35.56, 228.6, 90, {"_ref_at": (12.7, -1.27), "_val_at": (12.7, 1.27)}),
-        "TP501": (78.74, 210.82, 0, TPF),
+        "TP501": (93.98, 226.06, 0, TPF),
         # 3 - DevKit socket
-        "U501": (180.34, 187.96, 0, {"_ref_at": (-15.24, -38.1), "_val_at": (-15.24, -35.56),
+        "U501": (180.34, 203.2, 0, {"_ref_at": (-15.24, -38.1), "_val_at": (-15.24, -35.56),
                                      "Description": "Socket = 2 x 1x22 female header 2.54 mm (part open, height O-4); "
                                                     "pads 1-22 J1, 23-44 J3; EN (J1-3) -> RESET SW502, GPIO0 (J3-14) "
                                                     "-> BOOT SW503; other strapping pins, USB, UART0, GPIO35-38 not "
@@ -130,15 +130,24 @@ LAYOUTS["Controller"] = {
         "SW503": (345.44, 236.22, 0),
         # 2 - button node split for the interlock clock (O-35)
         "R518": (60.96, 186.69, 0, R),
+        "C511": (48.26, 186.69, 0, R),
+        "C510": (68.58, 226.06, 0, R),
+        "U507": (83.82, 205.74, 0, {"_ref_at": (2.54, -11.43), "_val_at": (2.54, 11.43), "_stub": {"4": 2.54}}),
         # 7 - restart interlock (O-35)
-        "C507": (125.73, 83.82, 0, R),
-        "C508": (140.97, 83.82, 0, R),
-        "R515": (138.43, 107.95, 90),
-        "R516": (147.32, 116.84, 0, R),
-        "C506": (160.02, 116.84, 0, R),
-        "U505": (177.8, 110.49, 0, {"_ref_at": (-5.08, -10.16), "_val_at": (5.08, 11.43)}),
-        "U506": (198.12, 88.9, 0, {"_ref_at": (12.7, 7.62), "_val_at": (12.7, 10.16)}),
-        "R517": (213.36, 110.49, 90),
+        "R515": (124.46, 93.98, 0, R),
+        "R516": (116.84, 111.76, 0, R),
+        "C506": (127.0, 111.76, 0, {"_ref_at": (2.54, -3.81), "_val_at": (2.54, -1.27), "_value": "100n 50V",
+                                     "MPN": "CC0603KRX7R9BB104", "LCSC": "C14663",
+                                     "Datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2211101700_YAGEO-CC0603KRX7R9BB104_C14663.pdf",
+                                     "Description": "O-35 SENSE filter (changed 2026-11-16): 9.59 kOhm x 100 nF = 0.96 ms "
+                                                    "(0.86-1.06 ms with +-10 %), below the RUN filter 1.53-1.87 ms"}),
+        "U505": (157.48, 105.41, 0, {"_ref_at": (-5.08, -10.16), "_val_at": (-15.24, 11.43)}),
+        "R517": (172.72, 96.52, 180, {"_ref_at": (7.62, -1.27), "_val_at": (7.62, 1.27)}),
+        "U508": (190.5, 115.57, 0, {"_ref_at": (-25.4, 13.97), "_val_at": (-25.4, 11.43)}),
+        "U506": (203.2, 88.9, 0, {"_ref_at": (12.7, 7.62), "_val_at": (12.7, 10.16)}),
+        "C507": (134.62, 132.08, 0, R),
+        "C508": (205.74, 132.08, 0, R),
+        "C509": (222.25, 132.08, 0, R),
     },
     # parts added after the layout review (electrical change; see docs/vcu/rev1-pin-und-anschlussplan.md 9)
     "new": {
@@ -187,9 +196,24 @@ LAYOUTS["Controller"] = {
                                  "Q-bar = ACT_DISARMED (TI SCES794G). LCSC not checked"}),
         "C508": ("Device:C", "100n 50V", "Capacitor_SMD:C_0603_1608Metric", {"1": "+3V3", "2": "GND"},
                  {"Manufacturer": "Yageo", "MPN": "CC0603KRX7R9BB104", "LCSC": "C14663", "Datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2211101700_YAGEO-CC0603KRX7R9BB104_C14663.pdf", "Description": "U506 VCC (place at U506)"}),
+        "U507": ("74xGxx:74LVC1G17", "SN74LVC1G17DBVR", "Package_TO_SOT_SMD:SOT-23-5",
+                 {"1": "NC", "2": "ENABLE_BTN_RAW", "3": "GND", "4": "BTN_CLK", "5": "+3V3"},
+                 dict({"Manufacturer": "Texas Instruments", "MPN": "SN74LVC1G17DBVR", "Datasheet": "https://www.ti.com/lit/ds/symlink/sn74lvc1g17.pdf", "Description": "O-35: Schmitt buffer SW501 node -> U506 CLK; the LVC1G74 needs <= 10 ns/V "
+                      "edges (SCES794G), the RC node is far slower. Pinout 1 NC, 2 A, 3 GND, 4 Y, 5 VCC (SCES351Y)"})),
+        "U508": ("74xGxx:74LVC1G17", "SN74LVC1G17DBVR", "Package_TO_SOT_SMD:SOT-23-5",
+                 {"1": "NC", "2": "VBAT_OK", "3": "GND", "4": "VBAT_OK_BUF", "5": "+3V3"},
+                 dict({"Manufacturer": "Texas Instruments", "MPN": "SN74LVC1G17DBVR", "Datasheet": "https://www.ti.com/lit/ds/symlink/sn74lvc1g17.pdf", "Description": "O-35: Schmitt buffer open-drain VBAT_OK (100k pull-up) -> U506 CLR-bar "
+                      "(edge-rate limit of the LVC1G74 input)"})),
+        "C509": ("Device:C", "100n 50V", "Capacitor_SMD:C_0603_1608Metric", {"1": "+3V3", "2": "GND"},
+                 dict({"Manufacturer": "Yageo", "MPN": "CC0603KRX7R9BB104", "LCSC": "C14663", "Datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2211101700_YAGEO-CC0603KRX7R9BB104_C14663.pdf", "Description": "U508 VCC (place at U508)"})),
+        "C510": ("Device:C", "100n 50V", "Capacitor_SMD:C_0603_1608Metric", {"1": "+3V3", "2": "GND"},
+                 dict({"Manufacturer": "Yageo", "MPN": "CC0603KRX7R9BB104", "LCSC": "C14663", "Datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2211101700_YAGEO-CC0603KRX7R9BB104_C14663.pdf", "Description": "U507 VCC (place at U507)"})),
+        "C511": ("Device:C", "100n 50V", "Capacitor_SMD:C_0603_1608Metric", {"1": "ENABLE_BTN_RAW", "2": "GND"},
+                 dict({"Manufacturer": "Yageo", "MPN": "CC0603KRX7R9BB104", "LCSC": "C14663", "Datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2211101700_YAGEO-CC0603KRX7R9BB104_C14663.pdf", "Description": "O-35: SW501 node filter, 10k x 100 nF = 1 ms - rejects interference spikes "
+                      "that could clock the latch; at GPIO10 only via R518 47k (<= 70 uA, O-21)"})),
     },
     "globals": {"ACT_ARMED": "output", "ACT_DISARMED": "output"},
-    "wire": ["+5V_DEVKIT", "LED_STAT_A", "ENABLE_BTN_N", "ENABLE_BTN_RAW", "VBAT_LOSS_SENSE", "VBAT_OK",
+    "wire": ["+5V_DEVKIT", "LED_STAT_A", "ENABLE_BTN_N", "ENABLE_BTN_RAW", "VBAT_LOSS_SENSE", "VBAT_OK", "VBAT_OK_BUF",
              "VBAT_PROT", "VBAT_SW", "VBAT_SW_G", "VBAT_SW_DRV",
              "VBAT_DIV", "VBAT_SENSE", "P3V3_OK"],
     "anchor": {"+5V_DEVKIT": ("D501", "1"), "LED_STAT_A": ("R504", "2"), "ENABLE_BTN_N": ("R518", "1"), "ENABLE_BTN_RAW": ("R502", "2"),
@@ -197,10 +221,11 @@ LAYOUTS["Controller"] = {
                "VBAT_PROT": ("Q505", "2"), "VBAT_SW": ("R505", "1"), "VBAT_SW_G": ("Q505", "1"),
                "VBAT_SW_DRV": ("R509", "2"), "VBAT_DIV": ("R506", "1"), "VBAT_SENSE": ("R507", "2"),
                "P3V3_OK": ("U504", "2")},
-    "label_only": [("U501", "21"), ("U501", "16"), ("U501", "4"), ("Q506", "1"), ("R515", "1"), ("U506", "1")],
+    "label_only": [("U501", "21"), ("U501", "16"), ("U501", "4"), ("Q506", "1"), ("R515", "1")],
     # nets re-assigned on existing parts (O-35): SW501 and R502 move to the raw button node
     "pins": {"U501": {"2": "=1", "3": "DEVKIT_EN", "36": "STRAP_GPIO0"}, "SW501": {"1": "ENABLE_BTN_RAW"},
-             "R502": {"2": "ENABLE_BTN_RAW"}, "U506": {"7": "=8"}},
+             "R502": {"2": "ENABLE_BTN_RAW"}, "U506": {"7": "=8", "1": "BTN_CLK", "6": "VBAT_OK_BUF"},
+             "U505": {"3": "DEVKIT_EN"}},
     "label_at": {"VBAT_PROT": (264.16, 69.85, (1, 0)), "VBAT_DIV": (281.94, 146.05, (1, 0))},
     "flags": ["+3V3"], "flag_at": {"+3V3": ("C501", "1")}, "flag_prefix": "5",
     "groups": {
@@ -208,16 +233,16 @@ LAYOUTS["Controller"] = {
                 "Carrier +5V -> D501 -> DevKit 5V pin (diode-OR with the\\nDevKit USB diodes, own extension, Versorgung 3.11).\\n+3V3 = DevKit LDO only."),
         "op": ("2  Operator and defaults", (22.86, 132.08, 106.68, 248.92),
                "R501: ACT_OE_N high at reset (buffers Hi-Z).\\nSW501 enable button = latch clock (O-35); GPIO10\\nvia R518 47k, no RC (O-21). D502 LED. TP501 GPIO18."),
-        "sock": ("3  DevKit socket U501", (111.76, 132.08, 231.14, 248.92),
+        "sock": ("3  DevKit socket U501", (111.76, 147.32, 231.14, 248.92),
                  "Original ESP32-S3-DevKitC-1-N16R8 v1.1; pads 1-22 = J1,\\n23-44 = J3. Reserved pins: no-connect (pinmap.csv).\\nSignals leave as global labels to the other sheets."),
         "vbat": ("4  VBAT measurement (O-21)", (236.22, 55.88, 370.84, 182.88),
                  "Q505 closes the divider only while P3V3_OK is high; C504 1 nF,\\nD506 holds VBAT_DIV <= +3V3 + 0.24 V. 12.6 V -> 1.80 V."),
         "sup": ("5  3.3 V supervisor -> P3V3_OK", (236.22, 187.96, 309.88, 248.92),
                 "TLV809E 2.93 V: P3V3_OK high only while +3V3 is good\\n(33-67 ms delay). Drives Q506 here, Q406 (ServoPower)\\nand U602 EN (Lighting_IO)."),
-        "intl": ("7  Wiederanlaufsperre (O-35)", (111.76, 55.88, 234.95, 129.54),
-                 "U505 clears latch U506 when VBAT_PROT < 10.0 V (9.6-10.4 V); the latch runs on +3V3, so USB keeps\\n"
-                 "it cleared. Only a rising edge of the SW501 node arms it (GPIO10 via R518 cannot). ACT_ARMED -> Q407\\n"
-                 "(ServoPower), ACT_DISARMED -> U204 (Actuators). Every LiPo loss needs a new deliberate enable."),
+        "intl": ("7  Wiederanlaufsperre (O-35)", (111.76, 55.88, 234.95, 144.78),
+                 "U505 clears latch U506 when VBAT_PROT < 9.62-10.40 V or DevKit EN is low (RESET); latch on +3V3.\\n"
+                 "Only a rising Schmitt edge (U507) of the SW501 node arms it; GPIO10 via R518 cannot. CLK/CLR via\\n"
+                 "Schmitt buffers U507/U508. ACT_ARMED -> Q407 (ServoPower), ACT_DISARMED -> U204 (Actuators)."),
         "prog": ("6  Programmierung und Neustart", (314.96, 187.96, 370.84, 248.92),
                  "RESET SW502: EN -> GND (DevKit R5 10k, C6 1 uF).\\nBOOT SW503: GPIO0 -> GND, internal pull-up\\n"
                  "= SPI boot. Download: hold BOOT, press\\nRESET, release BOOT. RESET is no power switch."),
@@ -238,7 +263,9 @@ LAYOUTS["ServoPower"] = {
         "R415": (30.48, 223.52, 0, R),
         "Q407": (66.04, 220.98, 0, {"_ref_at": (5.08, -1.27), "_val_at": (5.08, 1.27)}),
         "R420": (55.88, 229.87, 0, R),
-        "R405": (93.98, 144.78, 0, R), "R406": (93.98, 172.72, 0, R), "C420": (106.68, 172.72, 0, R),
+        "R405": (93.98, 144.78, 0, dict(R, _value="115k", MPN="RC0603FR-07115KL", LCSC=None,
+                                          Description="RUN divider top (changed 2026-11-16, O-35): RUN on 7.63-8.58 V; "
+                                                      "only a backup UVLO - the restart latch (9.62-10.40 V) stops the rail first")), "R406": (93.98, 172.72, 0, R), "C420": (106.68, 172.72, 0, R),
         # 3 controller
         "U401": (165.1, 144.78, 0, {"_ref_at": (-12.7, -19.05), "_val_at": (2.54, -19.05)}),
         "C414": (129.54, 187.96, 0, R),
@@ -309,7 +336,7 @@ LAYOUTS["ServoPower"] = {
         "in": ("1  Input capacitors", (22.86, 55.88, 114.3, 106.68),
                "4 x 10 uF/50 V + 100 nF at the power stage\\n(input ripple up to 5.6 A at 12.6 V)."),
         "run": ("2  RUN and default OFF", (22.86, 111.76, 114.3, 248.92),
-                "Default OFF: Q403 holds RUN low; only SERVO_PWR_EN (Q404) AND\\nACT_ARMED (Q407, interlock O-35) release it.\\nRUN 9.6 V on / 8.8 V off, C420 delay 1.75 ms."),
+                "Default OFF: Q403 holds RUN low; only SERVO_PWR_EN (Q404) AND\\nACT_ARMED (Q407, interlock O-35) release it. RUN divider\\n115k/20k: on 7.63-8.58 V, backup only; C420 delay 1.70 ms."),
         "ctl": ("3  LTC7803 controller", (119.38, 55.88, 233.68, 248.92),
                 "375 kHz, forced continuous, 100 % duty, EXTVCC from the output.\\nCompensation R413/C418/C419 and soft-start C414 are start values.\\nBoost D401/C411 (CB >= 100 x Ciss)."),
         "pwr": ("4  Power stage and RSENSE", (238.76, 55.88, 332.74, 160.02),
