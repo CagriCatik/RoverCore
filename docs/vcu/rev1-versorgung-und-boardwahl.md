@@ -1527,18 +1527,27 @@ Für den Vergleich muss das LTC6994-Datenblatt im Projekt liegen. Vorschlag:
     über den Fehler gehaltenen Tasters. Die Freigabe wirkt danach ohne die
     100/50-ms-Prüfung der Firmware.
   - Damit wäre die nun der Firmware zugewiesene F2 umgangen.
-- **Kleinste notwendige Anpassung (Vorschlag, nicht umgesetzt):**
-  - ACT_ARMED über einen Serienwiderstand (Vorschlag 1 kΩ) auf GPIO18 führen.
-    Der Pin ist Reserve-Eingang (TP501) und kein Strapping-Pin des ESP32-S3.
-    Er liegt in derselben +3V3-Domäne, also ohne Rückspeisung.
-  - Firmware-Regel: ACT_ARMED low in S1/S2 → S0.
-  - Erfassung: ACT_ARMED bleibt nach jedem Löschen mindestens t_D min. von
-    U505 = **12 ms** low (SBVS050N), bis zum nächsten Loslassen. Mit
-    Flankeninterrupt oder Abfrage ≤ 5 ms wird jedes Löschen sicher erfasst
-    (Zeitbedarf der Firmware nachzuweisen).
-  - Kein weiterer Bauteilbedarf.
-- Ohne diese Anpassung bleibt die Firmwarelösung gegenüber kurzen
-  VBAT-Einbrüchen unvollständig.
+- **Umgesetzt am 2026-11-16 (Owner-Freigabe):** R519 1 kΩ von ACT_ARMED auf
+  GPIO18, Netz `ACT_ARMED_FB`, TP501 am selben Netz.
+  - GPIO18 ist Eingang ohne interne Pulls und kein Strapping-Pin.
+  - Er liegt in derselben +3V3-Domäne, also ohne Rückspeisung.
+  - Wird GPIO18 versehentlich getrieben, begrenzt R519 auf 3,3 mA.
+- **Firmware-Regel (präzisiert nach Owner-Review):**
+  - ACT_ARMED low **sperrt die wirksamen Ausgänge**. Die Firmware darf
+    währenddessen den Bedienablauf weiter auswerten (Loslassen, neue
+    Betätigung). Vor dem ersten Setzen des Latch ist ACT_ARMED regulär low.
+  - Fällt ACT_ARMED bei **bestehender** Firmware-Freigabe ab, wird diese
+    gelöscht (→ S0).
+  - Ein späteres ACT_ARMED high stellt allein **keine** Freigabe wieder her.
+  - Eine neue Freigabe braucht den vollständigen Bedienablauf einschließlich
+    des abschließenden Loslassens.
+- **Erfassung des Abfalls:** ACT_ARMED bleibt nach jedem Löschen mindestens
+  t_D min. von U505 = 12 ms low (SBVS050N), bis zum nächsten Loslassen. Jedes
+  Löschen wird nur erfasst, wenn der **größte tatsächliche Abstand** zweier
+  Abfragen unter 12 ms bleibt. Das schließt blockierende Aufrufe und andere
+  Tasks ein. Alternativ ein Flankeninterrupt.
+  - Das ist eine **zu prüfende Softwareeigenschaft**, kein Hardwarenachweis.
+
 
 **2. Ausgangssperre bei ungültiger +3V3 – Vorschlag (O-37, nicht im Schaltplan)**
 

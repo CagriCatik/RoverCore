@@ -52,7 +52,7 @@ v1.8, ESP32-S3-DevKitC-1 User Guide v1.1, ESP-IDF-Doku (GPIO, LEDC).
 | 47 | J3-17 | EXT_UART_TX | UART2 TX | aus – **verbunden** (Blatt Lighting_IO) |
 | 48 | J3-16 | EXT_UART_RX | UART2 RX | ein – **verbunden** (Blatt Lighting_IO) |
 
-Reserve (nur Testpunkt): GPIO18 (nur als Eingang).
+GPIO18 (J1-11, nur Eingang): ACT_ARMED_FB, Rückmeldung des Freigabe-Latch über R519 1 kΩ, TP501 (Versorgung 3.20).
 Gesperrt: GPIO0/3/45/46 (Strapping), 19/20 (USB), 35–37 (PSRAM),
 38 (RGB-LED v1.1), 43/44 (UART0 zum CP2102N).
 
@@ -370,7 +370,7 @@ selbst stammt aus dem Espressif User Guide v1.1 (Abschnitt 1).
 | 8 | J1-8 | GPIO15 | SERVO_FRONT_PWM_3V3 | SERVO_FRONT_PWM_3V3 | signal – **verbunden** (Blatt Actuators) |
 | 9 | J1-9 | GPIO16 | SERVO_REAR_PWM_3V3 | SERVO_REAR_PWM_3V3 | signal – **verbunden** (Blatt Actuators) |
 | 10 | J1-10 | GPIO17 | SERVO_AUX1_PWM_3V3 | SERVO_AUX1_PWM_3V3 | signal – **verbunden** (Blatt Actuators) |
-| 11 | J1-11 | GPIO18 | SPARE_GPIO18 | SPARE_GPIO18 | signal |
+| 11 | J1-11 | GPIO18 | ACT_ARMED_FB | ACT_ARMED_FB | signal (Eingang, R519 von ACT_ARMED) |
 | 12 | J1-12 | GPIO8 | I2C_SDA | I2C_SDA | signal – **verbunden** (Blatt Sensors_Display) |
 | 13 | J1-13 | GPIO3 | STRAP_GPIO3 | unconnected-(U501-J1-13/GPIO3-Pad13) | expected NC |
 | 14 | J1-14 | GPIO46 | STRAP_GPIO46 | unconnected-(U501-J1-14/GPIO46-Pad14) | expected NC |
@@ -649,7 +649,7 @@ Carrier:
 - Firmware darf GPIO0 nicht als Ausgang treiben (Kurzschluss über SW503).
 - **Download-Modus:** BOOT halten, RESET kurz drücken, BOOT loslassen.
 - RESET ist **keine Leistungsabschaltung** (Versorgungsdokument 3.15).
-- GPIO18 bleibt Reserveeingang, keine weiteren GPIOs belegt.
+- GPIO18 war bis 2026-11-16 Reserveeingang; seitdem ACT_ARMED-Rückmeldung (R519, Versorgung 3.20).
 - Taster TL3342F160QG (wie SW501, Bestand offen, O-28).
 
 ## 11. Elektrische Änderungen gegenüber `d53365c`
@@ -721,4 +721,9 @@ Nachtrag 2026-11-16, Prüfung nach Versorgungsdokument 3.17: Korrekturen gegenü
 - DEVKIT_EN: + U505.3 (MR, vorher offen);
 - Wertänderungen: R405 140k → 115k, C506 47n → 100n;
 - übrige Netze unverändert.
+
+Nachtrag 2026-11-16, Rev1-Umfang (Versorgung 3.20): R519 1 kΩ von ACT_ARMED auf
+GPIO18 (U501.11, J1-11). Netz `ACT_ARMED_FB` ersetzt `SPARE_GPIO18`, TP501 am
+selben Netz (`compare_schematic_revisions.py`: 6 Unterschiede, alle
+beabsichtigt). GPIO18 ist nur Eingang.
 

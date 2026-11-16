@@ -102,7 +102,9 @@ LAYOUTS["Controller"] = {
         "SW501": (78.74, 177.8, 0),
         "R504": (35.56, 205.74, 0, R),
         "D502": (35.56, 228.6, 90, {"_ref_at": (12.7, -1.27), "_val_at": (12.7, 1.27)}),
-        "TP501": (93.98, 226.06, 0, TPF),
+        "TP501": (101.6, 233.68, 0, dict(TPF, Description="ACT_ARMED read-back at GPIO18 (input only: high- and "
+                                         "low-level power-up glitch); bare copper pad")),
+        "R519": (88.9, 241.3, 90, {"_ref_at": (0.0, -2.54), "_val_at": (0.0, 2.54)}),
         # 3 - DevKit socket
         "U501": (180.34, 203.2, 0, {"_ref_at": (-15.24, -38.1), "_val_at": (-15.24, -35.56),
                                      "Description": "Socket = 2 x 1x22 female header 2.54 mm (part open, height O-4); "
@@ -151,6 +153,10 @@ LAYOUTS["Controller"] = {
     },
     # parts added after the layout review (electrical change; see docs/vcu/rev1-pin-und-anschlussplan.md 9)
     "new": {
+        "R519": ("Device:R", "1k", "Resistor_SMD:R_0603_1608Metric", {"1": "ACT_ARMED", "2": "ACT_ARMED_FB"},
+                 {"Manufacturer": "Yageo", "MPN": "RC0603FR-071KL", "LCSC": "C22548", "Datasheet": YAGEO_RC,
+                  "Description": "O-35 Rev1: ACT_ARMED read-back to GPIO18 (input, no internal pulls). Firmware clears "
+                                 "its enable when ACT_ARMED falls; 1k limits a mistakenly driven GPIO18 to 3.3 mA"}),
         "SW502": ("Switch:SW_Push", "RESET", "Button_Switch_SMD:SW_SPST_TL3342", {"1": "DEVKIT_EN", "2": "GND"},
                   {"Manufacturer": "E-Switch", "MPN": "TL3342F160QG", "LCSC": "C2886898",
                    "Description": "RESET: shorts DevKit EN (CHIP_PU) to GND like DevKit SW2; DevKit keeps R5 10k pull-up "
@@ -215,15 +221,16 @@ LAYOUTS["Controller"] = {
     "globals": {"ACT_ARMED": "output", "ACT_DISARMED": "output"},
     "wire": ["+5V_DEVKIT", "LED_STAT_A", "ENABLE_BTN_N", "ENABLE_BTN_RAW", "VBAT_LOSS_SENSE", "VBAT_OK", "VBAT_OK_BUF",
              "VBAT_PROT", "VBAT_SW", "VBAT_SW_G", "VBAT_SW_DRV",
-             "VBAT_DIV", "VBAT_SENSE", "P3V3_OK"],
+             "VBAT_DIV", "VBAT_SENSE", "P3V3_OK", "ACT_ARMED_FB"],
     "anchor": {"+5V_DEVKIT": ("D501", "1"), "LED_STAT_A": ("R504", "2"), "ENABLE_BTN_N": ("R518", "1"), "ENABLE_BTN_RAW": ("R502", "2"),
                "VBAT_LOSS_SENSE": ("R516", "1"), "VBAT_OK": ("U505", "1"),
                "VBAT_PROT": ("Q505", "2"), "VBAT_SW": ("R505", "1"), "VBAT_SW_G": ("Q505", "1"),
                "VBAT_SW_DRV": ("R509", "2"), "VBAT_DIV": ("R506", "1"), "VBAT_SENSE": ("R507", "2"),
-               "P3V3_OK": ("U504", "2")},
-    "label_only": [("U501", "21"), ("U501", "16"), ("U501", "4"), ("Q506", "1"), ("R515", "1")],
+               "P3V3_OK": ("U504", "2"), "ACT_ARMED_FB": ("R519", "2")},
+    "label_only": [("U501", "11"), ("U501", "21"), ("U501", "16"), ("U501", "4"), ("Q506", "1"), ("R515", "1")],
     # nets re-assigned on existing parts (O-35): SW501 and R502 move to the raw button node
-    "pins": {"U501": {"2": "=1", "3": "DEVKIT_EN", "36": "STRAP_GPIO0"}, "SW501": {"1": "ENABLE_BTN_RAW"},
+    "pins": {"U501": {"2": "=1", "3": "DEVKIT_EN", "11": "ACT_ARMED_FB", "36": "STRAP_GPIO0"},
+             "TP501": {"1": "ACT_ARMED_FB"}, "SW501": {"1": "ENABLE_BTN_RAW"},
              "R502": {"2": "ENABLE_BTN_RAW"}, "U506": {"7": "=8", "1": "BTN_CLK", "6": "VBAT_OK_BUF"},
              "U505": {"3": "DEVKIT_EN"}},
     "label_at": {"VBAT_PROT": (264.16, 69.85, (1, 0)), "VBAT_DIV": (281.94, 146.05, (1, 0))},
@@ -232,7 +239,7 @@ LAYOUTS["Controller"] = {
         "pwr": ("1  5 V feed and 3.3 V", (22.86, 55.88, 106.68, 127.0),
                 "Carrier +5V -> D501 -> DevKit 5V pin (diode-OR with the\\nDevKit USB diodes, own extension, Versorgung 3.11).\\n+3V3 = DevKit LDO only."),
         "op": ("2  Operator and defaults", (22.86, 132.08, 106.68, 248.92),
-               "R501: ACT_OE_N high at reset (buffers Hi-Z).\\nSW501 enable button = latch clock (O-35); GPIO10\\nvia R518 47k, no RC (O-21). D502 LED. TP501 GPIO18."),
+               "R501: ACT_OE_N high at reset (buffers Hi-Z).\\nSW501 enable button = latch clock (O-35); GPIO10\\nvia R518 47k, no RC (O-21). D502 LED.\nR519 1k: ACT_ARMED read-back -> GPIO18 (TP501)."),
         "sock": ("3  DevKit socket U501", (111.76, 147.32, 231.14, 248.92),
                  "Original ESP32-S3-DevKitC-1-N16R8 v1.1; pads 1-22 = J1,\\n23-44 = J3. Reserved pins: no-connect (pinmap.csv).\\nSignals leave as global labels to the other sheets."),
         "vbat": ("4  VBAT measurement (O-21)", (236.22, 55.88, 370.84, 182.88),

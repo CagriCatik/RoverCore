@@ -5696,7 +5696,7 @@
 	)
 	(symbol
 		(lib_id "Connector:TestPoint")
-		(at 93.98 226.06 0)
+		(at 101.6 233.68 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom no)
@@ -5704,7 +5704,7 @@
 		(dnp no)
 		(uuid "cfc7d416-a32f-5a9c-bbb9-7b0ef1f01ee9")
 		(property "Reference" "TP501"
-			(at 96.52000000000001 223.52 0)
+			(at 104.14 231.14000000000001 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5713,7 +5713,7 @@
 			)
 		)
 		(property "Value" "GPIO18"
-			(at 96.52000000000001 226.06 0)
+			(at 104.14 233.68 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5722,7 +5722,7 @@
 			)
 		)
 		(property "Footprint" "TestPoint:TestPoint_Pad_D1.5mm"
-			(at 93.98 226.06 0)
+			(at 101.6 233.68 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5731,7 +5731,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 93.98 226.06 0)
+			(at 101.6 233.68 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5739,8 +5739,8 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "Spare GPIO18 (input only: high- and low-level power-up glitch); bare copper pad"
-			(at 93.98 226.06 0)
+		(property "Description" "ACT_ARMED read-back at GPIO18 (input only: high- and low-level power-up glitch); bare copper pad"
+			(at 101.6 233.68 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5762,7 +5762,7 @@
 	)
 	(wire
 		(pts
-			(xy 93.98 226.06) (xy 93.98 231.14)
+			(xy 101.6 233.68) (xy 101.6 238.76)
 		)
 		(stroke
 			(width 0)
@@ -5770,15 +5770,142 @@
 		)
 		(uuid "134b020f-b006-533a-a926-06ba13ca9d5e")
 	)
-	(label "SPARE_GPIO18"
-		(at 93.98 231.14 270)
+	(symbol
+		(lib_id "Device:R")
+		(at 88.9 241.3 90)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "8a91878d-51d1-5e1e-9d3e-815c2f97bfb6")
+		(property "Reference" "R519"
+			(at 88.9 238.76000000000002 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "1k"
+			(at 88.9 243.84 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
+			(at 88.9 241.3 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "https://www.yageogroup.com/content/datasheet/asset/file/PYU-RC_GROUP_51_ROHS_L"
+			(at 88.9 241.3 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "O-35 Rev1: ACT_ARMED read-back to GPIO18 (input, no internal pulls). Firmware clears its enable when ACT_ARMED falls; 1k limits a mistakenly driven GPIO18 to 3.3 mA"
+			(at 88.9 241.3 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Manufacturer" "Yageo"
+			(at 88.9 241.3 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "MPN" "RC0603FR-071KL"
+			(at 88.9 241.3 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C22548"
+			(at 88.9 241.3 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "3d196bdb-5dcd-561f-8c31-856045976054")
+		)
+		(pin "2"
+			(uuid "a823645e-17c6-5dd2-95c8-4f891151c3b5")
+		)
+		(instances
+			(project "RoverCore"
+				(path "/d069f045-7f09-4f8a-bd29-51e87a8a0808/729df4ff-05c8-51ee-af10-fc9e9a2c9bdd"
+					(reference "R519")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(wire
+		(pts
+			(xy 85.09 241.3) (xy 80.01 241.3)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "a60d9ac7-bf96-52a0-a9d3-725f2f4907a8")
+	)
+	(global_label "ACT_ARMED"
+		(shape output)
+		(at 80.01 241.3 180)
+		(fields_autoplaced yes)
 		(effects
 			(font
 				(size 1.27 1.27)
 			)
-			(justify right bottom)
+			(justify right)
 		)
-		(uuid "dda37888-c909-5d10-9200-4e70bfe86af8")
+		(uuid "10b79644-ca38-5938-97ec-bd67b78602c8")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 80.01 241.3 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+	)
+	(wire
+		(pts
+			(xy 92.71 241.3) (xy 97.79 241.3)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "88d55ddd-7861-5eb4-b156-b80cde992927")
 	)
 	(symbol
 		(lib_id "ProjectSymbols:ESP32-S3-DevKitC-1_Socket")
@@ -6108,16 +6235,6 @@
 			(type default)
 		)
 		(uuid "eb215a8d-be1b-5460-9ee3-8643173e29c4")
-	)
-	(label "SPARE_GPIO18"
-		(at 129.54 198.12 180)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right bottom)
-		)
-		(uuid "4431e6cd-8684-575e-b2e5-5ea173b310aa")
 	)
 	(wire
 		(pts
@@ -13384,6 +13501,46 @@
 			)
 		)
 	)
+	(label "ACT_ARMED_FB"
+		(at 129.54 198.12 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right bottom)
+		)
+		(uuid "4431e6cd-8684-575e-b2e5-5ea173b310aa")
+	)
+	(wire
+		(pts
+			(xy 101.6 238.76) (xy 97.79 238.76)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "988c61ac-e514-5706-bd36-d9311d1a2d2a")
+	)
+	(wire
+		(pts
+			(xy 97.79 238.76) (xy 97.79 241.3)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "d6d7a14e-23ed-5c7f-a766-5b14a4959c15")
+	)
+	(label "ACT_ARMED_FB"
+		(at 97.79 241.3 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "227c618e-491e-5e78-b333-4369e368ce93")
+	)
 	(symbol
 		(lib_id "power:PWR_FLAG")
 		(at 40.64 100.33 0)
@@ -13512,7 +13669,8 @@
 		)
 		(uuid "82049f4a-c72d-54ca-a327-3825aaf045ec")
 	)
-	(text "R501: ACT_OE_N high at reset (buffers Hi-Z).\nSW501 enable button = latch clock (O-35); GPIO10\nvia R518 47k, no RC (O-21). D502 LED. TP501 GPIO18."
+	(text "R501: ACT_OE_N high at reset (buffers Hi-Z).\nSW501 enable button = latch clock (O-35); GPIO10\nvia R518 47k, no RC (O-21). D502 LED.
+R519 1k: ACT_ARMED read-back -> GPIO18 (TP501)."
 		(exclude_from_sim no)
 		(at 24.13 137.16 0)
 		(effects
