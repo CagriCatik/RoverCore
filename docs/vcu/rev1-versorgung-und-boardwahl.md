@@ -1548,6 +1548,44 @@ Für den Vergleich muss das LTC6994-Datenblatt im Projekt liegen. Vorschlag:
   Tasks ein. Alternativ ein Flankeninterrupt.
   - Das ist eine **zu prüfende Softwareeigenschaft**, kein Hardwarenachweis.
 
+**Firmware-Zustandsautomat und Sequenztest (2026-11-16):**
+- Modul `firmware/app/enable_fsm.c/.h`, plattformunabhängig.
+- Ablauf:
+  - Taster entprellt (10 ms stabil);
+  - Loslassen ≥ 100 ms → S1;
+  - Druck ≥ 50 ms;
+  - abschließendes Loslassen → S2.
+- Wirksam wird die Freigabe nur bei S2 ∧ ACT_ARMED ∧ Versorgung gut.
+  ACT_ARMED muss ≤ 20 ms nach S2 erscheinen; sein Abfall danach → S0.
+- Erkennbar wirksame Zeiten einschließlich Entprellung: Loslassen ca.
+  110 ms, Druck ca. 60 ms, plus Abfrageabstand. Beides liegt in den Bändern
+  50–200 ms bzw. 20–100 ms. Rechnung als Schätzung; die Taktgenauigkeit des
+  Zielsystems ist nicht geprüft.
+- Host-Test `firmware/tests/test_enable_fsm.c` (13 Fälle, über
+  `qa/tests/test_firmware_enable_fsm.py`) mit einem 1-ms-Modell von U505
+  (CLR für die Dauer des Einbruchs + t_D) und U506 (Setzen beim Loslassen).
+  Abgedeckt sind:
+  - Normalablauf;
+  - Taster beim Start gehalten;
+  - Loslassen < t_LOS;
+  - abgebrochene Betätigung;
+  - Druck < 20 ms;
+  - Prellen;
+  - Einbruch, den die Firmware sieht, mit gehaltenem Taster;
+  - **Einbruch, den die Firmware nicht sieht** (nur ACT_ARMED): bei allen
+    Abfrageabständen 1–11 ms und allen Phasenlagen erkannt; bei 20 ms
+    nachweislich verpassbar;
+  - ACT_ARMED high allein stellt nichts wieder her;
+  - Latch kann nicht setzen;
+  - Fehler während der Betätigung;
+  - t_LOS beginnt erst nach Versorgungswiederkehr;
+  - 32-Bit-Zeitüberlauf.
+- Gegenprobe mit absichtlich falschen Varianten: S2 nie verlassen, Abbruch
+  → S1, kein Neustart nach Fehler, t_EIN 5 ms. Alle werden erkannt.
+- **Nicht abgedeckt:**
+  - Zielplattform, Watchdog und tatsächlicher Abfrageabstand im Gesamtsystem;
+  - RC-Filter und Schmitt-Verzögerung des Tasterknotens (≤ 1,5 ms) im Modell.
+
 
 **2. Ausgangssperre bei ungültiger +3V3 – Vorschlag (O-37, nicht im Schaltplan)**
 
