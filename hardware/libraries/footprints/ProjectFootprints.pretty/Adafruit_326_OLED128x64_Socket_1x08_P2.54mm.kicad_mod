@@ -240,81 +240,81 @@
 		(layer "F.SilkS")
 	)
 	(fp_text user "Data"
-		(at -0.0 -1.9 0)
+		(at -0.0 -1.85 0)
 		(layer "F.SilkS")
 		(effects
 			(font
-				(size 0.6 0.6)
+				(size 0.8 0.8)
 				(thickness 0.15)
 			)
 		)
 	)
 	(fp_text user "Clk"
-		(at -2.54 -1.9 0)
+		(at -2.54 1.85 0)
 		(layer "F.SilkS")
 		(effects
 			(font
-				(size 0.6 0.6)
+				(size 0.8 0.8)
 				(thickness 0.15)
 			)
 		)
 	)
 	(fp_text user "DC"
-		(at -5.08 -1.9 0)
+		(at -5.08 -1.85 0)
 		(layer "F.SilkS")
 		(effects
 			(font
-				(size 0.6 0.6)
+				(size 0.8 0.8)
 				(thickness 0.15)
 			)
 		)
 	)
 	(fp_text user "Rst"
-		(at -7.62 -1.9 0)
+		(at -7.62 1.85 0)
 		(layer "F.SilkS")
 		(effects
 			(font
-				(size 0.6 0.6)
+				(size 0.8 0.8)
 				(thickness 0.15)
 			)
 		)
 	)
 	(fp_text user "CS"
-		(at -10.16 -1.9 0)
+		(at -10.16 -1.85 0)
 		(layer "F.SilkS")
 		(effects
 			(font
-				(size 0.6 0.6)
+				(size 0.8 0.8)
 				(thickness 0.15)
 			)
 		)
 	)
 	(fp_text user "3Vo"
-		(at -12.7 -1.9 0)
+		(at -12.7 1.85 0)
 		(layer "F.SilkS")
 		(effects
 			(font
-				(size 0.6 0.6)
+				(size 0.8 0.8)
 				(thickness 0.15)
 			)
 		)
 	)
 	(fp_text user "Vin"
-		(at -15.24 -1.9 0)
+		(at -15.24 -1.85 0)
 		(layer "F.SilkS")
 		(effects
 			(font
-				(size 0.6 0.6)
+				(size 0.8 0.8)
 				(thickness 0.15)
 			)
 		)
 	)
 	(fp_text user "GND"
-		(at -17.78 -1.9 0)
+		(at -17.78 1.85 0)
 		(layer "F.SilkS")
 		(effects
 			(font
-				(size 0.6 0.6)
+				(size 0.8 0.8)
 				(thickness 0.15)
 			)
 		)

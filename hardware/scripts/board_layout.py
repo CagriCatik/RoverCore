@@ -85,7 +85,7 @@ ZONES = [
     (0.0, 76.0, 57.0, 100.0, "7 Schnittstellen (Lighting_IO)"),
 ]
 
-HOLES = [(3.5, 3.5, 3.2, "M3?"), (3.5, 96.5, 3.2, "M3?"), (146.5, 96.5, 3.2, "M3?"), (118.0, 66.0, 3.2, "M3?")]
+HOLES = [(21.0, 4.0, 3.2, "M3?"), (3.5, 96.5, 3.2, "M3?"), (146.5, 96.5, 3.2, "M3?"), (118.0, 66.0, 3.2, "M3?")]
 
 NOTES = [("VORLAEUFIG: Kontur 150 x 100 mm und Befestigung nicht mit dem Chassis abgestimmt. Keine Fertigungsfreigabe.",
           1.0, -3.0)]

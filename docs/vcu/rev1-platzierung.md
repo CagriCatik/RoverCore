@@ -394,9 +394,11 @@ Referenzen überlagerten sich. Die Leistungsstufe (3b) ist unverändert.
   OLED-Sockel, Mitte (81,5 | 53).
 - **Servicegruppe RESET (SW502) und BOOT (SW503)** zwischen OLED und DevKit
   bei (101,5 | 55) und (113,5 | 55).
-  - Abstand untereinander 12 mm, damit ein Finger nicht beide trifft.
+  - Abstand untereinander 12 mm. Das macht versehentliches gleichzeitiges
+    Drücken unwahrscheinlicher; ausschließen lässt es sich damit nicht.
   - 20 mm Abstand zu ENABLE, eigene Beschriftung.
-- **Prüfkriterium Fingerzugang** (Schätzung, keine Norm):
+- **Prüfkriterium Fingerzugang** (eigenes Kriterium, Schätzung, keine Norm;
+  es ersetzt nicht die Prüfung am Muster):
   - Fingerkuppe ca. 16 mm. Im Umkreis von 10 mm um die Tastermitte steht
     nichts Hohes.
   - Als hoch gelten die Modulhüllen, der USB-Steckerraum und L401, C406,
@@ -416,9 +418,19 @@ Referenzen überlagerten sich. Die Leistungsstufe (3b) ist unverändert.
     Sockelhöhe ist offen (O-4).
   - **OLED und IMU:** je ca. 11 mm (Sockelkörper 8,51 mm laut
     Footprint-Beschreibung, plus Modul).
-  - **USB-Steckerraum:** beide USB-C an der unteren Modulkante, über die
-    ganze Modulbreite, 30 mm lang, z 8,5–15 mm. Die genaue Lage der Buchsen
-    ist **nicht** aus einer Espressif-Zeichnung übernommen.
+  - **USB-Steckerräume (korrigiert):** Die erste Fassung dieses Abschnitts
+    nahm USB-C an. Das war falsch.
+    - ESP32-S3-DevKitC-1 v1.1 hat zwei **Micro-USB**-Buchsen ("USB-to-UART
+      Port: A Micro-USB port", Espressif User Guide v1.1).
+    - Lage aus `DXF_ESP32-S3-DevKitC-1_V1.1_20220429.dxf`, ausgewertet in
+      `rev1-versorgung-und-boardwahl.md` 2.3: an der unteren Modulkante,
+      "UART" x 2,4–9,6 mm und "USB" x 15,8–23,0 mm (DXF-Koordinaten).
+    - Auf der Platine: Buchsenmitten x = 130,2 und 143,6, Kante y = 63,84.
+    - Je Buchse ein Steckerraum 11 mm breit, 30 mm lang, z 7,9–14,9 mm.
+      Steckergröße und Höhe sind **geschätzt** (Sockelhöhe O-4 offen).
+    - Verbindlich werden die Maße erst, wenn das gekaufte Board v1.1 mit
+      Messschieber nachgemessen ist (O-4). Bis dahin ist der USB-Zugang nur
+      vorläufig geprüft.
   - Unter dem Steckerraum liegen nur flache SMD-Teile, keine Taster.
   - Bestätigt ist die Zugänglichkeit damit nicht: Das ist nur am Muster mit
     gestecktem DevKit und Kabel möglich.
@@ -427,8 +439,39 @@ Referenzen überlagerten sich. Die Leistungsstufe (3b) ist unverändert.
   - D502 lag auf der Marke (146,5 | 96,5);
   - J108 lag 2 mm neben (3,5 | 96,5).
 
-  Behoben: Die LED-/UART-Stecker J108–J112 sitzen 2 mm weiter östlich. J101
-  (XT30) hält 3,8 mm, noch zu prüfen.
+  Behoben: Die LED-/UART-Stecker J108–J112 sitzen 2 mm weiter östlich.
+
+**Befestigungsfreiraum (vorläufige M3-Marken, 2026-11-16):**
+- **Kriterien** (eigene Annahmen, Schätzung):
+  - M3, Kopf ca. Ø 5,5–5,7 mm (ISO 4762 / ISO 7380), Scheibe ISO 7089
+    Ø 7,0 mm.
+  - Scheibenauflage r = 3,5 mm frei von Bauteilen.
+  - Werkzeug (Innensechskant oder Schraubendreher von oben) und Montage:
+    Courtyard ≥ 4,5 mm von der Lochmitte, bei hohen Teilen (Stecker,
+    Module) ≥ 5,5 mm.
+  - Lochmitte ≥ 4,0 mm vom Platinenrand, damit die Scheibe ganz aufliegt.
+- **Gemessen** wird von der Lochmitte zur nächsten Kante des Courtyards
+  (Bauteilkörper + 0,25 mm).
+  - Die frühere Angabe 3,8 mm für J101 war genau dieser Abstand.
+  - Zum Gehäuse von J101 (F.Fab-Umriss) waren es 4,3 mm. Die Scheibenkante
+    lag damit nur 0,8 mm vom Steckergehäuse entfernt.
+
+| Marke | nächstes Courtyard | Abstand | Rand | Bewertung |
+|---|---|---|---|---|
+| alt (3,5 \| 3,5) | J101 XT30 (hoch) | 3,8 mm | 3,5 mm | nicht erfüllt → **verschoben** |
+| **neu (21,0 \| 4,0)** | J101 | 5,75 mm | 4,0 mm | erfüllt |
+| (3,5 \| 96,5) | J108 JST-PH (hoch) | 4,0 mm | 3,5 mm | nicht erfüllt |
+| (146,5 \| 96,5) | TP504 (flach) | 4,75 mm | 3,5 mm | Abstand erfüllt, Rand 0,5 mm zu knapp |
+| (118,0 \| 66,0) | U516 (flach) | 4,47 mm | – | knapp (0,03 mm) |
+
+- Die XT30-Marke liegt jetzt 17,5 mm von der Ecke entfernt an der
+  Oberkante. Die Eckstütze entfällt dort, bis das Chassis die Lage festlegt.
+- Die übrigen drei Marken sind nicht verschoben. Das entscheidet der Owner
+  mit dem Chassis.
+  - Vorschlag für (3,5 | 96,5): auf (4,0 | 68,0) am linken Rand; dort
+    liegt das nächste Courtyard ca. 7,9 mm entfernt.
+- Es sind nur Kommentarmarken; gebohrt wird nichts. Sperrflächen auf den
+  GND-Ebenen und ein Montagepad folgen mit der endgültigen Lage.
 
 **Controller-Elektronik vom Rand zurückgenommen und entzerrt:**
 - Courtyards ≥ 2 mm vom Platinenrand und ≥ 4 mm von der M3-Marke.
@@ -467,8 +510,23 @@ Referenzen überlagerten sich. Die Leistungsstufe (3b) ist unverändert.
     R243 R245 R412 R414 R506 R606 R608 R609.
 - **DRC Silkscreen:** 0 Überlappungen, 0 Silk über Kupfer und 0 Randbefunde
   (vor dieser Etappe 199 Überlappungen, 171–199 über Kupfer, 3–8 am Rand).
-  - Übrig bleiben 17 `text_height` aus den Pinbeschriftungen der
-    Projekt-Footprints J115/J116 (Bibliotheksgrafik, unverändert).
+  - Die 17 Pinbeschriftungen der Projekt-Footprints J115/J116 (0,6 mm,
+    unter Mindesthöhe) sind bereinigt.
+    - Jetzt 0,8 mm hoch, abwechselnd außerhalb und innerhalb der Pinreihe,
+      weil 0,8-mm-Namen nebeneinander nicht in das 2,54-mm-Raster passen.
+    - Die Namen bleiben auf dem Silkscreen, weil sie beim Messen und beim
+      Stecken der Module die Anschlüsse zeigen.
+    - Reine Detailtexte (Sockeltyp, "no standoff", Modulbezeichnung) standen
+      schon auf F.Fab.
+  - Geändert sind Generator (`make_sensor_module_sockets.py`), Bibliothek
+    und die zwei Platinen-Instanzen, gleich wie die Bibliothek.
+    `text_height` ist damit 0.
+- **Bestückungszeichnung:** Jedes der 253 Bauteile hat seine Referenz auf
+  der Fab-Lage oder dem Silkscreen (geprüft).
+  - 248 Footprints tragen eine Fab-Referenz, darunter alle 34 mit
+    ausgeblendeter Silk-Referenz.
+  - Die fünf Net-Ties NT401–NT405 haben keine Fab-Referenz (KiCad-Bibliothek);
+    ihre Silk-Referenzen sind sichtbar.
 
 **Fehlende 3D-Modelle** (in den Ansichten rot gekennzeichnet):
 - Kein Modell zugewiesen: BZ101, J115, J116, U501.

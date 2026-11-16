@@ -45,13 +45,21 @@ VIEWS = {  # name: (x1, y1, x2, y2) in mm
 }
 # Module and plug envelopes for the operator review (owner review 2026-11-16). Outlines are the footprints' F.Fab
 # module outlines; heights are ESTIMATES (socket body 8.51 mm from the footprint description, module PCB 1.6 mm
-# plus parts; DevKit socket height is open, O-4). The USB plug space is an ASSUMPTION: both USB-C ports at the
-# lower module edge, overmold 12 x 6.5 mm, 30 mm incl. strain relief, across the full module width.
+# plus parts; DevKit socket height is open, O-4). USB: ESP32-S3-DevKitC-1 v1.1 has two Micro-USB receptacles at the
+# lower board edge (Espressif user guide v1.1; DXF_ESP32-S3-DevKitC-1_V1.1_20220429, evaluated in
+# rev1-versorgung-und-boardwahl.md 2.3): UART x 2.4-9.6, USB x 15.8-23.0 (DXF, origin lower left). In board
+# coordinates (footprint origin J1-1 at 125.5|2.54; x = 125.5 - 1.27 + x_dxf) the receptacle centres are at
+# x = 130.2 and 143.6 on the edge y = 63.84. Plug space per port: ESTIMATE overmold 11 mm wide, 30 mm long incl.
+# strain relief, z 7.9-14.9 mm (receptacle centre about 11.4 mm with an assumed 8.5 mm socket).
+USB_Y, USB_W, USB_L = 63.84, 11.0, 30.0
 ENVELOPES = [  # (ref or None, label, height range mm, rect override)
     ("U501", "DevKit (Huelle, Hoehe ca. 13 mm, Sockel O-4 offen)", (0.0, 13.3), None),
     ("J116", "OLED-Modul (Huelle, ca. 11 mm)", (0.0, 11.1), None),
     ("J115", "IMU-Modul (Huelle, ca. 11 mm)", (0.0, 11.1), None),
-    (None, "USB-C-Stecker + Kabel (Annahme 30 mm, z 8,5-15 mm)", (8.45, 14.95), (124.2, 63.9, 149.7, 93.9)),
+    (None, "Micro-USB UART (Stecker+Kabel, Schaetzung)", (7.9, 14.9),
+     (130.2 - USB_W / 2, USB_Y, 130.2 + USB_W / 2, USB_Y + USB_L)),
+    (None, "Micro-USB USB (Stecker+Kabel, Schaetzung)", (7.9, 14.9),
+     (143.6 - USB_W / 2, USB_Y, 143.6 + USB_W / 2, USB_Y + USB_L)),
 ]
 TALL = ["L401", "C406", "C407", "C101", "J101", "J102", "J103", "J104", "J105", "J106", "J107", "BZ101"]
 BUTTONS = ["SW501", "SW502", "SW503"]
@@ -166,7 +174,7 @@ def finger_check(board, env):
     return rows
 
 
-HOLES_REV = [(3.5, 3.5), (3.5, 96.5), (146.5, 96.5), (118.0, 66.0)]  # provisional M3 markers (Cmts.User)
+HOLES_REV = [(21.0, 4.0), (3.5, 96.5), (146.5, 96.5), (118.0, 66.0)]  # provisional M3 markers (Cmts.User)
 
 
 def svg(view, side, parts, draw, edges, copper, env=None, fingers=None):
@@ -304,7 +312,7 @@ def oblique(board, parts, env, fingers):
              'keine 3D-Modelle): Modul- und USB-Huellen blau (Hoehen geschaetzt), Taster grau (1,54 mm laut '
              'KiCad-Modell),</text>')
     s.append('<text x="-92" y="-20" font-size="3" font-family="Helvetica">Fingerzonen r = %g mm (gruen frei); '
-             'USB-Steckerraum: Annahme beide USB-C an der Modulunterkante, 30 mm lang, z 8,5-15 mm</text>' % FINGER_R)
+             'Micro-USB-Steckerraeume (UART, USB) nach Espressif-DXF v1.1, Steckergroesse geschaetzt</text>' % FINGER_R)
     s.append('<text x="-92" y="-16" font-size="3" fill="#c00000" font-family="Helvetica">Rote Flaechen = Bauteile '
              'ohne 3D-Modell: %s</text>' % ", ".join(NO_MODEL))
     s.append("</svg>")

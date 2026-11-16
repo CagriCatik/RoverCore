@@ -152,8 +152,11 @@ def footprint(name, m):
                  max(tx(bx0), tx(bx1)) + o, max(ty(by0), ty(by1)) + o, 0.12)
     s = 1 if m["step"] > 0 else -1
     body += poly("F.SilkS", [(-s * 1.6, 1.2), (-s * 1.6, 2.4), (-s * 0.6, 1.8)])
+    # pin names at the board's minimum text height (0.8 mm); 0.8 mm names do not fit the 2.54 mm pitch side by side,
+    # so they alternate between the outer side of the pad row and the side under the module (owner review 2026-11-16)
+    out = -1 if ty(by0) > 0 else 1
     for i, p in enumerate(m["pins"]):
-        body += text("user", p, i * m["step"], -1.9 if ty(by0) > 0 else 1.9, "F.SilkS", 0.6)
+        body += text("user", p, i * m["step"], (out if i % 2 == 0 else -out) * 1.85, "F.SilkS", 0.8)
     # courtyard: module outline + 0.25 mm (the module overhangs the socket)
     c = 0.25
     body += rect("F.CrtYd", min(tx(bx0), tx(bx1)) - c, min(ty(by0), ty(by1)) - c,
