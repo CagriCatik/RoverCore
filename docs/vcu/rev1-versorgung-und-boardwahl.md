@@ -837,7 +837,7 @@ die Freigabe in Hardware (3.16). Offen bleiben drei Punkte:
 - Die verschärfte Freigabeanforderung F2/F3 erfüllt die Schaltung nicht
   (3.17 Punkt 3, O-35).
 - ESC-Neustarts bei gesetztem Latch (3.17 Punkt 2, O-36).
-- Die Abschaltreihenfolge gilt nur als begrenzte Prototyp-Aussage.
+- Die Abschaltreihenfolge ist eine **unbestätigte Prototyp-Hypothese**.
 
 ### 3.16 Wiederanlaufsperre (O-35, Stand 2026-11-16)
 
@@ -857,10 +857,11 @@ die Freigabe in Hardware (3.16). Offen bleiben drei Punkte:
   - Prellen über den Fehler hinweg;
   - ein klemmender Kontakt, der später öffnet.
 - „Irgendwann hat ein Mensch gedrückt“ erfüllt F2 nicht.
-- „Losgelassen erkannt“ heißt in Hardware: Der Tasterknoten überschreitet V_T+
-  von U507. Wegen des Filters R502/C511 muss der Kontakt dafür mindestens etwa
-  **0,53–1,14 ms** offen sein (Schätzung aus τ 0,89–1,11 ms, V_T+ 1,48–1,92 V,
-  V_CC 3,0–3,3 V). Kürzere Öffnungen zählen nicht als Loslassen.
+- „Losgelassen erkannt“ heißt: Der Taster ist nach CLR-Ende ununterbrochen
+  ≥ t_LOS offen. Der Vorschlag für t_LOS steht in 3.18 (R2).
+- Die Ist-Schaltung kennt kein t_LOS. Ihr Filter R502/C511 unterdrückt nur
+  Öffnungen unter etwa 0,53–1,14 ms. Diese Schätzung beruht auf τ 0,89–1,11 ms,
+  V_T+ 1,48–1,92 V und V_CC 3,0–3,3 V. Das ist kein Nachweis einer Entprellung.
 
 **Prüfergebnis vom 2026-11-16 (3.17, Punkt 3): Die vorhandene Schaltung erfüllt
 F2 und F3 nicht.**
@@ -869,8 +870,10 @@ F2 und F3 nicht.**
 - Ein über einen Fehler oder über das Einschalten gehaltener Taster setzt die
   Freigabe deshalb beim späteren Loslassen. Ein klemmender Kontakt, der später
   öffnet, setzt sie ebenfalls.
-- Kandidat **K1** (Takt beim Drücken, 3.17) ist **nicht umgesetzt**. Er ist eine
-  Entscheidung des Owners (O-35).
+- Kandidat **K1** (Takt beim Drücken, 3.17) ist als **unzureichender
+  Einzelvorschlag** eingestuft und wird nicht eingebaut. K1 speichert nicht, ob
+  nach gültiger Versorgung schon ein gültiges Loslassen erkannt wurde.
+- Das Zustandsmodell und der Vergleich der Umsetzungen stehen in 3.18.
 
 **Lösung:** Freigabe-Latch in Hardware, versorgt aus +3V3. Damit überlebt der
 Zustand „gesperrt“ jeden USB-Dauerbetrieb.
@@ -940,14 +943,17 @@ Zustand „gesperrt“ jeden USB-Dauerbetrieb.
 - U505 braucht dafür tw ≈ 20 µs und t_PD ≈ 20 µs. Beides sind nur Typwerte
   (**Annahme A3**, kein Max. im Datenblatt). Hinzu kommen U508 und U506 im
   ns-Bereich.
-- **Ergebnis, ausdrücklich begrenzt:** Unter A1–A3 ist der Latch gelöscht,
-  bevor die Servoschiene über RUN abschaltet.
+- **Status: unbestätigte Prototyp-Hypothese.** Unter A1–A3 wäre der Latch
+  gelöscht, bevor die Servoschiene über RUN abschaltet. A1–A3 sind nicht
+  gemessen. Die 77 Unit-Tests in `qa/tests` prüfen Template-Werkzeuge, Prüfskripte und das Servo-Spannungsbudget.
+  Zu dieser Reihenfolge liefern sie keinen Nachweis.
 - Das ist **keine Garantie aus Datenblattgrenzen**. Zwei Glieder der Kette haben
   keinen garantierten Grenzwert (Tabelle unten):
   - U505: t_w und t_PD;
   - LTC7803: RUN-Schwelle fallend.
 - Messungen an Mustern belegen nur das Verhalten dieser Aufbauten unter den
-  geprüften Bedingungen. Die Aussage gilt deshalb nur für den **Prototyp**.
+  geprüften Bedingungen. Auch nach bestandener Messung gilt die Aussage nur für
+  den **Prototyp**.
 - Selbst wenn U505 langsamer ist, schützt der Soft-Start des LTC7803 (ca. 2 ms):
   Nach RUN-Ein schaltet das spätere Löschen den Regler über Q403 wieder ab.
   Voraussetzung: U505 löst überhaupt aus.
@@ -967,7 +973,7 @@ Für eine garantierte Reihenfolge gibt es zwei Wege, beide nicht umgesetzt:
 - Bauteile mit garantierten Grenzen für Zeit und fallende Schwelle;
 - eine Schaltung, deren Ergebnis nicht von der Reihenfolge abhängt.
 
-Bis dahin gilt nur die begrenzte Prototyp-Aussage.
+Bis zur Messung bleibt die Reihenfolge eine unbestätigte Prototyp-Hypothese.
 
 Folgen und Grenzen (zu messen):
 - **Einbrüche unter Last:** Fällt VBAT_PROT länger als etwa 1 ms unter 9,62–10,40 V,
@@ -989,7 +995,7 @@ Servoschiene aus (Q403 hält RUN) und U201 hochohmig (keine Pulse).
 Anforderungen F1–F3 siehe 3.16. Messungen charakterisieren nur die geprüften
 Muster; sie ersetzen fehlende Datenblattgrenzen nicht.
 
-**Punkt 1 – Abschaltreihenfolge (begrenzte Prototyp-Aussage, 3.16)**
+**Punkt 1 – Abschaltreihenfolge (unbestätigte Prototyp-Hypothese, 3.16)**
 
 | Nr. | Fall | Erwartet | Prüfung |
 |---|---|---|---|
@@ -1042,10 +1048,13 @@ Taktpfad: SW501-Knoten (R502 10 kΩ, C511 100 nF, τ = 1 ms) → U507
 (Schmitt, V_T+ 1,48–1,92 V, V_T− 0,89–1,20 V) → U506 CLK. Ist-Schaltung:
 Takt bei steigendem Knoten, also beim **Loslassen**.
 
-Zum Vergleich steht daneben Kandidat **K1** (nicht umgesetzt):
-- U507 wird durch einen invertierenden Schmitt-Puffer ersetzt, etwa
-  SN74LVC1G14. Pinbelegung, Schwellen und Bestand sind noch zu prüfen.
-- Dann taktet U506 beim **Drücken**. Es kommt kein Bauteil hinzu.
+Zum Vergleich steht daneben Kandidat **K1**: U507 wird invertierend (etwa
+SN74LVC1G14), U506 taktet dann beim **Drücken**. K1 ist **unzureichend und wird
+nicht eingebaut**:
+- K1 wertet nur den Augenblickspegel des Tasters an der Taktflanke aus.
+- Ob nach Ende von CLR schon ein ausreichend langes Loslassen erkannt wurde,
+  speichert K1 nicht.
+- Genau diese Information verlangt F2 (3.18).
 
 | Nr. | Fall | Ist-Schaltung (Takt beim Loslassen) | F2/F3 | K1 (Takt beim Drücken) | F2/F3 mit K1 |
 |---|---|---|---|---|---|
@@ -1053,21 +1062,20 @@ Zum Vergleich steht daneben Kandidat **K1** (nicht umgesetzt):
 | 3.2 | beim Einschalten gehalten, nach CLR-Ende losgelassen | setzt beim Loslassen | **verletzt** | setzt nicht; erst ein neues Drücken | erfüllt |
 | 3.3 | vor dem Fehler gedrückt, über den Fehler gehalten, danach losgelassen | setzt | **verletzt** | setzt nicht | erfüllt |
 | 3.4 | während t_D gedrückt (VBAT gültig, CLR noch aktiv), nach CLR-Ende losgelassen | setzt | **verletzt** (Betätigung begann vor dem Erkennen) | setzt nicht | erfüllt |
-| 3.5 | Fehler beginnt während einer Betätigung, Kontakt prellt nach CLR-Ende | jede Öffnung ≥ ca. 0,53 ms setzt | **verletzt** | Öffnung ≥ ca. 0,53 ms mit anschließendem Schließen setzt | nur erfüllt, wenn das Prellen vor dem CLR-Ende endet. Das CLR-Ende liegt ≥ 12 ms (t_D min.) nach Betätigungsbeginn. Prelldauer TL3342 nicht belegt → **offen** |
+| 3.5 | Fehler beginnt während einer Betätigung, Kontakt prellt nach CLR-Ende | jede Öffnung ≥ ca. 0,53 ms setzt | **verletzt** | Öffnung ≥ ca. 0,53 ms mit anschließendem Schließen setzt | **verletzt**: Eine Prellöffnung von ca. 0,5 ms ist kein „ausreichend langes Loslassen“ (3.18) |
 | 3.6 | klemmender Kontakt öffnet später von selbst | setzt | **verletzt** | setzt nicht (steigender Knoten = fallender Takt) | erfüllt. Schließt der Kontakt danach erneut von selbst, ist das von einer Betätigung nicht zu unterscheiden (Restrisiko) |
-| 3.7 | Flanke innerhalb der Recovery-Zeit vor dem CLR-Ende (CLR inaktiv vor CLK↑ ≥ 1,2 ns) | Endzustand undefiniert, Removal-Zeit und Metastabilität nicht spezifiziert. „Gesetzt“ hieße: über den Fehler gehaltene Betätigung | **verletzt** (möglich) | Drücken genau am CLR-Ende nach losgelassenem Taster | Beide Endzustände sind mit F2 vereinbar, denn das Loslassen lag bei gültiger VBAT. Übergang bei Metastabilität (ACT_ARMED, U204, Q407) nicht spezifiziert → **offen** |
+| 3.7 | Flanke innerhalb der Recovery-Zeit vor dem CLR-Ende (CLR inaktiv vor CLK↑ ≥ 1,2 ns) | Endzustand undefiniert, Removal-Zeit und Metastabilität nicht spezifiziert | **verletzt** (möglich) | Drücken genau am CLR-Ende | **verletzt** (möglich): Nach CLR-Ende wurde noch kein Loslassen erkannt, also darf nicht freigegeben werden. Ein undefiniertes Ergebnis ist nicht zulässig. (Korrektur: Die Fassung vom 2026-11-16 nannte beide Endzustände fälschlich zulässig.) |
 | 3.8 | Firmware treibt GPIO10 low/high | kein Takt: Knoten ≥ 2,47 V > V_T+ max. | erfüllt | Schwellen des neuen Puffers prüfen | offen |
 | 3.9 | Prellen ohne Fehler | mehrere Takte mit D = 1 → gesetzt | erfüllt | gleich | erfüllt |
 | 3.10 | Mindestimpulsbreiten, Flankensteilheit | Puffer ≪ 10 ns/V; t_w ≥ 2,7 ns erfüllt | erfüllt | gleich | erfüllt |
 | 3.11 | Einstreuung, ESD am Taster | 1 ms Filter + Hysterese 0,51–0,83 V; Restrisiko | EMV-/ESD-Prüfung | gleich | EMV-/ESD-Prüfung |
 
-**Ergebnis Punkt 3:** Die Ist-Schaltung verletzt F2/F3 in den Fällen 3.2–3.7.
-K1 erfüllt 3.2–3.4 und 3.6 aus der Logik heraus. Offen bleiben bei K1:
-- 3.5: Prelldauer belegen (Datenblatt oder Messung);
-- 3.7: Übergangsverhalten;
-- 3.8: Schwellen des neuen Puffers.
-
-Die Schaltung wurde nicht geändert. Die Wahl liegt beim Owner (O-35).
+**Ergebnis Punkt 3:**
+- Die Ist-Schaltung verletzt F2/F3 in den Fällen 3.2–3.7.
+- K1 behebt nur die Fälle mit dauerhaft gehaltenem Kontakt (3.2–3.4, 3.6).
+  3.5 und 3.7 verletzt K1 weiterhin.
+- K1 wird deshalb nicht übernommen. Die Schaltung bleibt unverändert, bis die
+  Anforderungen in 3.18 festgelegt sind und eine Umsetzung gewählt ist (O-35).
 
 **Punkt 4 – RESET löscht den Latch (MR von U505 an DEVKIT_EN)**
 
@@ -1091,6 +1099,90 @@ Nur ein EN-Puls löscht den Latch. BOOT allein löscht ihn nicht.
 | 4.5 | Flashen bzw. Neustart über den nativen USB-Anschluss (USB-Serial-JTAG des ESP32-S3) | Neustart chipintern, EN bleibt high → Latch **nicht** gelöscht (am Muster bestätigen) |
 | 4.6 | Watchdog, Brown-out, Software-Reset des ESP32 | EN bleibt high → Latch **nicht** gelöscht; Ausgänge durch Ruhepegel gesperrt. Die Firmware kann den Latch nicht löschen; sie gibt nach einem Neustart nur über SW501 frei (O-35) |
 | 4.7 | ESP32-Hochlauf | EN-RC 8,75 ms ≫ tSTBL; Hochlauf unverändert |
+
+### 3.18 Freigabe als Zustandsmodell (Festlegung offen, Stand 2026-11-16)
+
+Diese Festlegung gilt vor jeder weiteren Schaltungsänderung. Die Zahlenwerte
+sind **Vorschläge** zur Entscheidung durch den Owner. Die Schaltung ist
+unverändert.
+
+**Zustände**
+
+| Zustand | Eintritt | Erlaubter Übergang | Alles andere |
+|---|---|---|---|
+| **S0 – gesperrt, wartet auf Loslassen** | Einschalten, Fehler, relevanter Reset; aus S1 bei zu kurzer Betätigung | → S1, wenn die Versorgung gültig ist (CLR inaktiv) und der Taster seit CLR-Ende bzw. seit der letzten Schließung **ununterbrochen ≥ t_LOS** losgelassen ist | Jede Schließung startet t_LOS neu. Gehaltener oder klemmender Taster: bleibt S0 |
+| **S1 – bereit für neue Betätigung** | aus S0 | → S2 bei einer neuen, **entprellten** Betätigung: Schließung ununterbrochen ≥ t_EIN | Schließung < t_EIN → S0. Fehler → S0 |
+| **S2 – freigegeben** (ACT_ARMED) | aus S1 | → S0 bei Fehler oder relevantem Reset | Prellen, Loslassen und weitere Betätigungen ändern nichts. Der Taster gibt nur frei, er sperrt nicht |
+
+**Begriffe**
+- **Fehler:** VBAT_PROT unter der Löschschwelle (U505).
+- **Relevanter Reset:** EN-Puls (RESET, Auto-Reset über USB-UART) und Verlust
+  von +3V3. Nicht dazu gehören Neustarts ohne EN-Puls (3.17 Nr. 4.5–4.6). Ob
+  diese ebenfalls sperren müssen, entscheidet der Owner.
+
+**Regeln**
+- **R1 – Fehler hat Vorrang:** Solange ein Fehler ansteht, gilt S0 in jedem
+  Zustand.
+  - Fallen ein Fehler- und ein Tasterereignis zusammen, darf keine Freigabe
+    entstehen. „Zusammen“ heißt: innerhalb der Erkennungszeit des Fehlers.
+  - Am Fehlerende kann kein Tasterereignis freigeben. Nach CLR-Ende muss erst
+    t_LOS ablaufen, also ist ein Zusammentreffen dort durch die Struktur
+    ausgeschlossen.
+  - Ein undefiniertes Ergebnis an einer Fehlergrenze ist unzulässig.
+- **R2 – „ausreichend lange losgelassen“:** t_LOS min. **50 ms**, max. **200 ms**
+  (Vorschlag).
+  - Unter t_LOS min. wird nie S1 erreicht, über t_LOS max. immer.
+  - Nur innerhalb dieses Bandes ist jedes Ergebnis zulässig. Nur dort darf eine
+    unbestimmte Entscheidung (Metastabilität) auftreten.
+- **R3 – entprellte Betätigung:** t_EIN min. **20 ms**, max. **100 ms**
+  (Vorschlag), mit derselben Bandregel wie R2.
+- **R4 – Prellwerte des Tasters:** Die größte Prell- bzw. Flatterdauer
+  t_PRELL,max von SW501 ist zu belegen, durch das Datenblatt TL3342 oder eine
+  Messung (nicht vorhanden).
+  - Vorschlag: t_LOS min. ≥ 5 × t_PRELL,max und t_EIN min. ≥ 2 × t_PRELL,max.
+  - Das vorhandene Filter R502/C511 (Öffnungen < ca. 0,53–1,14 ms werden
+    unterdrückt, Schätzung) wirkt nur gegen Einstreuung. Als Nachweis einer
+    Entprellung reicht es nicht.
+- **R5 – Restrisiko:** Ein klemmender Kontakt, der von selbst öffnet
+  (≥ t_LOS) und danach von selbst wieder schließt (≥ t_EIN), ist von einer
+  Betätigung nicht zu unterscheiden. Dieses Restrisiko wird dokumentiert und
+  nicht durch die Logik gelöst.
+
+**Welche Anforderungen ohne funktionierende Firmware gelten müssen
+(Vorschlag, Entscheidung Owner)**
+
+| Anforderung | firmwareunabhängig | Stand der Ist-Schaltung |
+|---|---|---|
+| F1 Löschen bei Fehler und EN-Reset | ja | erfüllt (U505, U506) |
+| R1 Fehler hat Vorrang | ja | im Betrieb erfüllt: CLR wirkt asynchron und ≥ 12 ms. Am CLR-Ende verletzt (3.17 Nr. 3.7) |
+| Firmware kann nicht freigeben | ja | erfüllt (R518, 3.17 Nr. 3.8) |
+| S0 → S1 nur nach t_LOS (F2) | ja | **nicht erfüllt** |
+| S1 → S2 nur nach t_EIN (R3) | ja | **nicht erfüllt** |
+| Anzeige, erster Puls neutral, Freigabe-GPIOs, ESC-Strategie | Firmware (zusätzlich) | Firmware-Regeln O-35 |
+
+**Mögliche Umsetzungen (Vergleich, nichts davon umgesetzt)**
+
+| | V1: vorhandene Hardware + Firmware | V2: zusätzliche Hardwarelogik | V3: eigener kleiner Sicherheitsbaustein |
+|---|---|---|---|
+| Prinzip | Die Firmware bildet S0/S1/S2 über GPIO10 und die VBAT-Messung ab. SERVO_PWR_EN und ACT_OE_N treibt sie nur in ihrem S2. U506 bleibt unverändert | Zeitglied „losgelassen ≥ t_LOS“: Knoten wird bei aktivem CLR oder geschlossenem Taster entladen und lädt beim Loslassen auf; Schmitt-Puffer → READY. Zeitglied t_EIN für die Betätigung. Latch: Takt = entprellte Betätigung, D = READY, CLR = Fehler; Rückführung, damit S2 erhalten bleibt | Kleiner Logikbaustein oder Mikrocontroller nur für das Zustandsmodell, mit eigenen Zeitgebern; treibt ACT_ARMED |
+| F2/R3 ohne Firmware | **nein**: U506 setzt beim Loslassen weiter. Ein gehaltener Taster hängt dann allein an der Firmware. Die Firmware sieht weder VBAT_OK noch den Latch | ja | ja, aber das eigene Programm ist selbst Firmware und braucht eine eigene Verifikation |
+| R1 am CLR-Ende | nur in Firmware | ja, durch die Struktur (t_LOS beginnt erst nach CLR-Ende) | ja |
+| Zusatzteile (Schätzung) | keine | ca. 1 Flipflop, 2–3 Gatter bzw. Schmitt-Puffer, 2 RC-Zeitglieder, 2 Dioden, Abblockkondensatoren | 1 Baustein, Takt, Programmierzugang |
+| Zeitgenauigkeit | Firmware-Takt, genau | RC über Toleranz und Temperatur ca. ±30 % (Schätzung) → Bänder R2/R3 | genau |
+| Offene Punkte | widerspricht dem Vorschlag „firmwareunabhängig“ | Detailauslegung: Staffelung der Zeitglieder, Haltezeit von D, Verhalten bei langsamem +3V3-Anstieg | Programmierung, Werkzeugkette, Verifikation |
+
+Bewertung:
+- Gilt der Vorschlag in der Tabelle oben, reicht V1 nicht. Dann bleiben V2
+  oder V3.
+- Die Entscheidung liegt beim Owner (O-35). Erst danach wird eine Variante
+  ausgelegt und gegen 3.17 und dieses Zustandsmodell geprüft.
+
+**Abgrenzung O-36:** Auch ein korrektes Freigabelatch erkennt keinen alleinigen
+ESC-Neustart (3.17 Nr. 2.4, 2.6). Dafür fehlen zwei Dinge:
+- das beobachtbare Verhalten des ESC;
+- eine passende Wiederanlaufstrategie.
+
+O-36 bleibt deshalb ein eigener Punkt.
 
 ## 4. Komponentendaten (Zwischenstand)
 
@@ -1171,7 +1263,7 @@ Schutzkoordination (O-17).
 | O-32 | I²C-Anstiegszeit an TP801/TP802 und OLED-Strom bei Vollbild messen; 400 kHz erst danach | Owner |
 | O-33 | ~~ST-Datenblatt LSM6DSOX~~ – erledigt 2026-11-16 (DS12814 Rev 4, Anschlussplan 9.3): INT1 beim Einschalten 0 (R803), Push-Pull aktiv high, 0,55 mA typ. | – |
 | O-34 | Hauptabschaltung außerhalb der VCU auswählen (3.14): Dauer-/Spitzenstrom, DC-Schaltvermögen bei 12,6 V, Einschaltstrom; bei elektronischer Lösung Body-Dioden, Rückspeisung, AUS-Zustand | Owner |
-| O-35 | Wiederanlaufsperre in Hardware (3.16), am 2026-11-16 gegen die verschärfte Anforderung F1–F3 geprüft (3.17). **F2/F3 nicht erfüllt**: U506 setzt beim Loslassen, also auch nach einem über den Fehler gehaltenen Taster und bei einem später öffnenden klemmenden Kontakt. Entscheidung Owner: Kandidat K1 (invertierender Schmitt-Puffer statt U507, Takt beim Drücken) oder ein anderer Weg. Für K1 offen: Prelldauer TL3342, Übergang bei Metastabilität, Schwellen. Abschaltreihenfolge nur begrenzte Prototyp-Aussage (U505 t_w/t_PD und LTC7803 RUN fallend ohne Grenzwert). Firmware zusätzlich: bei VBAT-Verlust SERVO_PWR_EN low, ACT_OE_N high, ESC neutral; nach jedem Neustart Freigabe nur über SW501, erster Puls neutral; GPIO10 ohne interne Pull-ups; J112-TX ohne Akku inaktiv; GPIO0 und GPIO6 nie als Ausgang. BOOT allein und Neustarts ohne EN-Puls (nativer USB, Watchdog) löschen den Latch nicht | Owner / Agent |
+| O-35 | Wiederanlaufsperre in Hardware (3.16), geprüft gegen F1–F3 (3.17). **F2/F3 nicht erfüllt**: U506 setzt beim Loslassen. K1 (Takt beim Drücken) ist unzureichend, weil er kein erkanntes Loslassen speichert; K1 wird nicht eingebaut. **Owner entscheidet:** (a) Zustandsmodell S0/S1/S2 mit t_LOS und t_EIN (Vorschläge 50–200 ms bzw. 20–100 ms, 3.18); (b) welche Anforderungen ohne Firmware gelten müssen; (c) Umsetzung V1/V2/V3. Zu belegen: Prelldauer TL3342. Abschaltreihenfolge = unbestätigte Prototyp-Hypothese (A1–A3 messen). Firmware zusätzlich: bei VBAT-Verlust SERVO_PWR_EN low, ACT_OE_N high, ESC neutral; nach jedem Neustart Freigabe nur über SW501, erster Puls neutral; GPIO10 ohne interne Pull-ups; J112-TX ohne Akku inaktiv; GPIO0 und GPIO6 nie als Ausgang. BOOT allein und Neustarts ohne EN-Puls löschen den Latch nicht | Owner / Agent |
 | O-36 | **Funktionale Lücke** der gemeinsamen Wiederanlaufanforderung: Der gemeinsame Akkuanschluss bedeutet kein gemeinsames Reset-Verhalten von ESC und VCU (Puffer-C, Leitungsabfälle, ESC-Brown-out). Der Latch sieht nur VBAT_PROT. Nicht abgedeckt: ESC-Zweig allein getrennt, ESC-Neustart bei gesetztem Latch (3.17 Nr. 2.4, 2.6). ESC-Verhalten bei fehlenden und wiederkehrenden PWM-Pulsen nicht belegt (2.7). Schließen nur durch eine Maßnahme im ESC-Zweig oder ein belegtes ESC-Arming-Verhalten als begrenzte Aussage | Owner |
 
 Erledigt: O-5 (DevKit-LDO), O-6 (Lenkservos), O-7 (LTC7803 Rev B, 3.5a;

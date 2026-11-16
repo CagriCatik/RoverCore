@@ -694,7 +694,7 @@ losgelassen wird; die Ist-Schaltung setzt beim Loslassen.
 verlangt: Taster erst bei gültiger Versorgung als losgelassen erkennen, und nur
 eine danach begonnene Betätigung gibt frei. Ein über den Fehler gehaltener oder
 klemmender Taster setzt den Latch beim späteren Öffnen. Siehe Versorgung 3.16
-und 3.17 Punkt 3, Kandidat K1, O-35. BOOT allein löscht den Latch nicht. Ein
+und 3.17 Punkt 3, O-35. Kandidat K1 ist unzureichend und wird nicht eingebaut. Zustandsmodell und Varianten: Versorgung 3.18. BOOT allein löscht den Latch nicht. Ein
 RESET löscht ihn, auch der RESET beim Download und der Auto-Reset über den
 USB-UART. Das gilt auch, wenn die Firmware die Freigabe-GPIOs bereits
 auf aktiv gesetzt hat. Der Freigabetaster bleibt zugleich Firmware-Eingang
