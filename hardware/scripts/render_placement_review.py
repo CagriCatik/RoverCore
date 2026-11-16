@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """Placement review images, top and bottom side separately, with KiCad's own ratsnest including GND.
 
-The ratsnest is not computed here: it is the list of unconnected item pairs from `kicad-cli pcb drc`
+Copper (tracks, vias and the filled zones of the outer layer of the view) is drawn under the parts: own side
+solid, the other outer layer faint; the inner GND planes are not drawn. The ratsnest is not computed here: it is the list of unconnected item pairs from `kicad-cli pcb drc`
 (KiCad connectivity, the same lines the PCB editor draws). GND is drawn in black, the critical power, switch,
 gate-drive and feedback nets in colour, all other nets thin grey. Each view exists for the top side (seen from
 above) and the bottom side (seen from below, mirrored); parts of the other side are shown faint.
@@ -37,6 +38,9 @@ VIEWS = {  # name: (x1, y1, x2, y2) in mm
     "detail_input_logic": (-2, -2, 37, 78),
     "detail_servo_regulator": (33, -2, 95, 50),
     "detail_devkit_usb": (90, -12, 152, 102),
+    "detail_logic_supply": (-1, 46, 36, 66),
+    "detail_output_stages": (91, 6, 123, 47),
+    "detail_controller_periphery": (119, 64, 151, 101),
 }
 LEGEND = [("GND", "#000000"), ("VBAT_IN/FUSED", "#d62728"), ("VBAT_PROT", "#ff7f0e"), ("SW / ISNS", "#9467bd"),
           ("VSERVO / +V_SERVO", "#2ca02c"), ("+5V", "#1f77b4"), ("+3V3", "#17becf"),
@@ -70,6 +74,22 @@ def collect(board):
             pads.append((lay, T(b.GetX()), T(b.GetY()), T(b.GetWidth()), T(b.GetHeight())))
         parts.append(dict(ref=fp.GetReference(), side=side, box=(T(bb.GetX()), T(bb.GetY()), T(bb.GetWidth()),
                                                                   T(bb.GetHeight())), pads=pads))
+    copper = {"F": [], "B": [], "via": [], "zone": {"F": [], "B": []}}
+    for t in board.GetTracks():
+        if t.GetClass() == "PCB_VIA":
+            copper["via"].append((T(t.GetPosition().x), T(t.GetPosition().y), T(t.GetWidth(pcbnew.F_Cu)) / 2))
+        elif t.GetLayer() in (pcbnew.F_Cu, pcbnew.B_Cu):
+            copper["F" if t.GetLayer() == pcbnew.F_Cu else "B"].append(
+                (T(t.GetStart().x), T(t.GetStart().y), T(t.GetEnd().x), T(t.GetEnd().y), T(t.GetWidth())))
+    for z in board.Zones():
+        for side, lay in (("F", pcbnew.F_Cu), ("B", pcbnew.B_Cu)):
+            if not z.IsOnLayer(lay):
+                continue
+            ps = z.GetFilledPolysList(lay)
+            for i in range(ps.OutlineCount()):
+                ch = ps.Outline(i)
+                copper["zone"][side].append(" ".join("%.3f,%.3f" % (T(ch.CPoint(k).x), T(ch.CPoint(k).y))
+                                                     for k in range(ch.PointCount())))
     draw = []
     for d in board.GetDrawings():
         layer = d.GetLayerName()
@@ -79,10 +99,13 @@ def collect(board):
             draw.append(("rect", layer, T(d.GetStart().x), T(d.GetStart().y), T(d.GetEnd().x), T(d.GetEnd().y)))
         elif d.GetShape() == pcbnew.SHAPE_T_CIRCLE:
             draw.append(("circle", layer, T(d.GetCenter().x), T(d.GetCenter().y), T(d.GetRadius())))
-    return parts, draw
+    return parts, draw, copper
 
 
-def svg(view, side, parts, draw, edges):
+CU = {"F": "#d04040", "B": "#3a6ad0"}
+
+
+def svg(view, side, parts, draw, edges, copper):
     x1, y1, x2, y2 = view
     w, h = x2 - x1, y2 - y1
     mirror = side == "B"
@@ -97,6 +120,15 @@ def svg(view, side, parts, draw, edges):
                      % (min(a[0], a[2]), min(a[1], a[3]), abs(a[2] - a[0]), abs(a[3] - a[1]), col, wid, dash))
         elif kind == "circle":
             s.append('<circle cx="%s" cy="%s" r="%s" fill="none" stroke="#cc3300" stroke-width="0.2"/>' % tuple(a))
+    for s_ in (("B", "F") if side == "F" else ("F", "B")):  # other outer layer first, faint
+        own = s_ == side
+        for pts in copper["zone"][s_]:
+            s.append('<polygon points="%s" fill="%s" opacity="%s"/>' % (pts, CU[s_], 0.28 if own else 0.08))
+        for x1_, y1_, x2_, y2_, w_ in copper[s_]:
+            s.append('<line x1="%s" y1="%s" x2="%s" y2="%s" stroke="%s" stroke-width="%s" stroke-linecap="round" '
+                     'opacity="%s"/>' % (x1_, y1_, x2_, y2_, CU[s_], w_, 0.9 if own else 0.25))
+    for x_, y_, r_ in copper["via"]:
+        s.append('<circle cx="%s" cy="%s" r="%s" fill="#666"/>' % (x_, y_, r_))
     for p in parts:  # other side faint, own side solid
         own = p["side"] == side
         bx, by, bw, bh = p["box"]
@@ -128,7 +160,7 @@ def svg(view, side, parts, draw, edges):
     s.append('<rect x="%s" y="%s" width="%s" height="9" fill="white"/>' % (x1, y2, w))
     ly = y2 + 2.0
     title = ("Oberseite (von oben)" if side == "F" else "Unterseite (von unten gesehen, gespiegelt)") + \
-        " - Luftlinien = KiCad-Ratsnest (DRC unconnected_items), GND schwarz"
+        " - Kupfer rot (F) / blau (B), Luftlinien = KiCad-Ratsnest (DRC unconnected_items), GND schwarz"
     s.append('<text x="%s" y="%s" font-size="1.6" font-family="Helvetica" fill="#000">%s</text>' % (x1 + 1, ly, title))
     lx = x1 + 1
     for name, col in LEGEND:
@@ -142,14 +174,14 @@ def svg(view, side, parts, draw, edges):
 def main():
     pcb = ROOT / "RoverCore.kicad_pcb"
     board = pcbnew.LoadBoard(str(pcb))
-    parts, draw = collect(board)
+    parts, draw, copper = collect(board)
     edges = ratsnest(pcb)
     OUT.mkdir(parents=True, exist_ok=True)
     for name, view in VIEWS.items():
         for side in ("F", "B"):
             stem = "%s_%s" % (name, "top" if side == "F" else "bottom")
             f = OUT / (stem + ".svg")
-            f.write_text(svg(view, side, parts, draw, edges))
+            f.write_text(svg(view, side, parts, draw, edges, copper))
             if shutil.which("rsvg-convert"):
                 subprocess.run(["rsvg-convert", "-o", str(OUT / (stem + ".png")), str(f)], check=True)
     print("wrote %d views to %s (%d ratsnest edges)" % (2 * len(VIEWS), OUT, len(edges)))

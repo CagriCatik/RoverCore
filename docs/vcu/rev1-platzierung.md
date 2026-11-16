@@ -1,7 +1,8 @@
 # RoverCore VCU Rev1 – erste funktionale Platzierung (Stand 2026-11-16)
 
-**Status: vorläufiger Platzierungsvorschlag.**
-- Keine Fertigungsfreigabe, kein Routing.
+**Status: vorläufiger Platzierungsvorschlag mit Probe-Routing des Servoreglers.**
+- Keine Fertigungsfreigabe. Geroutet ist nur der Servoregler (3b), die
+  übrige Platine nicht.
 - Kontur, Befestigung und Steckerzugang sind **nicht** mit dem Chassis
   abgestimmt. Sie dienen nur dazu, den Platzbedarf abzuleiten.
 - Die Gehäusedaten folgen aus dem selbst gedruckten Fahrzeugaufbau. Diese
@@ -309,6 +310,79 @@
   - RUN-Weiterführung von Pin 6 auf B.
   - Weitere GND-Stitching-Vias im Raster.
 
+## 3c. Elektrische Feinplatzierung Logikversorgung, Ausgangsstufen, Controller-Peripherie (2026-11-16)
+
+- **Werkzeug:** `hardware/scripts/fine_place_rev1.py`, einmal angewendet.
+  - Es setzt nur die dort aufgeführten 113 Footprints auf ausdrückliche
+    Lagen und Drehungen.
+  - Es verweigert das Verschieben eines Footprints, an dem schon Kupfer
+    hängt, und bricht bei Lock-Dateien ab.
+  - Die Courtyard-Packung war nur der Ausgangspunkt.
+- **Prüfung:**
+  - Für jedes Satellitenbauteil ist geprüft, dass sein Anschlusspad zum
+    vorgesehenen Pin zeigt (Pad-Abstände unten, Mitte zu Mitte, aus der
+    Platine).
+  - DRC: keine Courtyard-, Abstands- oder Kurzschlussbefunde.
+
+**Logikversorgung TPS54302 (U301):**
+
+| Funktion | Lage | Abstand |
+|---|---|---|
+| Eingang C301 (10 µF) | quer über VIN (Pin 3) und GND (Pin 1); SW (Pin 2) führt zwischen den Pads zu L301 | je 2,9 mm |
+| C302 (100 nF) | am VIN-Pad von C301; GND-Pad mit eigenem Via zu In1 | 1,9 mm zu C301 |
+| Boot C303 | direkt unter U301: BOOT (Pin 6) links, SW (Pin 2) über einen schmalen Steg zwischen den Pinreihen | 1,8 / 2,7 mm |
+| L301 | 2,7 mm näher an U301 als bisher, kürzerer SW-Knoten | SW-Pad 6,2 mm von Pin 2 |
+| Ausgang C304/C305/C307 | direkt hinter L301, +5V-Pads in einer Reihe | – |
+| FB-Teiler R302/R303, C306 | links oben an FB (Pin 4); R301 (Messeingang +5V) davor, der Fühlerweg kommt von den Ausgangskondensatoren | R302 1,6 mm |
+| EN-Teiler R305/R304 | links an EN (Pin 5); das VBAT-Ende von R304 erhält beim Routing ein Via | R305 1,7 mm |
+
+**Ausgangsstufen (U201, Q201–Q206):**
+- **U201 um 90° gedreht:** B-Seite (5 V, Pins 13–24) nach Norden zu den
+  Stufen, A-Seite (3,3 V) nach Süden.
+  - Abblockung: C202 an VCCB (Pins 23/24) 1,5 mm; C201 an VCCA (Pin 1)
+    1,5 mm.
+  - A-seitige Pull-ups/-downs R201–R209 in einer Reihe direkt unter ihren
+    Pins (2,8–6,6 mm).
+  - B-seitige LED-Pull-downs R216–R218: 2,5–3,7 mm.
+- **Je Kanal eine Spalte, in der Reihenfolge der Stecker** von West nach Ost:
+  AUX1 (J104), FRONT (J102), AUX2 (J105), REAR (J103), ESC (J106).
+  - Oben R22x (470 Ω, Ausgangspad zum Stecker);
+  - darunter Q20x (Drain nach oben, 2,0 mm zu R22x);
+  - dann D20x (+5V → PU);
+  - links daneben R24x, R23x und der Gate-Pull-up R21x (2,6 mm zum Gate).
+- **Kreuzungen:**
+  - Die Kanalreihenfolge von U201 (ESC, FRONT, REAR, AUX1, AUX2) weicht von
+    der Steckerreihenfolge ab.
+  - Die Gate-Leitungen zwischen U201 und den Stufen brauchen daher beim
+    Routing Lagenwechsel.
+  - Bewusst gewählt: Die Leitungen zum Stecker (Kabelseite) bleiben direkt.
+- **Längere Wege:**
+  - R222 → J102 und R223 → J103 ca. 10 mm, weil die AUX-Stiftleisten
+    J104–J106 zwischen den Micro-Fit-Steckern und den Stufen liegen.
+  - Q206 (OUT_LOCK-Klemme) an ESC_DRV ca. 8 mm.
+- **U204 und R501** (Pull-up an ACT_OE_N, Blatt Controller) westlich von
+  U201. C203 an VCC (3,3 mm).
+
+**Controller-Peripherie** (unter dem DevKit, nur flache SMD), nach Funktion
+gruppiert:
+
+| Block | Bauteile | Abstände |
+|---|---|---|
+| 5-V-Einspeisung DevKit | D501 und TP503 neben DevKit-Pin 21 (jetzt im Gruppenrahmen 4, westlich der Buchsenleiste) | D501 → Pin 21 3,5 mm |
+| 3V3-Wächter | U504, C505 an VDD, R510 an RESET | je 1,8 mm |
+| Akkuverlust-Wächter | U505, C507 an VDD, SENSE-Knoten C506/R516/R515 an Pin 5, R517 an Pin 1 | 1,8–4,1 mm |
+| Taster → Latch-Takt | U507, C510, Entprellung C511/R502/R518 am Eingang | 1,7 / 2,7 mm |
+| VBAT_OK-Puffer, Latch | U508 mit C509; U506 mit C508 an VCC, R519 an Q | 1,7–2,5 mm |
+| Ausgangssperre O-37 | D507/R520/C512 (LOCK_SUP-Erzeugung), U515/U516 mit C513, Teiler R521/R522 an U516-SENSE, R523 zwischen den RAILS_OK-Pins, Q507/R524/TP506 darunter | 1,6–3,1 mm |
+| VBAT-Messung | Q505 mit R508, Q506 mit R509, Teiler R505/R506/C504/R507 als Kette, D506 am Teilerknoten, TP505 | 1,7–5,1 mm |
+| 3V3-Puffer, Messpunkte, Status-LED | C501/C502, TP502/TP504, R504/D502 an der Unterkante | – |
+
+- **Nicht feinplatziert** (weiter Courtyard-Packung):
+  - Eingangsschutz (Gruppe 1);
+  - RUN- und Messgruppe des Servoreglers (Q403–Q408, Teiler);
+  - Sensoren/Display (Gruppe 6);
+  - Schnittstellen (Gruppe 7).
+
 ## 4. DevKit, Antenne und USB
 
 - U501 sitzt an der rechten Kante. Die Antennen-Sperrfläche des Footprints
@@ -366,6 +440,11 @@ und nicht versioniert (`.gitignore`); die Bilder sind kein Freigabenachweis.
   GND** in Schwarz. Nicht mehr selbst berechnet.
 - **Seiten:** Ober- und Unterseite getrennt. Die Unterseite ist von unten
   gesehen (gespiegelt); Teile der anderen Seite sind blass.
+- **Kupfer:**
+  - Leitungen, Vias und Füllungen der Außenlage der Ansicht; F rot, B blau.
+  - Die andere Außenlage ist blass; die GND-Innenlagen sind nicht
+    gezeichnet.
+- Stand der Bilder: nach Probe-Routing (3b) und Feinplatzierung (3c).
 
 | Datei (je `_top` und `_bottom`, `.png`/`.svg`) | Inhalt |
 |---|---|
@@ -373,7 +452,10 @@ und nicht versioniert (`.gitignore`); die Bilder sind kein Freigabenachweis.
 | `detail_input_logic` | Eingangsschutz und Logikversorgung |
 | `detail_servo_regulator` | Leistungsstufe LTC7803 mit Feinplatzierung, Kelvin-Abgriffe, C403/C404 auf der Unterseite |
 | `detail_devkit_usb` | Aktuatoren, DevKit mit Antennenrand, USB-Zugang, Controller-Peripherie |
-| `render_3d_top.png`, `render_3d_iso.png` | 3D-Ansicht (Teile ohne Modell fehlen, siehe models_3d) |
+| `detail_logic_supply` | TPS54302 mit Feinplatzierung (3c) |
+| `detail_output_stages` | U201, Kanalspalten, Stecker J102–J106 (3c) |
+| `detail_controller_periphery` | Wächter, Latch, O-37, VBAT-Messung (3c) |
+| `render_3d_top.png`, `render_3d_bottom.png`, `render_3d_iso.png` | 3D-Ansichten nach Probe-Routing und Feinplatzierung (Teile ohne Modell fehlen, siehe models_3d) |
 
 - Die Dateien ohne `_top`/`_bottom` (`overview.png` usw.) stammen vom ersten
   Renderer (GND ausgeblendet, Luftlinien selbst berechnet) und sind veraltet.
@@ -402,18 +484,21 @@ Ansichten:
 
 - Chassis: Kontur, Bohrungen, Steckerzugang (XT30, Micro-Fit, USB), Bauhöhen
   über und unter der Platine.
-- Feinplatzierung:
-  - übrige Gruppen elektrisch (bisher nach Courtyard gepackt: eine
-    Gruppierung, noch keine Feinplatzierung für Abblockung, Gate-Ansteuerung
-    und Rückkopplung);
-  - Servoregler: BG-Weg, SENSE-Paar und Kühlkupfer Q401/Q402/L401 im
-    Routing;
-  - Lage der Unterseiten-Kondensatoren C403/C404 bestätigen;
-  - Referenztexte (Silkscreen).
+- Feinplatzierung und Routing:
+  - Feinplatzierung von Eingangsschutz, Servo-RUN/Messgruppe, Sensoren und
+    Schnittstellen (3c);
+  - Routing der übrigen Platine, beginnend mit VBAT_PROT-Zuleitung und
+    Servoschiene (3b);
+  - Kühlkupfer Q401/Q402/L401;
+  - Referenztexte (Silkscreen), darunter Referenzfelder nahe der
+    Platinenkante.
+- Nach dem Beginn von Feinplatzierung und Routing wird
+  `build_board.py --bootstrap` nicht mehr angewendet. Der normale Abgleich
+  bleibt erlaubt.
 - Thermik: `scripts/kit thermal analyze` nach der Feinplatzierung. O-16:
   WROOM nur bis 65 °C, also Abstand zu den Reglern prüfen.
-- Lagenaufbau: Die Platine ist 4-lagig angelegt (F, In1, In2, B). Die
-  Belegung der Innenlagen (GND-Fläche) wird mit dem Routing festgelegt.
+- Lagenaufbau: festgelegt in 3a. Offen sind Prepreg-Dicke und
+  Außenkupfer (35 / 70 µm) beim Fertiger.
 - 3D-Modelle der 17 Footprints ohne Modell (nur echte Herstellerdaten).
 - Weiter offen aus dem Schaltplan:
   - O-36 (ESC-Test);
