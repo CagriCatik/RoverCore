@@ -1675,13 +1675,25 @@ Freigabe verzögern, nie die Sperre aufheben.
 - **Ruhestrom aus dem Akku:** 0,93 mA bei 12,6 V, 0,49 mA bei 9,0 V (Rev B:
   2,1 mA).
 
-**Lücke 1 – Sperrwirkung über Ein-Zustände (ersetzt A10):**
+> **Korrektur 2026-11-16 (Owner-Review):** Die frühere Aussage „RUN und
+> ESC-Leitung gesperrt für VBAT_PROT ≥ 4,4 V“ folgte nicht aus der Rechnung.
+> Die Sperrwerte mit `OUT_LOCK` ≥ 4,94 V gelten nur, solange D507 regelt. Aus
+> Widerstand und 5-V-Shunt lassen sich bei 4,4 V Eingang keine 4,94 V
+> erzeugen. Die gültigen Bereiche stehen jetzt unter Lücke 3. Die Lücken sind
+> **nicht** alle geschlossen:
+> - Lücke 1 ist im Regelbereich nachgewiesen.
+> - Lücke 2 ist geschlossen.
+> - Lücke 3 ist nur teilweise geschlossen; der Rest hängt an A11 oder ist
+>   offen.
+
+**Lücke 1 – Sperrwirkung über Ein-Zustände (ersetzt A10), Regelbereich VBAT_PROT ≥ 6,86 V:**
 - **`RAILS_OK`:** ≤ 0,4 V bei VDD ≥ 1,8 V und I_OL ≤ 1 mA (garantiert). Hier
   fließen höchstens 51 µA.
 - **Q507 (P-FET):** V_GS ≤ −(4,942 − 0,4) = −4,54 V. Garantiert sind
   R_DS(on) ≤ 110 mΩ bei −4,5 V und ≤ 150 mΩ bei −2,5 V (25 °C).
   - Strom ≤ 60 µA → Spannungsabfall < 0,1 mV (heiß × 1,5 typ.).
-  - Also `OUT_LOCK` ≥ 4,94 V.
+  - Also `OUT_LOCK` ≥ 4,94 V. Das gilt **nur, solange D507 regelt
+    (VBAT_PROT ≥ 6,86 V)**; darunter siehe Lücke 3.
 - **Q408 und Q206:** V_GS ≥ 4,94 V → R_DS(on) ≤ 1,5 Ω (Datenblattpunkt 4,0 V).
   - **RUN** ≤ 21,5 V / 115 kΩ × 1,5 Ω × 1,6 (heiß, typ.) = **0,45 mV**.
     Das ist weit unter der RUN-Schwelle 1,15 V.
@@ -1726,36 +1738,55 @@ Freigabe verzögern, nie die Sperre aufheben.
   EN ≥ 8,65 V und 5 ms Soft-Start. RUN braucht 1,6 ms (C420), und Q403
   sperrt RUN beim Anstecken zusätzlich.
 
-**Lücke 3 – Verhalten bei niedriger VBAT, abgedeckter Bereich:**
-- Bedingung für die garantierte Sperre: `LOCK_SUP` ≥ 2,9 V. Dann ist
-  V_GS(Q507) ≤ −2,5 V (150 mΩ) und `OUT_LOCK` ≥ 2,9 V ≥ 2,5 V (Q408/Q206
-  ≤ 2,0 Ω).
-- **Rechnung:**
-  - `LOCK_SUP` ≥ VBAT_PROT − (Last bei 2,9 V ≤ 76 µA + Shunt ≤ 95 µA) ×
-    8,28 kΩ.
-  - Damit gilt `LOCK_SUP` ≥ 2,9 V ab **VBAT_PROT ≥ 4,31 V**.
-  - Annahme **A11:** Unterhalb der Durchbruchspannung zieht der LM4040 nicht
-    mehr als I_Z,min (monotone Kennlinie; typ. weit weniger).
-- **Abgedeckter Bereich (garantiert):**
-  - **RUN und ESC-Leitung gesperrt für VBAT_PROT ≥ 4,4 V**, sobald +3V3 oder
-    +5V ungültig ist.
-  - Dabei ist ESC_DRV ≤ 5,16 V / 2,18 kΩ × 2 Ω × 1,6 = 7,6 mV.
-- **Unter 4,4 V:**
-  - **RUN:** Der RUN-Teiler liefert ≤ 0,67 V (Schwelle steigend 1,15 V).
-    Ausschaltschwelle: Hysterese typ. 100 mV, ohne Min → **Annahme A12:**
-    fallend ≥ 0,67 V.
-    - Zusätzlich gilt LTC7803 INTVCC-UVLO fallend 3,75–3,95 V.
-  - **ESC-Leitung:** nicht durch Datenblattwerte gedeckt.
-    - Das ESC_DRV-High kommt nur aus +5V.
-    - Der TPS54302 ist unter VIN 3,3 V garantiert aus (UVLO fallend
-      3,3–3,9 V), typisch schon unter ca. 8 V (EN).
-    - +5V ist dann nur Restladung mit Last (DevKit) und fällt ab, nicht
-      quantifiziert.
-    - Ein 3S-Akku unter 4,4 V (1,5 V/Zelle) tritt nur beim Abklemmen oder als
-      Fehler auf; der ESC hängt dann am selben Akku.
-  - **Messung am Muster:**
-    - Langsamer VBAT-Abfall 12 → 0 V und Abklemmen;
-    - Signale ESC_DRV, `OUT_LOCK`, +5V, `LOCK_SUP`.
+**Lücke 3 – Verhalten bei niedriger VBAT: gültige Bereiche (korrigiert):**
+- **Regelbereich von `LOCK_SUP`:**
+  - D507 hält seine Datenblattspannung nur bei I_Z ≥ I_Z,min (95 µA,
+    −40…85 °C).
+  - Mit Last ≤ 122 µA und R520 max. 8,28 kΩ gilt das ab
+    **VBAT_PROT ≥ 6,86 V** (5,058 V + 217 µA × 8,28 kΩ, Schätzung mit
+    Grenzwerten).
+  - Nur dort ist `LOCK_SUP` = 4,942–5,07 V durch Datenblattwerte belegt.
+- **Unterhalb von 6,86 V:**
+  - `LOCK_SUP` ist eine Teilerspannung aus R520 gegen die Lasten und den
+    Reststrom von D507.
+  - Den Reststrom unterhalb der Durchbruchspannung gibt das Datenblatt nicht
+    an.
+  - Eine Untergrenze für `LOCK_SUP` gibt es nur mit **Annahme A11**: Strom
+    ≤ I_Z,min, monotone Kennlinie, typisch weit weniger:
+    `LOCK_SUP` ≥ VBAT_PROT − (Last + 95 µA) × 8,28 kΩ.
+
+| VBAT_PROT | `LOCK_SUP` = Gate Q408/Q206 | Q507 | Q408/Q206 (Datenblattpunkt) | RUN / ESC_DRV in der Sperre | Nachweisstufe |
+|---|---|---|---|---|---|
+| ≥ 6,86 V | 4,942–5,07 V (geregelt) | V_GS ≤ −4,54 V, ≤ 110 mΩ | ≥ 4,0 V → ≤ 1,5 Ω | ≤ 0,45 mV / ≤ 5,7 mV | **Datenblatt (Grenzwerte, R_DS(on) 25 °C × 1,6 typ.)** |
+| 5,61 … 6,86 V | ≥ 4,0 V | V_GS ≤ −3,6 V, ≤ 150 mΩ (−2,5-V-Punkt) | ≥ 4,0 V → ≤ 1,5 Ω | ≤ 0,45 mV / ≤ 5,7 mV | **nur mit A11** |
+| 4,31 … 5,61 V | ≥ 2,9 V | V_GS ≤ −2,5 V, ≤ 150 mΩ | ≥ 2,5 V → ≤ 2,0 Ω | ≤ 0,6 mV / ≤ 7,6 mV | **nur mit A11** |
+| < 4,31 V | nicht belegt | – | – | – | **offen** |
+| < 6,86 V ohne A11 | nicht belegt | – | – | – | **offen** |
+
+- **Einordnung (keine Nachweisaussage):**
+  - Im Betrieb liegt VBAT_PROT bei 9,0–12,6 V (3S), also im Regelbereich.
+  - Der Servoregler startet erst ab RUN-Einschaltschwelle 7,63 V (garantiert)
+    und der +5V-Regler ab EN typ. 8,65 V.
+  - Die Bereiche unter 6,86 V treten beim Abklemmen, beim Hochlaufen und bei
+    tiefentladenem Akku auf.
+- **RUN unterhalb 6,86 V:**
+  - Der Regler kann dort nicht neu starten (RUN steigend ≥ 1,15 V erst ab
+    7,63 V).
+  - Läuft er bereits, hängt das Abschalten von der Sperre (A11) oder von der
+    nicht spezifizierten RUN-Ausschaltschwelle ab: **A12**, fallend ≥ 0,67 V
+    bei 4,4 V.
+  - Zusätzlich gilt LTC7803 INTVCC-UVLO fallend 3,75–3,95 V.
+- **ESC-Leitung unterhalb 6,86 V ohne A11 und unterhalb 4,31 V:** nicht
+  durch Datenblattwerte gedeckt.
+  - Das ESC_DRV-High kommt nur aus +5V.
+  - Der TPS54302 ist unter VIN 3,3 V garantiert aus (UVLO fallend
+    3,3–3,9 V), typisch schon unter ca. 8 V (EN).
+  - +5V ist dann Restladung mit Last (DevKit) und fällt ab, nicht
+    quantifiziert.
+- **Messung am Muster (schließt die offenen Bereiche nur als Messbefund):**
+  - Langsamer VBAT-Abfall 12 → 0 V und Abklemmen;
+  - Signale `LOCK_SUP`, `OUT_LOCK`, ESC_DRV, RUN, +5V;
+  - zusätzlich der Strom von D507 unter 5 V (prüft A11 am Muster).
 
 **Zusatzsperre U201 (Prüfauftrag, umgesetzt):**
 - Gespeicherte Servoenergie (≤ 14 mJ, Schätzung) darf nicht mit weiter
@@ -1773,13 +1804,13 @@ Freigabe verzögern, nie die Sperre aufheben.
 |---|---|---|
 | +3V3 2,7…3,02 V (Firmware evtl. aktiv, Lücke aus der Restladungs-Analyse) | U204 und U201 im Datenblattbereich (≥ 1,65 V); `OUT_LOCK` high → OE-bar high → **U201 Hi-Z, garantiert** | R21x ziehen die Q20x-Gates auf +5V → Leitungen low |
 | +3V3 1,65…2,7 V | wie oben, garantiert | low |
-| +3V3 < 1,65 V | U204/U201 außerhalb des Bereichs; Isolation von U201 erst bei V_CCA < 100 mV garantiert | ESP32 außerhalb V_DD min. 3,0 V, keine Pulserzeugung durch die Firmware; ESC-Leitung über Q206 geklemmt; RUN über Q408 gehalten (Restpunkt: Pegel von U201 in diesem Fenster, Messung) |
+| +3V3 < 1,65 V | U204/U201 außerhalb des Bereichs; Isolation von U201 erst bei V_CCA < 100 mV garantiert | **Elektrischer Zustand der Ausgangsstufe nicht definiert.** Dass der ESP32 dort nicht arbeitet, legt die Pegel von U201/Q20x nicht fest. ESC-Leitung über Q206 und RUN über Q408 gehalten, soweit `OUT_LOCK` nach Lücke 3 belegt ist. Bleibt beim bestehenden Unterspannungs-Prüfpunkt (V.18, Messung) |
 | +5V < 4,21 V, +3V3 gültig (USB) | `OUT_LOCK` high → U201 Hi-Z (V_CCB ≥ 1,65 V) oder isoliert | low bzw. ohne Hochziehquelle |
 | beide gültig + t_D | `OUT_LOCK` low → OE nur noch über ACT_OE_N ∨ ACT_DISARMED | Firmware-Regeln (O-35) |
 
 **Abdeckung:**
 
-| Zustand (Batterie angeschlossen, VBAT_PROT ≥ 4,4 V) | Ergebnis |
+| Zustand (Batterie angeschlossen, VBAT_PROT ≥ 6,86 V; darunter siehe Lücke 3) | Ergebnis |
 |---|---|
 | Anstecken, +5V im Soft-Start | U516 hält `RAILS_OK` low (+5V < 4,21 V bzw. t_D) → gesperrt |
 | +5V fällt unter 4,21 V | U516 → gesperrt; die Sperre hängt nur an VBAT |
@@ -1791,15 +1822,16 @@ Die Hardware-Sperre ersetzt keine Firmware-Regel. Die Firmware-Freigabe nach
 3.20 Punkt 1 bleibt unverändert nötig.
 
 **Annahmen und Restpunkte:**
-- **A11:** LM4040-Strom unter der Durchbruchspannung ≤ I_Z,min. Betrifft nur
-  die Untergrenze 4,4 V.
-- **A12:** LTC7803 RUN-Ausschaltschwelle ≥ 0,67 V. Betrifft nur RUN unter
-  4,4 V.
+- **A11:** LM4040-Strom unter der Durchbruchspannung ≤ I_Z,min. Betrifft den
+  Bereich 4,31–6,86 V; ohne A11 ist dort nichts nachgewiesen.
+- **A12:** LTC7803 RUN-Ausschaltschwelle ≥ 0,67 V. Betrifft nur RUN bei
+  laufendem Regler unter 6,86 V.
 - R_DS(on) ist bei 25 °C spezifiziert; heiß × 1,5–1,6 aus den typischen
   Kurven.
-- Unter 4,4 V ist die ESC-Leitung nicht durch Datenblattwerte gedeckt
-  (Messung).
-- U201-Pegel bei +3V3 < 1,65 V nicht spezifiziert (Messung).
+- ESC-Leitung unter 4,31 V (mit A11) bzw. unter 6,86 V (ohne A11) nicht
+  durch Datenblattwerte gedeckt (Messung).
+- Ausgangsstufe bei +3V3 < 1,65 V elektrisch nicht definiert; das bleibt beim
+  Unterspannungs-Prüfpunkt V.18 (Messung).
 - **Freigabe-Funktion:** Aus-Leckstrom von Q507 bei V_GS ≈ −61 mV ist nicht
   garantiert. Er kann nur die Freigabe verhindern (Messung `OUT_LOCK` im
   Betrieb, TP506).
@@ -1836,8 +1868,12 @@ Die Hardware-Sperre ersetzt keine Firmware-Regel. Die Firmware-Freigabe nach
 - Bei RESET, Neustart und fehlendem DevKit sind die Leitungen low
   (U201 hochohmig, Q20x leiten).
 - **Bewertung (Rev C):** Der Fall ist durch die Zusatzsperre U201 gedeckt:
-  - Bei +3V3 ≤ 3,024 V ist U201 garantiert hochohmig, solange +3V3 ≥ 1,65 V.
-    Darunter arbeitet der ESP32 nicht mehr.
+  - Bei +3V3 ≤ 3,024 V ist U201 garantiert hochohmig, solange +3V3 ≥ 1,65 V
+    ist und `OUT_LOCK` nach Lücke 3 belegt ist.
+  - Unter 1,65 V ist der Zustand der Ausgangsstufe **nicht definiert**. Die
+    frühere Begründung „der ESP32 arbeitet dort nicht“ ist zurückgenommen;
+    daraus folgt kein elektrischer Zustand. Das bleibt beim
+    Unterspannungs-Prüfpunkt V.18.
   - Keine Signalklemme an den Servoleitungen und keine aktive Entladung der
     Servoschiene.
   - Weiter messen: Abfall von +V_SERVO mit angeschlossenen Servos und
@@ -1937,7 +1973,7 @@ Schutzkoordination (O-17).
 | O-34 | Hauptabschaltung außerhalb der VCU auswählen (3.14): Dauer-/Spitzenstrom, DC-Schaltvermögen bei 12,6 V, Einschaltstrom; bei elektronischer Lösung Body-Dioden, Rückspeisung, AUS-Zustand | Owner |
 | O-35 | **Rev1-Umfang (Owner 2026-11-16, 3.20):** F2, Entprellung (S0/S1/S2, t_LOS 100 ms, t_EIN 50 ms) und Freigabe nach Versorgungswiederkehr in der ESP32-Firmware; keine garantierte Unabhängigkeit von fehlerhafter Firmware. V2 und Timervergleich geparkt (3.19). U505/U506 bleiben als zusätzliche Sperrebene (wirksam erst beim Loslassen). **Umgesetzt (6239bca, c963cf5):** ACT_ARMED über R519 1 kΩ auf GPIO18; die Firmware (enable_fsm) geht bei fallendem ACT_ARMED nach S0, ein späteres High allein gibt nicht frei. Der Abfrageabstand < 12 ms ist bis zur Prüfung auf dem ESP32 nur eine Eigenschaft des getesteten Modells. Firmware: Watchdog, nach jedem Neustart S0, bei VBAT-Verlust SERVO_PWR_EN low, ACT_OE_N high, ESC neutral; erster Puls neutral; GPIO10 ohne interne Pull-ups; J112-TX ohne Akku inaktiv; GPIO0 und GPIO6 nie als Ausgang. Abschaltreihenfolge = unbestätigte Prototyp-Hypothese | Owner / Agent |
 | O-36 | **Funktionale Lücke** der gemeinsamen Wiederanlaufanforderung: Der gemeinsame Akkuanschluss bedeutet kein gemeinsames Reset-Verhalten von ESC und VCU (Puffer-C, Leitungsabfälle, ESC-Brown-out). Der Latch sieht nur VBAT_PROT. Nicht abgedeckt: ESC-Zweig allein getrennt, ESC-Neustart bei gesetztem Latch (3.17 Nr. 2.4, 2.6). ESC-Verhalten bei fehlenden und wiederkehrenden PWM-Pulsen nicht belegt (2.7). Schließen nur durch eine Maßnahme im ESC-Zweig oder ein belegtes ESC-Arming-Verhalten als begrenzte Aussage | Owner |
-| O-37 | Ausgangssperre bei ungültigen Schienen (3.20, Punkt 2), **Rev C im Schaltplan (2026-11-16)**: `LOCK_SUP` 5,0 V aus VBAT_PROT (R520, LM4040 D507) versorgt U515 (TPS3808G33, +3V3) und U516 (TPS3808G01, +5V über 100 k/10,2 k). `RAILS_OK` low → Q507 (NTR4171P) ein → `OUT_LOCK`: Q408 hält RUN, Q206 hält ESC_DRV, U204 (LVC1G332) schaltet U201 hochohmig. Sicherheit nur über Ein-Zustände (V_OL, R_DS(on)). Garantiert: +3V3 Sperre < 3,024 V / Freigabe ≤ 3,194 V; +5V Sperre < 4,21 V / Freigabe ≤ 4,69 V; t_D 12–28 ms; abgedeckt ab VBAT_PROT ≥ 4,4 V. Restpunkte: A11, A12, ESC-Leitung unter 4,4 V, U201 bei +3V3 < 1,65 V, Freigabe-Leckstrom Q507, Beschaffung TPS3808/LM4040; Messungen am Muster **vor Fertigungsfreigabe** | Owner / Agent |
+| O-37 | Ausgangssperre bei ungültigen Schienen (3.20, Punkt 2), **Rev C im Schaltplan (2026-11-16)**: `LOCK_SUP` 5,0 V aus VBAT_PROT (R520, LM4040 D507) versorgt U515 (TPS3808G33, +3V3) und U516 (TPS3808G01, +5V über 100 k/10,2 k). `RAILS_OK` low → Q507 (NTR4171P) ein → `OUT_LOCK`: Q408 hält RUN, Q206 hält ESC_DRV, U204 (LVC1G332) schaltet U201 hochohmig. Sicherheit nur über Ein-Zustände (V_OL, R_DS(on)). Garantiert: +3V3 Sperre < 3,024 V / Freigabe ≤ 3,194 V; +5V Sperre < 4,21 V / Freigabe ≤ 4,69 V; t_D 12–28 ms. Sperrwirkung durch Datenblattwerte belegt im Regelbereich VBAT_PROT ≥ 6,86 V; 4,31–6,86 V nur mit A11; darunter offen (Korrektur 2026-11-16). Restpunkte: A11, A12, ESC-Leitung unterhalb dieser Bereiche, Ausgangsstufe bei +3V3 < 1,65 V nicht definiert (V.18), Freigabe-Leckstrom Q507, Beschaffung TPS3808/LM4040; Messungen am Muster **vor Fertigungsfreigabe** | Owner / Agent |
 
 Erledigt: O-5 (DevKit-LDO), O-6 (Lenkservos), O-7 (LTC7803 Rev B, 3.5a;
 Kompensation weiter unter O-27), O-9 (Projektort), O-14 (ersetzt durch O-17),

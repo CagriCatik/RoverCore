@@ -320,7 +320,7 @@ LAYOUTS["Controller"] = {
                        "U515: +3V3 < 3.024-3.116 V, U516: +5V < 4.21-4.55 V -> RAILS_OK low (wired AND, R523) -> Q507 on\\n"
                        "-> OUT_LOCK = LOCK_SUP: Q408 (ServoPower) holds RUN low, Q206 (Actuators) holds ESC_DRV low,\\n"
                        "U204 (Actuators) puts U201 Hi-Z. Release only with both rails valid + 12-28 ms. Safety uses only\\n"
-                       "ON states (guaranteed VOL, RDS(on)); OFF leakage only delays the release. Covered: VBAT_PROT >= 4.4 V.",
+                       "ON states (guaranteed VOL, RDS(on)); OFF leakage only delays the release. Proven while D507 regulates (VBAT_PROT >= 6.86 V); below: docs 3.20.",
                        248.92, 50.8)},
 }
 
@@ -373,7 +373,10 @@ LAYOUTS["ServoPower"] = {
         "D403": (339.09, 213.36, 90, {"_ref_at": (-7.62, -8.89), "_val_at": (-7.62, -6.35)}),
         "R417": (322.58, 241.3, 270),
         # 2 - O-37 RUN clamp
-        "Q408": (101.6, 233.68, 0, {"_ref_at": (-2.54, -7.62), "_val_at": (-2.54, 7.62)}),
+        "Q408": (101.6, 233.68, 0, {"_ref_at": (-2.54, -7.62), "_val_at": (-2.54, 7.62),
+                                     "Description": "O-37 RUN clamp parallel to Q403: on while OUT_LOCK is high (a rail "
+                                                    "invalid); VGS >= 4.94 V while D507 regulates (VBAT_PROT >= 6.86 V), "
+                                                    "RDS(on) <= 1.5 Ohm; below that see docs 3.20; 1 G, 2 S, 3 D"}),
     },
     "pins": {"U401": {"8": "=7"}, "U402": {"3": "=2", "7": "=2"}, "Q404": {"2": "SERVO_EN_SRC"}},
     # O-35 restart interlock: Q407 in series with Q404, gate from the Controller latch (ACT_ARMED)
@@ -389,7 +392,7 @@ LAYOUTS["ServoPower"] = {
                  {"1": "OUT_LOCK", "2": "GND", "3": "RUN_SERVO"},
                  {"Manufacturer": "onsemi", "MPN": "NTR4003NT1G", "LCSC": "C82325", "Datasheet": "https://www.onsemi.com/download/data-sheet/pdf/ntr4003n-d.pdf",
                   "Description": "O-37 RUN clamp parallel to Q403: on while OUT_LOCK is high (a rail invalid); VGS >= 4.94 V "
-                                 "(>= 2.9 V down to VBAT_PROT 4.4 V), RDS(on) <= 1.5 / 2.0 Ohm; 1 G, 2 S, 3 D"}),
+                                 "while D507 regulates (VBAT_PROT >= 6.86 V), RDS(on) <= 1.5 Ohm; below that see docs 3.20; 1 G, 2 S, 3 D"}),
     },
     "globals": {"ACT_ARMED": "input", "OUT_LOCK": "input"},
     "wire": ["VBAT_PROT", "SERVO_RUN_INH", "SERVO_PWR_EN", "SERVO_EN_SRC", "ACT_ARMED", "RUN_SERVO", "ITH_SERVO", "ITH_RC", "INTVCC_SERVO",

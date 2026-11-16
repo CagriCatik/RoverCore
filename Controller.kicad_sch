@@ -16635,7 +16635,7 @@
 		)
 		(uuid "0c29679a-66ef-529e-9d44-c449010db8c8")
 	)
-	(text "LOCK_SUP 5.0 V from VBAT_PROT (R520, D507) powers both supervisors: no rail is needed to lock.\nU515: +3V3 < 3.024-3.116 V, U516: +5V < 4.21-4.55 V -> RAILS_OK low (wired AND, R523) -> Q507 on\n-> OUT_LOCK = LOCK_SUP: Q408 (ServoPower) holds RUN low, Q206 (Actuators) holds ESC_DRV low,\nU204 (Actuators) puts U201 Hi-Z. Release only with both rails valid + 12-28 ms. Safety uses only\nON states (guaranteed VOL, RDS(on)); OFF leakage only delays the release. Covered: VBAT_PROT >= 4.4 V."
+	(text "LOCK_SUP 5.0 V from VBAT_PROT (R520, D507) powers both supervisors: no rail is needed to lock.\nU515: +3V3 < 3.024-3.116 V, U516: +5V < 4.21-4.55 V -> RAILS_OK low (wired AND, R523) -> Q507 on\n-> OUT_LOCK = LOCK_SUP: Q408 (ServoPower) holds RUN low, Q206 (Actuators) holds ESC_DRV low,\nU204 (Actuators) puts U201 Hi-Z. Release only with both rails valid + 12-28 ms. Safety uses only\nON states (guaranteed VOL, RDS(on)); OFF leakage only delays the release. Proven while D507 regulates (VBAT_PROT >= 6.86 V); below: docs 3.20."
 		(exclude_from_sim no)
 		(at 248.92 50.8 0)
 		(effects
