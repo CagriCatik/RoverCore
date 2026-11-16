@@ -40,8 +40,24 @@ VIEWS = {  # name: (x1, y1, x2, y2) in mm
     "detail_devkit_usb": (90, -12, 152, 102),
     "detail_logic_supply": (-1, 46, 36, 66),
     "detail_output_stages": (91, 6, 123, 47),
-    "detail_controller_periphery": (119, 64, 151, 101),
+    "detail_controller_periphery": (119, 62, 151, 101),
+    "operator_zone": (55, 36, 152, 101),
 }
+# Module and plug envelopes for the operator review (owner review 2026-11-16). Outlines are the footprints' F.Fab
+# module outlines; heights are ESTIMATES (socket body 8.51 mm from the footprint description, module PCB 1.6 mm
+# plus parts; DevKit socket height is open, O-4). The USB plug space is an ASSUMPTION: both USB-C ports at the
+# lower module edge, overmold 12 x 6.5 mm, 30 mm incl. strain relief, across the full module width.
+ENVELOPES = [  # (ref or None, label, height range mm, rect override)
+    ("U501", "DevKit (Huelle, Hoehe ca. 13 mm, Sockel O-4 offen)", (0.0, 13.3), None),
+    ("J116", "OLED-Modul (Huelle, ca. 11 mm)", (0.0, 11.1), None),
+    ("J115", "IMU-Modul (Huelle, ca. 11 mm)", (0.0, 11.1), None),
+    (None, "USB-C-Stecker + Kabel (Annahme 30 mm, z 8,5-15 mm)", (8.45, 14.95), (124.2, 63.9, 149.7, 93.9)),
+]
+TALL = ["L401", "C406", "C407", "C101", "J101", "J102", "J103", "J104", "J105", "J106", "J107", "BZ101"]
+BUTTONS = ["SW501", "SW502", "SW503"]
+FINGER_R = 10.0  # review criterion (estimate): fingertip ~16 mm plus margin, no tall object inside this radius
+NO_MODEL = ["BZ101", "D601", "D602", "D603", "D604", "D606", "D607", "D608", "J101", "J102", "J103", "J115", "J116",
+            "Q101", "Q401", "Q402", "U501"]  # verify: models_3d (no model assigned / model file missing)
 LEGEND = [("GND", "#000000"), ("VBAT_IN/FUSED", "#d62728"), ("VBAT_PROT", "#ff7f0e"), ("SW / ISNS", "#9467bd"),
           ("VSERVO / +V_SERVO", "#2ca02c"), ("+5V", "#1f77b4"), ("+3V3", "#17becf"),
           ("Gate/Boost/INTVCC", "#e377c2"), ("Sense", "#8c564b"), ("Feedback/ITH", "#bcbd22"), ("other", "#999999")]
@@ -105,7 +121,55 @@ def collect(board):
 CU = {"F": "#d04040", "B": "#3a6ad0"}
 
 
-def svg(view, side, parts, draw, edges, copper):
+def fab_rect(board, ref):
+    fp = board.FindFootprintByReference(ref)
+    xs, ys = [], []
+    for g in fp.GraphicalItems():
+        if g.GetLayer() == pcbnew.F_Fab and isinstance(g, pcbnew.PCB_SHAPE):
+            bb = g.GetBoundingBox()
+            xs += [T(bb.GetLeft()), T(bb.GetRight())]
+            ys += [T(bb.GetTop()), T(bb.GetBottom())]
+    return (min(xs), min(ys), max(xs), max(ys))
+
+
+def envelopes(board):
+    out = []
+    for ref, label, z, rect in ENVELOPES:
+        out.append((label, rect or fab_rect(board, ref), z))
+    return out
+
+
+def rect_dist(px, py, r):
+    dx = max(r[0] - px, 0, px - r[2])
+    dy = max(r[1] - py, 0, py - r[3])
+    return (dx * dx + dy * dy) ** 0.5
+
+
+def finger_check(board, env):
+    rows = []
+    for b_ in BUTTONS:
+        fp = board.FindFootprintByReference(b_)
+        px, py = T(fp.GetPosition().x), T(fp.GetPosition().y)
+        obst = [(lab.split(" (")[0], r) for lab, r, z in env]
+        for ref in TALL:
+            f = board.FindFootprintByReference(ref)
+            f.BuildCourtyardCaches()
+            bb = f.GetCourtyard(pcbnew.F_CrtYd).BBox()
+            obst.append((ref, (T(bb.GetLeft()), T(bb.GetTop()), T(bb.GetRight()), T(bb.GetBottom()))))
+        name, d = min(((n, rect_dist(px, py, r)) for n, r in obst), key=lambda a: a[1])
+        # M3 markers count as a low obstacle (screw head about 3 mm): courtyard keep-out 4 mm, not the finger radius
+        fp.BuildCourtyardCaches()
+        bb = fp.GetCourtyard(pcbnew.F_CrtYd).BBox()
+        cr = (T(bb.GetLeft()), T(bb.GetTop()), T(bb.GetRight()), T(bb.GetBottom()))
+        hole = min(rect_dist(hx, hy, cr) for hx, hy in HOLES_REV)
+        rows.append((b_, px, py, name, d, hole))
+    return rows
+
+
+HOLES_REV = [(3.5, 3.5), (3.5, 96.5), (146.5, 96.5), (118.0, 66.0)]  # provisional M3 markers (Cmts.User)
+
+
+def svg(view, side, parts, draw, edges, copper, env=None, fingers=None):
     x1, y1, x2, y2 = view
     w, h = x2 - x1, y2 - y1
     mirror = side == "B"
@@ -144,7 +208,24 @@ def svg(view, side, parts, draw, edges, copper):
         wid = 0.3 if net == "GND" else (0.35 if col else 0.06)
         s.append('<line x1="%s" y1="%s" x2="%s" y2="%s" stroke="%s" stroke-width="%s" opacity="%s"/>'
                  % (a[0], a[1], b[0], b[1], col or "#999", wid, 0.85 if col else 0.6))
+    if env and side == "F":
+        for lab, r, z in env:
+            s.append('<rect x="%s" y="%s" width="%s" height="%s" fill="#2b6cb0" fill-opacity="0.10" stroke="#2b6cb0" '
+                     'stroke-width="0.35" stroke-dasharray="1.5,0.8"/>' % (r[0], r[1], r[2] - r[0], r[3] - r[1]))
+        for p in parts:
+            if p["ref"] in NO_MODEL and p["side"] == side:
+                bx, by, bw, bh = p["box"]
+                s.append('<rect x="%s" y="%s" width="%s" height="%s" fill="none" stroke="#e00000" stroke-width="0.3" '
+                         'stroke-dasharray="0.6,0.4"/>' % (bx, by, bw, bh))
+        for b_, px, py, name, d, _h in fingers or []:
+            col = "#1a9850" if d >= FINGER_R else "#d73027"
+            s.append('<circle cx="%s" cy="%s" r="%s" fill="%s" fill-opacity="0.12" stroke="%s" stroke-width="0.3"/>'
+                     % (px, py, FINGER_R, col, col))
     s.append("</g>")
+    if env and side == "F":
+        for lab, r, z in env:
+            s.append('<text x="%s" y="%s" font-size="1.6" fill="#2b6cb0" font-family="Helvetica">%s</text>'
+                     % (r[0] + 0.8, r[1] + 2.4, lab))
     for p in sorted(parts, key=lambda p: p["side"] == side):  # own side last, on top
         bx, by, bw, bh = p["box"]
         cx = (x1 + x2) - (bx + bw / 2) if mirror else bx + bw / 2
@@ -159,6 +240,10 @@ def svg(view, side, parts, draw, edges, copper):
                      % (tx, a[2], a[0].replace("&", "&amp;")))
     s.append('<rect x="%s" y="%s" width="%s" height="9" fill="white"/>' % (x1, y2, w))
     ly = y2 + 2.0
+    if env and side == "F":
+        s.append('<text x="%s" y="%s" font-size="1.3" fill="#e00000" font-family="Helvetica">rot gestrichelt = kein '
+                 '3D-Modell (%s); blau = Modul-/Steckerhuellen (Schaetzung); Kreise r = %g mm Fingerzugang '
+                 '(gruen frei, rot verletzt)</text>' % (x1 + 1, y2 + 7.6, ", ".join(NO_MODEL), FINGER_R))
     title = ("Oberseite (von oben)" if side == "F" else "Unterseite (von unten gesehen, gespiegelt)") + \
         " - Kupfer rot (F) / blau (B), Luftlinien = KiCad-Ratsnest (DRC unconnected_items), GND schwarz"
     s.append('<text x="%s" y="%s" font-size="1.6" font-family="Helvetica" fill="#000">%s</text>' % (x1 + 1, ly, title))
@@ -171,20 +256,86 @@ def svg(view, side, parts, draw, edges, copper):
     return "\n".join(s)
 
 
+def oblique(board, parts, env, fingers):
+    """Isometric envelope view (no 3D models): board, module and plug envelopes, buttons, finger zones."""
+    c30, s30 = 0.8660, 0.5
+
+    def P(x, y, z):
+        return ((x - y) * c30, (x + y) * s30 - z)
+
+    def poly(pts, fill, op, stroke="#333"):
+        return '<polygon points="%s" fill="%s" fill-opacity="%s" stroke="%s" stroke-width="0.25"/>' % (
+            " ".join("%.2f,%.2f" % P(*q) for q in pts), fill, op, stroke)
+
+    def box(r, z0, z1, fill, op):
+        x1, y1, x2, y2 = r
+        out = [poly([(x1, y2, z0), (x2, y2, z0), (x2, y2, z1), (x1, y2, z1)], fill, op),    # south face
+               poly([(x2, y1, z0), (x2, y2, z0), (x2, y2, z1), (x2, y1, z1)], fill, op),    # east face
+               poly([(x1, y1, z1), (x2, y1, z1), (x2, y2, z1), (x1, y2, z1)], fill, op)]    # top
+        return out
+
+    s = ['<svg xmlns="http://www.w3.org/2000/svg" width="2200" height="1500" viewBox="-95 -30 240 160">',
+         '<rect x="-95" y="-30" width="240" height="160" fill="white"/>',
+         poly([(0, 0, 0), (150, 0, 0), (150, 100, 0), (0, 100, 0)], "#2f6b3a", 0.9)]
+    for p in parts:
+        if p["side"] != "F":
+            continue
+        bx, by, bw, bh = p["box"]
+        col = "#e00000" if p["ref"] in NO_MODEL else "#d8d0b0"
+        s.append(poly([(bx, by, 0), (bx + bw, by, 0), (bx + bw, by + bh, 0), (bx, by + bh, 0)], col, 0.8, col))
+    items = [(r, z, "#2b6cb0", 0.25) for lab, r, z in env]
+    for b_ in BUTTONS:
+        fp = board.FindFootprintByReference(b_)
+        fp.BuildCourtyardCaches()
+        bb = fp.GetCourtyard(pcbnew.F_CrtYd).BBox()
+        items.append(((T(bb.GetLeft()), T(bb.GetTop()), T(bb.GetRight()), T(bb.GetBottom())), (0, 1.54), "#444", 0.9))
+    for r, z, col, op in sorted(items, key=lambda it: it[0][2] + it[0][3]):
+        s += box(r, z[0], z[1], col, op)
+    for b_, px, py, name, d, _h in fingers:
+        col = "#1a9850" if d >= FINGER_R else "#d73027"
+        pts = [(px + FINGER_R * __import__("math").cos(a / 18 * 3.14159), py + FINGER_R *
+                __import__("math").sin(a / 18 * 3.14159), 1.6) for a in range(36)]
+        s.append('<polygon points="%s" fill="%s" fill-opacity="0.15" stroke="%s" stroke-width="0.3"/>'
+                 % (" ".join("%.2f,%.2f" % P(*q) for q in pts), col, col))
+        X, Y = P(px, py, 4)
+        s.append('<text x="%.1f" y="%.1f" font-size="2.2" font-family="Helvetica" text-anchor="middle">%s</text>'
+                 % (X, Y, {"SW501": "ENABLE", "SW502": "RESET", "SW503": "BOOT"}[b_]))
+    s.append('<text x="-92" y="-24" font-size="3" font-family="Helvetica">Schraege Huellenansicht (isometrisch, '
+             'keine 3D-Modelle): Modul- und USB-Huellen blau (Hoehen geschaetzt), Taster grau (1,54 mm laut '
+             'KiCad-Modell),</text>')
+    s.append('<text x="-92" y="-20" font-size="3" font-family="Helvetica">Fingerzonen r = %g mm (gruen frei); '
+             'USB-Steckerraum: Annahme beide USB-C an der Modulunterkante, 30 mm lang, z 8,5-15 mm</text>' % FINGER_R)
+    s.append('<text x="-92" y="-16" font-size="3" fill="#c00000" font-family="Helvetica">Rote Flaechen = Bauteile '
+             'ohne 3D-Modell: %s</text>' % ", ".join(NO_MODEL))
+    s.append("</svg>")
+    return "\n".join(s)
+
+
 def main():
     pcb = ROOT / "RoverCore.kicad_pcb"
     board = pcbnew.LoadBoard(str(pcb))
     parts, draw, copper = collect(board)
+    env = envelopes(board)
+    fingers = finger_check(board, env)
+    for b_, px, py, name, d, hole in fingers:
+        print("finger access %s (%.1f|%.1f): nearest tall object %s at %.1f mm (criterion %g mm) %s; "
+              "M3 marker %.1f mm from the courtyard (keep-out 4 mm) %s"
+              % (b_, px, py, name, d, FINGER_R, "OK" if d >= FINGER_R else "VIOLATED", hole,
+                 "OK" if hole >= 4 else "VIOLATED"))
     edges = ratsnest(pcb)
     OUT.mkdir(parents=True, exist_ok=True)
     for name, view in VIEWS.items():
         for side in ("F", "B"):
             stem = "%s_%s" % (name, "top" if side == "F" else "bottom")
             f = OUT / (stem + ".svg")
-            f.write_text(svg(view, side, parts, draw, edges, copper))
+            f.write_text(svg(view, side, parts, draw, edges, copper, env, fingers))
             if shutil.which("rsvg-convert"):
                 subprocess.run(["rsvg-convert", "-o", str(OUT / (stem + ".png")), str(f)], check=True)
-    print("wrote %d views to %s (%d ratsnest edges)" % (2 * len(VIEWS), OUT, len(edges)))
+    (OUT / "oblique_envelopes.svg").write_text(oblique(board, parts, env, fingers))
+    if shutil.which("rsvg-convert"):
+        subprocess.run(["rsvg-convert", "-o", str(OUT / "oblique_envelopes.png"), str(OUT / "oblique_envelopes.svg")],
+                       check=True)
+    print("wrote %d views + oblique_envelopes to %s (%d ratsnest edges)" % (2 * len(VIEWS), OUT, len(edges)))
 
 
 if __name__ == "__main__":

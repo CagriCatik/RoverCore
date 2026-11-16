@@ -373,15 +373,109 @@ gruppiert:
 | Akkuverlust-Wächter | U505, C507 an VDD, SENSE-Knoten C506/R516/R515 an Pin 5, R517 an Pin 1 | 1,8–4,1 mm |
 | Taster → Latch-Takt | U507, C510, Entprellung C511/R502/R518 am Eingang | 1,7 / 2,7 mm |
 | VBAT_OK-Puffer, Latch | U508 mit C509; U506 mit C508 an VCC, R519 an Q | 1,7–2,5 mm |
-| Ausgangssperre O-37 | D507/R520/C512 (LOCK_SUP-Erzeugung), U515/U516 mit C513, Teiler R521/R522 an U516-SENSE, R523 zwischen den RAILS_OK-Pins, Q507/R524/TP506 darunter | 1,6–3,1 mm |
+| Ausgangssperre O-37 | seit 3d zwischen OLED und DevKit, nahe ihren Lasten U204/Q206: D507/R520/C512 (LOCK_SUP-Erzeugung), U515/U516 mit C513, Teiler R521/R522 an U516-SENSE, R523 zwischen den RAILS_OK-Pins, Q507/R524/TP506 darunter | 1,6–3,1 mm |
 | VBAT-Messung | Q505 mit R508, Q506 mit R509, Teiler R505/R506/C504/R507 als Kette, D506 am Teilerknoten, TP505 | 1,7–5,1 mm |
-| 3V3-Puffer, Messpunkte, Status-LED | C501/C502, TP502/TP504, R504/D502 an der Unterkante | – |
+| 3V3-Puffer, Messpunkte | C501/C502, TP502/TP504 (Status-LED seit 3d an ENABLE) | – |
 
 - **Nicht feinplatziert** (weiter Courtyard-Packung):
   - Eingangsschutz (Gruppe 1);
   - RUN- und Messgruppe des Servoreglers (Q403–Q408, Teiler);
   - Sensoren/Display (Gruppe 6);
   - Schnittstellen (Gruppe 7).
+
+## 3d. Bedienzone, Zugänglichkeit und Beschriftung (2026-11-16, Owner-Review)
+
+Anlass: Die Taster lagen in einer engen Reihe direkt am USB-Ende des DevKits.
+Darunter war die Controller-Elektronik bis an die Kante verdichtet, und viele
+Referenzen überlagerten sich. Die Leistungsstufe (3b) ist unverändert.
+
+**Bedienzone:**
+- **ENABLE (SW501) mit Status-LED (D502, R504)** im freien Streifen über dem
+  OLED-Sockel, Mitte (81,5 | 53).
+- **Servicegruppe RESET (SW502) und BOOT (SW503)** zwischen OLED und DevKit
+  bei (101,5 | 55) und (113,5 | 55).
+  - Abstand untereinander 12 mm, damit ein Finger nicht beide trifft.
+  - 20 mm Abstand zu ENABLE, eigene Beschriftung.
+- **Prüfkriterium Fingerzugang** (Schätzung, keine Norm):
+  - Fingerkuppe ca. 16 mm. Im Umkreis von 10 mm um die Tastermitte steht
+    nichts Hohes.
+  - Als hoch gelten die Modulhüllen, der USB-Steckerraum und L401, C406,
+    C407, C101 sowie die Stecker.
+  - Die Taster sind laut KiCad-Modell nur 1,54 mm hoch.
+  - Die M3-Marken gelten als niedriges Hindernis (Schraubenkopf): 4 mm
+    Freiraum zum Courtyard.
+
+| Taster | nächstes hohes Objekt | Abstand | M3-Marke zum Courtyard |
+|---|---|---|---|
+| ENABLE | OLED-Modulhülle | 10,4 mm | 33,7 mm |
+| RESET | OLED-Modulhülle | 11,4 mm | 15,0 mm |
+| BOOT | DevKit-Hülle | 10,7 mm | 6,9 mm |
+
+- **Hüllen und Annahmen** (in den Ansichten blau, alle Höhen geschätzt):
+  - **DevKit:** F.Fab-Umriss des Footprints, ca. 13 mm hoch. Die
+    Sockelhöhe ist offen (O-4).
+  - **OLED und IMU:** je ca. 11 mm (Sockelkörper 8,51 mm laut
+    Footprint-Beschreibung, plus Modul).
+  - **USB-Steckerraum:** beide USB-C an der unteren Modulkante, über die
+    ganze Modulbreite, 30 mm lang, z 8,5–15 mm. Die genaue Lage der Buchsen
+    ist **nicht** aus einer Espressif-Zeichnung übernommen.
+  - Unter dem Steckerraum liegen nur flache SMD-Teile, keine Taster.
+  - Bestätigt ist die Zugänglichkeit damit nicht: Das ist nur am Muster mit
+    gestecktem DevKit und Kabel möglich.
+- **M3-Marken:** Eine Prüfung aller Courtyards gegen die vorläufigen
+  M3-Marken (4 mm) fand zwei Konflikte:
+  - D502 lag auf der Marke (146,5 | 96,5);
+  - J108 lag 2 mm neben (3,5 | 96,5).
+
+  Behoben: Die LED-/UART-Stecker J108–J112 sitzen 2 mm weiter östlich. J101
+  (XT30) hält 3,8 mm, noch zu prüfen.
+
+**Controller-Elektronik vom Rand zurückgenommen und entzerrt:**
+- Courtyards ≥ 2 mm vom Platinenrand und ≥ 4 mm von der M3-Marke.
+- Gruppen nach Verbindung:
+  - Wächter 3V3/Akkuverlust;
+  - Taster-Puffer mit Entprellung am Eingang;
+  - VBAT_OK-Puffer und Latch;
+  - VBAT-Messkette.
+- Die Ausgangssperre O-37 sitzt jetzt in der freien Fläche zwischen OLED und
+  DevKit, nahe U204/Q206, statt in der Ecke.
+- **Ausgangsstufen:** Zwischen den Reihen jeder Kanalspalte liegen jetzt
+  1,3 mm für Referenzen. U201 und die A-Reihe sitzen entsprechend tiefer.
+  Die AUX-/ESC-Stiftleisten liegen 1,5 mm tiefer, damit zwischen Micro-Fit
+  und Stiftleisten zwei Beschriftungsreihen Platz haben.
+- **Schnittstellengruppe:** Die Reihen sind nur auseinandergezogen, damit
+  die Referenzen lesbar sind. Das ist weiter die Courtyard-Packung, keine
+  Feinplatzierung.
+
+**Beschriftung** (`hardware/scripts/silk_cleanup.py`):
+- **Funktionsnamen** auf F.Silkscreen in der Gruppe `function_labels`:
+  - Taster: ENABLE, RESET, BOOT (1,5 mm); STATUS an D502.
+  - Anschlüsse: AKKU 3S, SERVO V(orne), SERVO H(inten), AUX1, AUX2, ESC,
+    iBUS, LED1–LED4, UART, IMU, OLED (1,2 mm).
+- **Referenzen:**
+  - 0,8 mm Höhe (Mindestwert der Boardregeln), je am nächsten freien Platz.
+  - Kein Pad (+0,2 mm), keine andere Silkscreen-Linie oder -Schrift
+    (+0,15 mm), kein fremder Bauteilkörper, 0,5 mm vom Rand.
+  - Ergebnis: 219 Referenzen gesetzt, **34 ausgeblendet**, weil kein freier
+    Platz ohne Überlagerung bleibt.
+  - Betroffen sind vor allem die fünf gleichartigen Kanalspalten der
+    Ausgangsstufen (R22x–R24x, Q20x) und Teile der Schnittstellenreihen.
+  - Alle ausgeblendeten Referenzen stehen weiter auf der Bestückungslage
+    (F.Fab).
+  - Ausgeblendet: C201 C511 C604 C606 C607 C610 D205 D602 D607 Q202 Q203 Q205
+    Q506 R204 R209 R216 R222 R223 R225 R231 R232 R233 R234 R235 R241 R242
+    R243 R245 R412 R414 R506 R606 R608 R609.
+- **DRC Silkscreen:** 0 Überlappungen, 0 Silk über Kupfer und 0 Randbefunde
+  (vor dieser Etappe 199 Überlappungen, 171–199 über Kupfer, 3–8 am Rand).
+  - Übrig bleiben 17 `text_height` aus den Pinbeschriftungen der
+    Projekt-Footprints J115/J116 (Bibliotheksgrafik, unverändert).
+
+**Fehlende 3D-Modelle** (in den Ansichten rot gekennzeichnet):
+- Kein Modell zugewiesen: BZ101, J115, J116, U501.
+- Modelldatei fehlt: D601–D604, D606–D608, J101, J102, J103, Q101, Q401,
+  Q402.
+- Die KiCad-3D-Renderings zeigen diese Teile nicht. Deshalb gibt es
+  zusätzlich die Hüllenansicht.
 
 ## 4. DevKit, Antenne und USB
 
@@ -444,7 +538,7 @@ und nicht versioniert (`.gitignore`); die Bilder sind kein Freigabenachweis.
   - Leitungen, Vias und Füllungen der Außenlage der Ansicht; F rot, B blau.
   - Die andere Außenlage ist blass; die GND-Innenlagen sind nicht
     gezeichnet.
-- Stand der Bilder: nach Probe-Routing (3b) und Feinplatzierung (3c).
+- Stand der Bilder: nach Probe-Routing (3b), Feinplatzierung (3c) und Bedienzone (3d).
 
 | Datei (je `_top` und `_bottom`, `.png`/`.svg`) | Inhalt |
 |---|---|
@@ -454,7 +548,9 @@ und nicht versioniert (`.gitignore`); die Bilder sind kein Freigabenachweis.
 | `detail_devkit_usb` | Aktuatoren, DevKit mit Antennenrand, USB-Zugang, Controller-Peripherie |
 | `detail_logic_supply` | TPS54302 mit Feinplatzierung (3c) |
 | `detail_output_stages` | U201, Kanalspalten, Stecker J102–J106 (3c) |
-| `detail_controller_periphery` | Wächter, Latch, O-37, VBAT-Messung (3c) |
+| `detail_controller_periphery` | Wächter, Latch, VBAT-Messung (3c, 3d) |
+| `operator_zone` | Bedienzone: Modul- und USB-Hüllen (blau), Fingerzonen r = 10 mm (grün frei / rot verletzt), Teile ohne 3D-Modell rot gestrichelt (3d) |
+| `oblique_envelopes.png` | schräge (isometrische) Hüllenansicht ohne 3D-Modelle: Modul- und Steckerhüllen mit geschätzten Höhen, Taster, Fingerzonen, Teile ohne Modell rot (3d) |
 | `render_3d_top.png`, `render_3d_bottom.png`, `render_3d_iso.png` | 3D-Ansichten nach Probe-Routing und Feinplatzierung (Teile ohne Modell fehlen, siehe models_3d) |
 
 - Die Dateien ohne `_top`/`_bottom` (`overview.png` usw.) stammen vom ersten
