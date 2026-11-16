@@ -858,6 +858,58 @@ geschätzt):
 - Die generischen Buchsenleisten-Modelle bestätigen weder die
   Samtec-Geometrie noch die Einsteckhöhe.
 
+## 3i. Routing K1 (Stand 2026-11-16)
+
+**Status: Platzierungsprüfungen bestanden, Routing unvollständig.** Offene
+Verbindungen und das offene RUN-Ausbruch-Via bedeuten: Die Gesamt-DRC ist
+**nicht** bestanden.
+
+**Schritt 3 – Servoschiene +V_SERVO** (`route_servo_rail.py`, Gruppe
+`servo_rail_routing`):
+- Bis zu 11,2 A.
+- Auf F belegen die VSERVO_REG-Flächen den Bereich nördlich von RS402.
+  Die Schiene verlässt RS402 Pad 2 deshalb über ein Feld aus 12 Vias
+  (0,8/0,4 mm) nach B.
+- Sie läuft auf B zum 5,6 mm breiten Band zwischen den Micro-Fit-Steckern
+  und den AUX-/ESC-Stiftleisten.
+- Dort liegen F und B parallel, mit 7 Vias vernäht, bis zu den Pins von
+  J102–J105.
+- Die Signalpins J102/J103 Pin 1 laufen vorher auf F durch das Band; die
+  Flächen sind um sie herum gefüllt.
+- Breite und Erwärmung sind nur geschätzt (IPC-Näherung, 2 × 5,6 mm bei
+  35 µm), nicht gemessen.
+
+**Netzklasse Power** (`RoverCore.kicad_pro`):
+- Gilt für +3V3, +5V, +5V_LED, +5V_EXT, +5V_RX, +5V_DEVKIT, +V_SERVO,
+  VBAT_PROT und LOCK_SUP.
+- 0,4 mm Leiterbreite, Via 0,6/0,3 mm.
+- Der Abstand bleibt 0,15 mm, weil 0,2 mm zwischen den Pins der
+  0,5-mm-Raster-ICs (U401, U506) nicht einzuhalten ist.
+
+**Unterseite vor dem Autorouting** (aus dem B-Kupfer der Platine, nicht aus
+der Luftlinienzahl):
+- **Belegt:**
+  - VBAT_IN/VBAT_FUSED-Flächen (x 10–35, y 15–30);
+  - VBAT_PROT-Parallelfläche (x 33–53, y 29–35);
+  - Servoschiene (x 85–123, y 8–27);
+  - C403/C404 mit ihren Via-Reihen, D401.
+- **Querriegel:** Durch den Servobereich (x 34–81) laufen auf B
+  ost-westlich das Sense-Paar (y 15,0/15,6), BG (y 17,75), EXTVCC (y 19,6)
+  und die Rückkopplung (y 28,4).
+  - Nord-Süd-Verbindungen kreuzen dort nur auf F oder außen herum.
+  - Diese Leitungen haben In2-GND als Bezug. Kreuzende B-Leitungen würden
+    sie nicht stören, sind aber auf derselben Lage nicht möglich.
+- **Durchsteckpins** auf B:
+  - DevKit-Buchsen (2 × 22);
+  - OLED- und IMU-Buchsen;
+  - XT30, Micro-Fit, Stiftleisten, JST-PH;
+  - J101-Haltestifte.
+- Die Antennen-Sperrfläche liegt über der Oberkante, außerhalb der
+  Platine.
+- **Frei** ist B im Wesentlichen in der unteren Hälfte (y > 36) und unter
+  den Ausgangsstufen außerhalb der Schiene. Dort liegen die meisten der
+  engen F-Gassen aus 3h.
+
 ## 4. DevKit, Antenne und USB
 
 - U501 sitzt an der rechten Kante. Die Antennen-Sperrfläche des Footprints
