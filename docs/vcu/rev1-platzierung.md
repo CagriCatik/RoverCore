@@ -580,6 +580,55 @@ Mitte zu Mitte, aus der Platine.
 - **DRC:** keine Courtyard-, Abstands- oder Silkscreen-Befunde.
   - Referenzen: 216 gesetzt, 37 ausgeblendet; alle stehen auf F.Fab.
 
+## 3f. Routing Schritt 2: Eingang, VBAT_PROT-Verteilung, Logikversorgung (2026-11-16)
+
+- **Werkzeug:** `hardware/scripts/route_input_logic.py`, einmal angewendet.
+  - Alle Teile liegen in der Gruppe `input_logic_routing`.
+  - Gleiche Schutzregeln wie in 3b: Abbruch, wenn die Gruppe schon
+    existiert oder auf den nur hier gerouteten Netzen Kupfer liegt.
+  - Die Servoleistungsstufe ist unverändert.
+- **Eingang:**
+  - VBAT_IN (J101 → F101) und VBAT_FUSED (F101 → Q101-Drain) als Flächen
+    auf F und B, mit 4 bzw. 5 Vias verbunden.
+  - Ausgelegt auf ca. 10 A Eingangsstrom bei Volllast. Schätzung:
+    Servostrom aus 3b plus Logikversorgung; die Fläche ist ca. 9 mm breit.
+- **Q101-Gate:**
+  - Gate-Leitung oberhalb des Drain-Bereichs zu Pin 4, 10 mm.
+  - VBAT-Seite von D102 östlich von Pin 4 zu Pin 3, ohne Kreuzung.
+  - R101 mit eigenem GND-Via.
+- **VBAT_PROT:**
+  - Knotenfläche an den Source-Pins mit D101 (TVS), C102, C101 und TP102.
+  - Zuleitung zur Servostufe:
+    - F: Korridor y 26,9–29,9, ca. 2,3 mm nutzbar zwischen den
+      Stützbauteilen und der RUN-Gruppe;
+    - B: parallele Fläche y 29,1–35,4 (ca. 6 mm), südlich der
+      Rückkopplungsleitung;
+    - verbunden über je 4 Vias an beiden Enden.
+  - Damit ist der in 3b genannte Engpass (4,3 mm bei 35 µm, Schätzung)
+    durch F und B zusammen abgedeckt. Die Erwärmung ist nicht gemessen.
+  - Zur Logikversorgung: 1-mm-Leitung von C101 zu C302/C301, für ca. 2 A
+    Eingangsstrom (Schätzung).
+- **TPS54302 lokal:**
+  - Eingangsschleife C301/C302 direkt an VIN/GND, GND-Vias an C301 und
+    C302.
+  - SW zwischen den C301-Pads zu L301, 9,6 mm.
+  - Boot-Kondensator: SW-Steg zwischen den Pinreihen, 1,8 mm BOOT-Seite.
+  - FB-Teiler am Pin (5,1 mm). Der +5V-Fühler kommt auf B von C307
+    (Kelvin am Ausgang, ca. 34 mm über In2-GND).
+  - EN-Teiler am Pin; das VBAT-Ende von R304 geht über B zu C302.
+  - Ausgangs- und GND-Flächen unter C304–C307 mit Vias; TP301/TP302
+    angebunden.
+- **DRC:** keine Abstands-, Kurzschluss- oder Silkscreen-Befunde.
+  - Nicht geroutete Verbindungen 394, vorher 442.
+  - Erwartet bleibt das RUN-Ausbruch-Via.
+- **Noch nicht geroutet:**
+  - +V_SERVO von RS402 zu J102–J105;
+  - +5V- und +3V3-Verteilung;
+  - VBAT_PROT zu den übrigen Verbrauchern (RUN- und Messteiler,
+    Controller, O-37);
+  - alle Signale;
+  - GND-Vias der übrigen Bauteile.
+
 ## 4. DevKit, Antenne und USB
 
 - U501 sitzt an der rechten Kante. Die Antennen-Sperrfläche des Footprints
@@ -686,8 +735,8 @@ Ansichten:
 - Feinplatzierung und Routing:
   - Feinplatzierung der Servo-RUN/Messgruppe und der Sensorgruppe
     (Eingangsschutz und Schnittstellen: 3e);
-  - Routing der übrigen Platine, beginnend mit VBAT_PROT-Zuleitung und
-    Servoschiene (3b);
+  - Routing der übrigen Platine (Stand 3f): als Nächstes Servoschiene
+    +V_SERVO zu J102–J105, dann +5V/+3V3 und die Signale;
   - Kühlkupfer Q401/Q402/L401;
   - Referenztexte (Silkscreen), darunter Referenzfelder nahe der
     Platinenkante.
