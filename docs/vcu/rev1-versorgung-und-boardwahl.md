@@ -1102,16 +1102,31 @@ Nur ein EN-Puls löscht den Latch. BOOT allein löscht ihn nicht.
 
 ### 3.18 Freigabe als Zustandsmodell (Festlegung offen, Stand 2026-11-16)
 
-Diese Festlegung gilt vor jeder weiteren Schaltungsänderung. Die Zahlenwerte
-sind **Vorschläge** zur Entscheidung durch den Owner. Die Schaltung ist
+Diese Festlegung gilt vor jeder weiteren Schaltungsänderung. Die Schaltung ist
 unverändert.
+
+**Entscheidung des Owners zu O-35 (2026-11-16):** Die Zeiten sind
+**Entwurfsanforderungen**. Sie sind noch keine nachgewiesenen Eigenschaften
+der Schaltung.
+
+| Punkt | Festlegung |
+|---|---|
+| Zustände | S0 → gültiges Loslassen → S1 → gültiger neuer Tastendruck → S2 |
+| Loslassen (t_LOS) | 100 ms nominal; nicht vor 50 ms, spätestens nach 200 ms erkannt |
+| Betätigung (t_EIN) | 50 ms nominal; nicht vor 20 ms, spätestens nach 100 ms erkannt |
+| Fehlerpriorität | Ein Fehler verhindert die Freigabe und löscht eine bestehende Freigabe |
+| Unabhängig von der ESP32-Firmware | Fehlerabschaltung, Loslassen vor neuer Betätigung, Entprellung, Schutz gegen Freigabe durch einen GPIO |
+| Umsetzung | V2 als zu prüfendes Hardwarekonzept (3.19) |
+| ESC-Neustart | O-36 bleibt separat offen |
+
+Der Umfang für den ersten Prototyp ist damit festgelegt.
 
 **Zustände**
 
 | Zustand | Eintritt | Erlaubter Übergang | Alles andere |
 |---|---|---|---|
 | **S0 – gesperrt, wartet auf Loslassen** | Einschalten, Fehler, relevanter Reset; aus S1 bei zu kurzer Betätigung | → S1, wenn die Versorgung gültig ist (CLR inaktiv) und der Taster seit CLR-Ende bzw. seit der letzten Schließung **ununterbrochen ≥ t_LOS** losgelassen ist | Jede Schließung startet t_LOS neu. Gehaltener oder klemmender Taster: bleibt S0 |
-| **S1 – bereit für neue Betätigung** | aus S0 | → S2 bei einer neuen, **entprellten** Betätigung: Schließung ununterbrochen ≥ t_EIN | Schließung < t_EIN → S0. Fehler → S0 |
+| **S1 – bereit für neue Betätigung** | aus S0 | → S2 bei einer neuen, **entprellten** Betätigung: Schließung ununterbrochen ≥ t_EIN | Schließung < t_EIN: keine Freigabe, **S1 bleibt** (Anpassung an V2, siehe 3.19; F2 bleibt erfüllt, weil jede spätere Betätigung nach dem erkannten Loslassen beginnt). Fehler → S0 |
 | **S2 – freigegeben** (ACT_ARMED) | aus S1 | → S0 bei Fehler oder relevantem Reset | Prellen, Loslassen und weitere Betätigungen ändern nichts. Der Taster gibt nur frei, er sperrt nicht |
 
 **Begriffe**
@@ -1129,17 +1144,22 @@ unverändert.
     t_LOS ablaufen, also ist ein Zusammentreffen dort durch die Struktur
     ausgeschlossen.
   - Ein undefiniertes Ergebnis an einer Fehlergrenze ist unzulässig.
-- **R2 – „ausreichend lange losgelassen“:** t_LOS min. **50 ms**, max. **200 ms**
-  (Vorschlag).
-  - Unter t_LOS min. wird nie S1 erreicht, über t_LOS max. immer.
-  - Nur innerhalb dieses Bandes ist jedes Ergebnis zulässig. Nur dort darf eine
-    unbestimmte Entscheidung (Metastabilität) auftreten.
-- **R3 – entprellte Betätigung:** t_EIN min. **20 ms**, max. **100 ms**
-  (Vorschlag), mit derselben Bandregel wie R2.
+- **R2 – „ausreichend lange losgelassen“:** t_LOS 100 ms nominal, Band
+  50–200 ms (Owner-Festlegung).
+  - Unter 50 ms wird nie S1 erreicht, nach 200 ms immer.
+  - Innerhalb des Bandes darf die **Erkennung** schwanken: Ein Ereignis darf
+    angenommen oder verworfen werden.
+  - Der **Ausgang** darf auch im Band nicht undefiniert sein. Unzulässig bleiben
+    unkontrollierte Ausgangsimpulse, ein undefinierter Freigabezustand und eine
+    Freigabe trotz aktivem (erkanntem) Fehler.
+- **R3 – entprellte Betätigung:** t_EIN 50 ms nominal, Band 20–100 ms
+  (Owner-Festlegung), mit derselben Bandregel wie R2.
 - **R4 – Prellwerte des Tasters:** Die größte Prell- bzw. Flatterdauer
   t_PRELL,max von SW501 ist zu belegen, durch das Datenblatt TL3342 oder eine
   Messung (nicht vorhanden).
-  - Vorschlag: t_LOS min. ≥ 5 × t_PRELL,max und t_EIN min. ≥ 2 × t_PRELL,max.
+  - Die früher vorgeschlagenen Faktoren 5× bzw. 2× sind **kein Nachweis** und
+    entfallen. In V2 hängt die Richtigkeit nicht von der Prelldauer ab, nur
+    die Reaktionszeit (3.19).
   - Das vorhandene Filter R502/C511 (Öffnungen < ca. 0,53–1,14 ms werden
     unterdrückt, Schätzung) wirkt nur gegen Einstreuung. Als Nachweis einer
     Entprellung reicht es nicht.
@@ -1149,33 +1169,33 @@ unverändert.
   nicht durch die Logik gelöst.
 
 **Welche Anforderungen ohne funktionierende Firmware gelten müssen
-(Vorschlag, Entscheidung Owner)**
+(vom Owner festgelegt)**
+
+„Logisch vorgesehen“ heißt: Die Schaltungslogik sieht es vor. Ein Nachweis
+mit garantierten Grenzen fehlt noch.
 
 | Anforderung | firmwareunabhängig | Stand der Ist-Schaltung |
 |---|---|---|
-| F1 Löschen bei Fehler und EN-Reset | ja | erfüllt (U505, U506) |
-| R1 Fehler hat Vorrang | ja | im Betrieb erfüllt: CLR wirkt asynchron und ≥ 12 ms. Am CLR-Ende verletzt (3.17 Nr. 3.7) |
-| Firmware kann nicht freigeben | ja | erfüllt (R518, 3.17 Nr. 3.8) |
+| F1 Löschen bei Fehler und EN-Reset | ja | **logisch vorgesehen** (U505, U506); Nachweis offen: U505 t_w/t_PD nur typisch (A3), Abschaltreihenfolge unbestätigte Hypothese (A1–A3) |
+| R1 Fehler hat Vorrang | ja | im Betrieb **logisch vorgesehen**: CLR wirkt asynchron und ≥ 12 ms; Erkennungszeit nur typisch (A3). Am CLR-Ende verletzt (3.17 Nr. 3.7) |
+| Firmware kann nicht freigeben | ja | **logisch vorgesehen** (R518, 3.17 Nr. 3.8); Nachweis aus Datenblattschwellen bei 3,0 V, Messung offen |
 | S0 → S1 nur nach t_LOS (F2) | ja | **nicht erfüllt** |
 | S1 → S2 nur nach t_EIN (R3) | ja | **nicht erfüllt** |
 | Anzeige, erster Puls neutral, Freigabe-GPIOs, ESC-Strategie | Firmware (zusätzlich) | Firmware-Regeln O-35 |
 
 **Mögliche Umsetzungen (Vergleich, nichts davon umgesetzt)**
 
-| | V1: vorhandene Hardware + Firmware | V2: zusätzliche Hardwarelogik | V3: eigener kleiner Sicherheitsbaustein |
+| | V1: vorhandene Hardware + Firmware | V2: zusätzliche Hardwarelogik | V3: separater Logikbaustein oder Mikrocontroller (die Trennung allein macht ihn nicht zum Sicherheitsbaustein) |
 |---|---|---|---|
 | Prinzip | Die Firmware bildet S0/S1/S2 über GPIO10 und die VBAT-Messung ab. SERVO_PWR_EN und ACT_OE_N treibt sie nur in ihrem S2. U506 bleibt unverändert | Zeitglied „losgelassen ≥ t_LOS“: Knoten wird bei aktivem CLR oder geschlossenem Taster entladen und lädt beim Loslassen auf; Schmitt-Puffer → READY. Zeitglied t_EIN für die Betätigung. Latch: Takt = entprellte Betätigung, D = READY, CLR = Fehler; Rückführung, damit S2 erhalten bleibt | Kleiner Logikbaustein oder Mikrocontroller nur für das Zustandsmodell, mit eigenen Zeitgebern; treibt ACT_ARMED |
-| F2/R3 ohne Firmware | **nein**: U506 setzt beim Loslassen weiter. Ein gehaltener Taster hängt dann allein an der Firmware. Die Firmware sieht weder VBAT_OK noch den Latch | ja | ja, aber das eigene Programm ist selbst Firmware und braucht eine eigene Verifikation |
-| R1 am CLR-Ende | nur in Firmware | ja, durch die Struktur (t_LOS beginnt erst nach CLR-Ende) | ja |
+| F2/R3 ohne Firmware | **nein**: U506 setzt beim Loslassen weiter. Ein gehaltener Taster hängt dann allein an der Firmware. Die Firmware sieht weder VBAT_OK noch den Latch | prinzipiell umsetzbar; Nachweis offen (3.19) | prinzipiell umsetzbar; Nachweis offen. Das eigene Programm ist selbst Firmware und braucht eine eigene Verifikation |
+| R1 am CLR-Ende | nur in Firmware | prinzipiell umsetzbar durch die Struktur (t_LOS beginnt erst nach CLR-Ende); Nachweis offen | prinzipiell umsetzbar; Nachweis offen |
 | Zusatzteile (Schätzung) | keine | ca. 1 Flipflop, 2–3 Gatter bzw. Schmitt-Puffer, 2 RC-Zeitglieder, 2 Dioden, Abblockkondensatoren | 1 Baustein, Takt, Programmierzugang |
 | Zeitgenauigkeit | Firmware-Takt, genau | RC über Toleranz und Temperatur ca. ±30 % (Schätzung) → Bänder R2/R3 | genau |
 | Offene Punkte | widerspricht dem Vorschlag „firmwareunabhängig“ | Detailauslegung: Staffelung der Zeitglieder, Haltezeit von D, Verhalten bei langsamem +3V3-Anstieg | Programmierung, Werkzeugkette, Verifikation |
 
-Bewertung:
-- Gilt der Vorschlag in der Tabelle oben, reicht V1 nicht. Dann bleiben V2
-  oder V3.
-- Die Entscheidung liegt beim Owner (O-35). Erst danach wird eine Variante
-  ausgelegt und gegen 3.17 und dieses Zustandsmodell geprüft.
+Bewertung: Nach der Festlegung oben reicht V1 nicht. Der Owner hat V2 als zu
+prüfendes Konzept gewählt (3.19).
 
 **Abgrenzung O-36:** Auch ein korrektes Freigabelatch erkennt keinen alleinigen
 ESC-Neustart (3.17 Nr. 2.4, 2.6). Dafür fehlen zwei Dinge:
@@ -1183,6 +1203,181 @@ ESC-Neustart (3.17 Nr. 2.4, 2.6). Dafür fehlen zwei Dinge:
 - eine passende Wiederanlaufstrategie.
 
 O-36 bleibt deshalb ein eigener Punkt.
+
+### 3.19 V2 – Konzeptentwurf der Freigabelogik (Stand 2026-11-16, nicht im Schaltplan)
+
+**Status:**
+- Funktions- und Zeitkonzept mit Bauteilkandidaten. Der KiCad-Schaltplan ist
+  **unverändert**.
+- Ergebnis der Prüfung: **logisch bestanden, bei den Zeitgrenzen noch nicht
+  bestanden**, wegen der Annahmen A6 und A9 (unten).
+- Deshalb wird der Schaltplan noch nicht geändert.
+- Alle Zeiten sind aus Datenblattgrenzen und Toleranzen abgeleitet und als
+  **Schätzung** gekennzeichnet, wo sie interpoliert sind.
+
+**Grundidee:**
+- Zwei Zeitglieder mit **garantierter Mindestzeit** prüfen „ununterbrochen
+  losgelassen“ und „ununterbrochen gedrückt“.
+- Beide werden während eines Fehlers in Ruhe gehalten.
+- Zwei Flipflops speichern S1 (READY) und S2 (ARM).
+- Ein Flipflop wird nur getaktet, wenn sein D-Eingang seit mindestens t_EIN
+  min. stabil ist.
+- Ein Ausgangsfilter unterdrückt Kurzimpulse am Freigabeausgang.
+
+```mermaid
+flowchart LR
+  SW[SW501 / R502 / C511<br/>ENABLE_BTN_RAW] --> I1[U507' 2G14 ch1<br/>BTN_PRESSED]
+  I1 --> I2[U507' 2G14 ch2<br/>BTN_REL]
+  FN[VBAT_OK_BUF = FAULT_N<br/>U505 + U508] --> A1
+  FN --> A2
+  I2 --> A1[U509 2G08 ch1<br/>REL_IN]
+  I1 --> A2[U509 2G08 ch2<br/>PRESS_IN]
+  A1 -->|MR| T1[U510 TPS3808<br/>CT 18 nF: t_LOS]
+  A2 -->|MR| T2[U511 TPS3808<br/>CT 8,2 nF: t_EIN]
+  T1 -->|REL_OK, 100k| S1[U512 2G17 ch1]
+  T2 -->|PRESS_OK, 100k| S2[U512 2G17 ch2]
+  S1 -->|CLK, D=1| FA[U513 1G74<br/>READY = S1]
+  S2 -->|CLK| FB[U506 1G74<br/>ARM = S2]
+  FA -->|D| FB
+  FN -->|CLR| FA
+  FN -->|CLR| FB
+  FB --> F[R 10k / C 10 nF / BAT54<br/>ARM_FILT]
+  F --> O1[U514 2G14 ch1<br/>ACT_DISARMED]
+  O1 --> O2[U514 2G14 ch2<br/>ACT_ARMED]
+```
+
+**Signale:**
+- **BTN_PRESSED / BTN_REL:** komplementär, aus dem gefilterten Tasterknoten.
+- **REL_IN = BTN_REL ∧ FAULT_N**, **PRESS_IN = BTN_PRESSED ∧ FAULT_N**:
+  Während eines Fehlers sind beide low.
+- **TPS3808 als Zeitglied** (SBVS050N 7.3.2/7.3.3):
+  - MR low → RESET low, und der CT-Kondensator wird entladen.
+  - MR high → RESET erst nach t_D high.
+  - Eine Unterbrechung startet die Zeit also neu.
+  - SENSE liegt an VDD.
+- **REL_OK↑:** Taster ununterbrochen ≥ t_LOS losgelassen **und** kein Fehler.
+  Setzt READY (U513, D = 1).
+- **PRESS_OK↑:** Taster ununterbrochen ≥ t_EIN gedrückt **und** kein Fehler.
+  Übernimmt READY in ARM (U506).
+- **FAULT_N low:** U505 hat den Fehler erkannt, oder RESET wirkt über MR.
+  - Löscht READY und ARM asynchron.
+  - Hält beide Zeitglieder zurückgesetzt.
+- **ARM_FILT:**
+  - ARM high lädt den Knoten über 10 kΩ.
+  - ARM low entlädt ihn schnell über BAT54.
+- U514 erzeugt ACT_DISARMED (zu U204) und ACT_ARMED (zu Q407). Ihre Bedeutung
+  ist unverändert.
+
+**Bauteilkandidaten (nicht bestellt, Bestand nicht geprüft):**
+
+| Ref. (vorläufig) | Funktion | Kandidat | Datenblatt |
+|---|---|---|---|
+| U507' (ersetzt U507) | Tasterknoten → BTN_PRESSED (1Y), BTN_REL (2Y) | SN74LVC2G14DBVR | SCES200O geprüft: 1A 1, GND 2, 2A 3, 2Y 4, VCC 5, 1Y 6; bei 3 V V_T+ 1,3–2,2 V, V_T− 0,6–1,3 V; t_pd ≤ 5,4 ns |
+| U509 | REL_IN, PRESS_IN | SN74LVC2G08DCUR | SCES198N geprüft: 1A 1, 1B 2, 2Y 3, GND 4, 2A 5, 2B 6, 1Y 7, VCC 8; t_pd ≤ 4,7 ns |
+| U510 | Zeitglied t_LOS | TPS3808G01DBVR, CT 18 nF C0G ±5 %, RESET-Pull-up 100 kΩ | SBVS050N geprüft (wie U505) |
+| U511 | Zeitglied t_EIN | TPS3808G01DBVR, CT 8,2 nF C0G ±5 %, RESET-Pull-up 100 kΩ | wie U510 |
+| U512 | Flanken REL_OK, PRESS_OK (Open-Drain-Anstieg) | SN74LVC2G17DBVR | SCES381N geprüft: 1A 1, GND 2, 2A 3, 2Y 4, VCC 5, 1Y 6; bei 3 V V_T+ 1,3–2,0 V, V_T− 0,8–1,3 V |
+| U513 | READY (S1) | SN74LVC1G74DCUR | SCES794G geprüft (wie U506) |
+| U506 | ARM (S2), D = READY | vorhanden | – |
+| R, C, D | Ausgangsfilter 10 kΩ / 10 nF C0G, BAT54 | Kandidaten | BAT54-Durchlassspannung nicht geprüft |
+| U514 | ARM_FILT → ACT_DISARMED → ACT_ARMED | SN74LVC2G14DBVR | wie U507' |
+| C | Abblockung 100 nF je IC (6×) | CC0603KRX7R9BB104 | vorhanden |
+
+Zusatzaufwand gegenüber heute: 5 ICs (U507 wird ersetzt), 2 C0G-Zeitkondensatoren,
+2 Pull-ups, Ausgangsfilter (R, C, Diode) und Abblockkondensatoren. Die
+C0G-Kandidaten 18 nF und 8,2 nF (Bauform 0603/0805) sind nicht ausgewählt.
+
+**Zeitbereiche (abgeleitet):**
+
+| Größe | Rechnung | Ergebnis | Anforderung |
+|---|---|---|---|
+| Skalierung t_D des TPS3808 | garantierte Messpunkte CT = 130 pF: 0,75/1,25/1,75 ms und CT = 180 nF: 0,62/1,03/1,44 s → min. 0,60 × nominal, max. 1,40 × nominal | – | – |
+| t_D U510 (18 nF) | nominal 18/175 s + 0,5 ms = 103,4 ms; C ± 5 % | **58,9–151,9 ms** (**Annahme A6**) | – |
+| Anstieg Tasterknoten bis V_T+ von U507' | τ = 10 kΩ ± 1 % × 100 nF ± 10 %; V_T+ 1,3–2,2 V; V_CC 3,0–3,6 V | 0,40–1,47 ms (Schätzung, 3,3-V-Schwellen interpoliert) | – |
+| **t_LOS gesamt** ab Öffnen des Kontakts | Anstieg + t_D + Gatter (ns) + RESET-Anstieg 100 kΩ × ca. 60 pF (≤ 7 µs) | **59,3–153,4 ms** | 50–200 ms ✓ (Abstand 9 ms bzw. 47 ms) |
+| t_D U511 (8,2 nF) | nominal 47,4 ms | **27,0–69,6 ms** (A6) | – |
+| **t_EIN gesamt** ab Schließen | der Schalter entlädt C511 sofort; + t_D + ≤ 7 µs | **27,0–69,6 ms** | 20–100 ms ✓ (Abstand 7 ms bzw. 30 ms) |
+| Ausgangsfilter: kürzester ARM-Impuls, der durchkommt | τ = 10 kΩ × 10 nF ± 5 %, bis V_T+ 1,3–2,2 V | 42–140 µs (Schätzung) | Kurzimpulse unterdrückt |
+| Fehler → ACT_ARMED low | U505 t_PD (20 µs typ., A3) + U508 ≤ 4,6 ns + CLR→Q ≤ 7,9 ns + Entladung 10 nF über BAT54 (ca. 1–2 µs, Schätzung) + 2 × ≤ 5,4 ns | ca. 20 µs + 2 µs; nur die Gatteranteile sind garantiert | – |
+
+Alternative für t_EIN: Mit 9,1 nF (E24) wäre der Nennwert 52,5 ms
+(29,9–77,1 ms). Die Prelldauer des Tasters geht nicht in die Korrektheit ein:
+- Jede erkannte Unterbrechung startet das jeweilige Zeitglied neu.
+- Prellen verlängert nur die Reaktionszeit, gerechnet ab dem Beginn der letzten
+  ununterbrochenen Phase.
+
+**Zeitdiagramm – Taster über einen Fehler gehalten, danach neu betätigt**
+(nicht maßstäblich):
+
+```
+VBAT_OK_BUF  ‾‾‾‾‾‾\________________/‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾
+                   Fehler       t_D U505 → CLR-Ende
+SW501        __gedrückt_________________________________/‾‾los‾‾‾‾‾‾‾‾‾\__gedrückt__
+BTN_REL      ___________________________________________/‾‾‾‾‾‾‾‾‾‾‾‾‾‾\___________
+PRESS_IN     ______________________/‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾\______________/‾‾‾‾‾‾‾‾‾‾‾
+PRESS_OK     ___________________________________/‾‾‾‾‾‾‾\____________________/‾‾‾‾
+                                    ↑ t_EIN nach CLR-Ende: Takt, D = READY = 0 → ARM bleibt 0
+REL_IN       ___________________________________________/‾‾‾‾‾‾‾‾‾‾‾‾‾‾\___________
+REL_OK       _______________________________________________________/‾‾‾\___________
+                                                         t_LOS ↑ READY = 1
+READY        _______________________________________________________/‾‾‾‾‾‾‾‾‾‾‾‾‾‾
+ARM          ____________________________________________________________________/‾
+ACT_ARMED    _____________________________________________________________________/  (+ Filter 42–140 µs)
+```
+
+**Prüfung gegen F1–F3 und das Zustandsmodell (3.18)**
+
+| Nr. | Fall | V2-Verhalten | Ergebnis |
+|---|---|---|---|
+| V.1 | Normal: losgelassen ≥ t_LOS, dann gedrückt ≥ t_EIN | S0 → S1 → S2 | erfüllt |
+| V.2 | beim Einschalten gehalten, später losgelassen | PRESS_OK steigt t_EIN nach CLR-Ende mit D = READY = 0 → ARM 0; nach dem Loslassen erst S1, Freigabe erst mit neuem Druck | erfüllt |
+| V.3 | über einen Fehler gehalten | wie V.2 (beide Zeitglieder starten erst am CLR-Ende) | erfüllt |
+| V.4 | während t_D von U505 gedrückt | Zeitglieder noch zurückgesetzt; wie V.2 | erfüllt |
+| V.5 | Prellen über den Fehler | jede Öffnung über der Filterschwelle startet t_LOS neu; S1 erst nach ≥ 59 ms ununterbrochenem Loslassen | erfüllt, unabhängig von der Prelldauer |
+| V.6 | klemmender Kontakt öffnet von selbst | ≥ t_LOS offen → S1; erst eine erneute Schließung ≥ t_EIN gibt frei | erfüllt; das Wiederschließen ist das Restrisiko R5 |
+| V.7 | Drücken genau am CLR-Ende | t_LOS kann frühestens 59 ms nach CLR-Ende ablaufen → READY = 0 → keine Freigabe | erfüllt, durch die Struktur |
+| V.8 | kurzer Druck < t_EIN in S1 | PRESS_OK steigt nicht; READY bleibt → S1 bleibt (3.18 angepasst) | erfüllt |
+| V.9 | schnelles Antippen nach dem Einschalten (losgelassen < t_LOS) | READY = 0 → keine Freigabe | erfüllt |
+| V.10 | Fehler in S1 oder S2 | CLR löscht READY und ARM asynchron (Pegel, ≥ 12 ms ≫ t_w 2,7 ns); ARM_FILT fällt über BAT54 | erfüllt (Erkennung A3) |
+| V.11 | Fehler fällt mit PRESS_OK↑ zusammen | ARM kann ns bis µs high sein, Endzustand durch den CLR-Pegel 0; Impulse unter 42 µs (Schätzung) erreichen den Ausgang nicht. Liegt PRESS_OK↑ länger vor der Fehlererkennung, war S2 regulär erreicht und wird gelöscht | erfüllt für **erkannte** Fehler; ein Fehler vor seiner Erkennung (SENSE-Filter, A3) ist keiner Schaltung zugänglich |
+| V.12 | RESET (EN → U505 MR) | wie V.10 | erfüllt |
+| V.13 | Druck endet genau bei Ablauf von t_EIN (Kurzimpuls an CLK) | ARM 0 oder 1, beides im Band zulässig; ein metastabiler Übergang wird vom Filter unterdrückt, wenn er sich in < 42 µs auflöst (**A7**) | bedingt (A7) |
+| V.14 | Loslassen endet genau bei Ablauf von t_LOS | READY 0 oder 1; READY wird erst ≥ 27 ms später gelesen → aufgelöst (A7) | bedingt (A7) |
+| V.15 | Setup/Hold an U506 | READY ändert sich nur bei REL_OK↑; PRESS_OK↑ verlangt ≥ 27 ms ununterbrochen gedrückt, REL_OK↑ ≥ 59 ms ununterbrochen losgelassen → Abstand ≥ 27 ms ≫ t_su 1,3 ns | erfüllt (Datenblatt) |
+| V.16 | Recovery an U506/U513 | CLK-Flanken frühestens 27 ms nach CLR-Ende ≫ 1,2 ns | erfüllt (Datenblatt) |
+| V.17 | GPIO10 low/high | Knoten ≥ 2,47 V > V_T− max. 1,3 V → kein BTN_PRESSED, also kein PRESS_OK. Über einen geschlossenen Kontakt kann GPIO10 kein Loslassen erzeugen | erfüllt (Schwellen bei 3,0 V) |
+| V.18 | Einschalten, +3V3 < 1,65 V | LVC-Logik undefiniert (**A5**). Q404 sperrt über R415, solange der ESP32 nicht läuft; U201 ohne gültiges V_CCA | bedingt (A5) |
+| V.19 | Einschalten, +3V3 ≥ 1,65 V | U505 hält FAULT_N low (ab V_DD 0,8 V definiert) → READY = ARM = 0, Zeitglieder zurückgesetzt → S0 | erfüllt |
+| V.20 | Einbruch von +3V3 auf 0,8–1,65 V bei gültiger VBAT | Flipflop-Zustand undefiniert. Ob U505 dann t_D neu startet, ist nicht spezifiziert (**A8**) | **offen** |
+| V.21 | DevKit fehlt | alles stromlos (Ioff), R420 hält Q407 aus | erfüllt |
+| V.22 | Zeitglied: kurze MR-Low-Impulse | Ob der TPS3808 CT bei sehr kurzem MR-Low vollständig entlädt, ist nicht spezifiziert. Teilentladung verkürzt t_D (**A9**). Betrifft U511: BTN_PRESSED-Lücken können beliebig kurz sein | **offen** |
+
+**Annahmen und offene Nachweise (zusätzlich zu A1–A4):**
+- **A5:** Bei +3V3 < 1,65 V entsteht keine Wirkung. Die Begründung stützt sich
+  auf ESP32-Reset, R415 und U201; die LVC-Logik ist in diesem Bereich nicht
+  spezifiziert.
+- **A6:** TI garantiert t_D nur bei CT = 130 pF und 180 nF. Für 18 nF und
+  8,2 nF ist dieselbe relative Toleranz angenommen. Grund: Die Verzögerung
+  folgt aus demselben Stromquellen- und Schwellenmechanismus. Das ist eine
+  Ableitung, **keine Garantie**.
+- **A7:** Metastabilität der LVC1G74 löst sich in < 42 µs auf. TI gibt keine
+  Daten an. Wahrscheinlichkeitsbetrachtung oder Messung nötig.
+- **A8:** Verhalten bei einem Einbruch von +3V3 in den Bereich 0,8–1,65 V.
+- **A9:** Neustart des TPS3808-Zeitglieds nach kurzem MR-Low.
+
+A6 und A9 betreffen die garantierte Zeitgrenze t_EIN min. bzw. t_LOS min.
+Damit ist die Prüfung **nicht bestanden**. Drei Wege, A6 und A9 zu schließen,
+die beiden letzten mit Änderung:
+- Herstellerauskunft von TI;
+- ein Zeitglied mit spezifizierter Genauigkeit und spezifiziertem
+  Neustartverhalten. Möglicher Kandidat: ADI LTC6994. Das Datenblatt war am
+  2026-11-16 nicht abrufbar (Zeitüberschreitung), der Owner kann es ablegen;
+- ein Impulsverlängerer vor MR.
+
+A5, A7 und A8 bleiben als begrenzte Aussagen auszuweisen.
+
+**O-36 bleibt getrennt:** V2 ändert nichts am alleinigen ESC-Neustart
+(3.17 Nr. 2.4, 2.6).
 
 ## 4. Komponentendaten (Zwischenstand)
 
@@ -1263,7 +1458,7 @@ Schutzkoordination (O-17).
 | O-32 | I²C-Anstiegszeit an TP801/TP802 und OLED-Strom bei Vollbild messen; 400 kHz erst danach | Owner |
 | O-33 | ~~ST-Datenblatt LSM6DSOX~~ – erledigt 2026-11-16 (DS12814 Rev 4, Anschlussplan 9.3): INT1 beim Einschalten 0 (R803), Push-Pull aktiv high, 0,55 mA typ. | – |
 | O-34 | Hauptabschaltung außerhalb der VCU auswählen (3.14): Dauer-/Spitzenstrom, DC-Schaltvermögen bei 12,6 V, Einschaltstrom; bei elektronischer Lösung Body-Dioden, Rückspeisung, AUS-Zustand | Owner |
-| O-35 | Wiederanlaufsperre in Hardware (3.16), geprüft gegen F1–F3 (3.17). **F2/F3 nicht erfüllt**: U506 setzt beim Loslassen. K1 (Takt beim Drücken) ist unzureichend, weil er kein erkanntes Loslassen speichert; K1 wird nicht eingebaut. **Owner entscheidet:** (a) Zustandsmodell S0/S1/S2 mit t_LOS und t_EIN (Vorschläge 50–200 ms bzw. 20–100 ms, 3.18); (b) welche Anforderungen ohne Firmware gelten müssen; (c) Umsetzung V1/V2/V3. Zu belegen: Prelldauer TL3342. Abschaltreihenfolge = unbestätigte Prototyp-Hypothese (A1–A3 messen). Firmware zusätzlich: bei VBAT-Verlust SERVO_PWR_EN low, ACT_OE_N high, ESC neutral; nach jedem Neustart Freigabe nur über SW501, erster Puls neutral; GPIO10 ohne interne Pull-ups; J112-TX ohne Akku inaktiv; GPIO0 und GPIO6 nie als Ausgang. BOOT allein und Neustarts ohne EN-Puls löschen den Latch nicht | Owner / Agent |
+| O-35 | Owner-Entscheidung 2026-11-16 (3.18): Zustände S0/S1/S2, t_LOS 100 ms (50–200), t_EIN 50 ms (20–100), Fehler hat Vorrang; Fehlerabschaltung, Loslassen vor neuer Betätigung, Entprellung und GPIO-Schutz ohne ESP32-Firmware; Umsetzung V2 als zu prüfendes Konzept. V2-Entwurf (3.19): logisch bestanden, Zeitgrenzen **nicht** bestanden. Offen: A6 (TPS3808-t_D nur bei 130 pF/180 nF garantiert), A9 (Neustart nach kurzem MR-Low). Auszuweisen: A5, A7, A8. Schaltplan erst nach bestandener Prüfung ändern. Ist-Schaltung erfüllt F2/F3 nicht. Abschaltreihenfolge = unbestätigte Prototyp-Hypothese. Firmware zusätzlich: bei VBAT-Verlust SERVO_PWR_EN low, ACT_OE_N high, ESC neutral; erster Puls neutral; GPIO10 ohne interne Pull-ups; J112-TX ohne Akku inaktiv; GPIO0 und GPIO6 nie als Ausgang | Owner / Agent |
 | O-36 | **Funktionale Lücke** der gemeinsamen Wiederanlaufanforderung: Der gemeinsame Akkuanschluss bedeutet kein gemeinsames Reset-Verhalten von ESC und VCU (Puffer-C, Leitungsabfälle, ESC-Brown-out). Der Latch sieht nur VBAT_PROT. Nicht abgedeckt: ESC-Zweig allein getrennt, ESC-Neustart bei gesetztem Latch (3.17 Nr. 2.4, 2.6). ESC-Verhalten bei fehlenden und wiederkehrenden PWM-Pulsen nicht belegt (2.7). Schließen nur durch eine Maßnahme im ESC-Zweig oder ein belegtes ESC-Arming-Verhalten als begrenzte Aussage | Owner |
 
 Erledigt: O-5 (DevKit-LDO), O-6 (Lenkservos), O-7 (LTC7803 Rev B, 3.5a;
