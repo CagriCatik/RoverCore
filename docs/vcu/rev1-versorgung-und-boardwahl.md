@@ -683,7 +683,7 @@ Datei `Controller.kicad_sch` (A3), einmalig erzeugt mit
 | DevKit-Sockel U501 | Original ESP32-S3-DevKitC-1-N16R8 v1.1; zwei 1×22-Buchsenleisten 2,54 mm, Reihenabstand 22,86 mm; Pads 1–22 = J1, 23–44 = J3. Silkscreen: Pfeil und „J1-1"/„J3-1" an Pin 1 beider Reihen (Antennenende), „ANT", „USB" mit Pfeil, DevKit-Umriss; Antennen-Sperrfläche auf allen Kupferlagen. x-Lage des Antennenüberstands mittig angenommen (O-4) |
 | 5 V | D501 +5V → 5-V-Pin (Dioden-ODER, 3.11); ≥ 1 cm² Kathodenkupfer; TP503 |
 | 3,3 V | +3V3 nur aus dem DevKit-LDO; C501 10 µF + C502 100 nF am Sockel; TP502, TP504 (GND) |
-| Freigabetaster | SW501 direkt nach GND, R502 10 kΩ Pull-up; **kein Kondensator am Pin** (O-21) – Entprellung in der Firmware |
+| Freigabetaster | SW501 nach GND am Rohknoten ENABLE_BTN_RAW (R502 10 kΩ Pull-up, C511 100 nF, Takt für U506 über U507, 3.16); GPIO10 liest über R518 47 kΩ, **kein Kondensator am Pin** (O-21) – Entprellung in der Firmware |
 | Status-LED | GPIO11 → R504 1 kΩ → D502 (AlGaInP, Typ offen, O-28), ca. 1,3 mA (Schätzung) |
 | Akkumessung | Q505 (NTR4171P) schaltet den Teiler R505 120 kΩ / R506 20 kΩ nur bei P3V3_OK an VBAT_PROT; C504 1 nF, D506 BAT54 nach +3V3, R507 10 kΩ (O-21) |
 | 3,3-V-Überwachung | U504 TLV809ED29 (2,93 V, Freigabe 33–67 ms) → `P3V3_OK`; R510 100k Pull-down |
@@ -832,16 +832,45 @@ Gesperrte Zustände bleiben in allen Fällen erhalten:
 - Puffer Hi-Z ohne aktive Freigabe;
 - Servoschiene AUS ohne SERVO_PWR_EN.
 
-Das Wiedereinschalten des Akkus bei laufendem Controller ist seit 2026-11-16 in
-Hardware gesperrt (3.16). Offen bleiben Unterbrechungen, die kürzer sind als
-die Haltezeit der VCU-Kondensatoren (3.16, O-36).
+Das Wiedereinschalten des Akkus bei laufendem Controller löscht seit 2026-11-16
+die Freigabe in Hardware (3.16). Offen bleiben drei Punkte:
+- Die verschärfte Freigabeanforderung F2/F3 erfüllt die Schaltung nicht
+  (3.17 Punkt 3, O-35).
+- ESC-Neustarts bei gesetztem Latch (3.17 Punkt 2, O-36).
+- Die Abschaltreihenfolge gilt nur als begrenzte Prototyp-Aussage.
 
 ### 3.16 Wiederanlaufsperre (O-35, Stand 2026-11-16)
 
-**Anforderung:** Nach Verlust der LiPo-Versorgung ist eine erneute bewusste
-Freigabe nötig. Das gilt auch bei weiterlaufendem USB und dauerhaft hohen
-Freigabe-GPIOs. Eine reine Firmware-Lösung reicht nicht, weil ein kurzer Ausfall
-zwischen zwei Abtastungen liegen kann.
+**Anforderung (verschärft am 2026-11-16 nach Owner-Review):**
+
+- **F1 – Löschen:** Nach dem Einschalten, nach LiPo-Verlust oder Unterspannung
+  und nach RESET ist die Freigabe gelöscht. Das gilt auch bei weiterlaufendem
+  USB und dauerhaft aktiven Freigabe-GPIOs. Eine reine Firmware-Lösung reicht
+  nicht, weil ein kurzer Ausfall zwischen zwei Abtastungen liegen kann.
+- **F2 – neue Betätigung:** „Gültige Versorgung erkannt“ heißt: CLR von U506 ist
+  inaktiv (VBAT_OK_BUF high). Erst danach zählt der Taster. SW501 muss zuerst
+  als **losgelassen** erkannt werden. Nur eine **danach begonnene** Betätigung
+  darf freigeben.
+- **F3 – nichts anderes setzt:** Folgendes darf die Freigabe nicht setzen:
+  - die Firmware;
+  - ein über den Fehler gehaltener Taster;
+  - Prellen über den Fehler hinweg;
+  - ein klemmender Kontakt, der später öffnet.
+- „Irgendwann hat ein Mensch gedrückt“ erfüllt F2 nicht.
+- „Losgelassen erkannt“ heißt in Hardware: Der Tasterknoten überschreitet V_T+
+  von U507. Wegen des Filters R502/C511 muss der Kontakt dafür mindestens etwa
+  **0,53–1,14 ms** offen sein (Schätzung aus τ 0,89–1,11 ms, V_T+ 1,48–1,92 V,
+  V_CC 3,0–3,3 V). Kürzere Öffnungen zählen nicht als Loslassen.
+
+**Prüfergebnis vom 2026-11-16 (3.17, Punkt 3): Die vorhandene Schaltung erfüllt
+F2 und F3 nicht.**
+- U506 wird an der steigenden Flanke des Tasterknotens gesetzt, also **beim
+  Loslassen**.
+- Ein über einen Fehler oder über das Einschalten gehaltener Taster setzt die
+  Freigabe deshalb beim späteren Loslassen. Ein klemmender Kontakt, der später
+  öffnet, setzt sie ebenfalls.
+- Kandidat **K1** (Takt beim Drücken, 3.17) ist **nicht umgesetzt**. Er ist eine
+  Entscheidung des Owners (O-35).
 
 **Lösung:** Freigabe-Latch in Hardware, versorgt aus +3V3. Damit überlebt der
 Zustand „gesperrt“ jeden USB-Dauerbetrieb.
@@ -851,15 +880,18 @@ Zustand „gesperrt“ jeden USB-Dauerbetrieb.
    den Schmitt-Puffer U508 an CLR von U506 und löscht den Latch asynchron
    (U506-Funktionstabelle: CLR low → Q low, unabhängig von CLK und D). MR von
    U505 liegt an DEVKIT_EN: auch RESET löscht den Latch (3.17, Punkt 4).
-2. **Latch U506 (SN74LVC1G74):** D und PRE fest auf 1. Gesetzt wird er nur durch
-   eine **steigende Flanke am Tasterknoten** von SW501, über Filter R502/C511
-   (1 ms) und den Schmitt-Puffer U507, und nur, solange CLR inaktiv ist.
+2. **Latch U506 (SN74LVC1G74):** D und PRE liegen fest auf 1. Gesetzt wird der
+   Latch nur durch eine **steigende Flanke am Tasterknoten** von SW501, also beim
+   **Loslassen**. Die Flanke läuft über das Filter R502/C511 (1 ms) und den
+   Schmitt-Puffer U507. Sie wirkt nur, solange CLR inaktiv ist. Das erfüllt
+   F2/F3 nicht (siehe oben).
 3. **Firmware kann den Latch nicht setzen:** GPIO10 liest den Taster über R518
    47 kΩ. Treibt die Firmware GPIO10 low, sinkt der Knoten nur auf
    3,3 V × 47/57 = 2,72 V (2,47 V bei 3,0 V). Das liegt über V_T+ max. 1,92 V von
    U507 (SCES351Y, 3 V, −40…125 °C); der Knoten erreicht also V_T− nie, es
-   entsteht keine Flanke. Ein Taster mit Dauerschluss erzeugt ebenfalls keine
-   Flanke.
+   entsteht keine Flanke. Ein Taster mit Dauerschluss erzeugt keine Flanke,
+   solange er geschlossen bleibt. Öffnet er später, entsteht eine Flanke
+   (F3 verletzt, 3.17 Nr. 3.6).
 4. **Wirkung:**
    - ACT_ARMED → Q407 in Reihe zu Q404: Q403 gibt RUN nur frei, wenn
      SERVO_PWR_EN **und** ACT_ARMED anliegen.
@@ -908,12 +940,34 @@ Zustand „gesperrt“ jeden USB-Dauerbetrieb.
 - U505 braucht dafür tw ≈ 20 µs und t_PD ≈ 20 µs. Beides sind nur Typwerte
   (**Annahme A3**, kein Max. im Datenblatt). Hinzu kommen U508 und U506 im
   ns-Bereich.
-- **Ergebnis:** Unter A1–A3 ist der Latch gelöscht, bevor die Servoschiene über
-  RUN abschaltet. Ein Wiederanlauf über RUN ist damit nur noch mit erneuter
-  Freigabe möglich.
-- Selbst wenn U505 langsamer ist: Nach RUN-Ein startet der LTC7803 mit
-  Soft-Start (ca. 2 ms), und das spätere Löschen schaltet ihn über Q403 wieder ab.
-- A1–A3 werden gemessen (3.17).
+- **Ergebnis, ausdrücklich begrenzt:** Unter A1–A3 ist der Latch gelöscht,
+  bevor die Servoschiene über RUN abschaltet.
+- Das ist **keine Garantie aus Datenblattgrenzen**. Zwei Glieder der Kette haben
+  keinen garantierten Grenzwert (Tabelle unten):
+  - U505: t_w und t_PD;
+  - LTC7803: RUN-Schwelle fallend.
+- Messungen an Mustern belegen nur das Verhalten dieser Aufbauten unter den
+  geprüften Bedingungen. Die Aussage gilt deshalb nur für den **Prototyp**.
+- Selbst wenn U505 langsamer ist, schützt der Soft-Start des LTC7803 (ca. 2 ms):
+  Nach RUN-Ein schaltet das spätere Löschen den Regler über Q403 wieder ab.
+  Voraussetzung: U505 löst überhaupt aus.
+
+**Kette und Grenzwerte (Datenblätter):**
+
+| Glied | Garantiert (Min/Max) | Nur typisch oder nicht angegeben |
+|---|---|---|
+| R515/R516, R405/R406, C506, C420 | ±1 % bzw. ±10 % | RUN-Pinstrom des LTC7803 (A1) |
+| U505 TPS3808G01 (SBVS050N) | V_IT 0,405 V ± 2 %; Hysterese ≤ 3 %; t_D 12–28 ms | SENSE-Mindestpuls t_w 20 µs und SENSE→RESET t_PD 20 µs nur typisch (A3); MR→RESET 150 ns typisch |
+| U508 SN74LVC1G17 (SCES351Y) | t_pd ≤ 4,6 ns (3,3 V, 15 pF, −40…85 °C), bis 6,5 ns je nach Last und Temperaturbereich | – |
+| U506 SN74LVC1G74 (SCES794G) | CLR→Q t_pd 1,7–5,9 ns (−40…85 °C), ≤ 7,9 ns (−40…125 °C); t_w(CLR) ≥ 2,7 ns; CLR inaktiv vor CLK↑ ≥ 1,2 ns | Removal-Zeit (CLK vor CLR-Ende) und Verhalten bei Metastabilität nicht angegeben |
+| LTC7803 RUN | steigend 1,15–1,25 V | Hysterese nur 100 mV typisch → fallende Schwelle ohne Grenzwert (A2) |
+| Q407/Q403, U204 | U204 t_pd laut Datenblatt (ns) | Schaltzeiten Q403/Q407 hängen vom Gate-RC ab, nicht berechnet |
+
+Für eine garantierte Reihenfolge gibt es zwei Wege, beide nicht umgesetzt:
+- Bauteile mit garantierten Grenzen für Zeit und fallende Schwelle;
+- eine Schaltung, deren Ergebnis nicht von der Reihenfolge abhängt.
+
+Bis dahin gilt nur die begrenzte Prototyp-Aussage.
 
 Folgen und Grenzen (zu messen):
 - **Einbrüche unter Last:** Fällt VBAT_PROT länger als etwa 1 ms unter 9,62–10,40 V,
@@ -928,77 +982,115 @@ Folgen und Grenzen (zu messen):
   der Zustand indirekt an VSERVO_SENSE ≈ 0 trotz SERVO_PWR_EN. Option: GPIO18
   als Lese-Eingang mit Serienwiderstand (nicht umgesetzt, GPIO18 bleibt Reserve).
 
-### 3.17 Zustände und Prüfungen der Wiederanlaufsperre (Stand 2026-11-16)
+### 3.17 Zustände und Prüfungen der Wiederanlaufsperre (Stand 2026-11-16, überarbeitet)
 
 Erwartung aus der Schaltung, **nicht gemessen**. „Gesperrt“ bedeutet:
 Servoschiene aus (Q403 hält RUN) und U201 hochohmig (keine Pulse).
+Anforderungen F1–F3 siehe 3.16. Messungen charakterisieren nur die geprüften
+Muster; sie ersetzen fehlende Datenblattgrenzen nicht.
 
-**Punkt 1 – Abschaltreihenfolge**
+**Punkt 1 – Abschaltreihenfolge (begrenzte Prototyp-Aussage, 3.16)**
 
 | Nr. | Fall | Erwartet | Prüfung |
 |---|---|---|---|
 | 1.1 | VBAT langsam 12,6 → 9 V → 12,6 V (≤ 1 V/s) | Latch löscht bei 9,62–10,40 V; RUN bleibt über Q403 aus; kein Wiederanlauf | Netzgerät-Rampe; Schwelle an VBAT_OK, ACT_ARMED, RUN, +V_SERVO messen |
-| 1.2 | VBAT-Sprung 12,6 → 0 V und zurück (Schalter) | Latch löscht ≥ 71 µs vor RUN-Aus (A1–A3); danach gesperrt | Oszilloskop: VBAT_PROT, VBAT_OK_BUF, RUN; Abstand t(VBAT_OK) → t(RUN < 1,05 V) |
+| 1.2 | VBAT-Sprung 12,6 → 0 V und zurück (Schalter) | Latch löscht ≥ 71 µs vor RUN-Aus (unter A1–A3); danach gesperrt | Oszilloskop: VBAT_PROT, VBAT_OK_BUF, RUN; Abstand t(VBAT_OK) → t(RUN < 1,05 V) |
 | 1.3 | Einbruch auf 9,0 V für 0,2 / 1 / 5 ms | ≤ ca. 1 ms: keine Löschung, RUN bleibt an (Filter); länger: gelöscht, gesperrt | Pulsquelle; Löschschwelle über Dauer aufnehmen |
-| 1.4 | A2/A3 | RUN fallend < RUN steigend; U505 tw + t_PD ≪ 71 µs | an 3 Mustern bei −20 / 25 / 65 °C |
+| 1.4 | A2/A3 | RUN fallend < RUN steigend; U505 t_w + t_PD ≪ 71 µs | an 3 Mustern bei −20 / 25 / 65 °C; Ergebnis gilt **nur für diese Muster** |
 
-**Punkt 2 – kurze Akkuunterbrechungen (O-36)**
+**Punkt 2 – ESC und VCU (O-36, funktionale Lücke)**
 
-VBAT_PROT und der ESC-Eingang sind über Q101 (leitet in beide Richtungen),
-F101, J101 und den Y-Verteiler **dasselbe Netz**:
-- Bei offenem Hauptschalter speisen die VCU-Kondensatoren auch den ESC, und
-  umgekehrt; beide Spannungen fallen gemeinsam.
-- Bricht der ESC-Eingang so weit ein, dass der ESC neu startet, fällt
-  VBAT_PROT ebenso (minus Spannungsabfall im Kabelbaum).
-- Damit löscht der Latch, solange die Neustartspannung des ESC unter der
-  Löschschwelle liegt.
+VBAT_PROT und der ESC-Eingang hängen über Q101 (leitet in beide Richtungen),
+F101, J101 und den Y-Verteiler am selben Akku. Daraus folgt **kein gemeinsames
+Reset-Verhalten**, denn beide Seiten reagieren unterschiedlich:
+- Pufferkondensatoren: ESC-Eingang einerseits, VCU hinter Q101 andererseits;
+- Spannungsabfälle im Kabelbaum und an den Steckern;
+- die internen Versorgungs- und Brown-out-Schaltungen des ESC (Hobbywing nennt
+  keine Werte).
 
-**Annahme A4:** ESC-Neustart (Controller-Reset) bei < 9,62 V am ESC. Hobbywing
-nennt keinen Wert. Die Lücke der gemeinsamen Anforderung bleibt deshalb **offen**,
-bis A4 gemessen ist (O-36). Bei Verletzung braucht es eine Abschaltung im
-ESC-Zweig oder eine ESC-seitige Messung.
+Der Latch beobachtet nur VBAT_PROT, nicht den Zustand des ESC. Ein ESC-Neustart
+bei gesetztem Latch ist damit möglich, zum Beispiel:
+- Kontaktfehler im ESC-Zweig;
+- Brown-out des ESC über 9,62 V;
+- Haltezeit der VCU-Kondensatoren.
 
-| Nr. | Fall | Erwartet | Prüfung |
+**A4** (ESC-Neustart nur unter 9,62 V) ist deshalb eine **funktionale Lücke**,
+keine bloß fehlende Messzahl. Entscheidend bleibt, wie sich der ESC bei
+fehlenden und wiederkehrenden PWM-Pulsen verhält. Das ist nicht belegt.
+
+| Nr. | Fall | Erwartet aus der Schaltung | Prüfung (nur ohne Motor bzw. mit freien Rädern) |
 |---|---|---|---|
-| 2.1 | Hauptschalter aus/ein für 1, 5, 20, 100 ms, ESC und VCU angeschlossen, Firmware sendet Neutralpulse | Neustart des ESC (Töne, Arming) nur zusammen mit gelöschtem Latch | VBAT_PROT, ESC-Eingang, ACT_ARMED aufzeichnen; ESC-Verhalten protokollieren |
-| 2.2 | wie 2.1 mit Vollgas-Kommando | ESC fährt nicht an (Latch gelöscht oder ESC-Arming verweigert) | **nur ohne Motor bzw. Rad frei** |
-| 2.3 | ESC-Neustartspannung | Netzgerät am ESC langsam absenken | A4 bestätigen |
+| 2.1 | Hauptschalter aus/ein für 1, 5, 20, 100 ms, ESC und VCU angeschlossen, Firmware sendet Neutral | ESC-Neustart nur zusammen mit gelöschtem Latch – **nicht garantiert** (A4) | VBAT_PROT, ESC-Eingang, ACT_ARMED aufzeichnen; ESC-Töne und Arming protokollieren |
+| 2.2 | wie 2.1 mit Vollgas-Kommando | ESC fährt nicht an (Latch gelöscht oder ESC verweigert das Arming ohne Neutral) | Verhalten protokollieren |
+| 2.3 | ESC-Neustartspannung | – | Netzgerät am ESC langsam absenken (A4) |
+| 2.4 | **Nur der ESC-Zweig** kurz getrennt (50 ms … 2 s), VCU bleibt versorgt | Latch bleibt **gesetzt**, PWM liegt sofort wieder an. Schutz nur durch das Arming-Verhalten des ESC und die Firmware; **von der Hardware nicht abgedeckt** | mit Neutral- und mit Gas-Kommando |
+| 2.5 | Akku getrennt, Controller bleibt über USB aktiv, Akku wieder an | Latch gelöscht (U505), U201 hochohmig → ESC startet ohne Pulse; erst nach SW501 kommen Pulse, die Firmware beginnt mit Neutral (O-35) | ESC-Verhalten ohne Pulse und beim ersten Puls |
+| 2.6 | ESC startet neu (eigener Brown-out oder Schutzabschaltung), Controller und Latch behalten ihren Zustand | wie 2.4: **nicht abgedeckt** | Neustart erzwingen (Netzgerät nur am ESC) |
+| 2.7 | PWM fällt im Lauf weg (RESET, ACT_OE_N, Latch gelöscht) und kehrt mit Nicht-Neutral zurück | ESC-Verhalten nicht belegt („throttle lost protection“) | Wegfall 20 ms … 2 s, Rückkehr mit Teil- und Vollgas |
 
-**Punkt 3 – Enable-Taster als Taktquelle**
+Den Punkt schließen kann nur eines davon:
+- eine ESC-seitige Maßnahme, etwa eine Abschaltung des ESC-Zweigs durch die
+  VCU;
+- ein belegtes Arming-Verhalten des ESC, als ausdrücklich begrenzte Aussage
+  zusammen mit der Firmware-Regel.
+
+Beides ist nicht umgesetzt (O-36).
+
+**Punkt 3 – Enable-Taster gegen F2/F3**
 
 Taktpfad: SW501-Knoten (R502 10 kΩ, C511 100 nF, τ = 1 ms) → U507
-(Schmitt, V_T+ 1,48–1,92 V, V_T− 0,89–1,20 V) → U506 CLK.
+(Schmitt, V_T+ 1,48–1,92 V, V_T− 0,89–1,20 V) → U506 CLK. Ist-Schaltung:
+Takt bei steigendem Knoten, also beim **Loslassen**.
 
-| Nr. | Fall | Erwartet | Grundlage |
-|---|---|---|---|
-| 3.1 | Prellen beim Drücken/Loslassen | C511 glättet; Restflanken erzeugen mehrere Takte mit D = 1 → Ergebnis „gesetzt“, kein anderer Zustand | Funktionstabelle; U507-Ausgang ≪ 10 ns/V |
-| 3.2 | Mindestimpulsbreiten | CLK und CLR je ≥ 2,7 ns, CLR inaktiv vor CLK ≥ 1,2 ns (3,3 V); erfüllt durch Puffer und ms-Zeitkonstanten | SCES794G Tab. Timing |
-| 3.3 | Taster beim Einschalten gehalten | CLR 12–28 ms aktiv; erst das **Loslassen** nach dieser Zeit setzt den Latch | Bewertung: Loslassen ist eine Bedienhandlung; ein **klemmender** Taster setzt nie |
-| 3.4 | Während Unterspannung gedrückt, kurz nach deren Ende losgelassen | Loslassen innerhalb 12–28 ms nach Ende: CLR noch aktiv → **nicht** gesetzt; später: gesetzt | U505 t_D |
-| 3.5 | Flanke genau beim Freigeben von CLR | Ergebnis unbestimmt (gesetzt oder nicht); beides ist sicher, da eine Bedienhandlung vorlag | SCES794G tsu 1,2 ns |
-| 3.6 | Firmware treibt GPIO10 low/high | kein Takt: Knoten ≥ 2,47 V > V_T+ max. | 3.16 Punkt 3 |
-| 3.7 | Einstreuung, ESD am Taster | 1 ms Filter + Hysterese 0,51–0,83 V; Restrisiko → EMV-/ESD-Prüfung | Messung |
+Zum Vergleich steht daneben Kandidat **K1** (nicht umgesetzt):
+- U507 wird durch einen invertierenden Schmitt-Puffer ersetzt, etwa
+  SN74LVC1G14. Pinbelegung, Schwellen und Bestand sind noch zu prüfen.
+- Dann taktet U506 beim **Drücken**. Es kommt kein Bauteil hinzu.
+
+| Nr. | Fall | Ist-Schaltung (Takt beim Loslassen) | F2/F3 | K1 (Takt beim Drücken) | F2/F3 mit K1 |
+|---|---|---|---|---|---|
+| 3.1 | Taster bei inaktivem CLR losgelassen, dann gedrückt und losgelassen | setzt beim Loslassen | erfüllt | setzt beim Drücken | erfüllt |
+| 3.2 | beim Einschalten gehalten, nach CLR-Ende losgelassen | setzt beim Loslassen | **verletzt** | setzt nicht; erst ein neues Drücken | erfüllt |
+| 3.3 | vor dem Fehler gedrückt, über den Fehler gehalten, danach losgelassen | setzt | **verletzt** | setzt nicht | erfüllt |
+| 3.4 | während t_D gedrückt (VBAT gültig, CLR noch aktiv), nach CLR-Ende losgelassen | setzt | **verletzt** (Betätigung begann vor dem Erkennen) | setzt nicht | erfüllt |
+| 3.5 | Fehler beginnt während einer Betätigung, Kontakt prellt nach CLR-Ende | jede Öffnung ≥ ca. 0,53 ms setzt | **verletzt** | Öffnung ≥ ca. 0,53 ms mit anschließendem Schließen setzt | nur erfüllt, wenn das Prellen vor dem CLR-Ende endet. Das CLR-Ende liegt ≥ 12 ms (t_D min.) nach Betätigungsbeginn. Prelldauer TL3342 nicht belegt → **offen** |
+| 3.6 | klemmender Kontakt öffnet später von selbst | setzt | **verletzt** | setzt nicht (steigender Knoten = fallender Takt) | erfüllt. Schließt der Kontakt danach erneut von selbst, ist das von einer Betätigung nicht zu unterscheiden (Restrisiko) |
+| 3.7 | Flanke innerhalb der Recovery-Zeit vor dem CLR-Ende (CLR inaktiv vor CLK↑ ≥ 1,2 ns) | Endzustand undefiniert, Removal-Zeit und Metastabilität nicht spezifiziert. „Gesetzt“ hieße: über den Fehler gehaltene Betätigung | **verletzt** (möglich) | Drücken genau am CLR-Ende nach losgelassenem Taster | Beide Endzustände sind mit F2 vereinbar, denn das Loslassen lag bei gültiger VBAT. Übergang bei Metastabilität (ACT_ARMED, U204, Q407) nicht spezifiziert → **offen** |
+| 3.8 | Firmware treibt GPIO10 low/high | kein Takt: Knoten ≥ 2,47 V > V_T+ max. | erfüllt | Schwellen des neuen Puffers prüfen | offen |
+| 3.9 | Prellen ohne Fehler | mehrere Takte mit D = 1 → gesetzt | erfüllt | gleich | erfüllt |
+| 3.10 | Mindestimpulsbreiten, Flankensteilheit | Puffer ≪ 10 ns/V; t_w ≥ 2,7 ns erfüllt | erfüllt | gleich | erfüllt |
+| 3.11 | Einstreuung, ESD am Taster | 1 ms Filter + Hysterese 0,51–0,83 V; Restrisiko | EMV-/ESD-Prüfung | gleich | EMV-/ESD-Prüfung |
+
+**Ergebnis Punkt 3:** Die Ist-Schaltung verletzt F2/F3 in den Fällen 3.2–3.7.
+K1 erfüllt 3.2–3.4 und 3.6 aus der Logik heraus. Offen bleiben bei K1:
+- 3.5: Prelldauer belegen (Datenblatt oder Messung);
+- 3.7: Übergangsverhalten;
+- 3.8: Schwellen des neuen Puffers.
+
+Die Schaltung wurde nicht geändert. Die Wahl liegt beim Owner (O-35).
 
 **Punkt 4 – RESET löscht den Latch (MR von U505 an DEVKIT_EN)**
 
 Geprüft gegen den DevKit-Schaltplan V1.1 (3.13):
 - **Pegel:** EN wird von SW2/SW502 bzw. Q1 (L8050) auf nahezu 0 V gezogen.
-  MR schaltet sicher (V_IL ≤ 0,3 × V_DD), MR-Laufzeit 150 ns.
+  MR schaltet sicher (V_IL ≤ 0,3 × V_DD), MR-Laufzeit 150 ns typisch.
 - **Belastung:** Der interne MR-Pull-up von 70–90 kΩ liegt an derselben +3V3
   wie R5. EN-Pull-up 10 k ∥ 70 k = 8,75 kΩ, die EN-Zeitkonstante sinkt von
   10 ms auf 8,75 ms. Q1 senkt zusätzlich ≤ 47 µA.
 - **Versorgung:** Fehlt der DevKit, sind EN und U505 gleichermaßen stromlos.
   Zwischen MR und EN gibt es keine zweite Quelle, also keine Rückspeisung.
 
+Nur ein EN-Puls löscht den Latch. BOOT allein löscht ihn nicht.
+
 | Nr. | Fall | Erwartet |
 |---|---|---|
 | 4.1 | RESET (SW502) im Betrieb | MR low → VBAT_OK low ≥ 12–28 ms → Latch gelöscht; nach dem Hochlauf gesperrt bis SW501 |
-| 4.2 | BOOT/Download und USB-Auto-Reset (Flashen, DTR/RTS) | EN-Puls → Latch gelöscht |
-| 4.3 | Watchdog, Brown-out, Software-Reset des ESP32 | EN bleibt high → Latch **nicht** gelöscht; Ausgänge durch Ruhepegel gesperrt; Firmware gibt nach Neustart nur über SW501 frei (O-35) |
-| 4.4 | ESP32-Hochlauf | EN-RC 8,75 ms ≫ tSTBL; Hochlauf unverändert |
-
-
-
+| 4.2 | **BOOT (SW503) allein** | nur GPIO0 low, EN bleibt high → **kein** Reset, Latch **nicht** gelöscht |
+| 4.3 | Download von Hand: BOOT halten, RESET drücken, BOOT loslassen | der RESET-Druck löscht den Latch (wie 4.1) |
+| 4.4 | Flashen über den USB-UART-Anschluss des DevKits (Auto-Reset über DTR/RTS, Q1/Q2) | EN-Puls → Latch gelöscht |
+| 4.5 | Flashen bzw. Neustart über den nativen USB-Anschluss (USB-Serial-JTAG des ESP32-S3) | Neustart chipintern, EN bleibt high → Latch **nicht** gelöscht (am Muster bestätigen) |
+| 4.6 | Watchdog, Brown-out, Software-Reset des ESP32 | EN bleibt high → Latch **nicht** gelöscht; Ausgänge durch Ruhepegel gesperrt. Die Firmware kann den Latch nicht löschen; sie gibt nach einem Neustart nur über SW501 frei (O-35) |
+| 4.7 | ESP32-Hochlauf | EN-RC 8,75 ms ≫ tSTBL; Hochlauf unverändert |
 
 ## 4. Komponentendaten (Zwischenstand)
 
@@ -1079,8 +1171,8 @@ Schutzkoordination (O-17).
 | O-32 | I²C-Anstiegszeit an TP801/TP802 und OLED-Strom bei Vollbild messen; 400 kHz erst danach | Owner |
 | O-33 | ~~ST-Datenblatt LSM6DSOX~~ – erledigt 2026-11-16 (DS12814 Rev 4, Anschlussplan 9.3): INT1 beim Einschalten 0 (R803), Push-Pull aktiv high, 0,55 mA typ. | – |
 | O-34 | Hauptabschaltung außerhalb der VCU auswählen (3.14): Dauer-/Spitzenstrom, DC-Schaltvermögen bei 12,6 V, Einschaltstrom; bei elektronischer Lösung Body-Dioden, Rückspeisung, AUS-Zustand | Owner |
-| O-35 | Wiederanlaufsperre in Hardware umgesetzt und am 2026-11-16 korrigiert (3.16, Prüftabelle 3.17: Annahmen A1–A3 messen). Firmware zusätzlich: bei VBAT-Verlust SERVO_PWR_EN low, ACT_OE_N high, ESC neutral; Freigabe nach Neustart nur über SW501; GPIO10 ohne interne Pull-ups; J112-TX ohne Akku inaktiv; GPIO0 und GPIO6 nie als Ausgang. Messen: Schwelle, Löschen bei langsamem und schnellem Abfall, kein Setzen durch GPIO10 | Agent / Owner |
-| O-36 | Lücke der gemeinsamen Wiederanlaufanforderung: VCU und ESC hängen am selben Netz; die Sperre greift für den ESC nur, wenn dessen Neustartspannung unter 9,62 V liegt (Annahme A4, 3.17 Punkt 2). Messen; bei Verletzung Abschaltung oder Messung im ESC-Zweig nötig | Owner |
+| O-35 | Wiederanlaufsperre in Hardware (3.16), am 2026-11-16 gegen die verschärfte Anforderung F1–F3 geprüft (3.17). **F2/F3 nicht erfüllt**: U506 setzt beim Loslassen, also auch nach einem über den Fehler gehaltenen Taster und bei einem später öffnenden klemmenden Kontakt. Entscheidung Owner: Kandidat K1 (invertierender Schmitt-Puffer statt U507, Takt beim Drücken) oder ein anderer Weg. Für K1 offen: Prelldauer TL3342, Übergang bei Metastabilität, Schwellen. Abschaltreihenfolge nur begrenzte Prototyp-Aussage (U505 t_w/t_PD und LTC7803 RUN fallend ohne Grenzwert). Firmware zusätzlich: bei VBAT-Verlust SERVO_PWR_EN low, ACT_OE_N high, ESC neutral; nach jedem Neustart Freigabe nur über SW501, erster Puls neutral; GPIO10 ohne interne Pull-ups; J112-TX ohne Akku inaktiv; GPIO0 und GPIO6 nie als Ausgang. BOOT allein und Neustarts ohne EN-Puls (nativer USB, Watchdog) löschen den Latch nicht | Owner / Agent |
+| O-36 | **Funktionale Lücke** der gemeinsamen Wiederanlaufanforderung: Der gemeinsame Akkuanschluss bedeutet kein gemeinsames Reset-Verhalten von ESC und VCU (Puffer-C, Leitungsabfälle, ESC-Brown-out). Der Latch sieht nur VBAT_PROT. Nicht abgedeckt: ESC-Zweig allein getrennt, ESC-Neustart bei gesetztem Latch (3.17 Nr. 2.4, 2.6). ESC-Verhalten bei fehlenden und wiederkehrenden PWM-Pulsen nicht belegt (2.7). Schließen nur durch eine Maßnahme im ESC-Zweig oder ein belegtes ESC-Arming-Verhalten als begrenzte Aussage | Owner |
 
 Erledigt: O-5 (DevKit-LDO), O-6 (Lenkservos), O-7 (LTC7803 Rev B, 3.5a;
 Kompensation weiter unter O-27), O-9 (Projektort), O-14 (ersetzt durch O-17),

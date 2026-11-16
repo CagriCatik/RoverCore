@@ -686,9 +686,17 @@ Rechnung im Versorgungsdokument 3.16.
 | Q407 (ServoPower) | in Reihe zu Q404: RUN nur mit SERVO_PWR_EN **und** ACT_ARMED |
 | U204 (Actuators) | U201-OE = ACT_OE_N **oder** ACT_DISARMED |
 
-Bedienung: Nach jedem Anstecken bzw. Einschalten des Akkus und nach jedem
-Akkuverlust bleiben Servoschiene und Puffer gesperrt, bis SW501 gedrückt und
-losgelassen wird. Das gilt auch, wenn die Firmware die Freigabe-GPIOs bereits
+Bedienung: Nach jedem Anstecken bzw. Einschalten des Akkus, nach jedem
+Akkuverlust und nach RESET bleiben Servoschiene und Puffer gesperrt, bis SW501
+losgelassen wird; die Ist-Schaltung setzt beim Loslassen.
+
+**Prüfung 2026-11-16:** Die verschärfte Anforderung ist nicht erfüllt. Sie
+verlangt: Taster erst bei gültiger Versorgung als losgelassen erkennen, und nur
+eine danach begonnene Betätigung gibt frei. Ein über den Fehler gehaltener oder
+klemmender Taster setzt den Latch beim späteren Öffnen. Siehe Versorgung 3.16
+und 3.17 Punkt 3, Kandidat K1, O-35. BOOT allein löscht den Latch nicht. Ein
+RESET löscht ihn, auch der RESET beim Download und der Auto-Reset über den
+USB-UART. Das gilt auch, wenn die Firmware die Freigabe-GPIOs bereits
 auf aktiv gesetzt hat. Der Freigabetaster bleibt zugleich Firmware-Eingang
 (GPIO10, ohne interne Pull-ups).
 
