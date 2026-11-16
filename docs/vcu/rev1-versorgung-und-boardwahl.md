@@ -841,6 +841,16 @@ die Freigabe in Hardware (3.16). Offen bleiben drei Punkte:
 
 ### 3.16 Wiederanlaufsperre (O-35, Stand 2026-11-16)
 
+> **Rev1-Umfang (Owner-Entscheidung 2026-11-16, 3.20):** Folgende Punkte trägt
+> in Rev1 die ESP32-Firmware:
+> - F2 (Loslassen vor neuer Betätigung);
+> - die Entprellung;
+> - die Freigabe nach Versorgungswiederkehr.
+>
+> Eine Unabhängigkeit von fehlerhafter Firmware wird dafür **nicht**
+> behauptet. Die Hardware hält definierte inaktive Ausgangszustände. Die
+> folgenden Abschnitte 3.16–3.19 bleiben als Analyse stehen.
+
 **Anforderung (verschärft am 2026-11-16 nach Owner-Review):**
 
 - **F1 – Löschen:** Nach dem Einschalten, nach LiPo-Verlust oder Unterspannung
@@ -1206,6 +1216,10 @@ O-36 bleibt deshalb ein eigener Punkt.
 
 ### 3.19 V2 – Konzeptentwurf der Freigabelogik (Stand 2026-11-16, nicht im Schaltplan)
 
+> **Geparkt für Rev1 (Owner-Entscheidung 2026-11-16, 3.20).** V2 und der
+> Vergleich TPS3808/LTC6994 werden nicht weiterverfolgt. Es kommen keine
+> weiteren Zeitglieder oder READY-Flipflops hinzu.
+
 **Status: Konzept mit offenen Funktions- und Timingnachweisen.**
 - Funktions- und Zeitkonzept mit Bauteilkandidaten. Der KiCad-Schaltplan ist
   **unverändert** und wird es bis zum bestandenen Nachweis bleiben.
@@ -1475,6 +1489,130 @@ Für den Vergleich muss das LTC6994-Datenblatt im Projekt liegen. Vorschlag:
 **O-36 bleibt getrennt:** V2 ändert nichts am alleinigen ESC-Neustart
 (3.17 Nr. 2.4, 2.6).
 
+### 3.20 Rev1-Umfang: Freigabe in Firmware, Ausgangssperre bei Unterspannung (Stand 2026-11-16)
+
+**Anforderungsänderung (Owner):**
+- Für Rev1 entfällt „F2 vollständig ohne Firmware“. Die ESP32-Firmware
+  übernimmt das Zustandsmodell aus 3.18 (S0/S1/S2):
+  - t_LOS 100 ms (50–200 ms);
+  - t_EIN 50 ms (20–100 ms);
+  - abgebrochene Betätigung → S0.
+- Eine garantierte Unabhängigkeit von fehlerhafter Firmware wird **nicht**
+  behauptet. Das ist eine bewusste Änderung, kein Nachweis, dass die
+  Hardware F2 erfüllt.
+
+| Hardware | Firmware |
+|---|---|
+| Definierte inaktive Ausgänge bei Reset, Boot und fehlendem DevKit (3.15) | Loslassen ≥ 100 ms, danach neue Betätigung ≥ 50 ms (GPIO10, ohne interne Pull-ups) |
+| Versorgung und elektrische Ausgangssperre, auch bei ungültiger +3V3 (unten, O-37) | Beim Start und bei erkanntem Fehler die Freigabe löschen: SERVO_PWR_EN low, ACT_OE_N high, ESC neutral |
+| Vorhandene Sperre U505/U506 bleibt als zusätzliche Ebene; sie löscht bei VBAT-Fehler und EN-Reset | Nach Versorgungswiederkehr ausdrücklich neu freigeben; erster Puls neutral |
+| – | Watchdog und festgelegte Fehlerreaktion; nach jedem Neustart S0 |
+
+**1. Lässt die bestehende Freigabeschaltung die Firmwarelösung zu?**
+- **Verknüpfung:** Wirksam ist eine Freigabe nur, wenn Hardware und Firmware
+  sie beide geben:
+  - Servoschiene: Q404 (GPIO7) **und** Q407 (ACT_ARMED);
+  - Pulse: ACT_OE_N low **und** ACT_DISARMED low (U204).
+- Die Hardware kann also nur zusätzlich sperren, nie allein freigeben.
+- **Zeitpunkt:** U506 setzt beim Loslassen. Die Firmware erreicht S2 nach
+  ≥ 50 ms Betätigung, wirksam wird die Freigabe also erst beim folgenden
+  Loslassen.
+  - Das ist verträglich, denn auf jede gültige Betätigung folgt ein Loslassen.
+  - Ein danach klemmender Taster gibt nie frei (sichere Richtung).
+  - Bedienhinweis: „Taster drücken und loslassen“.
+- **Lücke (Anpassung nötig):** Die Firmware kann den Latch nicht lesen.
+  - Löscht U505 den Latch, etwa bei einem kurzen VBAT-Einbruch, den die
+    Firmware über VBAT_SENSE nicht sieht, bleibt die Firmware in S2.
+  - Das nächste Loslassen setzt U506 dann wieder, auch ein Loslassen eines
+    über den Fehler gehaltenen Tasters. Die Freigabe wirkt danach ohne die
+    100/50-ms-Prüfung der Firmware.
+  - Damit wäre die nun der Firmware zugewiesene F2 umgangen.
+- **Kleinste notwendige Anpassung (Vorschlag, nicht umgesetzt):**
+  - ACT_ARMED über einen Serienwiderstand (Vorschlag 1 kΩ) auf GPIO18 führen.
+    Der Pin ist Reserve-Eingang (TP501) und kein Strapping-Pin des ESP32-S3.
+    Er liegt in derselben +3V3-Domäne, also ohne Rückspeisung.
+  - Firmware-Regel: ACT_ARMED low in S1/S2 → S0.
+  - Erfassung: ACT_ARMED bleibt nach jedem Löschen mindestens t_D min. von
+    U505 = **12 ms** low (SBVS050N), bis zum nächsten Loslassen. Mit
+    Flankeninterrupt oder Abfrage ≤ 5 ms wird jedes Löschen sicher erfasst
+    (Zeitbedarf der Firmware nachzuweisen).
+  - Kein weiterer Bauteilbedarf.
+- Ohne diese Anpassung bleibt die Firmwarelösung gegenüber kurzen
+  VBAT-Einbrüchen unvollständig.
+
+**2. Ausgangssperre bei ungültiger +3V3 – Vorschlag (O-37, nicht im Schaltplan)**
+
+**Problem (3.19.1 Punkt 3):** Die Freigabe-FETs Q404/Q407 und U201 werden aus
+der +3V3-Domäne angesteuert.
+- Ab etwa 0,8 V Gate-Spannung kann die Reihenschaltung Q404 + Q407 RUN
+  freigeben (NTR4003N V_GS(th) 0,8–1,4 V bei 250 µA).
+- U201 ist bei 0 < V_CCA < 1,65 V nicht spezifiziert.
+- Die Firmware kann das nicht beheben.
+
+**Prinzip:**
+- Ein Wächter, der **nicht aus +3V3**, sondern aus +5V versorgt ist,
+  überwacht +3V3.
+- Im Fehlerfall wird die Sperre durch **eingeschaltete** Transistoren
+  hergestellt. Deren Durchlasswerte sind im Datenblatt spezifiziert.
+- Die Sperre stützt sich also nicht auf „ausgeschaltete“ Transistoren bei
+  unbestimmter Gate-Spannung.
+
+| Ref. (vorläufig) | Kandidat | Beschaltung |
+|---|---|---|
+| U515 | TPS3808G01DBVR | VDD = +5V (Carrier, aus VBAT über TPS54302), 100 nF; SENSE = +3V3 über 63,4 kΩ / 10 kΩ (±1 %), 1 nF; CT offen; MR offen; RESET-Pull-up 100 kΩ nach +5V → Netz `V3V3_OK_N` |
+| Q408 | BSS84 (onsemi) | P-FET, Source +5V, Gate `V3V3_OK_N`, Drain → `LOCK_3V3` |
+| R421 | 10 kΩ | `LOCK_3V3` → GND |
+| Q409 | NTR4003N | RUN → GND, Gate `LOCK_3V3`: hält RUN low |
+| Q410 | NTR4003N | Drain an Q201-Drain (ESC-Leitung, vor R221) → GND, Gate `LOCK_3V3`: hält die ESC-Leitung low |
+
+Die Servoleitungen brauchen keine eigene Klemmung: Ohne Servoschiene sind die
+Servos stromlos. Die LED-Kanäle sind nicht sicherheitsrelevant.
+
+**Grenzwerte und Rechnung (Datenblätter; Rechnung als Schätzung gekennzeichnet):**
+
+| Glied | Datenblatt | Folgerung |
+|---|---|---|
+| U515 Schwelle fallend | V_IT 0,405 V ± 2 %, Teiler ± 1 % (SBVS050N) | Sperre sicher aktiv unter **2,86 V**, nominal 2,97 V |
+| U515 Schwelle steigend | + Hysterese ≤ 3 % | Freigabe spätestens bei 3,18 V < SGM2212-3.3 V_OUT min. 3,251 V (0–800 mA) → Abstand 73 mV |
+| U515 nach Wiederkehr | t_D 12–28 ms (CT offen) | Sperre hält noch 12–28 ms nach gültiger +3V3 |
+| U515 Ausgang low | V_OL ≤ 0,4 V bei 1 mA, V_DD ≥ 1,8 V; asserted für 0,8 V < V_DD < 1,7 V (7.4.2) | unabhängig vom Wert von +3V3, also auch bei 0 V |
+| Q408 ein | BSS84 V_GS(th) −0,8 bis −2,0 V bei −1 mA (V_DS = V_GS) | V_GS = −(V_5V − 0,4 V). Bei ≤ 1 mA Last (R421: 0,5 mA) ist \|V_DS\| ≤ 2 V → `LOCK_3V3` ≥ V_5V − 2 V |
+| Q409/Q410 ein | NTR4003N R_DS(on) ≤ 2,0 Ω bei V_GS 2,5 V (10 mA) | ab V_5V ≥ 4,5 V: V_GS ≥ 2,5 V |
+| RUN gehalten | RUN-Teilerstrom ≤ 21,5 V / 115 kΩ = 0,19 mA | RUN ≤ 0,4 mV ≪ 1,15 V (LTC7803 V_RUN min.) |
+| ESC-Leitung gehalten | Pull-up 2,2 kΩ von +5V | Leitung ≤ 5 V × 2 Ω / 2,2 kΩ ≈ 5 mV → „kein Signal“ |
+| Freigabe (+3V3 gültig) | U515 RESET hochohmig (I_OH ≤ 300 nA) → Q408 V_GS ≈ −30 mV; BSS84 I_DSS ≤ 15 µA (nur bei −50 V angegeben) × 10 kΩ ≤ 0,15 V an `LOCK_3V3` | Q409/Q410 aus. Das ist nur Funktion, nicht Sicherheit: Ein Leckstrom würde RUN bzw. die ESC-Leitung belasten, also in sichere Richtung wirken |
+
+**Abdeckung:**
+
+| Zustand | Ergebnis |
+|---|---|
+| +3V3 < 2,86 V (jeder Wert, auch DevKit fehlt), +5V ≥ 4,5 V | RUN und ESC-Leitung durch eingeschaltete FETs gehalten (Datenblattwerte) |
+| +3V3 2,86–3,0 V | ggf. freigegeben; LVC-Logik spezifiziert, ESP32 unter V_DD min. 3,0 V → Restpunkt |
+| +5V 3,4–4,5 V (Schätzung, nur über V_GS(th)) | wahrscheinlich gehalten, R_DS(on) nicht spezifiziert |
+| +5V < 3,4 V bei vorhandener VBAT (Anlauf oder Ausfall TPS54302) | **nicht gedeckt** (Restpunkt). +3V3 ohne USB ≤ +5V |
+| nur USB | VBAT fehlt → keine Servoschiene, ESC stromlos |
+
+**Kosten:** 1 Supervisor, 1 P-FET, 2 N-FETs, 4 Widerstände, 2 Kondensatoren.
+Alle Typen sind bereits im Projekt (TPS3808, NTR4003N) bzw. als Datenblatt
+geprüft (BSS84).
+
+**Offen vor der Fertigungsfreigabe:**
+- Owner-Entscheidung zum Vorschlag;
+- Restpunkte +5V < 4,5 V und +3V3 2,86–3,0 V;
+- Toleranz der +5V-Schiene (TPS54302-Sollwert);
+- Verhalten von SENSE an unversorgtem U515, also USB allein und +5V = 0
+  (Strom über 73 kΩ ≤ 45 µA; Eingangsstruktur ohne VDD nicht angegeben);
+- Messung am Muster.
+
+**3. O-36 bleibt ein separater ESC-Prüfpunkt.** Weder die Firmware noch die
+Ausgangssperre erkennen einen alleinigen ESC-Neustart. Eine automatische
+Erkennung wird nicht behauptet.
+
+**Nächste Schritte:**
+1. Owner entscheidet über GPIO18 ← ACT_ARMED und über den Vorschlag O-37.
+2. Danach den Schaltplan abschließen und mit der PCB-Platzierung beginnen.
+3. Die Ausgangssperre muss vor der Fertigungsfreigabe geklärt sein.
+
 ## 4. Komponentendaten (Zwischenstand)
 
 | Komponente | Bestätigt | Offen |
@@ -1554,8 +1692,9 @@ Schutzkoordination (O-17).
 | O-32 | I²C-Anstiegszeit an TP801/TP802 und OLED-Strom bei Vollbild messen; 400 kHz erst danach | Owner |
 | O-33 | ~~ST-Datenblatt LSM6DSOX~~ – erledigt 2026-11-16 (DS12814 Rev 4, Anschlussplan 9.3): INT1 beim Einschalten 0 (R803), Push-Pull aktiv high, 0,55 mA typ. | – |
 | O-34 | Hauptabschaltung außerhalb der VCU auswählen (3.14): Dauer-/Spitzenstrom, DC-Schaltvermögen bei 12,6 V, Einschaltstrom; bei elektronischer Lösung Body-Dioden, Rückspeisung, AUS-Zustand | Owner |
-| O-35 | Owner-Entscheidung 2026-11-16 (3.18): S0/S1/S2 (abgebrochene Betätigung → S0), t_LOS 100 ms (50–200), t_EIN 50 ms (20–100), Fehler hat Vorrang, firmwareunabhängiger Umfang, V2 als zu prüfendes Konzept. **Status V2: Konzept mit offenen Funktions- und Timingnachweisen** (3.19, 3.19.1): READY-Rücknahme fehlt; asynchrone Entscheidung ohne begrenzte Auflösungszeit → Owner entscheidet über Formulierung (a)/(b); Ausgangssperre bei ungültiger +3V3 nicht durch Datenblattgrenzen gedeckt (Ist-Schaltung und V2); A6/A9 TPS3808; LTC6994-Datenblatt fehlt im Projekt. Keine Schaltplanänderung vor bestandenem Nachweis. Ist-Schaltung erfüllt F2/F3 nicht. Abschaltreihenfolge = unbestätigte Prototyp-Hypothese. Firmware zusätzlich: bei VBAT-Verlust SERVO_PWR_EN low, ACT_OE_N high, ESC neutral; erster Puls neutral; GPIO10 ohne interne Pull-ups; J112-TX ohne Akku inaktiv; GPIO0 und GPIO6 nie als Ausgang | Owner / Agent |
+| O-35 | **Rev1-Umfang (Owner 2026-11-16, 3.20):** F2, Entprellung (S0/S1/S2, t_LOS 100 ms, t_EIN 50 ms) und Freigabe nach Versorgungswiederkehr in der ESP32-Firmware; keine garantierte Unabhängigkeit von fehlerhafter Firmware. V2 und Timervergleich geparkt (3.19). U505/U506 bleiben als zusätzliche Sperrebene (wirksam erst beim Loslassen). **Vorschlag, Entscheidung offen:** ACT_ARMED über 1 kΩ auf GPIO18, Firmware geht bei ACT_ARMED low nach S0 (sonst re-armiert U506 nach kurzem VBAT-Einbruch ohne Firmwareprüfung). Firmware: Watchdog, nach jedem Neustart S0, bei VBAT-Verlust SERVO_PWR_EN low, ACT_OE_N high, ESC neutral; erster Puls neutral; GPIO10 ohne interne Pull-ups; J112-TX ohne Akku inaktiv; GPIO0 und GPIO6 nie als Ausgang. Abschaltreihenfolge = unbestätigte Prototyp-Hypothese | Owner / Agent |
 | O-36 | **Funktionale Lücke** der gemeinsamen Wiederanlaufanforderung: Der gemeinsame Akkuanschluss bedeutet kein gemeinsames Reset-Verhalten von ESC und VCU (Puffer-C, Leitungsabfälle, ESC-Brown-out). Der Latch sieht nur VBAT_PROT. Nicht abgedeckt: ESC-Zweig allein getrennt, ESC-Neustart bei gesetztem Latch (3.17 Nr. 2.4, 2.6). ESC-Verhalten bei fehlenden und wiederkehrenden PWM-Pulsen nicht belegt (2.7). Schließen nur durch eine Maßnahme im ESC-Zweig oder ein belegtes ESC-Arming-Verhalten als begrenzte Aussage | Owner |
+| O-37 | Elektrische Ausgangssperre bei ungültiger +3V3 (3.20, Punkt 2): Vorschlag U515 TPS3808 an +5V überwacht +3V3, Q408 BSS84 + Q409/Q410 NTR4003N halten RUN und ESC-Leitung low. Restpunkte +5V < 4,5 V, +3V3 2,86–3,0 V, SENSE ohne VDD. **Vor Fertigungsfreigabe klären** | Owner / Agent |
 
 Erledigt: O-5 (DevKit-LDO), O-6 (Lenkservos), O-7 (LTC7803 Rev B, 3.5a;
 Kompensation weiter unter O-27), O-9 (Projektort), O-14 (ersetzt durch O-17),

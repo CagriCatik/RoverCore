@@ -694,7 +694,7 @@ losgelassen wird; die Ist-Schaltung setzt beim Loslassen.
 verlangt: Taster erst bei gültiger Versorgung als losgelassen erkennen, und nur
 eine danach begonnene Betätigung gibt frei. Ein über den Fehler gehaltener oder
 klemmender Taster setzt den Latch beim späteren Öffnen. Siehe Versorgung 3.16
-und 3.17 Punkt 3, O-35. Kandidat K1 ist unzureichend und wird nicht eingebaut. Zustandsmodell und Owner-Entscheidung: Versorgung 3.18; Konzept V2 (noch nicht im Schaltplan): 3.19. BOOT allein löscht den Latch nicht. Ein
+und 3.17 Punkt 3, O-35. Kandidat K1 ist unzureichend und wird nicht eingebaut. Zustandsmodell: Versorgung 3.18. **Rev1:** Freigabelogik in der Firmware, V2 geparkt; Vorschläge GPIO18 ← ACT_ARMED und Ausgangssperre bei ungültiger +3V3 (O-37): Versorgung 3.20. BOOT allein löscht den Latch nicht. Ein
 RESET löscht ihn, auch der RESET beim Download und der Auto-Reset über den
 USB-UART. Das gilt auch, wenn die Firmware die Freigabe-GPIOs bereits
 auf aktiv gesetzt hat. Der Freigabetaster bleibt zugleich Firmware-Eingang
