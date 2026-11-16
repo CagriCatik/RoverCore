@@ -125,7 +125,7 @@
 
 | Funktion | Bauteile | Lage | Abstand zum Pin |
 |---|---|---|---|
-| Boost | C411 (BOOST–SW), D401 (INTVCC→BOOST) | rechts oben an U401, C411-SW-Pad zu den Source-Pins von Q401 | C411 BOOST ↔ Pin 14 ca. 3,1 mm; C411 SW ↔ Q401-Source ca. 4,0 mm |
+| Boost | C411 (BOOST–SW), D401 (INTVCC→BOOST) | C411 rechts oben an U401, SW-Pad zu den Source-Pins von Q401; D401 seit dem Probe-Routing auf der Unterseite (3b) | C411 BOOST ↔ Pin 14 ca. 3,1 mm; C411 SW ↔ Q401-Source ca. 4,0 mm |
 | INTVCC | C412 4,7 µF, C413 1 µF | direkt unter den Pins 9/10, GND-Pad zur GND-Seite | ca. 1,7 mm |
 | Soft-Start | C414 | links oben an Pin 1 | ca. 3,5 mm |
 | Strommessung | CF401 (SENSE+/−), RF401 (SENSE_P_K → SENSE+) | links an Pin 2/3; Filter am IC, lange Leitung vor dem Filter | CF401 ca. 3,0 mm |
@@ -135,23 +135,17 @@
 - **Verbleibende Kompromisse** (aus dem Pinbild von LTC7803 und TDSON-8 mit
   der gewählten SW-oben-Anordnung):
   - **TG kurz:** Q401-Gate ↔ Pin 15 ca. 6,9 mm.
-  - **BG lang:** Q402-Gate ↔ Pin 13 ca. 13,8 mm. Führung auf einer Innenlage
-    direkt über der GND-Fläche, als Paar mit dem GND-Rückweg zur Source von
-    Q402.
+  - **BG lang:** Q402-Gate ↔ Pin 13 ca. 13,8 mm Luftlinie. Die frühere
+    Angabe „Innenlage über GND“ passt nicht zum Lagenaufbau (In2 liegt
+    1,24 mm unter In1). Ausgeführt ist BG auf B.Cu über In2-GND, siehe 3b.
   - Eine Anordnung mit beiden Gates nahe am IC ergäbe eine größere
     Leistungsschleife (Kondensatoren nicht mehr zwischen VIN-Drain und
     GND-Source). Die Leistungsschleife hat Vorrang.
-- **SENSE± von RS401 (Kelvin NT401/NT402) zu U401:** ca. 39 mm, als enges
-  Paar abseits von SW zu führen. Filter RF401/CF401 am IC.
-- **Rückweg:**
-  - Die Luftlinienansichten zeigen jetzt GND (schwarz) aus der
-    KiCad-Konnektivität.
-  - Das zeigt Verbindungen, nicht den Stromweg. Der Rückweg der
-    Leistungsschleife ergibt sich aus der Lage: die GND-Pads von C401/C402
-    (oben) und C403/C404 (unten) liegen unter den Source-Pins von Q402,
-    ca. 5 mm.
-  - Geplant ist eine durchgehende GND-Innenlage (In1) unter der ganzen
-    Gruppe. Die Schleifenfläche ist erst mit dem Routing bestimmbar.
+- **SENSE± von RS401 (Kelvin NT401/NT402) zu U401:** ca. 39 mm Luftlinie;
+  geroutet ca. 44 mm, siehe 3b. Filter RF401/CF401 am IC.
+- **Rückweg:** Die Luftlinien zeigen nur Verbindungen. Der vorgesehene
+  Rückstromweg steht in 3a, die Kupferführung in 3b. Ein Abstand von 5 mm
+  zwischen GND-Pads beschreibt nur die Geometrie.
 
 **Logikversorgung (Gruppe 2):**
 - U301 ist um 180° gedreht, damit VIN/GND/SW zur Leistungsseite zeigen.
@@ -163,6 +157,157 @@
 **Eingang (Gruppe 1):**
 - Stromweg J101 → F101 → Q101 → D101/C101/C102 ohne Umweg.
 - VBAT_PROT geht nach rechts (Servoregler) und nach unten (U301) ab.
+
+## 3a. Lagenaufbau und vorgesehene Rückstromwege (2026-11-16)
+
+**Lagenaufbau** (Werte aus der Board-Datei, beim Fertiger noch zu bestätigen):
+
+| Lage | Dicke | Rolle |
+|---|---|---|
+| F.Cu | 35 µm | Bauteile; Leistungsflächen VBAT_PROT, SW, ISNS_PWR, VSERVO_REG, lokale GND-Flächen; kurze kritische Leitungen (TG/SW-Paar, Bootstrap, IC-Umgebung) |
+| Prepreg | 0,1 mm | – |
+| In1.Cu | 35 µm | **GND, durchgehend, ohne Leitungen**; Bezugs- und Rückstromebene für F.Cu |
+| Kern | 1,24 mm | – |
+| In2.Cu | 35 µm | **GND, durchgehend** (vorerst); Bezugsebene für B.Cu |
+| Prepreg | 0,1 mm | – |
+| B.Cu | 35 µm | C403/C404, D401; Leitungen BG, Sense-Paar, Rückkopplung, EXTVCC; später weitere Signale und Leistungsflächen parallel zu F |
+
+- **Folgerung aus dem Aufbau:** Eine Leitung ist nur an die Ebene im Abstand
+  von 0,1 mm eng gekoppelt, F an In1 und B an In2. In1 und In2 sind
+  1,24 mm voneinander entfernt. Eine Leitung auf In2 wäre deshalb schlecht an
+  In1 gekoppelt und würde zugleich die In2-Ebene zerschneiden.
+- **Fertigerseitig offen:** Ein Aufbau mit ca. 0,1 mm Prepreg ist vor der
+  Bestellung zu bestätigen. Bei dickerem Prepreg steigt die
+  Leitungsinduktivität etwa proportional (Schätzung).
+- **Leistungsinseln auf In2** (z. B. VBAT_PROT- oder +V_SERVO-Verteilung)
+  nur außerhalb von Bereichen mit B-Leitungen. Entschieden wird beim Routing
+  der übrigen Platine.
+- **Kupferdicke:** 35 µm außen bei bis zu 11,2 A Servostrom ist knapp. Ob
+  70 µm außen nötig sind, wird mit der Führung der Servoschiene entschieden
+  (offen).
+
+**Vorgesehene Rückstromwege** (die Kupferführung dazu steht in 3b):
+
+| Kreis | Hinweg | Rückweg |
+|---|---|---|
+| Eingangsschleife | C405/C401/C402 → VBAT-Fläche F → Q401 → SW-Fläche F → Q402 | GND-Fläche F (Source Q402 → GND-Pads der Kondensatoren), In1 direkt darunter |
+| Eingangs-C Unterseite | C403/C404 über je 4 VBAT-Vias (0,8/0,4 mm) neben Pad 1 | je 4 GND-Vias neben Pad 2 zu In1/In2 und F |
+| TG | Pin 15 → Q401-Gate (Pin 4), F | SW von Pin 16 als Nachbarleitung zur Q401-Source (Pin 3), F |
+| BG | Pin 13 → F → Via → B → Via → F → Q402-Gate | In1 unter dem F-Stück, In2 unter dem B-Stück; Ebenenwechsel über GND-Vias direkt neben beiden BG-Vias |
+| Bootstrap | Pin 14 → C411 → SW-Steg zur Q401-Source; Nachladen INTVCC → D401 (B) → BOOST | über SW und Q402 zu GND, INTVCC-C C412/C413 mit eigenen GND-Vias |
+| Strommessung | Kelvin RS401 → Paar auf B → RF401/CF401 am IC | differenziell; Bezug In2, zwei GND-Ebenen zwischen Paar und SW/L401 |
+| Rückkopplung | VFB_TAP (niederohmig, Ausgangsspannung) lang auf B → Teiler R403/R404 am IC | In2; GND-Ende von R404 mit eigenem Via |
+| Kleinsignal-GND | C414, R404, C419, C418, C412, C413 | je ein Via zu In1/In2; U401-EP über seine Vias, vollflächig an die Ebenen angebunden |
+
+## 3b. Probe-Routing Servoregler (2026-11-16)
+
+- **Werkzeug:** `hardware/scripts/route_servo_trial.py`, einmalig auf
+  `RoverCore.kicad_pcb` angewendet.
+  - Alle Leitungen, Vias und Flächen liegen in der Gruppe
+    `servo_trial_routing`. Im Editor lassen sie sich als Block auswählen,
+    ändern oder löschen.
+  - Das Skript bricht ab, wenn die Gruppe schon existiert, wenn Lock-Dateien
+    vorliegen oder wenn auf den betroffenen Netzen schon Kupfer liegt. Es
+    überschreibt also keine Handarbeit.
+  - Ab jetzt wird im Editor weitergearbeitet. **`build_board.py --bootstrap`
+    wird nicht mehr angewendet.**
+  - Der normale Abgleich erhält das Routing; auf einer Kopie geprüft:
+    Leitungen, Flächen, Gruppen, D401-Seite und RS402-Drehung bleiben
+    unverändert.
+- **Umfang:**
+  - Eingangsschleife mit GND-Rückweg;
+  - TG und BG mit ihren Rückwegen;
+  - Bootstrap;
+  - INTVCC und EXTVCC;
+  - Kelvin-Sense;
+  - Rückkopplung und Kompensation;
+  - SW-, ISNS- und VSERVO_REG-Flächen bis zu RS402;
+  - GND auf In1 und In2 über die ganze Platine.
+- **Nicht geroutet:**
+  - VBAT_PROT-Zuleitung von Q101 zur Stufe;
+  - +V_SERVO von RS402 zu J102–J105;
+  - INA240-Eingänge;
+  - RUN-Netz hinter dem Ausbruch-Via;
+  - Messteiler;
+  - übrige Platine.
+- **Platzierungsänderungen, die das Routing erforderte** (keine Schaltungsänderung):
+  - **D401 auf die Unterseite** (47,2 | 18,35). Auf der Oberseite lag D401
+    mit dem TG-Ausgang in der Schleife Pin 16 (SW) – C411 – Pin 14 (BOOST)
+    und hatte keine kreuzungsfreie Verbindung. Jetzt: BOOST-Via → D401 →
+    INTVCC-Via → C413.
+  - **RS402 um 90° gedreht** (84,5 | 24,5), Pad 1 VSERVO_REG nach Westen,
+    Pad 2 +V_SERVO nach Osten zu J102–J105. Vorher lag das Ausgangspad
+    zwischen den Ausgangskondensatoren und Pad 1; der Reglerstrom hätte am
+    Ausgangspad vorbeigeführt werden müssen.
+  - **NT403/NT404/NT405** an die unteren Enden der Shuntpads. Der Strom tritt
+    oben ein und aus, die Abgriffe liegen damit abseits des Stromwegs.
+  - **C405** 0,65 mm näher an die Drain-Laschen von Q401 und die Source-Pins
+    von Q402 (Courtyards gerade frei).
+
+**Gemessene Längen** (aus den Leiterbahnen der Platine):
+
+| Verbindung | Länge | Lagen / Vias | Bemerkung |
+|---|---|---|---|
+| TG Pin 15 → Q401-Gate | 9,6 mm | F | Rückleitung SW Pin 16 → Q401-Source ca. 12 mm, auf 5,1 mm Länge im Mittenabstand 0,5 mm daneben |
+| BG Pin 13 → Q402-Gate | 15,3 mm | F 5,2 + B 10,1, 2 Vias | Luftlinie war 13,8 mm |
+| BOOST Pin 14 → C411 | 4,4 mm | F | C411-SW-Seite über einen 0,4-mm-Steg zwischen Pinreihe und Drain-Pad von Q401 zu Pin 3 |
+| SENSE_P_K (RS401 → RF401) | 44,1 mm | B 42,2, 2 Vias | Paar, 0,2 mm Leiter, 0,4 mm Abstand |
+| SENSE_N (RS401 → CF401) | ca. 44 mm | B 42,4, 2 Vias | – |
+| VFB_TAP (NT403 → R403) | 54,5 mm | B 52,6, 2 Vias | niederohmiger Ausgangsabgriff; Teiler am IC |
+| EXTVCC (Pin 11 → VSERVO_REG) | 35,6 mm | B 31,4, 2 Vias | Versorgungsleitung, kein Messsignal |
+
+**Prüfpunkte:**
+- **BG (13,8 mm Luftlinie):**
+  - Ohne Kreuzung der Eingangsschleife und ohne Vergrößerung der
+    Schleife führbar, mit zwei Lagenwechseln.
+  - Rückweg definiert: In1 unter dem F-Stück, In2 unter dem B-Stück.
+    GND-Vias neben beiden BG-Vias bei (48,2 | 19,6) und (57,9 | 18,6).
+    Kein Via, keine Aussparung unterbricht In2 unter der B-Leitung (Ansicht
+    der In2-Füllung geprüft).
+  - **Schätzung**, keine Messung: Leitungsinduktivität ca. 3–5 nH
+    (Plattennäherung, h = 0,1 mm, b = 0,3–0,4 mm, 15 mm).
+  - Nachweis erst durch Messung von V_GS an Q402 (Überschwingen,
+    Miller-Einbruch beim SW-Anstieg).
+  - Bewertung: Die Platzierung funktioniert für BG. Eine kürzere Führung
+    gäbe es nur mit einer größeren Leistungsschleife.
+- **Sense-Paar (39 mm Luftlinie):**
+  - Geroutet ca. 44 mm, durchgehend als Paar auf B über In2-GND.
+  - Zwischen dem Paar und der SW-Fläche bzw. L401 liegen zwei GND-Ebenen.
+    Das Paar unterquert die SW-Fläche und L401 (geschirmte Bauform). Ein
+    Weg abseits davon wäre deutlich länger.
+  - Filter RF401/CF401 am IC.
+  - Nicht nachgewiesen ist die Störfreiheit. Nachweis durch Messung der
+    Stromgrenze und des SENSE-Signals am Prototyp.
+  - Bewertung: führbar, mit dem genannten Restrisiko.
+- **Eingangsschleife:**
+  - Seitlich auf F: Q401-Source-Reihe (y ≈ 11) – SW-Fläche – Q402 –
+    GND-Fläche – C405 (y ≈ 18,7) – VBAT-Fläche.
+  - Fläche zwischen ca. 15 mm² (innerster Weg, x 53–55) und ca. 45 mm²
+    (FET-Mitten). Das ist eine **Schätzung aus der Geometrie**.
+  - Die wirksame Induktivität ist ohne Feldberechnung oder Messung des
+    SW-Überschwingens nicht bestimmt.
+  - In1 liegt 0,1 mm darunter und ist im Bereich der Schleife nicht
+    unterbrochen (nur Via-Freistellungen).
+- **VBAT_PROT-Zuleitung (noch nicht geroutet):**
+  - Möglicher Korridor auf F bei y 27,6–30: ca. 2,4 mm zwischen den
+    Stützbauteilen und der RUN-Gruppe. Auf B parallel dazu südlich der
+    Rückkopplungsleitung (y > 28,8).
+  - Eingangsstrom bei Volllast ca. 9,4 A (Schätzung: 11,2 A × 6,8 V /
+    (9,0 V × 0,9)).
+  - Bei 35 µm außen und 20 K Erwärmung wären ca. 4,3 mm Breite nötig
+    (IPC-2221-Näherung, **Schätzung**). Das geht nur mit F und B parallel,
+    oder mit einem breiteren Korridor (RUN-Gruppe bei der Feinplatzierung
+    1–2 mm nach unten).
+- **DRC nach dem Probe-Routing:**
+  - keine Kurzschluss-, Abstands- oder Courtyard-Befunde;
+  - ein erwartetes `via_dangling`: RUN-Ausbruch-Via, Weiterführung offen;
+  - Silkscreen-Befunde unverändert;
+  - nicht geroutete Verbindungen 442, vorher 499.
+- **Offen aus dem Probe-Routing:**
+  - INA240-Abgriffe: ISERV_P liegt westlich, ISERV_N östlich, Pin 8/1 von
+    U402 umgekehrt. Später ein Via oder U402 anders orientieren.
+  - RUN-Weiterführung von Pin 6 auf B.
+  - Weitere GND-Stitching-Vias im Raster.
 
 ## 4. DevKit, Antenne und USB
 
