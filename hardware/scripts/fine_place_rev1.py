@@ -106,25 +106,36 @@ O37 = {  # 4.5 mm below the service buttons, 1 mm gaps for the references
 EDGE = {"J108": (10.0, 96.0, 0), "J109": (21.0, 96.0, 0), "J110": (32.0, 96.0, 0), "J111": (43.0, 96.0, 0),
         "J112": (54.0, 96.0, 0)}
 
-# ---- interface group rows loosened for readable references (still the courtyard packing, no fine placement)
-IO_ROWS = {78.7: 77.6, 78.2: 77.6, 78.3: 77.6, 81.9: 82.4, 82.1: 82.4, 84.5: 86.6, 86.4: 91.0, 86.7: 89.6}
+# ---- input protection (2026-11-16): current path left to right J101 -> F101 -> Q101; Q101 turned so that its
+# VBAT_PROT pins (1-3) face east into the feed corridor to the servo stage (y 27.6-29.9); gate parts north of Q101,
+# TVS and capacitors at the VBAT_PROT node below it, bulk C101 towards the logic supply.
+INPUT = {
+    "F101": (16.6, 24.5, 0), "TP101": (11.5, 24.5, 0),
+    "Q101": (33.6, 27.0, 180), "D102": (33.4, 22.7, 180), "R101": (31.0, 20.3, 180),
+    "D101": (32.3, 32.6, 180), "C102": (33.5, 36.8, 180), "C101": (21.8, 39.5, 180),
+    "TP102": (30.0, 39.6, 0), "TP103": (30.0, 43.0, 0),
+}
 
+# ---- interfaces (2026-11-16): one column per connector (ESD diode at the pin, series R above it), LED power
+# switch U601 between J108-J111, LED4 level shifter at J111, UART power and series parts at J112, iBUS buffer and
+# power at J107 (moved 5 mm north to free the UART column), buzzer block in the free area above.
+IFACE = {
+    "D601": (12.0, 91.5, 90), "D602": (23.0, 91.5, 90), "D603": (34.0, 91.5, 90), "D604": (45.0, 91.5, 90),
+    "D607": (56.0, 91.5, 90), "D608": (58.0, 91.5, 90), "TP602": (15.0, 91.5, 0),
+    "R607": (12.0, 88.4, -90), "R608": (23.0, 88.4, -90), "R609": (34.0, 88.4, -90), "R610": (45.0, 88.4, -90),
+    "R615": (56.0, 88.4, -90), "R616": (58.0, 88.4, 90), "R617": (60.2, 88.4, 90),
+    "U601": (22.0, 83.0, 0), "C601": (18.6, 83.0, -90), "C602": (25.6, 82.6, -90), "R601": (22.0, 86.0, 180),
+    "U202": (42.5, 83.0, 0), "C607": (39.2, 82.6, -90), "C603": (45.9, 82.6, -90),
+    "R605": (39.0, 85.8, 180), "R606": (43.0, 85.8, 180), "R604": (47.2, 85.8, 180),
+    "U602": (51.0, 83.0, 0), "C608": (48.1, 82.6, -90), "C604": (54.4, 82.6, -90), "R602": (51.0, 86.0, 180),
+    "J107": (59.0, 79.0, 0), "D606": (61.6, 79.0, 0), "R613": (59.0, 75.6, 90), "R614": (57.3, 75.6, -90),
+    "U203": (58.5, 71.0, 0), "C610": (61.8, 70.6, -90), "TP601": (62.0, 74.0, 0),
+    "U603": (52.3, 77.5, 0), "C606": (55.5, 77.0, -90), "C605": (49.4, 77.0, -90), "R603": (51.6, 80.3, 180),
+    "BZ101": (34.0, 71.5, 0), "Q601": (42.0, 70.5, 180), "D605": (42.6, 74.8, 180),
+    "R611": (46.5, 71.5, 180), "R612": (46.5, 73.3, 0),
+}
 
-def io_rows(board):
-    out = {}
-    for f in board.GetFootprints():
-        if f.GetSheetname() == "Lighting_IO" and not f.GetReference().startswith(("J", "BZ")):
-            y = round(pcbnew.ToMM(f.GetPosition().y), 1)
-            new = IO_ROWS.get(y)
-            if new is None and y in IO_ROWS.values():
-                continue  # already moved
-            if new is None:
-                raise Abort("Lighting_IO part %s at unexpected row y=%.1f" % (f.GetReference(), y))
-            out[f.GetReference()] = (round(pcbnew.ToMM(f.GetPosition().x), 3), new, f.GetOrientationDegrees())
-    return out
-
-
-GROUPS = {"logic": LOGIC, "actuators": ACT, "operator": OPERATOR, "controller": CTRL, "o37": O37, "edge": EDGE}
+GROUPS = {"logic": LOGIC, "actuators": ACT, "operator": OPERATOR, "controller": CTRL, "o37": O37, "edge": EDGE, "input": INPUT, "interfaces": IFACE}
 
 
 class Abort(Exception):
@@ -153,7 +164,6 @@ def main():
             raise Abort("KiCad lock files present: %s" % ", ".join(p.name for p in locks))
         b = pcbnew.LoadBoard(str(pcb))
         fps = {f.GetReference(): f for f in b.GetFootprints()}
-        GROUPS["io_rows"] = io_rows(b)
         moved = 0
         for name, table in GROUPS.items():
             for ref, (x, y, rot) in table.items():

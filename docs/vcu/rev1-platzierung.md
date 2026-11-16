@@ -535,6 +535,51 @@ Referenzen überlagerten sich. Die Leistungsstufe (3b) ist unverändert.
 - Die KiCad-3D-Renderings zeigen diese Teile nicht. Deshalb gibt es
   zusätzlich die Hüllenansicht.
 
+## 3e. Elektrische Feinplatzierung Eingangsschutz und Schnittstellen (2026-11-16)
+
+Gleiches Werkzeug wie in 3c (`fine_place_rev1.py`, Gruppen `input` und
+`interfaces`). Die Servoleistungsstufe ist unverändert. Pad-Abstände sind
+Mitte zu Mitte, aus der Platine.
+
+**Eingangsschutz:**
+- **Stromweg von links nach rechts:** J101 → F101 → Q101.
+  - Q101 ist um 180° gedreht. Seine VBAT_PROT-Pins (1–3) zeigen nach Osten,
+    direkt in den Zuleitungskorridor zur Servostufe (y 27,6–29,9, siehe
+    3b).
+  - Vorher zeigten sie nach Süden, und die Zuleitung hätte den Drain-Bereich
+    (VBAT_FUSED) umgehen müssen.
+
+| Verbindung | Abstand |
+|---|---|
+| J101 Pin 2 → F101 Eingang | 7,9 mm |
+| F101 Ausgang → Q101 Drain | 6,9 mm |
+| Q101 Source → D101 (TVS) | 4,1 mm |
+| Q101 Source → C102 | 8,0 mm |
+| D101 → C101 (Puffer, Richtung Logikversorgung) | 10,9 mm |
+
+- **Gate-Beschaltung:** D102 und R101 liegen nördlich von Q101.
+  - D102 ist so gedreht, dass Gate- und VBAT-Leitung zum Pinblock nicht
+    kreuzen. Das Gate-Pad liegt deshalb auf der abgewandten Seite: 5,1 mm
+    zu Pin 4, bewusst.
+- TP101 sitzt jetzt am Sicherungseingang, TP102/TP103 am VBAT_PROT-Knoten.
+
+**Schnittstellen:**
+- **Je Stecker eine Spalte:** ESD-Diode direkt am Signalpin (4,2 mm),
+  darüber der Serienwiderstand (2,6 mm zur Diode). Das gilt für LED1–LED4
+  und für UART TX/RX. Der RX-Pull-up R617 sitzt neben R616.
+- **Schaltblöcke**, Abblockung je 1,8–2,5 mm am Pin:
+  - LED-Versorgung U601 zwischen J108 und J111;
+  - LED4-Pegelwandler U202 an J111;
+  - UART-Versorgung U602 an J112;
+  - iBUS-Versorgung U603 und Puffer U203 an J107.
+- **J107 (iBUS) 5 mm nach Norden**, damit die UART-Spalte an J112 Platz hat.
+  D606 sitzt an Pin 1.
+- **Summerblock** (BZ101, Q601, R611/R612, D605) in der freien Fläche
+  darüber. D605 ist leicht verschoben, weil die Plus-Markierung des
+  BZ101-Footprints sonst auf seinem Pad lag.
+- **DRC:** keine Courtyard-, Abstands- oder Silkscreen-Befunde.
+  - Referenzen: 216 gesetzt, 37 ausgeblendet; alle stehen auf F.Fab.
+
 ## 4. DevKit, Antenne und USB
 
 - U501 sitzt an der rechten Kante. Die Antennen-Sperrfläche des Footprints
@@ -639,8 +684,8 @@ Ansichten:
 - Chassis: Kontur, Bohrungen, Steckerzugang (XT30, Micro-Fit, USB), Bauhöhen
   über und unter der Platine.
 - Feinplatzierung und Routing:
-  - Feinplatzierung von Eingangsschutz, Servo-RUN/Messgruppe, Sensoren und
-    Schnittstellen (3c);
+  - Feinplatzierung der Servo-RUN/Messgruppe und der Sensorgruppe
+    (Eingangsschutz und Schnittstellen: 3e);
   - Routing der übrigen Platine, beginnend mit VBAT_PROT-Zuleitung und
     Servoschiene (3b);
   - Kühlkupfer Q401/Q402/L401;
