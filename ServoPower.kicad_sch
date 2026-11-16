@@ -12929,6 +12929,222 @@
 			)
 		)
 	)
+	(symbol
+		(lib_id "Transistor_FET:Q_NMOS_GSD")
+		(at 101.6 233.68 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "b520253f-9965-5495-be55-7988117b4c7c")
+		(property "Reference" "Q408"
+			(at 99.05999999999999 226.06 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "NTR4003N"
+			(at 99.05999999999999 241.3 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Package_TO_SOT_SMD:SOT-23"
+			(at 101.6 233.68 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "https://www.onsemi.com/download/data-sheet/pdf/ntr4003n-d.pdf"
+			(at 101.6 233.68 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "O-37 RUN clamp parallel to Q403: on while OUT_LOCK is high (a rail invalid); VGS >= 4.94 V (>= 2.9 V down to VBAT_PROT 4.4 V), RDS(on) <= 1.5 / 2.0 Ohm; 1 G, 2 S, 3 D"
+			(at 101.6 233.68 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Manufacturer" "onsemi"
+			(at 101.6 233.68 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "MPN" "NTR4003NT1G"
+			(at 101.6 233.68 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C82325"
+			(at 101.6 233.68 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "613eebc2-44dc-53d0-bc2a-01234f9ca642")
+		)
+		(pin "2"
+			(uuid "01d95383-a3ac-5f6c-8fd9-ca764b41f40e")
+		)
+		(pin "3"
+			(uuid "f45c8b68-2530-51cd-9373-a2ef3827a280")
+		)
+		(instances
+			(project "RoverCore"
+				(path "/d069f045-7f09-4f8a-bd29-51e87a8a0808/3572c06e-32ee-5f4c-a534-3f1640e128b2"
+					(reference "Q408")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(wire
+		(pts
+			(xy 96.52 233.68) (xy 91.44 233.68)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "3edc804b-118a-5031-bf9a-7ccd244176bd")
+	)
+	(global_label "OUT_LOCK"
+		(shape input)
+		(at 91.44 233.68 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "3a3bb9dd-5afd-5d57-91d4-2b35bfe1f346")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 91.44 233.68 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+	)
+	(wire
+		(pts
+			(xy 104.14 238.76) (xy 104.14 243.84)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "97ecc35d-b00e-5715-8752-9349482c2959")
+	)
+	(symbol
+		(lib_id "power:GND")
+		(at 104.14 243.84 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom no)
+		(on_board no)
+		(dnp no)
+		(uuid "a287278f-0556-524f-8127-cea89169c4c2")
+		(property "Reference" "#PWRQ40838"
+			(at 104.14 247.65 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 104.14 248.92000000000002 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Footprint" ""
+			(at 104.14 243.84 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 104.14 243.84 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 104.14 243.84 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "cf4ba3b5-91a4-5df0-bb34-e4e162bda064")
+		)
+		(instances
+			(project "RoverCore"
+				(path "/d069f045-7f09-4f8a-bd29-51e87a8a0808/3572c06e-32ee-5f4c-a534-3f1640e128b2"
+					(reference "#PWRQ40838")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(wire
+		(pts
+			(xy 104.14 228.6) (xy 104.14 223.52)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "662ad2c1-7ce1-5c25-9d36-7f6564c9ba5c")
+	)
 	(hierarchical_label "VBAT_PROT"
 		(shape input)
 		(at 256.54 78.74 90)
@@ -13185,6 +13401,16 @@
 				(hide yes)
 			)
 		)
+	)
+	(label "RUN_SERVO"
+		(at 104.14 223.52 90)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "5ba058dd-03b2-5bf3-bbd9-6d244f716a9c")
 	)
 	(label "RUN_SERVO"
 		(at 144.78 137.16 180)
@@ -14406,7 +14632,7 @@
 		)
 		(uuid "67c01416-7fb7-5e6f-bd83-0b056ee38a5e")
 	)
-	(text "Default OFF: Q403 holds RUN low; only SERVO_PWR_EN (Q404) AND\nACT_ARMED (Q407, interlock O-35) release it. RUN divider\n115k/20k: on 7.63-8.58 V, backup only; C420 delay 1.70 ms."
+	(text "Default OFF: Q403 holds RUN low; only SERVO_PWR_EN (Q404) AND\nACT_ARMED (Q407, interlock O-35) release it. RUN divider\n115k/20k: on 7.63-8.58 V, backup only; C420 delay 1.70 ms.\nQ408 (O-37): RUN low while OUT_LOCK is high."
 		(exclude_from_sim no)
 		(at 24.13 116.84 0)
 		(effects

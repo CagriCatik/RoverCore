@@ -171,11 +171,13 @@ def build(sheet, spec, nets):
         pins.update(spec.get("pins", {}).get(ref, {}))
         fields = dict(sym["fields"], **extra_fields)
         value = fields.pop("_value", sym["value"])   # value change of an existing part (listed electrical change)
+        lib = fields.pop("_lib", sym["lib"])          # part type change (listed electrical change; pins given in spec)
+        footprint = fields.pop("_footprint", sym["footprint"])
         fields = {k: v for k, v in fields.items() if v is not None}  # None removes a field (e.g. stale LCSC)
         if all(v is None for v in fields["_pin_uuids"].values()):
             fields.pop("_pin_uuids")
             fields.pop("_uuid", None)
-        s.part(ref, sym["lib"], value, sym["footprint"], (x, y, rot), pins, fields, power_nets, hier,
+        s.part(ref, lib, value, footprint, (x, y, rot), pins, fields, power_nets, hier,
                in_bom=sym["in_bom"])
     s.route()
     for net, (ref, num) in hier_local.items():

@@ -150,6 +150,21 @@ LAYOUTS["Controller"] = {
         "C507": (134.62, 132.08, 0, R),
         "C508": (205.74, 132.08, 0, R),
         "C509": (222.25, 132.08, 0, R),
+        # 8 - output lock O-37 (lock supply from VBAT_PROT, rail supervisors, lock driver)
+        "R520": (38.1, 25.4, 90, {"_ref_at": (0.0, -2.54), "_val_at": (0.0, 2.54)}),
+        "D507": (53.34, 35.56, 270, {"_ref_at": (-17.78, -1.27), "_val_at": (-17.78, 1.27)}),
+        "C512": (66.04, 31.75, 0, R),
+        "U515": (96.52, 35.56, 0, {"_ref_at": (-5.08, -8.89), "_val_at": (2.54, 10.16),
+                                   "_lib": "ProjectSymbols:TPS3808_DBV_OD"}),
+        "C513": (124.46, 31.75, 0, R),
+        "R521": (147.32, 33.02, 90, {"_ref_at": (0.0, -2.54), "_val_at": (0.0, 2.54)}),
+        "R522": (151.13, 39.37, 0, {"_ref_at": (-7.62, -1.27), "_val_at": (-7.62, 1.27), "_stub": {"1": 2.54}}),
+        "U516": (172.72, 35.56, 0, {"_ref_at": (-5.08, -8.89), "_val_at": (2.54, 10.16),
+                                    "_lib": "ProjectSymbols:TPS3808_DBV_OD"}),
+        "R523": (200.66, 31.75, 0, R),
+        "Q507": (218.44, 30.48, 180, {"_ref_at": (7.62, -6.35), "_val_at": (7.62, -3.81)}),
+        "R524": (215.9, 39.37, 0, R),
+        "TP506": (238.76, 27.94, 0, TPF),
     },
     # parts added after the layout review (electrical change; see docs/vcu/rev1-pin-und-anschlussplan.md 9)
     "new": {
@@ -217,29 +232,72 @@ LAYOUTS["Controller"] = {
         "C511": ("Device:C", "100n 50V", "Capacitor_SMD:C_0603_1608Metric", {"1": "ENABLE_BTN_RAW", "2": "GND"},
                  dict({"Manufacturer": "Yageo", "MPN": "CC0603KRX7R9BB104", "LCSC": "C14663", "Datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2211101700_YAGEO-CC0603KRX7R9BB104_C14663.pdf", "Description": "O-35: SW501 node filter, 10k x 100 nF = 1 ms - rejects interference spikes "
                       "that could clock the latch; at GPIO10 only via R518 47k (<= 70 uA, O-21)"})),
+        # O-37 output lock (docs/vcu/rev1-versorgung-und-boardwahl.md 3.20 Punkt 2, Rev C)
+        "R520": ("Device:R", "8.2k", "Resistor_SMD:R_0603_1608Metric", {"1": "VBAT_PROT", "2": "LOCK_SUP"},
+                 {"Manufacturer": "Yageo", "Datasheet": YAGEO_RC, "MPN": "RC0603FR-078K2L", "LCSC": "C114637",
+                  "Description": "O-37 lock supply from VBAT_PROT: <= 2.04 mA / 34 mW at 21.5 V, 0.93 mA at 12.6 V"}),
+        "D507": ("Device:D_Zener", "LM4040C50IDBZR", "Package_TO_SOT_SMD:SOT-23", {"1": "LOCK_SUP", "2": "GND"},
+                 {"Manufacturer": "Texas Instruments", "MPN": "LM4040C50IDBZR", "LCSC": "C69316",
+                  "Datasheet": "https://www.ti.com/lit/ds/symlink/lm4040.pdf",
+                  "Description": "O-37 LOCK_SUP shunt 5.00 V: 4.942-5.058 V at 100 uA (-40..85 degC), IZ,min <= 95 uA, "
+                                 "<= 15 mA, stable with any capacitance; Zener symbol for the 2-pin shunt, DBZ 1 K, 2 A, pad 3 floats (TI SLOS456Q). LCSC stock low"}),
+        "C512": ("Device:C", "100n 50V", "Capacitor_SMD:C_0603_1608Metric", {"1": "LOCK_SUP", "2": "GND"},
+                 {"Manufacturer": "Yageo", "MPN": "CC0603KRX7R9BB104", "LCSC": "C14663", "Datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2211101700_YAGEO-CC0603KRX7R9BB104_C14663.pdf", "Description": "U515 VDD (place at U515)"}),
+        "U515": ("ProjectSymbols:TPS3808_DBV_OD", "TPS3808G33DBVR", "Package_TO_SOT_SMD:SOT-23-6",
+                 {"1": "RAILS_OK", "2": "GND", "3": "NC", "4": "NC", "5": "+3V3", "6": "LOCK_SUP"},
+                 {"Manufacturer": "Texas Instruments", "MPN": "TPS3808G33DBVR", "LCSC": "C43698", "Datasheet": "https://www.ti.com/lit/ds/symlink/tps3808.pdf",
+                  "Description": "O-37 +3V3 monitor, VDD from LOCK_SUP (VBAT): RESET low below 3.024-3.116 V, released "
+                                 "<= 3.194 V + 12-28 ms (CT open); MR open (internal pull-up). TI SBVS050N. LCSC stock 0"}),
+        "C513": ("Device:C", "100n 50V", "Capacitor_SMD:C_0603_1608Metric", {"1": "LOCK_SUP", "2": "GND"},
+                 {"Manufacturer": "Yageo", "MPN": "CC0603KRX7R9BB104", "LCSC": "C14663", "Datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2211101700_YAGEO-CC0603KRX7R9BB104_C14663.pdf", "Description": "U516 VDD (place at U516)"}),
+        "R521": ("Device:R", "100k", "Resistor_SMD:R_0603_1608Metric", {"1": "+5V", "2": "SENSE_5V"},
+                 {"Manufacturer": "Yageo", "Datasheet": YAGEO_RC, "MPN": "RC0603FR-07100KL", "LCSC": "C14675", "Description": "O-37 +5V divider top (ratio 10.80)"}),
+        "R522": ("Device:R", "10.2k", "Resistor_SMD:R_0603_1608Metric", {"1": "SENSE_5V", "2": "GND"},
+                 {"Manufacturer": "Yageo", "Datasheet": YAGEO_RC, "MPN": "RC0603FR-0710K2L", "LCSC": "C183219", "Description": "O-37 +5V divider bottom"}),
+        "U516": ("ProjectSymbols:TPS3808_DBV_OD", "TPS3808G01DBVR", "Package_TO_SOT_SMD:SOT-23-6",
+                 {"1": "RAILS_OK", "2": "GND", "3": "NC", "4": "NC", "5": "SENSE_5V", "6": "LOCK_SUP"},
+                 {"Manufacturer": "Texas Instruments", "MPN": "TPS3808G01DBVR", "LCSC": "C19653", "Datasheet": "https://www.ti.com/lit/ds/symlink/tps3808.pdf",
+                  "Description": "O-37 +5V monitor via R521/R522: RESET low below 4.21-4.55 V, released <= 4.69 V "
+                                 "(+5V min 4.74 V) + 12-28 ms; VDD from LOCK_SUP. TI SBVS050N. LCSC stock low"}),
+        "R523": ("Device:R", "100k", "Resistor_SMD:R_0603_1608Metric", {"1": "LOCK_SUP", "2": "RAILS_OK"},
+                 {"Manufacturer": "Yageo", "Datasheet": YAGEO_RC, "MPN": "RC0603FR-07100KL", "LCSC": "C14675",
+                  "Description": "O-37 RAILS_OK pull-up to LOCK_SUP (same node as the Q507 source: VGS >= -61 mV when released)"}),
+        "Q507": ("Transistor_FET:Q_PMOS_GSD", "NTR4171P", "Package_TO_SOT_SMD:SOT-23",
+                 {"1": "RAILS_OK", "2": "LOCK_SUP", "3": "OUT_LOCK"},
+                 {"Manufacturer": "onsemi", "MPN": "NTR4171PT1G", "LCSC": "C146715",
+                  "Datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_1810301521_onsemi-NTR4171PT1G_C146715.pdf",
+                  "Description": "O-37 lock driver: RAILS_OK low (a rail invalid) turns it on, VGS <= -4.54 V, RDS(on) "
+                                 "<= 110 mOhm at -4.5 V / 150 mOhm at -2.5 V (25 degC) -> OUT_LOCK = LOCK_SUP; 1 G, 2 S, 3 D"}),
+        "R524": ("Device:R", "100k", "Resistor_SMD:R_0603_1608Metric", {"1": "OUT_LOCK", "2": "GND"},
+                 {"Manufacturer": "Yageo", "Datasheet": YAGEO_RC, "MPN": "RC0603FR-07100KL", "LCSC": "C14675",
+                  "Description": "O-37 OUT_LOCK pull-down: outputs unlocked only while Q507 is off (rails valid)"}),
+        "TP506": ("Connector:TestPoint", "OUT_LOCK", "TestPoint:TestPoint_Pad_D1.5mm", {"1": "OUT_LOCK"},
+                  {"Description": "O-37 OUT_LOCK measuring point (high = outputs locked); bare copper pad"}),
     },
-    "globals": {"ACT_ARMED": "output", "ACT_DISARMED": "output"},
+    "globals": {"ACT_ARMED": "output", "ACT_DISARMED": "output", "OUT_LOCK": "output"},
     "wire": ["+5V_DEVKIT", "LED_STAT_A", "ENABLE_BTN_N", "ENABLE_BTN_RAW", "VBAT_LOSS_SENSE", "VBAT_OK", "VBAT_OK_BUF",
              "VBAT_PROT", "VBAT_SW", "VBAT_SW_G", "VBAT_SW_DRV",
-             "VBAT_DIV", "VBAT_SENSE", "P3V3_OK", "ACT_ARMED_FB"],
+             "VBAT_DIV", "VBAT_SENSE", "P3V3_OK", "ACT_ARMED_FB", "LOCK_SUP", "SENSE_5V", "OUT_LOCK"],
     "anchor": {"+5V_DEVKIT": ("D501", "1"), "LED_STAT_A": ("R504", "2"), "ENABLE_BTN_N": ("R518", "1"), "ENABLE_BTN_RAW": ("R502", "2"),
                "VBAT_LOSS_SENSE": ("R516", "1"), "VBAT_OK": ("U505", "1"),
                "VBAT_PROT": ("Q505", "2"), "VBAT_SW": ("R505", "1"), "VBAT_SW_G": ("Q505", "1"),
                "VBAT_SW_DRV": ("R509", "2"), "VBAT_DIV": ("R506", "1"), "VBAT_SENSE": ("R507", "2"),
-               "P3V3_OK": ("U504", "2"), "ACT_ARMED_FB": ("R519", "2")},
-    "label_only": [("U501", "11"), ("U501", "21"), ("U501", "16"), ("U501", "4"), ("Q506", "1"), ("R515", "1")],
+               "P3V3_OK": ("U504", "2"), "ACT_ARMED_FB": ("R519", "2"),
+               "LOCK_SUP": ("R520", "2"), "SENSE_5V": ("U516", "5"), "OUT_LOCK": ("Q507", "3")},
+    "label_only": [("U501", "11"), ("U501", "21"), ("U501", "16"), ("U501", "4"), ("Q506", "1"), ("R515", "1"), ("R520", "1"), ("TP506", "1")],
     # nets re-assigned on existing parts (O-35): SW501 and R502 move to the raw button node
     "pins": {"U501": {"2": "=1", "3": "DEVKIT_EN", "11": "ACT_ARMED_FB", "36": "STRAP_GPIO0"},
              "TP501": {"1": "ACT_ARMED_FB"}, "SW501": {"1": "ENABLE_BTN_RAW"},
              "R502": {"2": "ENABLE_BTN_RAW"}, "U506": {"7": "=8", "1": "BTN_CLK", "6": "VBAT_OK_BUF"},
              "U505": {"3": "DEVKIT_EN"}},
-    "label_at": {"VBAT_PROT": (264.16, 69.85, (1, 0)), "VBAT_DIV": (281.94, 146.05, (1, 0))},
-    "flags": ["+3V3"], "flag_at": {"+3V3": ("C501", "1")}, "flag_prefix": "5",
+    "label_at": {"VBAT_PROT": (264.16, 69.85, (1, 0)), "VBAT_DIV": (281.94, 146.05, (1, 0)),
+                 "OUT_LOCK": (215.9, 35.56, (1, 0))},
+    "flags": ["+3V3", "LOCK_SUP"], "flag_at": {"+3V3": ("C501", "1"), "LOCK_SUP": ("U515", "6")}, "flag_prefix": "5",
     "groups": {
         "pwr": ("1  5 V feed and 3.3 V", (22.86, 55.88, 106.68, 127.0),
                 "Carrier +5V -> D501 -> DevKit 5V pin (diode-OR with the\\nDevKit USB diodes, own extension, Versorgung 3.11).\\n+3V3 = DevKit LDO only."),
         "op": ("2  Operator and defaults", (22.86, 132.08, 106.68, 248.92),
-               "R501: ACT_OE_N high at reset (buffers Hi-Z).\\nSW501 enable button = latch clock (O-35); GPIO10\\nvia R518 47k, no RC (O-21). D502 LED.\\nR519 1k: ACT_ARMED read-back -> GPIO18 (TP501)."),
+               "R501: ACT_OE_N high at reset (buffers Hi-Z). SW501 = latch\\nclock (O-35); GPIO10 via R518 47k, no RC (O-21).\\nD502 LED. R519 1k: ACT_ARMED read-back -> GPIO18 (TP501)."),
         "sock": ("3  DevKit socket U501", (111.76, 147.32, 231.14, 248.92),
                  "Original ESP32-S3-DevKitC-1-N16R8 v1.1; pads 1-22 = J1,\\n23-44 = J3. Reserved pins: no-connect (pinmap.csv).\\nSignals leave as global labels to the other sheets."),
         "vbat": ("4  VBAT measurement (O-21)", (236.22, 55.88, 370.84, 182.88),
@@ -253,9 +311,17 @@ LAYOUTS["Controller"] = {
         "prog": ("6  Programmierung und Neustart", (314.96, 187.96, 370.84, 248.92),
                  "RESET SW502: EN -> GND (DevKit R5 10k, C6 1 uF).\\nBOOT SW503: GPIO0 -> GND, internal pull-up\\n"
                  "= SPI boot. Download: hold BOOT, press\\nRESET, release BOOT. RESET is no power switch."),
+        "lock": ("8  Ausgangssperre O-37: rails invalid -> RUN and ESC line clamped, U201 Hi-Z",
+                 (22.86, 15.24, 407.67, 53.34), None),
     },
     "notes": {"head": ("Controller: DevKit socket, 5 V feed, 3.3 V, defaults and protected measurement inputs "
-                       "(Versorgung 3.11-3.13).", 22.86, 48.26)},
+                       "(Versorgung 3.11-3.13).", 22.86, 256.54),
+              "lock": ("LOCK_SUP 5.0 V from VBAT_PROT (R520, D507) powers both supervisors: no rail is needed to lock.\\n"
+                       "U515: +3V3 < 3.024-3.116 V, U516: +5V < 4.21-4.55 V -> RAILS_OK low (wired AND, R523) -> Q507 on\\n"
+                       "-> OUT_LOCK = LOCK_SUP: Q408 (ServoPower) holds RUN low, Q206 (Actuators) holds ESC_DRV low,\\n"
+                       "U204 (Actuators) puts U201 Hi-Z. Release only with both rails valid + 12-28 ms. Safety uses only\\n"
+                       "ON states (guaranteed VOL, RDS(on)); OFF leakage only delays the release. Covered: VBAT_PROT >= 4.4 V.",
+                       248.92, 50.8)},
 }
 
 LAYOUTS["ServoPower"] = {
@@ -306,6 +372,8 @@ LAYOUTS["ServoPower"] = {
         "R410": (360.68, 218.44, 0, R), "R411": (360.68, 236.22, 0, R), "C417": (342.9, 236.22, 0, R),
         "D403": (339.09, 213.36, 90, {"_ref_at": (-7.62, -8.89), "_val_at": (-7.62, -6.35)}),
         "R417": (322.58, 241.3, 270),
+        # 2 - O-37 RUN clamp
+        "Q408": (101.6, 233.68, 0, {"_ref_at": (-2.54, -7.62), "_val_at": (-2.54, 7.62)}),
     },
     "pins": {"U401": {"8": "=7"}, "U402": {"3": "=2", "7": "=2"}, "Q404": {"2": "SERVO_EN_SRC"}},
     # O-35 restart interlock: Q407 in series with Q404, gate from the Controller latch (ACT_ARMED)
@@ -317,8 +385,13 @@ LAYOUTS["ServoPower"] = {
         "R420": ("Device:R", "100k", "Resistor_SMD:R_0603_1608Metric", {"1": "ACT_ARMED", "2": "GND"},
                  {"Manufacturer": "Yageo", "MPN": "RC0603FR-07100KL", "LCSC": "C14675", "Datasheet": YAGEO_RC,
                   "Description": "Q407 gate pull-down: off without +3V3 / DevKit (latch unpowered, Ioff)"}),
+        "Q408": ("Transistor_FET:Q_NMOS_GSD", "NTR4003N", "Package_TO_SOT_SMD:SOT-23",
+                 {"1": "OUT_LOCK", "2": "GND", "3": "RUN_SERVO"},
+                 {"Manufacturer": "onsemi", "MPN": "NTR4003NT1G", "LCSC": "C82325", "Datasheet": "https://www.onsemi.com/download/data-sheet/pdf/ntr4003n-d.pdf",
+                  "Description": "O-37 RUN clamp parallel to Q403: on while OUT_LOCK is high (a rail invalid); VGS >= 4.94 V "
+                                 "(>= 2.9 V down to VBAT_PROT 4.4 V), RDS(on) <= 1.5 / 2.0 Ohm; 1 G, 2 S, 3 D"}),
     },
-    "globals": {"ACT_ARMED": "input"},
+    "globals": {"ACT_ARMED": "input", "OUT_LOCK": "input"},
     "wire": ["VBAT_PROT", "SERVO_RUN_INH", "SERVO_PWR_EN", "SERVO_EN_SRC", "ACT_ARMED", "RUN_SERVO", "ITH_SERVO", "ITH_RC", "INTVCC_SERVO",
              "BOOST_SERVO", "SW_SERVO", "ISNS_PWR", "SENSE_P_K", "SENSE_P", "SENSE_N", "VSERVO_REG", "+V_SERVO",
              "VFB_TAP", "VFB_SERVO", "ISENSE_RAW", "ISERVO_FILT", "ISERVO_SENSE", "VSERVO_SW", "VSERVO_SW_G",
@@ -334,7 +407,7 @@ LAYOUTS["ServoPower"] = {
                "VSERVO_SW_G": ("R418", "2"), "VSERVO_SW_DRV": ("R419", "2"), "VSERVO_DIV": ("R411", "1")},
     "label_only": [("U401", n) for n in ("12", "6", "11", "1", "9", "5", "14", "15", "16", "13", "10", "2", "3", "4")]
                   + [("R414", "1"), ("R405", "1"), ("Q401", "5"), ("D401", "2"), ("Q405", "2"), ("R418", "1"),
-                     ("U402", "8"), ("U402", "1"), ("NT404", "2"), ("NT405", "2"), ("Q406", "1")],
+                     ("U402", "8"), ("U402", "1"), ("NT404", "2"), ("NT405", "2"), ("Q406", "1"), ("Q408", "3")],
     # net names on free wire segments instead of the short stubs between the divider resistors
     "label_at": {"ACT_ARMED": (55.88, 220.98, (-1, 0)), "VSERVO_DIV": (344.17, 227.33, (1, 0)), "VSERVO_SW_G": (375.92, 190.5, (1, 0)),
                  "VSERVO_SW_DRV": (393.7, 210.82, (0, 1))},
@@ -343,7 +416,7 @@ LAYOUTS["ServoPower"] = {
         "in": ("1  Input capacitors", (22.86, 55.88, 114.3, 106.68),
                "4 x 10 uF/50 V + 100 nF at the power stage\\n(input ripple up to 5.6 A at 12.6 V)."),
         "run": ("2  RUN and default OFF", (22.86, 111.76, 114.3, 248.92),
-                "Default OFF: Q403 holds RUN low; only SERVO_PWR_EN (Q404) AND\\nACT_ARMED (Q407, interlock O-35) release it. RUN divider\\n115k/20k: on 7.63-8.58 V, backup only; C420 delay 1.70 ms."),
+                "Default OFF: Q403 holds RUN low; only SERVO_PWR_EN (Q404) AND\\nACT_ARMED (Q407, interlock O-35) release it. RUN divider\\n115k/20k: on 7.63-8.58 V, backup only; C420 delay 1.70 ms.\\nQ408 (O-37): RUN low while OUT_LOCK is high."),
         "ctl": ("3  LTC7803 controller", (119.38, 55.88, 233.68, 248.92),
                 "375 kHz, forced continuous, 100 % duty, EXTVCC from the output.\\nCompensation R413/C418/C419 and soft-start C414 are start values.\\nBoost D401/C411 (CB >= 100 x Ciss)."),
         "pwr": ("4  Power stage and RSENSE", (238.76, 55.88, 332.74, 160.02),
@@ -380,7 +453,14 @@ LAYOUTS["Actuators"] = {
         "R216": (259.08, 101.6, 0, R),
         "R217": (274.32, 101.6, 0, R),
         "R218": (289.56, 101.6, 0, R),
-        "U204": (340.36, 101.6, 0, {"_ref_at": (2.54, -11.43), "_val_at": (2.54, 11.43)}),
+        "U204": (340.36, 101.6, 0, {"_ref_at": (2.54, -11.43), "_val_at": (2.54, 11.43),
+                                     "_lib": "74xGxx:74LVC1G332", "_value": "SN74LVC1G332DBVR",
+                                     "_footprint": "Package_TO_SOT_SMD:SOT-23-6", "MPN": "SN74LVC1G332DBVR", "LCSC": "C43368",
+                                     "Datasheet": "https://www.ti.com/lit/ds/symlink/sn74lvc1g332.pdf",
+                                     "Description": "O-35/O-37: U201 OE-bar = ACT_OE_N OR ACT_DISARMED OR OUT_LOCK - buffers "
+                                                    "Hi-Z unless firmware enables, the latch is armed AND both rails are valid; "
+                                                    "inputs 5.5 V tolerant (OUT_LOCK <= 5.07 V), Ioff; DBV 1 A, 2 GND, 3 B, 4 Y, "
+                                                    "5 VCC, 6 C (TI SCES489E)"}),
         "C203": (381.0, 101.6, 0, R),
         "Q201": (38.1, 210.82, 0, {"_ref_at": (-12.7, 8.89), "_val_at": (-12.7, 11.43)}),
         "D201": (41.91, 172.72, 0, {'_ref_at': (-2.54, -3.81), '_val_at': (-2.54, 3.81)}),
@@ -412,6 +492,7 @@ LAYOUTS["Actuators"] = {
         "R245": (355.6, 231.14, 0, R),
         "R225": (368.3, 205.74, 90),
         "J105": (401.32, 208.28, 0, {"_ref_at": (-7.62, 7.62), "_val_at": (-7.62, 10.16)}),
+        "Q206": (83.82, 233.68, 0, {"_ref_at": (5.08, -1.27), "_val_at": (5.08, 1.27)}),
     },
     # O-35 restart interlock: U201 OE = ACT_OE_N OR ACT_DISARMED (latch U506 on Controller)
     "new": {
@@ -424,19 +505,26 @@ LAYOUTS["Actuators"] = {
                                  "LCSC not checked"}),
         "C203": ("Device:C", "100n 50V", "Capacitor_SMD:C_0603_1608Metric", {"1": "+3V3", "2": "GND"},
                  {"Manufacturer": "Yageo", "MPN": "CC0603KRX7R9BB104", "LCSC": "C14663", "Datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2211101700_YAGEO-CC0603KRX7R9BB104_C14663.pdf", "Description": "U204 VCC"}),
+        "Q206": ("Transistor_FET:Q_NMOS_GSD", "NTR4003N", "Package_TO_SOT_SMD:SOT-23",
+                 {"1": "OUT_LOCK", "2": "GND", "3": "ESC_DRV"},
+                 {"Manufacturer": "onsemi", "MPN": "NTR4003NT1G", "LCSC": "C82325", "Datasheet": "https://www.onsemi.com/download/data-sheet/pdf/ntr4003n-d.pdf",
+                  "Description": "O-37 ESC line clamp: holds ESC_DRV low while OUT_LOCK is high (a rail invalid), "
+                                 "<= 2.3 mA from the 2.2k pull-up, <= 6 mV; foreign voltage via R221 470R; 1 G, 2 S, 3 D"}),
     },
-    "globals": {"ACT_DISARMED": "input"},
-    "pins": {"U201": {"22": "ACT_OE_GATED_N"}},
+    "globals": {"ACT_DISARMED": "input", "OUT_LOCK": "input"},
+    # U204 becomes the 3-input OR SN74LVC1G332 (O-37): all pins listed because the pin numbering changes
+    "pins": {"U201": {"22": "ACT_OE_GATED_N"},
+             "U204": {"1": "ACT_DISARMED", "2": "GND", "3": "ACT_OE_N", "4": "ACT_OE_GATED_N", "5": "+3V3", "6": "OUT_LOCK"}},
     "wire": ['U201_DIR', 'ESC_PWM_B', 'ESC_DRV', 'ESC_PU', 'ESC_OUT', 'SERVO_FRONT_B', 'SERVO_FRONT_DRV', 'SERVO_FRONT_PU', 'SERVO_FRONT_OUT', 'SERVO_REAR_B', 'SERVO_REAR_DRV', 'SERVO_REAR_PU', 'SERVO_REAR_OUT', 'SERVO_AUX1_B', 'SERVO_AUX1_DRV', 'SERVO_AUX1_PU', 'SERVO_AUX1_OUT', 'SERVO_AUX2_B', 'SERVO_AUX2_DRV', 'SERVO_AUX2_PU', 'SERVO_AUX2_OUT'],
     "anchor": {'U201_DIR': ('R209', '2'), 'ESC_PWM_B': ('R211', '2'), 'ESC_DRV': ('R241', '1'), 'ESC_PU': ('D201', '3'), 'ESC_OUT': ('R221', '2'), 'SERVO_FRONT_B': ('R212', '2'), 'SERVO_FRONT_DRV': ('R242', '1'), 'SERVO_FRONT_PU': ('D202', '3'), 'SERVO_FRONT_OUT': ('R222', '2'), 'SERVO_REAR_B': ('R213', '2'), 'SERVO_REAR_DRV': ('R243', '1'), 'SERVO_REAR_PU': ('D203', '3'), 'SERVO_REAR_OUT': ('R223', '2'), 'SERVO_AUX1_B': ('R214', '2'), 'SERVO_AUX1_DRV': ('R244', '1'), 'SERVO_AUX1_PU': ('D204', '3'), 'SERVO_AUX1_OUT': ('R224', '2'), 'SERVO_AUX2_B': ('R215', '2'), 'SERVO_AUX2_DRV': ('R245', '1'), 'SERVO_AUX2_PU': ('D205', '3'), 'SERVO_AUX2_OUT': ('R225', '2')},
-    "label_only": [("U201", n) for n in ("21", "20", "19", "18", "17")],
+    "label_only": [("U201", n) for n in ("21", "20", "19", "18", "17")] + [("Q206", "3")],
     "groups": {
         "buf": ("1  Output buffer U201 and idle levels", (22.86, 55.88, 407.67, 139.7),
-                "SN74LVC8T245: A = 3.3 V (GPIO), B = 5 V, DIR via R209 = A -> B, OE = ACT_OE_N OR ACT_DISARMED (U204, interlock O-35).\\n"
+                "SN74LVC8T245: A = 3.3 V (GPIO), B = 5 V, DIR via R209 = A -> B, OE = ACT_OE_N OR ACT_DISARMED OR OUT_LOCK (U204, O-35/O-37).\\n"
                 "R201-R205 pull-ups (servo/ESC stage inverts), R206-R208 pull-downs (LED data); R216-R218 LED pull-downs (to Lighting_IO)."),
         "out": ("2  Open-drain outputs ESC J106, servos J102-J105", (22.86, 144.78, 407.67, 248.92),
                 "Q20x NTR4003N (30 V) with BAT54 + 2.2k pull-up from +5V: a foreign voltage on the signal pin reaches neither +5V nor U201 (VCU on or off).\\n"
-                "INVERTED stage - firmware inverts the LEDC outputs. R21x gate pull-ups keep the lines low while U201 is Hi-Z. J106 pin 2 (ESC BEC +) not connected."),
+                "INVERTED stage - firmware inverts the LEDC outputs. R21x gate pull-ups keep the lines low while U201 is Hi-Z. J106 pin 2 (ESC BEC +) not connected. Q206 (O-37): ESC_DRV low while OUT_LOCK is high."),
     },
     "notes": {"head": ("Actuators: 3.3 V -> 5 V buffer and protected servo/ESC outputs (Pinplan 3.1, 4, 7).", 22.86, 48.26)},
 }

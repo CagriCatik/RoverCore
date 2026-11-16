@@ -8,7 +8,10 @@ The supervisor (TPS3808DBV) and the OR gate (74LVC1G32) come from the KiCad libr
 compared with TI SBVS050N Figure 5-1 (1 RESET, 2 GND, 3 MR, 4 CT, 5 SENSE, 6 VDD) and SCES219W Figure 4-1
 (1 A, 2 B, 3 GND, 4 Y, 5 VCC).
 
-Usage: python3 hardware/scripts/make_interlock_parts.py   (rewrites only this symbol)
+TPS3808_DBV_OD (O-37): same pin geometry as KiCad Power_Supervisor:TPS3808DBV, but RESET typed open_collector
+(open-drain per SBVS050N 5 Pin Functions), so the wired AND of U515/U516 on RAILS_OK passes ERC without exclusion.
+
+Usage: python3 hardware/scripts/make_interlock_parts.py   (rewrites only these symbols)
 """
 from pathlib import Path
 import sys
@@ -29,3 +32,12 @@ if __name__ == "__main__":
                "6 CLR-bar, 7 PRE-bar, 8 VCC (TI SCES794G); Ioff partial power-down",
                pins, body(NAME, (-7.62, 7.62), (7.62, -7.62)), ref_at=(-7.62, 12.7), val_at=(5.08, 12.7)), NAME)
     print("wrote", NAME)
+    OD = "TPS3808_DBV_OD"
+    pins = (pin("open_collector", "1", "~{RESET}", 10.16, 0, 180) + pin("power_in", "2", "GND", 0, -7.62, 90)
+            + pin("input", "3", "~{MR}", -10.16, 0, 0) + pin("input", "4", "CT", -10.16, -2.54, 0)
+            + pin("input", "5", "SENSE", -10.16, 2.54, 0) + pin("power_in", "6", "VDD", 0, 7.62, 270))
+    put(symbol(OD, "U", "Package_TO_SOT_SMD:SOT-23-6", "https://www.ti.com/lit/ds/symlink/tps3808.pdf",
+               "Supervisor with open-drain RESET (wired AND allowed), DBV pinout 1 RESET, 2 GND, 3 MR, 4 CT, 5 SENSE, "
+               "6 VDD (TI SBVS050N Figure 5-1)",
+               pins, body(OD, (-7.62, 5.08), (7.62, -5.08)), ref_at=(-5.08, 7.62), val_at=(5.08, 7.62)), OD)
+    print("wrote", OD)

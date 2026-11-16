@@ -10,14 +10,14 @@
 		(comment 1 "DRAFT – docs/vcu rev1 Pinplan 3.1/4, Versorgung 3.13")
 	)
 	(lib_symbols
-		(symbol "74xGxx:74LVC1G32"
+		(symbol "74xGxx:74LVC1G332"
 			(exclude_from_sim no)
 			(in_bom yes)
 			(on_board yes)
 			(in_pos_files yes)
 			(duplicate_pin_numbers_are_jumpers no)
 			(property "Reference" "U"
-				(at -5.08 7.62 0)
+				(at -7.112 7.366 0)
 				(show_name no)
 				(do_not_autoplace no)
 				(effects
@@ -26,8 +26,8 @@
 					)
 				)
 			)
-			(property "Value" "74LVC1G32"
-				(at 7.62 -7.62 0)
+			(property "Value" "74LVC1G332"
+				(at 6.096 -7.62 0)
 				(show_name no)
 				(do_not_autoplace no)
 				(effects
@@ -58,7 +58,7 @@
 					)
 				)
 			)
-			(property "Description" "Single OR Gate, Low-Voltage CMOS"
+			(property "Description" "Single OR 3-Input Gate, Low-Voltage CMOS"
 				(at 0 0 0)
 				(show_name no)
 				(do_not_autoplace no)
@@ -69,7 +69,7 @@
 					)
 				)
 			)
-			(property "ki_keywords" "Single Gate OR LVC CMOS"
+			(property "ki_keywords" "Single Gate OR triple LVC CMOS"
 				(at 0 0 0)
 				(show_name no)
 				(do_not_autoplace no)
@@ -80,7 +80,7 @@
 					)
 				)
 			)
-			(property "ki_fp_filters" "SOT* SG-*"
+			(property "ki_fp_filters" "SOT* SG*"
 				(at 0 0 0)
 				(show_name no)
 				(do_not_autoplace no)
@@ -91,11 +91,11 @@
 					)
 				)
 			)
-			(symbol "74LVC1G32_0_1"
+			(symbol "74LVC1G332_0_1"
 				(arc
-					(start -7.62 5.08)
-					(mid -5.838 0)
-					(end -7.62 -5.08)
+					(start -7.62 6.35)
+					(mid -5.321 0)
+					(end -7.62 -6.35)
 					(stroke
 						(width 0.254)
 						(type default)
@@ -106,7 +106,67 @@
 				)
 				(polyline
 					(pts
-						(xy -7.62 2.54) (xy -6.35 2.54)
+						(xy -7.62 5.08) (xy -6.858 5.08)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy -7.62 -5.08) (xy -6.858 -5.08)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy -6.35 0) (xy -5.334 0)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(arc
+					(start 6.35 0)
+					(mid 3.9978 -3.9978)
+					(end 0 -6.35)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(arc
+					(start 0 6.35)
+					(mid 3.9978 3.9978)
+					(end 6.35 0)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 0 6.35) (xy -7.62 6.35)
 					)
 					(stroke
 						(width 0.254)
@@ -118,55 +178,7 @@
 				)
 				(polyline
 					(pts
-						(xy -7.62 -2.54) (xy -6.35 -2.54)
-					)
-					(stroke
-						(width 0.254)
-						(type default)
-					)
-					(fill
-						(type background)
-					)
-				)
-				(arc
-					(start 5.08 0)
-					(mid 3.202 -3.202)
-					(end 0 -5.08)
-					(stroke
-						(width 0.254)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(arc
-					(start 0 5.08)
-					(mid 3.2271 3.2271)
-					(end 5.08 0)
-					(stroke
-						(width 0.254)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(polyline
-					(pts
-						(xy 0 5.08) (xy -7.62 5.08)
-					)
-					(stroke
-						(width 0.254)
-						(type default)
-					)
-					(fill
-						(type background)
-					)
-				)
-				(polyline
-					(pts
-						(xy 0 -5.08) (xy -7.62 -5.08)
+						(xy 0 -6.35) (xy -7.62 -6.35)
 					)
 					(stroke
 						(width 0.254)
@@ -177,10 +189,10 @@
 					)
 				)
 			)
-			(symbol "74LVC1G32_1_1"
+			(symbol "74LVC1G332_1_1"
 				(pin input line
-					(at -15.24 2.54 0)
-					(length 7.62)
+					(at -12.7 0 0)
+					(length 6.35)
 					(name ""
 						(effects
 							(font
@@ -196,10 +208,10 @@
 						)
 					)
 				)
-				(pin input line
-					(at -15.24 -2.54 0)
-					(length 7.62)
-					(name ""
+				(pin power_in line
+					(at 0 -10.16 90)
+					(length 3.81)
+					(name "GND"
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -214,10 +226,10 @@
 						)
 					)
 				)
-				(pin power_in line
-					(at 0 -10.16 90)
+				(pin input line
+					(at -12.7 -5.08 0)
 					(length 5.08)
-					(name "GND"
+					(name ""
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -234,7 +246,7 @@
 				)
 				(pin output line
 					(at 12.7 0 180)
-					(length 7.62)
+					(length 6.35)
 					(name ""
 						(effects
 							(font
@@ -252,7 +264,7 @@
 				)
 				(pin power_in line
 					(at 0 10.16 270)
-					(length 5.08)
+					(length 3.81)
 					(name "VCC"
 						(effects
 							(font
@@ -261,6 +273,24 @@
 						)
 					)
 					(number "5"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin input line
+					(at -12.7 5.08 0)
+					(length 5.08)
+					(name ""
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "6"
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -7302,7 +7332,7 @@
 		)
 	)
 	(symbol
-		(lib_id "74xGxx:74LVC1G32")
+		(lib_id "74xGxx:74LVC1G332")
 		(at 340.36 101.6 0)
 		(unit 1)
 		(exclude_from_sim no)
@@ -7319,7 +7349,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "SN74LVC1G32DBVR"
+		(property "Value" "SN74LVC1G332DBVR"
 			(at 342.90000000000003 113.03 0)
 			(effects
 				(font
@@ -7328,7 +7358,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Package_TO_SOT_SMD:SOT-23-5"
+		(property "Footprint" "Package_TO_SOT_SMD:SOT-23-6"
 			(at 340.36 101.6 0)
 			(effects
 				(font
@@ -7337,7 +7367,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://www.ti.com/lit/ds/symlink/sn74lvc1g32.pdf"
+		(property "Datasheet" "https://www.ti.com/lit/ds/symlink/sn74lvc1g332.pdf"
 			(at 340.36 101.6 0)
 			(effects
 				(font
@@ -7346,7 +7376,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "O-35: U201 OE-bar = ACT_OE_N OR ACT_DISARMED - buffers Hi-Z unless firmware enables AND the restart latch is armed; DBV 1 A, 2 B, 3 GND, 4 Y, 5 VCC, Ioff (TI SCES219W). LCSC not checked"
+		(property "Description" "O-35/O-37: U201 OE-bar = ACT_OE_N OR ACT_DISARMED OR OUT_LOCK - buffers Hi-Z unless firmware enables, the latch is armed AND both rails are valid; inputs 5.5 V tolerant (OUT_LOCK <= 5.07 V), Ioff; DBV 1 A, 2 GND, 3 B, 4 Y, 5 VCC, 6 C (TI SCES489E)"
 			(at 340.36 101.6 0)
 			(effects
 				(font
@@ -7364,7 +7394,16 @@
 				(hide yes)
 			)
 		)
-		(property "MPN" "SN74LVC1G32DBVR"
+		(property "MPN" "SN74LVC1G332DBVR"
+			(at 340.36 101.6 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C43368"
 			(at 340.36 101.6 0)
 			(effects
 				(font
@@ -7388,6 +7427,9 @@
 		(pin "5"
 			(uuid "4c89717a-7535-5ee8-b1a8-2bc90484a402")
 		)
+		(pin "6"
+			(uuid "07826c69-b8c2-578e-bafc-8537dce8eca9")
+		)
 		(instances
 			(project "RoverCore"
 				(path "/d069f045-7f09-4f8a-bd29-51e87a8a0808/b55a5280-f16d-5b6e-8bfc-55876edbf85f"
@@ -7399,7 +7441,7 @@
 	)
 	(wire
 		(pts
-			(xy 325.12 99.06) (xy 320.04 99.06)
+			(xy 327.66 101.6) (xy 322.58 101.6)
 		)
 		(stroke
 			(width 0)
@@ -7409,7 +7451,7 @@
 	)
 	(global_label "ACT_DISARMED"
 		(shape input)
-		(at 320.04 99.06 180)
+		(at 322.58 101.6 180)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -7419,38 +7461,7 @@
 		)
 		(uuid "02aa6779-e5bc-5ffc-84fd-b042c0a8af66")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 320.04 99.06 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-	)
-	(wire
-		(pts
-			(xy 325.12 104.14) (xy 320.04 104.14)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "0846a367-d58d-5315-b888-a41605c9577a")
-	)
-	(global_label "ACT_OE_N"
-		(shape input)
-		(at 320.04 104.14 180)
-		(fields_autoplaced yes)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "eded41fb-77cd-550c-bf24-473462e48244")
-		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 320.04 104.14 0)
+			(at 322.58 101.6 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7467,7 +7478,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "6dd3f65f-05a9-5a88-9776-90067210b0c2")
+		(uuid "0846a367-d58d-5315-b888-a41605c9577a")
 	)
 	(symbol
 		(lib_id "power:GND")
@@ -7532,6 +7543,37 @@
 					(reference "#PWRU20425")
 					(unit 1)
 				)
+			)
+		)
+	)
+	(wire
+		(pts
+			(xy 327.66 106.68) (xy 322.58 106.68)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "6dd3f65f-05a9-5a88-9776-90067210b0c2")
+	)
+	(global_label "ACT_OE_N"
+		(shape input)
+		(at 322.58 106.68 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "32b6ce74-c6a0-553a-9921-e5a411f11b80")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 322.58 106.68 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
 			)
 		)
 	)
@@ -7627,6 +7669,37 @@
 					(reference "#PWRU20426")
 					(unit 1)
 				)
+			)
+		)
+	)
+	(wire
+		(pts
+			(xy 327.66 96.52) (xy 322.58 96.52)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "6748435e-b698-51d3-b622-9734b380fdf5")
+	)
+	(global_label "OUT_LOCK"
+		(shape input)
+		(at 322.58 96.52 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "33fbf5d5-e6e6-54ea-bebd-2d6ec8cd005b")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 322.58 96.52 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
 			)
 		)
 	)
@@ -12843,6 +12916,222 @@
 			)
 		)
 	)
+	(symbol
+		(lib_id "Transistor_FET:Q_NMOS_GSD")
+		(at 83.82 233.68 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "19323a3e-e055-5762-b25e-fc6ba190f4fd")
+		(property "Reference" "Q206"
+			(at 88.89999999999999 232.41 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "NTR4003N"
+			(at 88.89999999999999 234.95000000000002 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Package_TO_SOT_SMD:SOT-23"
+			(at 83.82 233.68 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "https://www.onsemi.com/download/data-sheet/pdf/ntr4003n-d.pdf"
+			(at 83.82 233.68 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "O-37 ESC line clamp: holds ESC_DRV low while OUT_LOCK is high (a rail invalid), <= 2.3 mA from the 2.2k pull-up, <= 6 mV; foreign voltage via R221 470R; 1 G, 2 S, 3 D"
+			(at 83.82 233.68 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Manufacturer" "onsemi"
+			(at 83.82 233.68 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "MPN" "NTR4003NT1G"
+			(at 83.82 233.68 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C82325"
+			(at 83.82 233.68 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "9d13db5c-ec4b-5f33-bb94-52bff4684456")
+		)
+		(pin "2"
+			(uuid "de1bed39-ba22-503b-8956-8d482120ba06")
+		)
+		(pin "3"
+			(uuid "83cefe8b-4052-5c5b-aa56-f71043d6ea65")
+		)
+		(instances
+			(project "RoverCore"
+				(path "/d069f045-7f09-4f8a-bd29-51e87a8a0808/b55a5280-f16d-5b6e-8bfc-55876edbf85f"
+					(reference "Q206")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(wire
+		(pts
+			(xy 78.74 233.68) (xy 73.66 233.68)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "fd8ead43-121e-5d5a-bd15-bc5b11d37280")
+	)
+	(global_label "OUT_LOCK"
+		(shape input)
+		(at 73.66 233.68 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "b78f517c-ceb6-526e-ad24-c420b06a7111")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 73.66 233.68 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+	)
+	(wire
+		(pts
+			(xy 86.36 238.76) (xy 86.36 243.84)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "56e85191-86c2-5e58-9030-47deedfed109")
+	)
+	(symbol
+		(lib_id "power:GND")
+		(at 86.36 243.84 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom no)
+		(on_board no)
+		(dnp no)
+		(uuid "7b7c5961-61a7-56cd-9187-910e51758174")
+		(property "Reference" "#PWRQ20649"
+			(at 86.36 247.65 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 86.36 248.92000000000002 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Footprint" ""
+			(at 86.36 243.84 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 86.36 243.84 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 86.36 243.84 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "f08a6c36-30de-5faf-a5b4-1233833745fc")
+		)
+		(instances
+			(project "RoverCore"
+				(path "/d069f045-7f09-4f8a-bd29-51e87a8a0808/b55a5280-f16d-5b6e-8bfc-55876edbf85f"
+					(reference "#PWRQ20649")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(wire
+		(pts
+			(xy 86.36 228.6) (xy 86.36 223.52)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "1e26daf2-7ed6-5753-9140-ec6f8c687441")
+	)
 	(wire
 		(pts
 			(xy 187.96 129.54) (xy 181.61 129.54)
@@ -12902,6 +13191,16 @@
 			(justify right bottom)
 		)
 		(uuid "5fee915f-27f1-55f3-abe6-10ce7884f276")
+	)
+	(label "ESC_DRV"
+		(at 86.36 223.52 90)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "4bd97b66-d87b-5d69-ae77-01ecf217253f")
 	)
 	(wire
 		(pts
@@ -13638,7 +13937,7 @@
 		)
 		(uuid "9a7be35e-e2ad-5660-989a-a580e1f6b9f5")
 	)
-	(text "SN74LVC8T245: A = 3.3 V (GPIO), B = 5 V, DIR via R209 = A -> B, OE = ACT_OE_N OR ACT_DISARMED (U204, interlock O-35).\nR201-R205 pull-ups (servo/ESC stage inverts), R206-R208 pull-downs (LED data); R216-R218 LED pull-downs (to Lighting_IO)."
+	(text "SN74LVC8T245: A = 3.3 V (GPIO), B = 5 V, DIR via R209 = A -> B, OE = ACT_OE_N OR ACT_DISARMED OR OUT_LOCK (U204, O-35/O-37).\nR201-R205 pull-ups (servo/ESC stage inverts), R206-R208 pull-downs (LED data); R216-R218 LED pull-downs (to Lighting_IO)."
 		(exclude_from_sim no)
 		(at 24.13 60.96 0)
 		(effects
@@ -13674,7 +13973,7 @@
 		)
 		(uuid "5c6982ca-a3db-53eb-8fc6-2376488eaebb")
 	)
-	(text "Q20x NTR4003N (30 V) with BAT54 + 2.2k pull-up from +5V: a foreign voltage on the signal pin reaches neither +5V nor U201 (VCU on or off).\nINVERTED stage - firmware inverts the LEDC outputs. R21x gate pull-ups keep the lines low while U201 is Hi-Z. J106 pin 2 (ESC BEC +) not connected."
+	(text "Q20x NTR4003N (30 V) with BAT54 + 2.2k pull-up from +5V: a foreign voltage on the signal pin reaches neither +5V nor U201 (VCU on or off).\nINVERTED stage - firmware inverts the LEDC outputs. R21x gate pull-ups keep the lines low while U201 is Hi-Z. J106 pin 2 (ESC BEC +) not connected. Q206 (O-37): ESC_DRV low while OUT_LOCK is high."
 		(exclude_from_sim no)
 		(at 24.13 149.86 0)
 		(effects
