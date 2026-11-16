@@ -128,6 +128,9 @@ def main():
     if list(pcb.parent.glob("~*.lck")) + list(pcb.parent.glob("*.lck")):
         raise SystemExit("ABORTED: KiCad lock files present")
     b = pcbnew.LoadBoard(str(pcb))
+    global BOARD
+    e = b.GetBoardEdgesBoundingBox()  # outline of this board (150 x 100, or a variant)
+    BOARD = (T(e.GetLeft()), T(e.GetTop()), T(e.GetRight()), T(e.GetBottom()))
     old = {}  # labels of a previous run are reused (deleting board items crashes the KiCad 10 Python bindings)
     group = None
     for g in b.Groups():
@@ -158,7 +161,7 @@ def main():
                 for hh in (hgt, 1.0):  # fall back to 1.0 mm where the full height does not fit
                     t.SetTextSize(pcbnew.VECTOR2I(MM(hh), MM(hh)))
                     t.SetTextThickness(MM(max(0.15, hh * 0.17)))
-                    r = place_text(t, obst, ref, candidates(fps[ref], 0.9 * hh * len(text), hh, side), angles=(0, 90))
+                    r = place_text(t, obst, ref, candidates(fps[ref], 0.9 * hh * len(text), 1.85 * hh, side), angles=(0, 90))
                     if r:
                         break
                 if r is None:

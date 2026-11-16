@@ -88,9 +88,10 @@ def model_exists(fn):
     return os.path.exists(fn)
 
 
-def build(with_modules):
-    b = pcbnew.LoadBoard(str(ROOT / "RoverCore.kicad_pcb"))
-    mdir = OUT / "models"
+def build(with_modules, src=None, out=None):
+    out = out or OUT
+    b = pcbnew.LoadBoard(str(src or ROOT / "RoverCore.kicad_pcb"))
+    mdir = out / "models"
     mdir.mkdir(parents=True, exist_ok=True)
     for ref, boxes in ENVELOPES.items():
         fp = b.FindFootprintByReference(ref)
@@ -106,8 +107,8 @@ def build(with_modules):
             m.m_Scale = pcbnew.VECTOR3D(1, 1, 1)
             fp.Add3DModel(m)
     name = "RoverCore_review_%s.kicad_pcb" % ("populated" if with_modules else "without_modules")
-    b.Save(str(OUT / name))
-    return OUT / name
+    b.Save(str(out / name))
+    return out / name
 
 
 def caption(png, title, out):
@@ -129,17 +130,19 @@ def caption(png, title, out):
     subprocess.run(["rsvg-convert", "-o", str(out), str(s)], check=True, cwd=str(png.parent))
 
 
-def render(pcb, stem, sides):
+def render(pcb, stem, sides, out=None, label=""):
+    out = out or OUT
     for side, args in sides:
-        raw = OUT / ("%s_%s_raw.png" % (stem, side))
+        raw = out / ("%s_%s_raw.png" % (stem, side))
         subprocess.run([CLI, "pcb", "render", "-o", str(raw), "--width", "2400", "--height", "1600", "--quality",
                         "basic"] + args + [str(pcb)], check=True, capture_output=True)
-        caption(raw, "%s - %s (Review-Ansicht, Hüllkörper sind keine Herstellermodelle)" % (stem, side),
-                OUT / ("%s_%s.png" % (stem, side)))
+        caption(raw, "%s%s - %s (Review-Ansicht, Hüllkörper sind keine Herstellermodelle)" % (label, stem, side),
+                out / ("%s_%s.png" % (stem, side)))
 
 
-def status_list():
-    b = pcbnew.LoadBoard(str(ROOT / "RoverCore.kicad_pcb"))
+def status_list(src=None, out=None):
+    out = out or OUT
+    b = pcbnew.LoadBoard(str(src or ROOT / "RoverCore.kicad_pcb"))
     rows = []
     for fp in sorted(b.GetFootprints(), key=lambda f: f.GetReference()):
         ref, fpid = fp.GetReference(), fp.GetFPIDAsString()
@@ -157,7 +160,7 @@ def status_list():
             st = "FEHLT"
         src = "; ".join(x[4] for x in ENVELOPES.get(ref, []))
         rows.append((ref, fpid, " | ".join(os.path.basename(f) for f in files), st, src))
-    with open(OUT / "model_status.csv", "w", newline="") as fh:
+    with open(out / "model_status.csv", "w", newline="") as fh:
         w = csv.writer(fh)
         w.writerow(["Referenz", "Footprint", "Modelldatei(en)", "Status", "Maße der Hülle / Quelle"])
         w.writerows(rows)

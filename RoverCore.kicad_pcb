@@ -1704,7 +1704,7 @@
 		(descr "X1SON 2 pin 0.6x1mm 0.375mm height package, https://www.ti.com/lit/ml/mpss034c/mpss034c.pdf, https://www.ti.com/lit/ds/symlink/tpd6e05u06.pdf")
 		(tags "X1SON")
 		(property "Reference" "D608"
-			(at 0.556 2.144999 0)
+			(at 0 -4.395 0)
 			(unlocked yes)
 			(layer "F.SilkS")
 			(uuid "de511451-f408-4cba-9d1e-ccc1d5456798")
@@ -22335,7 +22335,7 @@
 		(descr "Resistor SMD 0603 (1608 Metric), square (rectangular) end terminal, IPC-7351 nominal, (Body size source: IPC-SM-782 page 72, https://www.pcb-3d.com/wordpress/wp-content/uploads/ipc-sm-782a_amendment_1_and_2.pdf)")
 		(tags "resistor")
 		(property "Reference" "R617"
-			(at 0 2.275 90)
+			(at -2.249999 0 0)
 			(layer "F.SilkS")
 			(uuid "b2556930-e0c6-4392-b81c-5076ffb2dd1a")
 			(effects
@@ -34255,9 +34255,10 @@
 		(descr "X1SON 2 pin 0.6x1mm 0.375mm height package, https://www.ti.com/lit/ml/mpss034c/mpss034c.pdf, https://www.ti.com/lit/ds/symlink/tpd6e05u06.pdf")
 		(tags "X1SON")
 		(property "Reference" "D607"
-			(at 0 -2.145 0)
+			(at -0.556 4.394999 90)
 			(unlocked yes)
 			(layer "F.SilkS")
+			(hide yes)
 			(uuid "e7012ebd-bb06-488e-be6c-df78f48e0e85")
 			(effects
 				(font
@@ -60793,7 +60794,7 @@
 		(uuid "44f2775d-6eaf-46da-97b0-c87a2a26d8b1")
 	)
 	(gr_text "AKKU 3S"
-		(at 8.325 6.355 0)
+		(at 8.325 6.194999 0)
 		(layer "F.SilkS")
 		(uuid "43b91878-0e7a-455b-a440-ee8d188fea69")
 		(effects
@@ -60804,7 +60805,7 @@
 		)
 	)
 	(gr_text "LED1"
-		(at 8.404 92.555 0)
+		(at 8.404 92.494999 0)
 		(layer "F.SilkS")
 		(uuid "6f32af42-2323-4757-99a3-dfb9b764805e")
 		(effects
@@ -60815,7 +60816,7 @@
 		)
 	)
 	(gr_text "LED2"
-		(at 26.596 92.805 0)
+		(at 26.596 92.645 0)
 		(layer "F.SilkS")
 		(uuid "a5f8082f-97d9-4643-aebf-193064bdfdf0")
 		(effects
@@ -60826,7 +60827,7 @@
 		)
 	)
 	(gr_text "LED3"
-		(at 37.596 92.805 0)
+		(at 37.596 92.645 0)
 		(layer "F.SilkS")
 		(uuid "d5edfbd9-e36a-4b26-ab98-2401c509cd02")
 		(effects
@@ -60837,7 +60838,7 @@
 		)
 	)
 	(gr_text "LED4"
-		(at 48.596 92.805 0)
+		(at 48.596 92.645 0)
 		(layer "F.SilkS")
 		(uuid "731b20fa-4e6b-47a7-9780-1339487e5f88")
 		(effects
@@ -60848,7 +60849,7 @@
 		)
 	)
 	(gr_text "UART"
-		(at 61.396 92.805 0)
+		(at 61.396 92.645 0)
 		(layer "F.SilkS")
 		(uuid "b52e6132-867c-403e-8381-05e345e7881e")
 		(effects
@@ -60870,7 +60871,7 @@
 		)
 	)
 	(gr_text "STATUS"
-		(at 89.5 50.625 0)
+		(at 89.5 50.765 0)
 		(layer "F.SilkS")
 		(uuid "6c1e4a3c-023f-4841-b9bd-142d5a14a707")
 		(effects
@@ -60881,7 +60882,7 @@
 		)
 	)
 	(gr_text "AUX1"
-		(at 97.539999 15.235 0)
+		(at 97.539999 15.075 0)
 		(layer "F.SilkS")
 		(uuid "16c79a26-155c-4763-9cde-e6f9b752d0e3")
 		(effects
@@ -60892,7 +60893,7 @@
 		)
 	)
 	(gr_text "SERVO V"
-		(at 101.5 12.184999 0)
+		(at 101.5 12.344999 0)
 		(layer "F.SilkS")
 		(uuid "d5885cdc-e460-4fb3-99d3-4e43ffbfbea8")
 		(effects
@@ -60903,7 +60904,7 @@
 		)
 	)
 	(gr_text "AUX2"
-		(at 107.039999 15.235 0)
+		(at 107.039999 15.075 0)
 		(layer "F.SilkS")
 		(uuid "b6aa033a-4527-4b75-bf39-fe9f0f2cde21")
 		(effects
@@ -60925,7 +60926,7 @@
 		)
 	)
 	(gr_text "SERVO H"
-		(at 115.5 12.184999 0)
+		(at 115.5 12.344999 0)
 		(layer "F.SilkS")
 		(uuid "3520796a-10dc-41f9-bb25-c77ec230688b")
 		(effects
@@ -60936,7 +60937,7 @@
 		)
 	)
 	(gr_text "ESC"
-		(at 116.539999 15.235 0)
+		(at 116.539999 15.075 0)
 		(layer "F.SilkS")
 		(uuid "9b1504b8-c911-40fb-8e0d-edcd9be0da4e")
 		(effects
@@ -60958,7 +60959,7 @@
 		)
 	)
 	(gr_text "ENABLE"
-		(at 81.5 48.605 0)
+		(at 81.5 48.567499 0)
 		(layer "F.SilkS")
 		(uuid "94e3818b-8c5b-47da-947d-e2d28ef035a7")
 		(effects
@@ -60969,7 +60970,7 @@
 		)
 	)
 	(gr_text "RESET"
-		(at 101.5 60.645 0)
+		(at 101.5 60.6825 0)
 		(layer "F.SilkS")
 		(uuid "eb181cd2-69cd-41c9-ae2d-13c517738af9")
 		(effects
@@ -60980,7 +60981,7 @@
 		)
 	)
 	(gr_text "BOOT"
-		(at 113.5 60.645 0)
+		(at 113.5 60.6825 0)
 		(layer "F.SilkS")
 		(uuid "6bcdb798-9c2b-4a22-a451-1d65426e0526")
 		(effects

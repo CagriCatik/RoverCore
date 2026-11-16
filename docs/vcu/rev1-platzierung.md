@@ -739,6 +739,115 @@ Mitte zu Mitte, aus der Platine.
 - **Stand:** Noch nicht ausgeführt. Die Freigabe des Owners für K1 auf der
   Boardkopie ist offen.
 
+## 3h. Kompaktvariante K1 auf einer Boardkopie (Versuch, 2026-11-16)
+
+**Werkzeug:** `hardware/scripts/make_compact_variant.py`.
+- Es erzeugt aus `RoverCore.kicad_pcb` die Kopie
+  `qa/generated/compact/RoverCore_K1.kicad_pcb` (erzeugt, nicht
+  versioniert). **Der 150 × 100-mm-Stand bleibt unverändert.**
+- Mit `--compare` rendert es beide Varianten mit identischen bestückten
+  Ansichten (`render_populated_review.py`) und legt sie als
+  `compare_*.png` übereinander.
+- **Verschoben** werden nur ungeroutete Blöcke, 91 Footprints:
+  Controller-Peripherie, OLED, IMU, Taster, O-37, I²C-Pull-ups und
+  Schnittstellen.
+  - Teils starr als Block mit erhaltener Feinplatzierung, teils auf
+    ausdrückliche Lagen.
+  - Das Skript bricht ab, falls an einem verschobenen Teil Kupfer hängt.
+- **Unverändert** bleiben die gerouteten Gruppen (Servostufe, Eingang,
+  Logikversorgung) mit Kupfer, Vias und Rückwegen, ebenso das DevKit.
+
+**Anordnung K1:**
+- OLED direkt unter der Servo-RUN-Reihe (y 41,5–73,8).
+- IMU unter den Ausgangsstufen (y 50,8–69,1).
+- RESET/BOOT als Servicegruppe links neben der Logikversorgung (x 40,
+  12 mm Abstand).
+- ENABLE mit Status-LED an der Unterkante zwischen OLED und IMU.
+- O-37 in zwei Reihen unter dem OLED, außerhalb des Modulumrisses.
+- Schnittstellenblöcke unter der Logikversorgung; LED-/UART-Stecker an der
+  Unterkante.
+- VBAT-Messung zwischen IMU und ENABLE, Latch in die rechte Spalte.
+- Kontur und GND-Ebenen auf 85 mm, M3-Marken neu gesucht.
+
+**Vergleich** (Zahlen aus den Prüfskripten; Höhen und Fingerkriterium wie in 3d/3g
+geschätzt):
+
+| Merkmal | 150 × 100 mm (main) | K1 150 × 85 mm (Kopie) |
+|---|---|---|
+| Fläche | 15 000 mm² | 12 750 mm² (−15 %) |
+| DRC | 1 `via_dangling` (RUN-Ausbruch), sonst keine Befunde | gleich |
+| nicht geroutete Verbindungen | 394, Luftlinien gesamt 4 511 mm | 394, Luftlinien gesamt 4 471 mm |
+| ENABLE: nächstes hohes Objekt | OLED 10,4 mm | IMU 11,1 mm |
+| RESET: nächstes hohes Objekt | OLED 11,4 mm | C101 11,5 mm |
+| BOOT: nächstes hohes Objekt | DevKit 10,7 mm | J107 (iBUS-Stiftleiste) 12,6 mm |
+| Abstand RESET–BOOT / Service–ENABLE | 12 / 20 mm | 12 / 60 mm |
+| Micro-USB-Stecker | ganz über der Platine (30 mm) | 21,2 mm über der Platine, ragt ca. 8,8 mm über die Unterkante (Steckerlänge geschätzt) |
+| unter dem Steckerraum | flache SMD der Peripherie | 22 flache SMD (Wächter, Latch, Puffer, Testpunkte); höchste ca. 1,2 mm gegen Steckerunterkante ca. 10,4 mm (geschätzt) |
+| Antennen-Sperrfläche | über der Oberkante | unverändert (DevKit nicht verschoben) |
+| M3-Marken | 4, davon 3 außerhalb der Kriterien (3d) | 5, alle ≥ 4,5 mm zu Courtyards und ≥ 4 mm vom Rand |
+| ausgeblendete Silk-Referenzen | 38 | 42 |
+
+**Prüfpunkte:**
+- **USB:** Die **Buchse bleibt auf dem DevKit**. Nur der eingesteckte
+  Stecker mit Kabel ragt über die Unterkante.
+  - Die Buchse an die Kante zu bringen hieße, das DevKit um ca. 21 mm nach
+    unten zu schieben.
+  - Dann läge der Antennenüberstand über der Platine statt über der
+    Oberkante. Das wurde deshalb nicht gemacht.
+- **M3-Marken K1:** (28 | 4), (54 | 4), (4 | 36), (91 | 81) und (145 | 81),
+  Abstand zum nächsten Courtyard 5,4–12,1 mm.
+  - Die Ecke unten links ist durch die Steckerreihe belegt und bleibt ohne
+    Marke.
+  - Ob fünf Punkte und diese Lagen zum Chassis passen, ist offen.
+- **Steckrichtungen** unverändert:
+  - XT30 links aus der Kante;
+  - Micro-Fit oben;
+  - Stiftleisten und JST-PH senkrecht.
+
+  J107 (iBUS) steht jetzt mitten auf der Platine neben dem OLED. Der
+  senkrechte Servostecker hat dort ca. 4 mm Seitenabstand zur OLED-Hülle
+  (Schätzung).
+- **Routingkorridore:**
+  - Auf F werden die Gassen schmal: zwischen den Ausgangsstufen und der IMU
+    ca. 1,3 mm, zwischen OLED und IMU ca. 1,7 mm.
+  - Signale vom DevKit nach links (I²C, LED, UART, iBUS, Summer, Taster)
+    laufen deshalb in K1 überwiegend auf B. B ist außerhalb des
+    Servobereichs frei; die Module blockieren B nicht.
+  - Das ist bis zum Routing eine **Annahme**. Die Luftliniensumme ist
+    praktisch gleich.
+- **Bauteile unter Modulen:** keine. O-37 liegt unter, nicht im
+  OLED-Umriss; die IMU-Fläche ist frei.
+
+**Bewertung:**
+- K1 funktioniert auf Platzierungsebene: DRC wie im Ausgangsstand, alle
+  Taster nach dem eigenen Kriterium zugänglich, Befestigungsmarken besser
+  als im Ausgangsstand.
+- Nachweise fehlen noch:
+  - das Routing der unteren Hälfte, besonders die schmalen F-Gassen;
+  - die Steckerlängen (Micro-USB, iBUS) am realen Teil;
+  - die Lage der Befestigung am Chassis.
+- Bei Übernahme in `RoverCore.kicad_pcb`:
+  - 91 Footprints neu setzen (Skript);
+  - Kontur und GND-Ebenen;
+  - M3-Marken;
+  - Silkscreen neu;
+  - Bericht 3c/3d/3e an die neuen Lagen anpassen.
+
+  Die gerouteten Gruppen bleiben unberührt. Die Übernahme entscheidet der
+  Owner.
+
+**3D-Modelle (Nachtrag):**
+- Die fünf Dateien, auf die die Footprints von J101, J102/J103, Q101,
+  Q401/Q402 und D601–D608 zeigen, gibt es auch in der offiziellen
+  KiCad-3D-Bibliothek nicht. Geprüft wurde `kicad-packages3D`, Zweig
+  master; Tags 10.0.x gibt es, einen Zweig 9/10 nicht.
+- Das Adafruit-CAD-Repository hat keine Modelle für die Produkte 326 und
+  4438; die nächstliegenden Ordner sind andere Boards.
+- Espressif bietet für das DevKitC-1 v1.1 kein 3D-Modell an.
+- Es wurde daher nichts installiert. Die Hüllkörper bleiben gekennzeichnet.
+- Die generischen Buchsenleisten-Modelle bestätigen weder die
+  Samtec-Geometrie noch die Einsteckhöhe.
+
 ## 4. DevKit, Antenne und USB
 
 - U501 sitzt an der rechten Kante. Die Antennen-Sperrfläche des Footprints
