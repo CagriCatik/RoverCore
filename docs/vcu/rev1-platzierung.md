@@ -213,8 +213,8 @@
 ## 6. Ansichten
 
 Erzeugt mit `hardware/scripts/render_placement_review.py` (pcbnew-Python) und
-`kicad-cli pcb render` in `qa/generated/placement/`. Das ist erzeugte Ausgabe;
-der Agent checkt sie nicht ein.
+`kicad-cli pcb render` in `qa/generated/placement/`. Das ist erzeugte Ausgabe
+und nicht versioniert (`.gitignore`); die Bilder sind kein Freigabenachweis.
 
 - **Luftlinien:** KiCads eigener Ratsnest, also die `unconnected_items` aus
   `kicad-cli pcb drc` (dieselben Linien wie im Editor), **einschließlich
@@ -231,9 +231,9 @@ der Agent checkt sie nicht ein.
 | `render_3d_top.png`, `render_3d_iso.png` | 3D-Ansicht (Teile ohne Modell fehlen, siehe models_3d) |
 
 - Die Dateien ohne `_top`/`_bottom` (`overview.png` usw.) stammen vom ersten
-  Renderer: GND war ausgeblendet, die Luftlinien waren selbst berechnet.
-- Sie liegen im eingecheckten Stand `a8ba76a` und sind **veraltet**. Löschen
-  oder ersetzen entscheidet der Owner.
+  Renderer (GND ausgeblendet, Luftlinien selbst berechnet) und sind veraltet.
+  Sie wurden mit `a8ba76a` eingecheckt und sind auf Owner-Entscheid wieder aus
+  Git entfernt (lokal behalten).
 
 Abgleich (normal, verändert keine Platzierung):
 
