@@ -13669,8 +13669,7 @@
 		)
 		(uuid "82049f4a-c72d-54ca-a327-3825aaf045ec")
 	)
-	(text "R501: ACT_OE_N high at reset (buffers Hi-Z).\nSW501 enable button = latch clock (O-35); GPIO10\nvia R518 47k, no RC (O-21). D502 LED.
-R519 1k: ACT_ARMED read-back -> GPIO18 (TP501)."
+	(text "R501: ACT_OE_N high at reset (buffers Hi-Z).\nSW501 enable button = latch clock (O-35); GPIO10\nvia R518 47k, no RC (O-21). D502 LED.\nR519 1k: ACT_ARMED read-back -> GPIO18 (TP501)."
 		(exclude_from_sim no)
 		(at 24.13 137.16 0)
 		(effects

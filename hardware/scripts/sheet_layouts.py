@@ -239,7 +239,7 @@ LAYOUTS["Controller"] = {
         "pwr": ("1  5 V feed and 3.3 V", (22.86, 55.88, 106.68, 127.0),
                 "Carrier +5V -> D501 -> DevKit 5V pin (diode-OR with the\\nDevKit USB diodes, own extension, Versorgung 3.11).\\n+3V3 = DevKit LDO only."),
         "op": ("2  Operator and defaults", (22.86, 132.08, 106.68, 248.92),
-               "R501: ACT_OE_N high at reset (buffers Hi-Z).\\nSW501 enable button = latch clock (O-35); GPIO10\\nvia R518 47k, no RC (O-21). D502 LED.\nR519 1k: ACT_ARMED read-back -> GPIO18 (TP501)."),
+               "R501: ACT_OE_N high at reset (buffers Hi-Z).\\nSW501 enable button = latch clock (O-35); GPIO10\\nvia R518 47k, no RC (O-21). D502 LED.\\nR519 1k: ACT_ARMED read-back -> GPIO18 (TP501)."),
         "sock": ("3  DevKit socket U501", (111.76, 147.32, 231.14, 248.92),
                  "Original ESP32-S3-DevKitC-1-N16R8 v1.1; pads 1-22 = J1,\\n23-44 = J3. Reserved pins: no-connect (pinmap.csv).\\nSignals leave as global labels to the other sheets."),
         "vbat": ("4  VBAT measurement (O-21)", (236.22, 55.88, 370.84, 182.88),
