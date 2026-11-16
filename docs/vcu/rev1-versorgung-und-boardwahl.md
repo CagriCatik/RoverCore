@@ -1885,7 +1885,7 @@ Erkennung wird nicht behauptet.
 
 **Nächste Schritte:**
 1. GPIO18 ← ACT_ARMED (6239bca) und O-37 Rev C sind im Schaltplan; ERC 0.
-2. PCB-Platzierung beginnen.
+2. Erste funktionale PCB-Platzierung: `docs/vcu/rev1-platzierung.md` (vorläufig, keine Freigabe).
 3. Vor der Fertigungsfreigabe offen:
    - die O-37-Messungen und die Restpunkte A11/A12;
    - der Abfragenachweis < 12 ms auf dem ESP32. Bis dahin ist er nur eine
