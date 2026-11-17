@@ -55,6 +55,10 @@ STEPS = {
         (B, [(54.2, 30.6), (53.9, 30.9), (53.9, 36.7), (53.6, 37.0), (51.0, 37.0), (50.6, 37.4), (50.0, 37.4),
              (49.4, 38.0), (48.8, 38.0)]), ("via", (48.8, 38.0)),
         (F, [(48.8, 38.0), (47.7, 38.95)])])]),
+    # VBAT_PROT stitching at Q101 (current check, current_map.py vbat): the B VBAT pour was fed from Q101 only through
+    # a 0.5-0.6 mm neck of the F pour to the D101 vias (estimated 9 A/mm there). Six vias 0.8/0.4 mm along the bottom
+    # edge of the F band, inside both pours and south of the hand-routed VFB_TAP (B, y 28.3).
+    "vbat_stitch": ([], [(VBAT, 0.4, (0.8, 0.4), [("via", (x, 29.55)) for x in (36.4, 37.5, 38.6, 39.7, 40.8, 41.9)])]),
     "vbat_r414": ([], [(VBAT, 0.4, (0.6, 0.3), [
         ("via", (40.4, 35.0)), (F, [(40.4, 35.0), (41.25, 34.87)])])]),
     # GND of R407 pad 2 / Q407 pin 2 lies above the B VBAT pour: one GND via on the existing trace (the pour leaves
