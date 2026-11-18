@@ -73,7 +73,7 @@ class BuildBoardSyncTest(unittest.TestCase):
         self.assertEqual(out[2], "/Power/VBAT_PROT GND")
         self.assertEqual(out[3], "False True")
         self.assertEqual(out[4], "1")
-        self.assertEqual(out[5], "True 253")
+        self.assertEqual(out[5], "True 257")  # 253 + mounting holes H1-H4 (2026-11-18)
         self.assertEqual(out[6], "''")
 
     def test_unknown_layout_reference_aborts_without_writing(self):
