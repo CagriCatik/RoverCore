@@ -5895,7 +5895,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "LED status"
+		(property "Value" "LED red"
 			(at 48.260000000000005 229.87 90)
 			(effects
 				(font
@@ -5913,7 +5913,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "~"
+		(property "Datasheet" "https://www.we-online.com/components/products/datasheet/150060RS75000.pdf"
 			(at 35.56 228.6 0)
 			(effects
 				(font
@@ -5922,7 +5922,25 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "Status LED, 0603, AlGaInP (VF <= 2.4 V at 2 mA required with 3.3 V drive); part open (O-28)"
+		(property "Description" "Status LED, 0603, red AlInGaP, VF max 2.4 V at 20 mA; about 1.5 mA via R504 1 k at 3.3 V (estimate)"
+			(at 35.56 228.6 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Manufacturer" "Würth Elektronik"
+			(at 35.56 228.6 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "MPN" "150060RS75000"
 			(at 35.56 228.6 0)
 			(effects
 				(font
