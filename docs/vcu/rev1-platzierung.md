@@ -1145,6 +1145,79 @@ und der J102/J103-Laschen bei 11,2 A (Messung am Muster mit blockierten
 Servos oder Ersatzlast); Bestätigung von Aufbau und Hülsenklasse beim
 Fertiger; Muster-Messungen LDO-Eingang und D501.
 
+## 3k. Fertigerabgleich und DRAFT-Fertigungspaket (Stand 2026-11-18)
+
+Layout unverändert (keine Baugruppe verschoben, kein Routing geändert); nur
+Beschriftung und Exportwerkzeug angepasst. Vorlage: JLCPCB
+[PCB-Capabilities](https://jlcpcb.com/capabilities/pcb-capabilities), Abruf
+2026-11-18, Mehrlagenwerte.
+
+*Fertigerregeln im DRC*: `RoverCore.kicad_dru` enthält die JLCPCB-Grenzen
+(Leiterbahn ≥ 0,09 mm, Via-Bohrung ≥ 0,15 mm, Via-Restring ≥ 0,05 mm,
+PTH-Restring ≥ 0,15 mm, NPTH ≥ 0,5 mm, PTH-Bohrung zu Kupfer ≥ 0,28 mm bzw.
+innen ≥ 0,3 mm, Via-Bohrung zu Kupfer ≥ 0,2 mm, Pad-Bohrabstand ≥ 0,45 mm,
+Pad-Pad ≥ 0,15 mm, Rand ≥ 0,2 mm, Bestückungsdruck ≥ 1,0 mm / 0,15 mm,
+Druck-Abstand ≥ 0,15 mm). Kupfer und Bohrungen erfüllten alle Werte schon
+vorher; DRC mit Regelsatz: 0 Verstöße, 0 offene Verbindungen.
+
+*Bestückungsdruck* (`hardware/scripts/silk_jlc.py`):
+- 230 Texte unter dem Minimum (Referenzen 0,8/0,12 mm, Modul-Pinbeschriftungen
+  0,8 mm) auf 1,0 mm Höhe / 0,15 mm Strich vergrößert; Ankerpunkte unverändert.
+- 38 Referenzen kollidierten danach mit Druck oder Pads; sie stehen nur noch
+  auf der Bestückungszeichnung (Fab-Lage), z. B. C408–C417, R415–R419, TP401,
+  TP402. Die U501-Pinmarke „J3-1“ liegt auf F.Fab.
+- **Abweichung:** Umrisslinien der Bibliotheks-Footprints haben 0,12 mm
+  Strich (919 Linien) und liegen unter den 0,15 mm von JLCPCB. Sie sind keine
+  Zeichen; das Risiko ist ein dünner oder lückenhafter Druck, nicht eine
+  falsche Bestückung. Nicht geändert (Bibliotheksstand); Owner-Entscheid.
+
+*Hülsenkupfer – Einschränkung*: JLCPCB nennt nur eine **mittlere**
+Hülsendicke von 18 µm. Die Rechnungen setzen 18 µm an der **dünnsten** Stelle
+voraus (IPC-6012 Kl. 2). Das ist mit dem Standardangebot nicht abgedeckt:
+entweder Klasse 2 bzw. ≥ 18 µm Mindestwert ausdrücklich bestellen oder die
+Via-Anteile der Rechnungen mit dem vereinbarten Wert wiederholen (3a,
+Geltungsbedingung).
+
+*DRAFT-Paket* (`scripts/kit export . --revision A1` →
+`manufacturing/releases/generated/rev-A1-DRAFT`, NO-GO, nicht versioniert):
+- Quality Gate PASS (ERC, DRC, Parität, Bibliotheken, Footprints,
+  Pin-Pad-Zuordnung). Hinweise: Datenblattfeld fehlt bei 44 Teilen, 14
+  Teile ohne 3D-Modell, keine Bauteilakten (`components/`).
+- **Fehler im Exportwerkzeug gefunden und behoben:** Die BOM gruppierte nicht
+  nach DNP. R616 (bestückt) stand in einer Zeile mit R801/R802 (DNP) und war
+  dort als DNP markiert, während die Bestückungsdatei R616 platzierte.
+  `tools/release/exports.py` gruppiert jetzt auch nach `${DNP}`
+  (`tools/VENDORED.md`).
+- Abgleich Paket ↔ Board (`hardware/scripts/fab_package_check.py`): BOM 230
+  Referenzen in 92 Zeilen, DNP-Kennungen stimmen; Bestückungsdatei 228 Teile
+  (225 oben, 3 unten), Lage, Seite und Drehung gleich dem Board; Bohrwerkzeuge
+  0,25–1,90 mm PTH, 2,70/3,00 mm NPTH; Gerber-Jobdatei 4 Lagen, 1,6 mm,
+  Aufbau wie 3a. **Offener Fehler:** D502 (Status-LED) ohne Hersteller und
+  Teilenummer – Typ offen (O-28), vor der Bestellung festlegen.
+- Sichtprüfung der Gerber- und Bohrdateien mit einem eigenen Renderer
+  (`hardware/scripts/gerber_preview.py`, zeichnet die exportierten Dateien,
+  nicht das Board): Kupfer, Innenlagen mit Antennenaussparung, Maske,
+  Bestückungsdruck, Paste und Bohrungen ohne Auffälligkeiten.
+- Hinweise für die Bestellung:
+  - Nur F/B_Cu, In1/In2_Cu, F/B_Mask, F/B_Paste, F/B_Silkscreen, Edge_Cuts und
+    die Bohrdatei hochladen; das Paket enthält zusätzlich Fab-, Courtyard- und
+    User-Lagen.
+  - Bestückungsdatei im KiCad-Format, Ursprung = Seitenursprung (kein
+    Hilfsursprung gesetzt), Y nach oben; für JLCPCB Spalten umbenennen und
+    Drehwinkel in deren Vorschau prüfen.
+  - 16 THT-Teile stehen in der Bestückungsdatei (J101–J112, J115, J116, F101,
+    U501-Buchsen): entweder THT-Bestückung bestellen oder von Hand löten.
+  - U401 hat 0,25-mm-Bohrungen im Footprint (Wärmevias im Pad); kleiner als
+    die JLCPCB-Empfehlung 0,5 mm für Bauteilbohrungen, aber zulässig.
+  - Die Bestückungszeichnung aus `kit export` ist auf A4 1:1 kaum lesbar;
+    ergänzend `qa/generated/fab/assembly_refs_top.pdf` / `_bottom.pdf`
+    (nur Referenzen, skaliert).
+- **Keine Befestigungsbohrungen** auf K1 (Chassis offen, Abschnitt 7). Für den
+  Prototyp auf dem Labortisch unkritisch; für den Einbau offen.
+
+Erstinbetriebnahme: [docs/bringup.md](../bringup.md) (Versorgung, D501,
+Servostrompfad, Abbruchkriterien).
+
 ## 4. DevKit, Antenne und USB
 
 - U501 sitzt an der rechten Kante. Die Antennen-Sperrfläche des Footprints
