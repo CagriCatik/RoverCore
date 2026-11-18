@@ -1216,6 +1216,18 @@ Geltungsbedingung).
     (nur Referenzen, skaliert).
 - Befestigung: seit 3n vier M3-NPTH-Bohrungen H1–H4, Lage vorläufig.
 
+- **D502 festgelegt (2026-11-18, schließt den BOM-Teil von O-28):** Würth
+  Elektronik 150060RS75000 (WL-SMCW, 0603, rot, AlInGaP). Werte aus dem
+  [Herstellerdatenblatt](https://www.we-online.com/components/products/datasheet/150060RS75000.pdf):
+  - V_F typ. 2,0 V / max. 2,4 V bei 20 mA, I_F max. 30 mA, λ_dom 625 nm;
+  - Pin 1 = Kathode mit Polaritätsmarke. Das passt zu Device:LED und
+    LED_0603_1608Metric (Pad 1 an GND).
+  - Strom über R504 1 kΩ bei 3,3 V etwa 1,5 mA (Schätzung, V_F bei kleinem
+    Strom aus der Kennlinie nicht abgelesen).
+  - Eine LCSC-Nummer und der JLCPCB-Bestand sind nicht geprüft; das Feld
+    LCSC ist leer.
+  - Der Paketabgleich meldet 0 Fehler.
+
 Erstinbetriebnahme: [docs/bringup.md](../bringup.md) (Versorgung, D501,
 Servostrompfad, Abbruchkriterien).
 
@@ -1341,6 +1353,17 @@ bleiben, wie sie sind.
   Gerenderte Bilder des Modells stehen im README.
 - **Stand `models_3d`:** 12 statt 14 Meldungen. ERC, DRC und Parität bestehen.
 
+*Nachtrag 2026-11-18:* Weitere Suche nach Herstellerquellen ohne Konto ohne
+Ergebnis:
+- **Vishay:** Die Produktseiten zu PowerPAK SO-8 verweisen nur auf das
+  Ultra-Librarian-Portal.
+- **Same Sky:** Das Modell gibt es weiterhin nur mit E-Mail und Zustimmung
+  zu den CAD-Bedingungen.
+- **Drittportale** (SnapMagic, Octopart-Partner): Sie verlangen ebenfalls ein
+  Konto oder eine Anfrage und liefern keine Herstellermodelle.
+- **D502:** Für das jetzt festgelegte Teil 150060RS75000 bleibt das passende
+  KiCad-Bibliotheksmodell LED_0603 im Einsatz.
+
 *Für die blockierten Teile braucht es den Owner:*
 - **Ultra Librarian (TPD1E05U06):** im Browser-Bereich anmelden; dann lade ich
   das Modell und prüfe es wie oben.
@@ -1454,8 +1477,16 @@ das DevKit wird vor dem Einbau gesteckt.
   `fab_package_check.py` meldet eine gemeinsame Datei als Fehler.
 - **DRAFT-Paket neu erzeugt und geprüft** (`fab_package_check.py`, Vergleich
   mit dem vorherigen Paket):
-  - NPTH: 10 Löcher, deckungsgleich mit dem Board innerhalb 0,02 mm
-    (Excellon speichert 3 Nachkommastellen):
+  - NPTH: 10 Löcher, deckungsgleich mit dem Board innerhalb 0,0005 mm:
+    - Die Datei ist Excellon „absolute / metric / decimal“ mit höchstens 3
+      Nachkommastellen, also 0,001 mm Auflösung. Die Toleranz ist eine halbe
+      Einheit der letzten Stelle und wird aus der Datei abgeleitet.
+    - Der Vergleich rundet nicht.
+    - Die zuvor gemeldeten Abweichungen von 0,01 mm kamen aus meiner eigenen
+      Rundung beider Seiten auf 2 Stellen, nicht aus der Datei.
+    - Gegenprobe: Ein um 0,001 mm verschobenes Loch wird als Fehler
+      gemeldet.
+    Die Löcher im Einzelnen:
     - H1 (83,25 | −54,50), H2 (66,25 | −93,50), H3 (153,25 | −131,50) und
       H4 (208,25 | −131,50), je Ø 3,2 mm;
     - J102/J103 je Ø 3,0 mm;

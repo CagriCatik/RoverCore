@@ -73,7 +73,7 @@ Online: <https://cagricatik.github.io/RoverCore/>
 
 - Lagenaufbau und **Mindest**-Hülsendicke 18 µm schriftlich beim Fertiger
   bestellen (JLCPCB nennt nur einen Mittelwert von 18 µm).
-- D502 (Status-LED): Typ und Teilenummer festlegen (O-28).
+- D502 festgelegt (Würth 150060RS75000); LCSC-Nummer und JLCPCB-Bestand prüfen.
 - Datenblattfelder (44 Teile), 3D-Modelle (14), Bauteilakten.
 - Bestückungsdruck: 1 211 Umrissstriche mit 0,12 mm im exportierten Gerber
   (JLCPCB verlangt 0,15 mm); Entscheidung offen (Bericht 3l).
