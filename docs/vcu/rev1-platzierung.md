@@ -161,7 +161,8 @@
 
 ## 3a. Lagenaufbau und vorgesehene Rückstromwege (2026-11-16)
 
-**Lagenaufbau – festgelegt 2026-11-18** (in der Board-Datei eingetragen; Fertigungsvorgabe):
+**Lagenaufbau – Fertigungsvorgabe seit 2026-11-18** (in der Board-Datei eingetragen; noch keine bestätigte
+Fertigungseigenschaft – erst die Bestellung bzw. die schriftliche Zusage des Fertigers macht daraus eine):
 
 | Lage | Dicke | Rolle |
 |---|---|---|
@@ -196,6 +197,11 @@
     Stelle ≥ 18 µm). JLCPCB veröffentlicht keinen garantierten Wert; die
     Vorgabe ist bei der Bestellung schriftlich zu bestätigen. Alle
     Rechnungen verwenden 18 µm.
+  - **Geltungsbedingung:** Alle Strom- und Thermikrechnungen dieses
+    Berichts gelten nur unter der Voraussetzung, dass die Bestellung genau
+    diesen Aufbau bzw. vereinbarte Mindestwerte (Endkupfer außen ≥ 35 µm,
+    innen ≥ 17,5 µm, Hülse an der dünnsten Stelle ≥ 18 µm) abdeckt.
+    Weicht der Auftrag ab, sind die Rechnungen zu wiederholen.
 
 **Vorgesehene Rückstromwege** (die Kupferführung dazu steht in 3b):
 
@@ -1092,11 +1098,17 @@ Umgebung 65 °C, nur D501 als Quelle):
 - Werkzeug ohne Innenlagen (konservativ): Platine 108 °C → T_j ≈ 125 °C.
 - Innenlagen als gleichwertige Flächenleitfähigkeit (In1 liegt 0,1 mm unter
   F): Platine 77 °C → T_j ≈ 93 °C.
-- Damit T_j ≈ 93–125 °C bei T_j max. 150 °C; im Mittel 90 mW statt 274 mW.
+- Zwei Modellfälle ergeben etwa 93 beziehungsweise 125 °C. Eine
+  belastbare Temperaturbegrenzung ist daraus nicht abgeleitet; Messung am
+  Muster erforderlich. Weil andere Wärmequellen im Modell fehlen, ist
+  insbesondere 125 °C keine gesicherte Obergrenze. (Im Mittel 90 mW statt
+  274 mW.)
   Das F-Kupfer (14 mm²) und das B-Kupfer (49 mm², 4 Vias) sind nicht einer
   zusammenhängenden 1-cm²-Fläche gleichwertig; der Vergleich geht über das
   Platinenmodell, nicht über die Fläche.
-- **Kein Versetzen von D501.** Offen bleiben Wärme anderer Quellen am Ort
+- **D501 bleibt vorläufig, wo er ist.** Die Entscheidung wird durch die
+  Messung bei der Erstinbetriebnahme überprüft (docs/bringup.md, Schritt D).
+  Offen bleiben Wärme anderer Quellen am Ort
   von D501 (Regler ca. 70 mm entfernt, nicht im Modell) und die Messung.
 
 *Strompfade mit festgelegtem Aufbau* (35/17,5/17,5/35 µm, Hülse 18 µm; feinstes
@@ -1111,10 +1123,13 @@ Raster):
 
 *Modellgrenzen (GND-Rechnung und allgemein)*:
 - **Ausschnitt:** Kupfer außerhalb des Rechenbereichs fehlt. Weglassen von
-  Leitern kann den Widerstand nur erhöhen (Monotonie), ein Ausschnitt macht
-  Abfälle also ungünstiger, nicht günstiger: GND-Rückstrom im Ausschnitt
-  130 × 45 mm 14,3 mV, ganze Platine 11,4 mV (Raster 0,25 mm). Für den
-  Bericht gilt die ganze Platine.
+  Leitern kann den Widerstand nur erhöhen (Monotonie). Das gilt aber nur,
+  solange Einspeise- und Senkenanschlüsse sowie die Randbedingungen im
+  Ausschnitt unverändert und passend bleiben; schneidet der Ausschnitt
+  Anschlüsse ab oder verschiebt er sie, gilt die Aussage nicht. Der
+  Vergleich GND-Rückstrom im Ausschnitt 130 × 45 mm 14,3 mV gegen ganze
+  Platine 11,4 mV (Raster 0,25 mm) ist eine Plausibilitätsprüfung, kein
+  Ersatz für diese Bedingungen. Für den Bericht gilt die ganze Platine.
 - **Raster:** Abfälle und Via-Ströme ändern sich zwischen 0,25 und 0,15 mm
   (GND) bzw. 0,1 und 0,05 mm (Servo, VBAT) um ≤ 4 %. **Punktspitzen** der
   Stromdichte an Via-Ringen und Innenecken steigen mit feinerem Raster
@@ -1246,9 +1261,9 @@ Ansichten:
   bleibt erlaubt.
 - Thermik: `scripts/kit thermal analyze` nach der Feinplatzierung. O-16:
   WROOM nur bis 65 °C, also Abstand zu den Reglern prüfen.
-- Lagenaufbau: festgelegt in 3a. Offen sind Prepreg-Dicke und
-  Außenkupfer: festgelegt in 3a (35/17,5/17,5/35 µm, Hülse IPC-6012 Kl. 2),
-  beim Fertiger zu bestätigen.
+- Lagenaufbau: Fertigungsvorgabe in 3a (35/17,5/17,5/35 µm, Prepreg
+  0,1 mm, Hülse IPC-6012 Kl. 2); beim Fertiger zu bestätigen. Bis dahin
+  gelten die Rechnungen nur unter dieser Voraussetzung.
 - 3D-Modelle der 17 Footprints ohne Modell (nur echte Herstellerdaten).
 - Weiter offen aus dem Schaltplan:
   - O-36 (ESC-Test);
