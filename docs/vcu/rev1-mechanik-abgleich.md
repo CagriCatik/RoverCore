@@ -1,5 +1,10 @@
 # Rev 1 / K1: Mechanischer Abgleich am Fahrzeug
 
+> **Überholt durch die mechanische Überarbeitung:** H1–H4 sind nur ein
+> vorläufiger Entwurf. Das neue Lochbild steht im
+> [Vorschlag](rev1-befestigung-vorschlag.md); die Prüfliste unten gilt
+> sinngemäß für das neue Lochbild.
+
 Stand 2026-11-18. Die Befestigung H1–H4 ist **vorläufig** (Bericht
 [3n](rev1-platzierung.md)). Gefunden wurden die Positionen unter den dort
 gewählten Abstandsregeln und ohne Umrouten. Ob sie zur Fahrzeugbefestigung

@@ -77,7 +77,10 @@ Online: <https://cagricatik.github.io/RoverCore/>
 - Datenblattfelder (44 Teile), 3D-Modelle (14), Bauteilakten.
 - Bestückungsdruck: 1 211 Umrissstriche mit 0,12 mm im exportierten Gerber
   (JLCPCB verlangt 0,15 mm); Entscheidung offen (Bericht 3l).
-- Befestigung: vier M3-NPTH-Bohrungen H1–H4 gesetzt, Lage **vorläufig** (keine
+- **Befestigung wird überarbeitet:** H1–H4 sind nur ein vorläufiger Entwurf; Vorschlag
+  für ein Lochbild an den vier Ecken in [rev1-befestigung-vorschlag.md](docs/vcu/rev1-befestigung-vorschlag.md)
+  (Variantenwahl und Chassismaße offen). Fertigungsvorbereitung gestoppt.
+- Bisher: vier M3-NPTH-Bohrungen H1–H4 gesetzt, Lage **vorläufig** (keine
   Chassismaße); vor der Fertigung am Fahrzeug abgleichen
   ([Prüfliste](docs/vcu/rev1-mechanik-abgleich.md)), Auflage unter dem DevKit vorsehen.
 - Bohrdateien: `kit export` liefert getrennt `RoverCore-PTH.drl` und

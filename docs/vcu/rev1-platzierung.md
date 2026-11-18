@@ -1378,6 +1378,14 @@ Ergebnis:
 
 ## 3n. Befestigungsbohrungen H1–H4 (Stand 2026-11-18, Lage vorläufig)
 
+> **Stand nach Owner-Review 2026-11-18:** H1–H4 sind ein vorläufiger Entwurf.
+> Sie wurden nachträglich in freie Stellen gesetzt; das ist kein
+> Befestigungskonzept. Die Fertigungsvorbereitung ist gestoppt. Ein neues
+> Lochbild nahe den vier Ecken, mit lokalen Platzierungs- und
+> Routingänderungen, steht als Vorschlag in
+> [rev1-befestigung-vorschlag.md](rev1-befestigung-vorschlag.md). Das Board
+> ist noch nicht geändert.
+
 **Vorgaben:** Im Repository gibt es keine Chassis- oder Gehäusemaße
 (`hardware/mechanical/` enthält nur die Vorlage). Die Lage ist deshalb ein
 **vorläufiger Vorschlag** und vor der Fertigung an der Fahrzeugbefestigung zu
