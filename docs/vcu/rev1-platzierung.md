@@ -1158,7 +1158,10 @@ PTH-Restring ≥ 0,15 mm, NPTH ≥ 0,5 mm, PTH-Bohrung zu Kupfer ≥ 0,28 mm bzw
 innen ≥ 0,3 mm, Via-Bohrung zu Kupfer ≥ 0,2 mm, Pad-Bohrabstand ≥ 0,45 mm,
 Pad-Pad ≥ 0,15 mm, Rand ≥ 0,2 mm, Bestückungsdruck ≥ 1,0 mm / 0,15 mm,
 Druck-Abstand ≥ 0,15 mm). Kupfer und Bohrungen erfüllten alle Werte schon
-vorher; DRC mit Regelsatz: 0 Verstöße, 0 offene Verbindungen.
+vorher; DRC mit Regelsatz: 0 Verstöße, 0 offene Verbindungen. **Grenze der
+Aussage:** KiCads DRC kennt keine Mindest-Linienbreite für den
+Bestückungsdruck; der Regelsatz prüft dort nur Texte und Abstände. Die
+Linienbreite ist damit **nicht** abgedeckt (3l).
 
 *Bestückungsdruck* (`hardware/scripts/silk_jlc.py`):
 - 230 Texte unter dem Minimum (Referenzen 0,8/0,12 mm, Modul-Pinbeschriftungen
@@ -1166,10 +1169,9 @@ vorher; DRC mit Regelsatz: 0 Verstöße, 0 offene Verbindungen.
 - 38 Referenzen kollidierten danach mit Druck oder Pads; sie stehen nur noch
   auf der Bestückungszeichnung (Fab-Lage), z. B. C408–C417, R415–R419, TP401,
   TP402. Die U501-Pinmarke „J3-1“ liegt auf F.Fab.
-- **Abweichung:** Umrisslinien der Bibliotheks-Footprints haben 0,12 mm
-  Strich (919 Linien) und liegen unter den 0,15 mm von JLCPCB. Sie sind keine
-  Zeichen; das Risiko ist ein dünner oder lückenhafter Druck, nicht eine
-  falsche Bestückung. Nicht geändert (Bibliotheksstand); Owner-Entscheid.
+- **Bekannte Abweichung:** Umrisslinien der Bibliotheks-Footprints haben
+  0,12 mm Strich und liegen unter den 0,15 mm von JLCPCB; Auswertung des
+  exportierten Gerbers in 3l. Nicht geändert; Owner-Entscheid.
 
 *Hülsenkupfer – Einschränkung*: JLCPCB nennt nur eine **mittlere**
 Hülsendicke von 18 µm. Die Rechnungen setzen 18 µm an der **dünnsten** Stelle
@@ -1212,11 +1214,93 @@ Geltungsbedingung).
   - Die Bestückungszeichnung aus `kit export` ist auf A4 1:1 kaum lesbar;
     ergänzend `qa/generated/fab/assembly_refs_top.pdf` / `_bottom.pdf`
     (nur Referenzen, skaliert).
-- **Keine Befestigungsbohrungen** auf K1 (Chassis offen, Abschnitt 7). Für den
-  Prototyp auf dem Labortisch unkritisch; für den Einbau offen.
+- **Keine Befestigungsbohrungen** auf K1, nur Kommentarmarken (3l). Vor der
+  Fertigung festzulegen.
 
 Erstinbetriebnahme: [docs/bringup.md](../bringup.md) (Versorgung, D501,
 Servostrompfad, Abbruchkriterien).
+
+## 3l. 3D-Vollständigkeit, Bestückungsdruck-Linien, Befestigung (Stand 2026-11-18)
+
+Schaltung, Routing und Board-Datei unverändert. Diese Klärung ändert nur
+Review-Bilder, Skripte und Dokumentation.
+
+*3D-Ansichten* (`hardware/scripts/render_populated_review.py`, Ausgabe
+`qa/generated/populated/`, nicht versioniert; Auswahl in `docs/images/`):
+- Die README-Bilder vom Stand `b8ed540` waren direkt aus der Board-Datei
+  gerendert. Teile ohne Modell fehlten, die Module waren nur als
+  Buchsenleisten zu sehen. Ersetzt durch Review-Ansichten mit und ohne
+  gesteckte Module (oben, unten, schräg vorne, schräg hinten, flach von vorne),
+  Renderqualität „high“.
+- **Hüllkörper** entstehen nur in einer Kopie der Board-Datei, nie in der
+  Bibliothek oder in `RoverCore.kicad_pcb`, und gehen nicht in den STEP-Export
+  ein. Kennzeichnung: magenta = Carrier-Teil, blau = Modul; jede Bildunterschrift
+  nennt die betroffenen Referenzen. Status je Position in `model_status.csv`:
+  213 Bibliotheksmodelle, 14 Hüllkörper, 3 Buchsenleisten mit Modulhülle,
+  23 ohne Körper (Testpunkte, Net-Ties), 0 fehlend.
+- **Warum Hüllkörper:**
+  - Die KiCad-Bibliotheksdateien für XT30PW-M, Micro-Fit 43650-0300,
+    PowerPAK SO-8, PG-TDSON-8 und DPY0002A sind in dieser KiCad-Installation
+    nicht vorhanden (`Connector_Molex.3dshapes` fehlt ganz).
+  - Für DevKit, OLED, IMU und BZ101 liegt kein Herstellermodell im Projekt.
+  - Die Dateien nachzuladen braucht eine Freigabe zum Herunterladen und einen
+    Lizenzabgleich.
+- **Steckrichtung:** XT30 und Micro-Fit haben eine dunkle Stirnfläche auf der
+  Steckseite. Das ist die Seite der Fab-Kontur, auf der das Gehäuse über die
+  Pads hinausragt (lokal y min).
+- **Ausrichtung im Render geprüft:** Draufsicht 6000 × 3600 px, in Ausschnitten
+  verglichen:
+  - Polung von C101, C406 und C407 (dunkle Markierung gegenüber „+“), Ring
+    von D101 und D501;
+  - Pin-1-Punkt gegen Druckmarke bei U201, U301, U401, U402 (bei SOT-23/-5
+    ist im Modell keine Pin-1-Marke erkennbar, dort nicht beurteilbar);
+  - Buchsenleisten J115, J116 und U501 über den Pad-Reihen.
+  Alle Bibliotheksmodelle haben Versatz und Drehung 0. Eine Drehung von ±90°
+  haben nur die Buchsenmodelle von J115/J116, einen Versatz von 22,86 mm nur
+  das zweite U501-Modell; beides stimmt im Render mit den Pads überein. Das
+  war eine Stichprobe, keine Prüfung jedes Bauteils.
+
+*Bestückungsdruck-Linien* (Auswertung der exportierten Dateien
+`RoverCore-F_Silkscreen.gto` / `B_Silkscreen.gbo`, Stand `rev-A1-DRAFT`):
+- F: 1 204 Striche mit 0,12 mm (ca. 1,66 m), B: 7 (D401, C403, C404). Laut
+  Gerber-Attribut `TO.C` gehören sie zu 241 Footprints (Umrisse, Pin-1-Marken
+  von C, R, D, Q, U, J, SW, TP, L, F, BZ). Keine Brett-Grafik, keine Texte; alle
+  Zeichen haben 0,15 mm.
+- Exportoption „Maske vom Bestückungsdruck abziehen“ ist **aus**; DRC meldet
+  keinen Druck über offenem Kupfer.
+- **Abweichung zu JLCPCB** (≥ 0,15 mm). Risiko: dünne oder lückenhafte
+  Umrisse; Bestückung und Beschriftung sind nicht betroffen.
+- **Probelauf auf einer Kopie:** Werden alle 926 Footprint-Linien unter
+  0,15 mm auf 0,15 mm gesetzt, meldet die DRC 13 neue Abstandswarnungen
+  (Druck zu Druck 0,13–0,149 mm statt 0,15 mm):
+  - Q505/Q506 (Umrisse berühren sich);
+  - J116-Rahmen zu den Pinbeschriftungen;
+  - Q101-Pin-1-Marke zur Referenz von Q403;
+  - U501-Rahmen 0,145 mm zur Platinenkante.
+  Kein Kupfer betroffen. **Nicht übernommen:** Owner-Entscheid zwischen
+  (a) verbreitern und die 13 Stellen lokal bei 0,12 mm lassen oder kürzen,
+  (b) 0,12 mm als bekannte Abweichung mit dem Fertiger abstimmen.
+
+*Befestigung*:
+- Die „fünf Montagepositionen“ aus 3h sind **Kommentarkreise auf Cmts.User**
+  (Ø 3,2 mm) bei (28 | 4), (54 | 4), (4 | 36), (91 | 81), (145 | 81)
+  (K1-Koordinaten). Sie erzeugen keine Bohrung und stehen in keinem Gerber.
+  Die frühere Prüfung galt nur dem Freiraum zu Courtyards.
+- **Kupfercheck auf dem gerouteten Stand:** Im Radius 1,8 mm (Bohrung + 0,2 mm)
+  und im Radius 3,5 mm (Unterlegscheibe) liegt an allen fünf Stellen auf keiner
+  Lage Kupfer eines anderen Netzes als GND. Nächster Courtyard 5,4–12,2 mm,
+  Rand je 4,0 mm. Bohrungen ließen sich also ohne Umrouten setzen; nur die
+  GND-Flächen werden neu gefüllt.
+- **Einschränkung:** (145 | 81) liegt unter der Hülle des gesteckten
+  USB-Steckers (10,4–17,4 mm hoch). Der Schraubenkopf kollidiert nicht, aber
+  das Werkzeug kommt nur bei abgezogenem USB-Kabel heran. (91 | 81) liegt
+  7,5 mm neben der OLED-Hülle.
+- **Notwendige mechanische Änderung (separat, vor dem nächsten Paket):**
+  Befestigungsbohrungen setzen. Offene Entscheidungen des Owners:
+  - Lage, abgestimmt mit dem Chassis;
+  - NPTH oder mit GND verbundene Hülse;
+  - Abstandshöhe unten (THT-Stifte, C403/C404/D401).
+  Bis dahin bleibt das Paket DRAFT/NO-GO.
 
 ## 4. DevKit, Antenne und USB
 
