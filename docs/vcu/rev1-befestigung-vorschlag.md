@@ -166,7 +166,9 @@ Schätzung; neue Fälle `vbat_in`, `vbat_fused`):
 | +5V_LED U601 → J108–J111 | je 0,08 A | 6,2–9,3 mV | 6,9–8,1 mV |
 | +5V_EXT U602 → J112 | 0,30 A | 5,7 mV | 6,4 mV |
 
-Kein Pfad ist wesentlich schlechter geworden. Eine Erwärmungsrechnung ist das nicht (siehe 3j).
+Keine wesentliche Verschlechterung im untersuchten DC-Fall. VBAT_FUSED ist beim Spannungsabfall
+leicht schlechter geworden (2,24 → 2,50 mV), seine höchste berechnete Stromdichte sinkt (3,00 → 2,82 A/mm);
++5V_EXT steigt von 5,7 auf 6,4 mV. Eine Erwärmungsrechnung ist das nicht (siehe 3j).
 
 **Steckerzugang:**
 - **J101 XT30:** Der Gegenstecker (XT30-Buchse) steckt von links über die Kante und liegt
