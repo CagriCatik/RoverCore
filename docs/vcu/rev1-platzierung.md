@@ -1393,6 +1393,25 @@ erlaubt):*
   Platine nur als Buchsenleisten; als ganze Module sind sie nur in den Review-Ansichten zu sehen, als
   Hüllkörper.
 
+*Nachtrag 2026-11-19 (BZ101, STEP):*
+- **BZ101:** eigenes Modell nach der Maßzeichnung des Same-Sky-Datenblatts (09/11/2024). Das PDF ist
+  ohne Konto ladbar; eine E-Mail-Angabe war dafür nicht nötig.
+  - Maße: 8,5 × 8,5 × 4,0 mm (+0,2/−0), Fasen 1,5 × 45°, Bodenfreiheit 0,15 mm, Schallöffnung Ø 2,1 mm.
+  - Die Anschlussform ist vereinfacht.
+  - Polung: Pad 1 (+5V) unten rechts, wie im „Recommended PCB Layout“.
+- **STEP:** Der Generator schreibt jedes eigene Modell zusätzlich als STEP AP214 (facettierte B-Rep
+  mit Farben). KiCad liest diese Dateien (Render geprüft); das Board verweist jetzt auf die
+  STEP-Dateien.
+- **Board-STEP** (`kit export`, `rev-A3-DRAFT/mechanical/board.step`): enthält die eigenen Modelle und
+  das Molex-Modell. `models_3d`: 0 Funde.
+- **Grenzen des Board-STEP** (für Gehäusekonstruktion und Kollisionsprüfung):
+  - Die gesteckten Module DevKit, OLED und IMU fehlen; enthalten sind nur ihre Buchsenleisten, die
+    Hüllen gibt es nur in den Review-Bildern.
+  - Das Molex-Modell fehlt in einem frischen Checkout ohne `vendor/`.
+  - Die eigenen Modelle sind vereinfacht und gegen Zeichnungsnennmaße gebaut; die XT30-Höhe ist
+    geschätzt.
+  - Verlässlich sind am Ende nur die echten Teile beim Passungstest.
+
 *Für die blockierten Teile braucht es den Owner:*
 - **Ultra Librarian (TPD1E05U06):** im Browser-Bereich anmelden; dann lade ich
   das Modell und prüfe es wie oben.

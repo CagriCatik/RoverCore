@@ -5,7 +5,7 @@ ESP32-S3-DevKitC-1, IMU (Adafruit 4438), OLED (Adafruit 326), geregelte
 Servoschiene, 5-V-Logikversorgung, LED-, Empfänger- und UART-Ausgänge.
 KiCad 10.0.7, 4 Lagen, 160 × 85 mm (Variante B, vier M3-Eckbohrungen).
 
-**Stand 2026-11-18: Variante B umgesetzt, DRAFT-Paket A2 (NO-GO). Fertigung gestoppt bis zum Fahrzeugabgleich.**
+**Stand 2026-11-18: Variante B umgesetzt, DRAFT-Paket A3 (NO-GO). Fertigung gestoppt bis zum Fahrzeugabgleich.**
 ERC, DRC und Schaltplan-Parität bestehen im lokalen Lauf. Der
 JLCPCB-Regelsatz im DRC prüft Kupfer, Bohrungen und Texte, aber keine
 Linienbreiten im Bestückungsdruck (bekannte Abweichung, siehe unten). Das ist ein Werkzeugergebnis; elektrische, thermische und
@@ -18,11 +18,12 @@ prüfbare Prototyp nach dem [Inbetriebnahmeplan](docs/bringup.md).
 
 Review-Ansichten (`hardware/scripts/render_populated_review.py`): Bauteile mit
 KiCad-Bibliotheksmodell erscheinen normal. J102/J103 zeigen das Molex-Herstellermodell
-(projektlokal, nicht in Git). J101 XT30, Q101, Q401/Q402 und D601–D604, D606–D608 zeigen **eigene
-Gehäusemodelle**, aus den Herstellerzeichnungen erzeugt (`hardware/scripts/make_package_models.py`, MIT; Maße
-und Quellen in `hardware/libraries/3d-models/models.csv`; die XT30-Höhe ist geschätzt). **Magenta** ist nur noch
-der Hüllkörper für BZ101 (Modell bei Same Sky nur gegen E-Mail und Zustimmung zu den CAD-Bedingungen).
-**Blau** sind Hüllkörper der gesteckten Module (DevKit, OLED, IMU). Hüllkörper sind keine Herstellermodelle;
+(projektlokal, nicht in Git). J101 XT30, BZ101, Q101, Q401/Q402 und D601–D604, D606–D608 zeigen **selbst erzeugte,
+vereinfachte Gehäusemodelle nach den Maßzeichnungen der Hersteller** – keine heruntergeladenen Herstellermodelle
+(`hardware/scripts/make_package_models.py`, MIT, als STEP und VRML; Maße und Quellen in
+`hardware/libraries/3d-models/models.csv`; geschätzt bzw. vereinfacht: XT30-Höhe, Anschlussform BZ101).
+**Blau** sind Hüllkörper der gesteckten Module (DevKit, OLED, IMU), Höhen geschätzt. Hüllkörper und eigene Modelle
+sind keine verlässlichen mechanischen Modelle; die echten Teile entscheiden beim Passungstest.
 Status je Position in `qa/generated/populated/model_status.csv`, Bericht 3g, 3l, 3m.
 
 | Mit Modulen | Ohne Module (Buchsenleisten) |
@@ -84,8 +85,11 @@ Online: <https://cagricatik.github.io/RoverCore/>
 - Bohrdateien: `kit export` liefert getrennt `RoverCore-PTH.drl` und
   `RoverCore-NPTH.drl`; beide hochladen und die 10 NPTH-Löcher in der
   Fertiger-Vorschau prüfen (Bericht 3n).
-- 3D: Für BZ101 und die Module DevKit, OLED, IMU fehlen noch Modelle (Hüllkörper). J102/J103 haben das
-  Molex-Modell, J101, Q101, Q401/Q402 und D601–D608 eigene Gehäusemodelle nach Herstellerzeichnung.
+- 3D / STEP: Alle Carrier-Teile haben ein Modell (`models_3d` 0 Funde). Der Board-STEP (`kit export`,
+  `mechanical/board.step`) enthält die eigenen Modelle, ist für Gehäusekonstruktion und Kollisionsprüfung aber
+  **unvollständig**: Die gesteckten Module DevKit, OLED und IMU fehlen darin (nur ihre Buchsenleisten; die blauen
+  Hüllen gibt es nur in den Review-Bildern), und das Molex-Modell J102/J103 fehlt in einem frischen Checkout,
+  solange `vendor/` nicht geladen ist. Eigene Modelle sind vereinfacht (XT30-Höhe geschätzt).
 - GO-Freigabe nur mit signierter Freigabe (`manufacturing/approval.example.json`)
   und `--authorize`.
 
@@ -115,8 +119,8 @@ Prüfung eines DRAFT-Pakets gegen das Board und Gerber-Vorschau:
 
 ```sh
 /Applications/KiCad/KiCad.app/Contents/Frameworks/Python.framework/Versions/Current/bin/python3 \
-  hardware/scripts/fab_package_check.py RoverCore.kicad_pcb manufacturing/releases/generated/rev-A2-DRAFT
-python3 -I hardware/scripts/gerber_preview.py manufacturing/releases/generated/rev-A2-DRAFT qa/generated/fab
+  hardware/scripts/fab_package_check.py RoverCore.kicad_pcb manufacturing/releases/generated/rev-A3-DRAFT
+python3 -I hardware/scripts/gerber_preview.py manufacturing/releases/generated/rev-A3-DRAFT qa/generated/fab
 ```
 
 Die Werkzeuge sind aus PCB-Project-Template 2.0.0 übernommen; Herkunft,

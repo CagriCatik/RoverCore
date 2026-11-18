@@ -205,7 +205,7 @@ Wert mehr):
 `mounting_holes.py place` ist stillgelegt, die Suche bleibt.
 
 **Fertigungsdaten:**
-- Neues Paket `manufacturing/releases/generated/rev-A2-DRAFT` (NO-GO), Paketabgleich 0 Fehler:
+- Paket `manufacturing/releases/generated/rev-A2-DRAFT` (NO-GO), Paketabgleich 0 Fehler (seit 2026-11-19 ersetzt durch `rev-A3-DRAFT`: gleiche Kupfer- und Bohrdaten, STEP mit den eigenen Gehäusemodellen):
   - NPTH 10 = Board;
   - PTH 417 = Board, innerhalb 0,0005 mm.
 - `rev-A1-DRAFT` und `rev-A0-tooling-DRAFT` sind überholt und mit `SUPERSEDED.txt`

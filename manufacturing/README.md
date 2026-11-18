@@ -10,6 +10,7 @@ KiCad CLI to regenerate from approved design.
 
 ## RoverCore status (2026-11-18)
 
-Current DRAFT package: `releases/generated/rev-A2-DRAFT` (variant B, 160 x 85 mm, NO-GO). `rev-A1-DRAFT` and
-`rev-A0-tooling-DRAFT` are superseded (marked with `SUPERSEDED.txt`); do not upload them. Fabrication stays stopped
+Current DRAFT package: `releases/generated/rev-A3-DRAFT` (variant B, 160 x 85 mm, NO-GO; board.step with the own
+package models, but without the plug-in modules). `rev-A2-DRAFT`, `rev-A1-DRAFT` and `rev-A0-tooling-DRAFT` are
+superseded (marked with `SUPERSEDED.txt`); do not upload them. Fabrication stays stopped
 until the vehicle check and the open reviews are done.
