@@ -33,7 +33,7 @@ DY_IN = 3.0
 MOVES = {"J101": (0, DY_IN), "F101": (-1.4, 2.4),
          "J108": (7.5, 0), "J109": (6.5, 0), "J110": (5.5, 0), "J111": (4.5, 0), "J112": (3.5, 0)}
 PLACE = {"R520": (58.5, 74.9), "TP506": (63.0, 81.4), "TP101": (9.0, 27.5)}          # new centres (free spots, checked by DRC)
-HOLES = {"H1": (4.5, 4.5), "H2": (4.5, 80.5), "H3": (155.5, 16.0), "H4": (155.5, 80.5)}
+HOLES = {"H1": (4.5, 4.5), "H2": (4.5, 80.5), "H3": (155.5, 18.0), "H4": (155.5, 80.5)}  # H3: washer edge >= 15 mm (in plane) from the antenna keep-out
 JAR = Path.home() / "Documents/KiCad/10.0/3rdparty/plugins/app_freerouting_kicad-plugin/jar/freerouting-2.4.1.jar"
 
 

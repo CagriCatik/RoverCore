@@ -74,6 +74,11 @@ CASES = {
                   sinks=[("J107", [("J107", "2")], 0.21)]),
     # servo return current (11.2 A) from the connectors to the battery connector (9.35 A, input current of the servo
     # buck) and to the low-side FET Q402 (1.85 A, average freewheel share = output minus input current; estimate)
+    # input path J101 -> F101 -> Q101 (pours VBAT_IN / VBAT_FUSED), full VCU input 10.1 A at 9.0 V (3.10)
+    "vbat_in": dict(net="/Power/VBAT_IN", layers=["F.Cu", "B.Cu"], source=[("J101", "2")],
+                    sinks=[("F101 input", [("F101", "1")], 10.1)]),
+    "vbat_fused": dict(net="/Power/VBAT_FUSED", layers=["F.Cu", "B.Cu"], source=[("F101", "2")],
+                       sinks=[("Q101 drain", [("Q101", "5")], 10.1)]),
     "gnd_servo": dict(net="GND", layers=["F.Cu", "In1.Cu", "In2.Cu", "B.Cu"], source=[("J101", "1")],
                       sinks=[("J102 front servo", [("J102", "3")], -5.1), ("J103 rear servo", [("J103", "3")], -5.1),
                              ("J104 reserve", [("J104", "3")], -0.5), ("J105 reserve", [("J105", "3")], -0.5),
