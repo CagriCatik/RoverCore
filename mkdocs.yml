@@ -1,0 +1,52 @@
+site_name: RoverCore VCU Rev 1
+site_description: Modulare VCU-Trägerplatine für einen RC-Rover (KiCad 10.0.7)
+site_url: https://cagricatik.github.io/RoverCore/
+repo_url: https://github.com/CagriCatik/RoverCore
+edit_uri: edit/main/docs/
+docs_dir: docs
+theme:
+  name: material
+  language: de
+  features:
+    - navigation.sections
+    - navigation.top
+    - search.highlight
+    - content.code.copy
+  palette:
+    - scheme: default
+      primary: green
+      toggle: {icon: material/brightness-7, name: Dunkel}
+    - scheme: slate
+      primary: green
+      toggle: {icon: material/brightness-4, name: Hell}
+markdown_extensions:
+  - tables
+  - toc: {permalink: true}
+  - admonition
+  - attr_list
+nav:
+  - Übersicht: index.md
+  - Erstinbetriebnahme: bringup.md
+  - VCU Rev 1:
+      - Versorgung und Boardwahl: vcu/rev1-versorgung-und-boardwahl.md
+      - Pin- und Anschlussplan: vcu/rev1-pin-und-anschlussplan.md
+      - Platzierung, Routing, Fertigung: vcu/rev1-platzierung.md
+      - Review 2026-11-15: vcu/rev1-review-2026-11-15.md
+      - Schaltplan-Darstellung 2026-11-15: vcu/reviews/2026-11-15-schematic-layout.md
+      - Werkzeuge: vcu/tooling-integration.md
+  - Projekt:
+      - Anforderungen: requirements.md
+      - Architektur: architecture.md
+      - Schnittstellen: interfaces.md
+      - Verifikationsplan: verification-plan.md
+      - Konventionen: conventions.md
+      - ADR-0001: decisions/ADR-0001-repo-boundaries.md
+  - Engineering-Richtlinien:
+      - engineering/README.md
+      - engineering/component-selection.md
+      - engineering/datasheet-review.md
+      - engineering/schematic-guidelines.md
+      - engineering/placement-guidelines.md
+      - engineering/routing-guidelines.md
+      - engineering/manufacturing-guidelines.md
+      - engineering/lessons-learned.md
