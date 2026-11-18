@@ -5,8 +5,8 @@ Usage: <KiCad python> current_map.py BOARD.kicad_pcb CASE OUTDIR [--grid 0.1] [-
 CASE is one of CASES below (net, layers, source terminal, sink terminals with load currents from the power budget).
 
 Model: the net's copper (filled zones, tracks, pads, via rings) is rasterised per layer on a square grid; neighbouring
-copper cells are joined by the sheet conductance of 35 um copper, vias and plated pad holes join the layers with the
-barrel resistance (plating 20 um assumed, IPC class 2 average), terminals (pads) are equipotential. The source pad is
+copper cells are joined by the sheet conductance of the layer's copper thickness from the board stackup, vias and plated pad holes join the layers with the
+barrel resistance (18 um plating, IPC-6012 class 2 thinnest point), terminals (pads) are equipotential. The source pad is
 held at 0 V, each sink draws its load current; the linear network is solved directly (scipy).
 Not modelled: temperature rise and copper heating (IPC-2152 needs board/environment data), plating tolerance, solder
 fill of holes, skin effect / switching ripple (DC only), contact resistance of connectors.
@@ -28,9 +28,26 @@ from scipy.sparse.csgraph import connected_components
 
 T, M = pcbnew.ToMM, pcbnew.FromMM
 RHO = 1.72e-8          # Ohm*m, copper at 20 degC
-T_CU = 35e-6           # m, outer and inner copper of the stackup (3a)
-T_PLATE = 20e-6        # m, hole plating (assumption)
-Z = {"F.Cu": 0.0, "In1.Cu": 0.135, "In2.Cu": 1.41, "B.Cu": 1.545}  # mm, copper layer positions from the stackup
+T_PLATE = 18e-6        # m, hole wall copper: IPC-6012 class 2 thinnest point (fabrication requirement, 3a)
+
+
+def stackup(path):
+    """Copper thickness (m) and centre position (mm from the top) of every copper layer, read from the (stackup ...)
+    block of the board file (the KiCad 10 Python binding does not expose the stackup items)."""
+    import re
+    txt = Path(path).read_text()
+    blk = txt[txt.index("(stackup"):]
+    blk = blk[:blk.index("(copper_finish")] if "(copper_finish" in blk else blk[:20000]
+    tcu, z, pos = {}, {}, 0.0
+    for m in re.finditer(r'\(layer "([^"]+)"\s*\(type "([^"]+)"\)(.*?)(?=\(layer "|\Z)', blk, re.S):
+        name, typ, body = m.groups()
+        th = re.search(r"\(thickness ([0-9.]+)", body)
+        th = float(th.group(1)) if th else 0.0
+        if typ == "copper":
+            tcu[name], z[name] = th * 1e-3, pos + th / 2
+        if typ == "copper" or name.startswith("dielectric"):
+            pos += th
+    return tcu, z
 G_TERM = 1e4           # S per cell, pad terminal tie (equipotential pad)
 
 # Loads: rev1-versorgung-und-boardwahl.md 3.2/3.4/3.10 and rev1-pin-und-anschlussplan.md (worst case, blocked servos).
@@ -164,7 +181,10 @@ def main():
         idx[ln] = a
         n += k
     rows, cols, vals = [], [], []
-    gs = T_CU / RHO  # S, square cell
+    TCU, Z = stackup(pcb)
+    print("stackup copper (um): %s; hole plating %.0f um" % (", ".join("%s %.1f" % (k, v * 1e6) for k, v in TCU.items()),
+                                                           T_PLATE * 1e6))
+    gsl = {ln: TCU[ln] / RHO for ln in c["layers"]}  # S, square cell, per layer
 
     def link(i, j, gg):
         rows.extend([i, j, i, j]); cols.extend([i, j, j, i]); vals.extend([gg, gg, -gg, -gg])
@@ -176,7 +196,7 @@ def main():
         edges[ln] = (a[:, :-1][h], a[:, 1:][h], a[:-1, :][v], a[1:, :][v], h, v)
         for p_, q_ in ((a[:, :-1][h], a[:, 1:][h]), (a[:-1, :][v], a[1:, :][v])):
             rows.extend(np.concatenate([p_, q_, p_, q_])); cols.extend(np.concatenate([p_, q_, q_, p_]))
-            vals.extend(np.concatenate([np.full(len(p_), gs)] * 2 + [np.full(len(p_), -gs)] * 2))
+            vals.extend(np.concatenate([np.full(len(p_), gsl[ln])] * 2 + [np.full(len(p_), -gsl[ln])] * 2))
 
     def cell(ln, x, y):
         i, j = int((x - x0) / g), int((y - y0) / g)
@@ -247,8 +267,12 @@ def main():
     V[free] = spl.spsolve(Ak[free][:, free].tocsc(), Ivec[free])
     Vn = np.full(n, np.nan)
     Vn[keep] = V
-    print("case %s, net %s, grid %.2f mm, %d copper cells; ESTIMATE (35 um copper, 20 um plating, 20 degC)" %
-          (case, c["net"], g, n, ))
+    e = b.GetBoardEdgesBoundingBox()
+    ox, oy = T(e.GetLeft()) + 0.05, T(e.GetTop()) + 0.05
+    print("case %s, net %s, grid %.2f mm, %d copper cells; ESTIMATE (copper from the stackup, 20 degC)" %
+          (case, c["net"], g, n))
+    print("model region (K1 coordinates): x %.1f-%.1f, y %.1f-%.1f; copper outside is not modelled" %
+          (x0 - ox, x0 + nx * g - ox, y0 - oy, y0 + ny * g - oy))
     print("terminal drops (source = %s):" % ", ".join("%s.%s" % x for x in c["source"]))
     for sl, pl, cur in c["sinks"]:
         v = Vn[term[sl]]
@@ -260,7 +284,7 @@ def main():
         p_, q_, r_, s_, h, v = edges[ln]
         for aa, bb_ in ((p_, q_), (r_, s_)):
             dv = Vn[aa] - Vn[bb_]
-            loss += np.nansum(dv * dv * gs)
+            loss += np.nansum(dv * dv * gsl[ln])
     print("copper loss in the modelled layers: %.3f W" % loss)
     print("barrels (vias / plated pad holes) carrying > 0.05 A:")
     rep = []
@@ -278,8 +302,8 @@ def main():
         a = idx[ln]
         Vg = np.where(a >= 0, Vn[np.maximum(a, 0)], np.nan)
         ix = np.zeros((ny, nx)); iy = np.zeros((ny, nx))
-        dx = (Vg[:, :-1] - Vg[:, 1:]) * gs
-        dy = (Vg[:-1, :] - Vg[1:, :]) * gs
+        dx = (Vg[:, :-1] - Vg[:, 1:]) * gsl[ln]
+        dy = (Vg[:-1, :] - Vg[1:, :]) * gsl[ln]
         dx = np.nan_to_num(dx); dy = np.nan_to_num(dy)
         ix[:, :-1] += dx / 2; ix[:, 1:] += dx / 2
         iy[:-1, :] += dy / 2; iy[1:, :] += dy / 2

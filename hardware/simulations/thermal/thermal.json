@@ -8,9 +8,13 @@
   "copper_k_w_mk": 390.0,
   "dielectric_k_inplane_w_mk": 0.8,
   "dielectric_k_through_w_mk": 0.3,
-  "copper_thickness_mm": {"F.Cu": null, "B.Cu": null},
-  "via_plating_mm": 0.025,
+  "copper_thickness_mm": {
+    "F.Cu": null,
+    "B.Cu": null
+  },
+  "via_plating_mm": 0.018,
   "board_max_c": 105.0,
   "hotspot_count": 10,
-  "hotspot_separation_mm": 2.0
+  "hotspot_separation_mm": 2.0,
+  "notes": "2026-11-18: via_plating 0.018 mm = IPC-6012 class 2 thinnest point (fabrication requirement, rev1-platzierung 3a). Ambient for the D501 check: 65 degC (O-16) via --ambient."
 }

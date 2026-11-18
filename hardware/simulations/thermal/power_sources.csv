@@ -1,1 +1,2 @@
 reference,power_w,basis,theta_jb_c_per_w,limit_c,notes
+D501,0.274,calculation,60,150,"PMEG4010CEH: 0.55 A continuous x V_F max 0.498 V (0.5 A 490 mV / 0.7 A 520 mV, 25 degC pulsed, interpolated); theta = Rth(j-sp) 60 K/W, datasheet v.3 Table 6; Tj max 150 degC"
