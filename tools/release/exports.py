@@ -115,7 +115,7 @@ def export_plan(stage, sch, pcb):
          ["--format", "excellon", "--excellon-units", "mm", "--generate-map", "--map-format", "pdf",
           "--output", str(fab / "drill") + "/", pcb], [fab / "drill"]),
         ("bom", ("sch", "export", "bom"),
-         ["--fields", BOM_FIELDS, "--labels", BOM_LABELS, "--group-by", "Value,Footprint,Manufacturer,MPN",
+         ["--fields", BOM_FIELDS, "--labels", BOM_LABELS, "--group-by", "Value,Footprint,Manufacturer,MPN,${DNP}",
           "--output", asm / "bom.csv", sch], [asm / "bom.csv"]),
         ("positions", ("pcb", "export", "pos"),
          ["--format", "csv", "--units", "mm", "--side", "both", "--exclude-dnp", "--output",

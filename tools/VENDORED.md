@@ -49,6 +49,9 @@ tests (`test_templates`, `test_gui`, `test_manager`, `test_layout`,
   `RoverCore-kit` so it never shares state with a separate template checkout.
 - `tools/__init__.py`, `tools/thermal/geometry.py`, `tools/kicad/ipc.py`:
   docstring/messages only.
+- `tools/release/exports.py` (2026-11-18): BOM `--group-by` also groups by
+  `${DNP}`. Without it a fitted part (R616) was merged into a DNP line
+  (R801/R802) and marked DNP in the BOM while the position file placed it.
 - `qa/tests/test_components.py`, `test_thermal.py`, `test_installer.py`: use
   fixture copies instead of the project generator; installer tests check the
   template-free behaviour and the local launcher.
