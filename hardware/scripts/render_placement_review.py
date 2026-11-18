@@ -175,7 +175,7 @@ def finger_check(board, env):
     return rows
 
 
-HOLES_REV = [(28.0, 4.0), (54.0, 4.0), (4.0, 36.0), (91.0, 81.0), (145.0, 81.0)]  # K1 provisional M3 markers (Cmts.User)
+HOLES_REV = [(21.0, 4.0), (4.0, 43.0), (91.0, 81.0), (146.0, 81.0)]  # H1-H4, provisional (mounting_holes.py)
 
 
 def svg(view, side, parts, draw, edges, copper, env=None, fingers=None):

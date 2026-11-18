@@ -8,7 +8,107 @@
 		(title "${PROJECTNAME}")
 		(rev "A")
 	)
-	(lib_symbols)
+	(lib_symbols
+		(symbol "Mechanical:MountingHole"
+			(pin_names
+				(offset 1.016)
+			)
+			(exclude_from_sim no)
+			(in_bom no)
+			(on_board yes)
+			(in_pos_files yes)
+			(duplicate_pin_numbers_are_jumpers no)
+			(property "Reference" "H"
+				(at 0 5.08 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Value" "MountingHole"
+				(at 0 3.175 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" ""
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Datasheet" ""
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Description" "Mounting Hole without connection"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "ki_keywords" "mounting hole"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "ki_fp_filters" "MountingHole*"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(symbol "MountingHole_0_1"
+				(circle
+					(center 0 0)
+					(radius 1.27)
+					(stroke
+						(width 1.27)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
+	)
 	(sheet
 		(at 63.5 50.8)
 		(size 38.1 15.24)
@@ -417,6 +517,168 @@
 			(project "RoverCore"
 				(path "/d069f045-7f09-4f8a-bd29-51e87a8a0808"
 					(page "8")
+				)
+			)
+		)
+	)
+	(text "Mounting: H1-H4 M3 NPTH 3.2 mm. Positions PROVISIONAL - no chassis/enclosure data;\nconfirm against the vehicle mounting before fabrication (docs/vcu/rev1-platzierung.md 3n)."
+		(exclude_from_sim no)
+		(at 63.5 170.18 0)
+		(effects (font (size 1.27 1.27)) (justify left))
+		(uuid "a021a046-7fb8-53fe-8b5c-973f48941f88")
+	)
+	(symbol
+		(lib_id "Mechanical:MountingHole")
+		(at 63.50 177.80 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom no)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "66d614ff-262e-58a6-a3d9-c5720396f40b")
+		(property "Reference" "H1"
+			(at 66.04 176.53 0)
+			(effects (font (size 1.27 1.27)) (justify left))
+		)
+		(property "Value" "M3 NPTH"
+			(at 66.04 179.07 0)
+			(effects (font (size 1.27 1.27)) (justify left))
+		)
+		(property "Footprint" "ProjectFootprints:MountingHole_3.2mm_M3_NPTH_Keepout"
+			(at 63.50 177.80 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "Datasheet" "~"
+			(at 63.50 177.80 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "Description" "Mounting hole M3, NPTH 3.2 mm, provisional position (no chassis data)"
+			(at 63.50 177.80 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(instances
+			(project "RoverCore"
+				(path "/d069f045-7f09-4f8a-bd29-51e87a8a0808"
+					(reference "H1")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Mechanical:MountingHole")
+		(at 81.28 177.80 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom no)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "8700df91-2d03-53a8-96cc-5412ae75e6fe")
+		(property "Reference" "H2"
+			(at 83.82 176.53 0)
+			(effects (font (size 1.27 1.27)) (justify left))
+		)
+		(property "Value" "M3 NPTH"
+			(at 83.82 179.07 0)
+			(effects (font (size 1.27 1.27)) (justify left))
+		)
+		(property "Footprint" "ProjectFootprints:MountingHole_3.2mm_M3_NPTH_Keepout"
+			(at 81.28 177.80 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "Datasheet" "~"
+			(at 81.28 177.80 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "Description" "Mounting hole M3, NPTH 3.2 mm, provisional position (no chassis data)"
+			(at 81.28 177.80 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(instances
+			(project "RoverCore"
+				(path "/d069f045-7f09-4f8a-bd29-51e87a8a0808"
+					(reference "H2")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Mechanical:MountingHole")
+		(at 99.06 177.80 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom no)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "7b134ecd-e6fe-5fa0-a582-664b2c6cbfc2")
+		(property "Reference" "H3"
+			(at 101.60 176.53 0)
+			(effects (font (size 1.27 1.27)) (justify left))
+		)
+		(property "Value" "M3 NPTH"
+			(at 101.60 179.07 0)
+			(effects (font (size 1.27 1.27)) (justify left))
+		)
+		(property "Footprint" "ProjectFootprints:MountingHole_3.2mm_M3_NPTH_Keepout"
+			(at 99.06 177.80 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "Datasheet" "~"
+			(at 99.06 177.80 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "Description" "Mounting hole M3, NPTH 3.2 mm, provisional position (no chassis data)"
+			(at 99.06 177.80 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(instances
+			(project "RoverCore"
+				(path "/d069f045-7f09-4f8a-bd29-51e87a8a0808"
+					(reference "H3")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Mechanical:MountingHole")
+		(at 116.84 177.80 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom no)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "75dbb095-eb8c-5f32-9388-c068b92a0fac")
+		(property "Reference" "H4"
+			(at 119.38 176.53 0)
+			(effects (font (size 1.27 1.27)) (justify left))
+		)
+		(property "Value" "M3 NPTH"
+			(at 119.38 179.07 0)
+			(effects (font (size 1.27 1.27)) (justify left))
+		)
+		(property "Footprint" "ProjectFootprints:MountingHole_3.2mm_M3_NPTH_Keepout"
+			(at 116.84 177.80 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "Datasheet" "~"
+			(at 116.84 177.80 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "Description" "Mounting hole M3, NPTH 3.2 mm, provisional position (no chassis data)"
+			(at 116.84 177.80 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(instances
+			(project "RoverCore"
+				(path "/d069f045-7f09-4f8a-bd29-51e87a8a0808"
+					(reference "H4")
+					(unit 1)
 				)
 			)
 		)
