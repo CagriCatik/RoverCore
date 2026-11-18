@@ -1378,7 +1378,9 @@ Ergebnis:
 
 ## 3n. Befestigungsbohrungen H1–H4 (Stand 2026-11-18, Lage vorläufig)
 
-> **Stand nach Owner-Review 2026-11-18:** H1–H4 sind ein vorläufiger Entwurf.
+> **Ersetzt 2026-11-18 durch Variante B** (160 × 85 mm, vier Eckbohrungen, [Umsetzung und Prüfung](rev1-befestigung-vorschlag.md)). Der folgende Abschnitt beschreibt den überholten ersten Entwurf.
+>
+> Stand nach Owner-Review 2026-11-18: H1–H4 waren ein vorläufiger Entwurf.
 > Sie wurden nachträglich in freie Stellen gesetzt; das ist kein
 > Befestigungskonzept. Die Fertigungsvorbereitung ist gestoppt. Ein neues
 > Lochbild nahe den vier Ecken, mit lokalen Platzierungs- und

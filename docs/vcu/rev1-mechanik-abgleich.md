@@ -1,11 +1,12 @@
 # Rev 1 / K1: Mechanischer Abgleich am Fahrzeug
 
-> **Überholt durch die mechanische Überarbeitung:** H1–H4 sind nur ein
-> vorläufiger Entwurf. Das neue Lochbild steht im
-> [Vorschlag](rev1-befestigung-vorschlag.md); die Prüfliste unten gilt
-> sinngemäß für das neue Lochbild.
+> **Gilt für Variante B** (Kontur 160 × 85 mm, H1 (4,5 | 4,5), H2 (4,5 | 80,5), H3 (155,5 | 18,0),
+> H4 (155,5 | 80,5); [Umsetzung und Prüfung](rev1-befestigung-vorschlag.md)). Die 1:1-Vorlage liest
+> Kontur und Löcher aus dem Board. Lochabstände der Mitten: H1–H2 76,0, H3–H4 62,5, H2–H4 151,0,
+> H1–H3 151,6 mm. Die Auflage unter dem DevKit bleibt im Plan, bis der Stecktest (M9) zeigt, ob die
+> rechten Bohrungen genügen.
 
-Stand 2026-11-18. Die Befestigung H1–H4 ist **vorläufig** (Bericht
+Stand 2026-11-18. Die Befestigung ist **vorläufig** (Bericht
 [3n](rev1-platzierung.md)). Gefunden wurden die Positionen unter den dort
 gewählten Abstandsregeln und ohne Umrouten. Ob sie zur Fahrzeugbefestigung
 passen, ist offen. Eine bestandene DRC ersetzt diesen Abgleich nicht.

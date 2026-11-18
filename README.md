@@ -3,9 +3,9 @@
 Modulare VCU-Trägerplatine (Rev 1) für einen RC-Rover: steckbares
 ESP32-S3-DevKitC-1, IMU (Adafruit 4438), OLED (Adafruit 326), geregelte
 Servoschiene, 5-V-Logikversorgung, LED-, Empfänger- und UART-Ausgänge.
-KiCad 10.0.7, 4 Lagen, 150 × 85 mm.
+KiCad 10.0.7, 4 Lagen, 160 × 85 mm (Variante B, vier M3-Eckbohrungen).
 
-**Stand 2026-11-18: Layout geschlossen, DRAFT-Fertigungspaket A1 (NO-GO).**
+**Stand 2026-11-18: Variante B umgesetzt, DRAFT-Paket A2 (NO-GO). Fertigung gestoppt bis zum Fahrzeugabgleich.**
 ERC, DRC und Schaltplan-Parität bestehen im lokalen Lauf. Der
 JLCPCB-Regelsatz im DRC prüft Kupfer, Bohrungen und Texte, aber keine
 Linienbreiten im Bestückungsdruck (bekannte Abweichung, siehe unten). Das ist ein Werkzeugergebnis; elektrische, thermische und
@@ -33,7 +33,8 @@ Quellen stehen in `qa/generated/populated/model_status.csv` und im Bericht
 | ![Mit Modulen, oben](docs/images/populated_top.jpg) | ![Ohne Module, oben](docs/images/without_modules_top.jpg) |
 | ![Flach von vorne](docs/images/populated_front_low.jpg) | ![Unterseite](docs/images/populated_bottom.jpg) |
 
-Befestigung (vorläufig, Bericht 3n): vier M3-Bohrungen, NPTH 3,2 mm; orange in
+Befestigung Variante B ([Bericht](docs/vcu/rev1-befestigung-vorschlag.md)): vier M3-Bohrungen, NPTH 3,2 mm,
+(4,5 | 4,5), (4,5 | 80,5), (155,5 | 18,0), (155,5 | 80,5); vorläufig bis zum Fahrzeugabgleich; orange in
 den 3D-Ansichten = Hüllkörper für Scheibe, Kopf und 10-mm-Abstandshalter.
 
 ![Bemaßte Draufsicht der Befestigungsbohrungen](docs/images/mounting_top.jpg)
@@ -77,12 +78,10 @@ Online: <https://cagricatik.github.io/RoverCore/>
 - Datenblattfelder (44 Teile), 3D-Modelle (14), Bauteilakten.
 - Bestückungsdruck: 1 211 Umrissstriche mit 0,12 mm im exportierten Gerber
   (JLCPCB verlangt 0,15 mm); Entscheidung offen (Bericht 3l).
-- **Befestigung wird überarbeitet:** H1–H4 sind nur ein vorläufiger Entwurf; Vorschlag
-  für ein Lochbild an den vier Ecken in [rev1-befestigung-vorschlag.md](docs/vcu/rev1-befestigung-vorschlag.md)
-  (Variantenwahl und Chassismaße offen). Fertigungsvorbereitung gestoppt.
-- Bisher: vier M3-NPTH-Bohrungen H1–H4 gesetzt, Lage **vorläufig** (keine
-  Chassismaße); vor der Fertigung am Fahrzeug abgleichen
-  ([Prüfliste](docs/vcu/rev1-mechanik-abgleich.md)), Auflage unter dem DevKit vorsehen.
+- **Befestigung Variante B umgesetzt** (Kontur 160 × 85, vier Eckbohrungen); offen ist der
+  Abgleich am Fahrzeug mit der 1:1-Vorlage ([Prüfliste](docs/vcu/rev1-mechanik-abgleich.md)) und der
+  Stecktest am DevKit (ob die Auflage unter dem DevKit nötig ist). Ergebnisse der Prüfung des Umbaus
+  in [rev1-befestigung-vorschlag.md](docs/vcu/rev1-befestigung-vorschlag.md).
 - Bohrdateien: `kit export` liefert getrennt `RoverCore-PTH.drl` und
   `RoverCore-NPTH.drl`; beide hochladen und die 10 NPTH-Löcher in der
   Fertiger-Vorschau prüfen (Bericht 3n).
@@ -118,8 +117,8 @@ Prüfung eines DRAFT-Pakets gegen das Board und Gerber-Vorschau:
 
 ```sh
 /Applications/KiCad/KiCad.app/Contents/Frameworks/Python.framework/Versions/Current/bin/python3 \
-  hardware/scripts/fab_package_check.py RoverCore.kicad_pcb manufacturing/releases/generated/rev-A1-DRAFT
-python3 -I hardware/scripts/gerber_preview.py manufacturing/releases/generated/rev-A1-DRAFT qa/generated/fab
+  hardware/scripts/fab_package_check.py RoverCore.kicad_pcb manufacturing/releases/generated/rev-A2-DRAFT
+python3 -I hardware/scripts/gerber_preview.py manufacturing/releases/generated/rev-A2-DRAFT qa/generated/fab
 ```
 
 Die Werkzeuge sind aus PCB-Project-Template 2.0.0 übernommen; Herkunft,
