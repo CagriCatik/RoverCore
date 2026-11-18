@@ -170,12 +170,17 @@ def finger_check(board, env):
         fp.BuildCourtyardCaches()
         bb = fp.GetCourtyard(pcbnew.F_CrtYd).BBox()
         cr = (T(bb.GetLeft()), T(bb.GetTop()), T(bb.GetRight()), T(bb.GetBottom()))
-        hole = min(rect_dist(hx, hy, cr) for hx, hy in HOLES_REV)
+        hole = min(rect_dist(hx, hy, cr) for hx, hy in holes_on_board(board, k1=False))
         rows.append((b_, px, py, name, d, hole))
     return rows
 
 
-HOLES_REV = [(21.0, 4.0), (4.0, 43.0), (91.0, 81.0), (146.0, 81.0)]  # H1-H4, provisional (mounting_holes.py)
+def holes_on_board(board, k1=True):
+    """Mounting hole centres read from the board (footprints MountingHole*), K1 or absolute coordinates (mm)."""
+    e = board.GetBoardEdgesBoundingBox()
+    ox, oy = (T(e.GetLeft()) + 0.05, T(e.GetTop()) + 0.05) if k1 else (0.0, 0.0)
+    return [(T(f.GetPosition().x) - ox, T(f.GetPosition().y) - oy) for f in board.GetFootprints()
+            if "MountingHole" in f.GetFPIDAsString()]
 
 
 def svg(view, side, parts, draw, edges, copper, env=None, fingers=None):

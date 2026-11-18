@@ -37,6 +37,7 @@ TALL = ("J", "U501", "C101", "C406", "C407", "L301", "L401", "F101", "SW", "BZ")
 CU = [pcbnew.F_Cu, pcbnew.In1_Cu, pcbnew.In2_Cu, pcbnew.B_Cu]
 PWR = {"VBAT_IN", "VBAT_FUSED", "VBAT_PROT", "SW_5V", "SW_SERVO", "ISNS_PWR", "VSERVO_REG", "+V_SERVO",
        "BOOT_5V", "SENSE_P", "SENSE_N", "SENSE_P_K", "+5V"}   # regulator and high-current nets
+# SUPERSEDED (variant B, 2026-11-18): first provisional positions, kept for the record; see mount_rework_b.py.
 # Search result 2026-11-18 (K1 coordinates). Top-right is impossible: the DevKit with its antenna reaches the edge.
 # H4 lies under the estimated USB plug/cable envelope: no collision with the screw head (plug 10.4-17.4 mm high),
 # but the screw has to go in before the USB cable is plugged (ENV_EXEMPT).
@@ -139,11 +140,12 @@ def main():
     bd = Board(b)
     if sys.argv[2] == "search":
         search(bd)
-        for x, y in rp.HOLES_REV:
-            print("old marker (%.1f | %.1f): %s" % (x, y, bd.check(x, y) or "feasible"))
+        for x, y in rp.holes_on_board(b):
+            print("current hole (%.1f | %.1f): %s" % (x, y, bd.check(x, y) or "feasible"))
         return
     if list(pcb.parent.glob("~*.lck")) + list(pcb.parent.glob("*.lck")):
         raise SystemExit("ABORTED: KiCad lock files present")
+    raise SystemExit("place is superseded: the corner holes of variant B are set by mount_rework_b.py holes")
     for ref, (x, y) in POS.items():
         why = bd.check(x, y)
         if why and not (ref in ENV_EXEMPT and why.startswith("envelope " + ENV_EXEMPT[ref][:11])):

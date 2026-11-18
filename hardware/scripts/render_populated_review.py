@@ -9,7 +9,7 @@ model_status.csv with one of: library model, generic library model (socket), env
 Views: populated_top / _bottom / _iso_front / _iso_rear / _front_low and without_modules_* (sockets visible, modules
 removed; no bottom view), high render quality, each
 with a caption naming the envelope parts; gap_map.png shows the free board area (courtyards, envelopes, M3
-keep-outs and power pours counted as occupied). Run with the KiCad Python.
+keep-outs read from the board's mounting holes and power pours counted as occupied). Run with the KiCad Python.
 """
 from pathlib import Path
 import csv
@@ -276,7 +276,7 @@ def gap_map(step=0.5):
     outer-layer power/GND pour. Returns free mm2, the largest free rectangles and writes gap_map.png."""
     import sys
     sys.path.insert(0, str(Path(__file__).resolve().parent))
-    from render_placement_review import ENVELOPES as ENV_REV, HOLES_REV, fab_rect
+    from render_placement_review import ENVELOPES as ENV_REV, holes_on_board, fab_rect
     b = pcbnew.LoadBoard(str(ROOT / "RoverCore.kicad_pcb"))
     e = b.GetBoardEdgesBoundingBox()
     BW, BH = round(T(e.GetWidth())), round(T(e.GetHeight()))
@@ -301,7 +301,7 @@ def gap_map(step=0.5):
             mark(*rect, v=2)
         else:
             mark_abs(*fab_rect(b, ref), v=2)
-    for hx, hy in HOLES_REV:
+    for hx, hy in holes_on_board(b):
         mark(hx - 4, hy - 4, hx + 4, hy + 4, v=3)
     for z in b.Zones():
         if z.IsOnLayer(pcbnew.F_Cu) and z.GetNetname() != "GND" or (z.IsOnLayer(pcbnew.F_Cu) and
@@ -337,7 +337,7 @@ def gap_map(step=0.5):
             for i in range(i1, i2 + 1):
                 work[j][i] = 9
     cols = {0: "#ffffff", 1: "#c9c2a0", 2: "#7fa6e8", 3: "#e07070", 4: "#e7b9b9", 9: "#ffffff"}
-    s = ['<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="1100" viewBox="0 -2 150 110">',
+    s = ['<svg xmlns="http://www.w3.org/2000/svg" width="%d" height="1100" viewBox="0 -2 %d 110">' % (BW * 10, BW),
          '<rect x="0" y="0" width="%s" height="%s" fill="white" stroke="black" stroke-width="0.3"/>' % (BW, BH)]
     for j in range(H):
         for i in range(W):

@@ -156,20 +156,24 @@ def main():
              % (vx, vy, vx, vy, vx, vy + 100))
     s.append('<text x="%.1f" y="%.1f" font-size="3px" text-anchor="middle" transform="rotate(-90 %.1f %.1f)">'
              'Kontrollmaß 100,0 mm</text>' % (vx + 4.5, vy + 50, vx + 4.5, vy + 50))
+    import itertools
+    import math
+    pairs = ", ".join("%s-%s %.1f" % (a_[0], b_[0], math.hypot(a_[1] - b_[1], a_[2] - b_[2]))
+                      for a_, b_ in itertools.combinations(sorted(holes), 2))
     notes = [
-        "RoverCore Rev 1 / K1 - Befestigung VORLÄUFIG (keine Chassismaße). Maßstab 1:1 - mit 100 % / 'Tatsächliche Größe' "
-        "drucken, beide Kontrollmaße nachmessen.",
-        "Draufsicht von oben, Bezug linke obere Konturecke, mm. H1-H4: M3, NPTH Ø 3,2; Kreis Ø 7,0 = Scheibe; rot "
-        "gestrichelt r 3,8 = Kupfersperre (F/B).",
-        "Grün: Auflage UNTERSEITE unter dem DevKit (±1,5 mm zu Pads/Courtyards, keine Vias, ≥ 3 mm zum roten "
+        "RoverCore Rev 1 - Variante B, Kontur %.1f x %.1f mm (aus dem Board). Befestigung VORLÄUFIG bis zum Fahrzeugabgleich. "
+        % (W, H) + "Maßstab 1:1 - mit 100 % drucken,",
+        "beide Kontrollmaße nachmessen. Draufsicht, Bezug linke obere Konturecke, mm. H1-H4: M3, NPTH Ø 3,2; Kreis Ø 7,0 "
+        "= Scheibe; rot gestrichelt r 3,8 = Kupfersperre (F/B).",
+        "Lochabstände (Mitte, aus dem Board): " + pairs + " mm.",
+        "Grün: mögliche Auflage UNTERSEITE unter dem DevKit (±1,5 mm zu Pads/Courtyards, keine Vias, ≥ 3 mm zum roten "
         "Antennenfreiraum) - breit, isolierend, ohne scharfe Kanten,",
-        "kein Metall (Lötstopplack ist kein Scheuerschutz); Höhe = gemessener Abstand Chassis-Platine, Platine nicht "
-        "vorspannen.",
-        "Orange: Steckrichtung der waagrechten Stecker (J101, J102/J103, DevKit-USB); J104-J112 senkrecht. Lochabstände: H1-H2 42,5 / H2-H3 94,9 / H3-H4 55,0 / H1-H4 146,8 / "
-        "H2-H4 147,0 mm.",
+        "kein Metall (Lötstopplack ist kein Scheuerschutz); Höhe = gemessener Abstand Chassis-Platine, nicht vorspannen. "
+        "Ob sie nötig ist, zeigt der Stecktest am DevKit.",
+        "Orange: Steckrichtung der waagrechten Stecker (J101, J102/J103, DevKit-USB); J104-J112 senkrecht.",
     ]
     for i, ln in enumerate(notes):
-        s.append('<text x="15" y="%.1f" font-size="2.6px">%s</text>' % (174 + i * 4.0, ln))
+        s.append('<text x="12" y="%.1f" font-size="2.4px">%s</text>' % (172 + i * 3.6, ln))
     s.append("</svg>")
     svg = out.with_suffix(".svg")
     out.parent.mkdir(parents=True, exist_ok=True)
