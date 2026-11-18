@@ -1,7 +1,7 @@
 # VCU Rev 1 – GPIO- und Anschlussplan
 
 Status: **Entwurf zur Review**, Stand 2026-11-15 (3S-Basis). Maschinenlesbare Fassung:
-[`hardware/interfaces/pinmap.csv`](../../hardware/interfaces/pinmap.csv).
+[`hardware/interfaces/pinmap.csv`](https://github.com/CagriCatik/RoverCore/blob/main/hardware/interfaces/pinmap.csv).
 Die Carrier-Referenzbezeichner (J101, U201 …) sind vorläufig und werden im
 Schaltplan vergeben; danach werden Pinmap und Schaltplan abgeglichen.
 „J1-x“ und „J3-x“ bezeichnen immer die Stiftleisten des DevKit.

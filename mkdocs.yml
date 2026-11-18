@@ -36,7 +36,7 @@ nav:
       - Werkzeuge: vcu/tooling-integration.md
   - Projekt:
       - Anforderungen: requirements.md
-      - Architektur: architecture.md
+      - Architektur: ARCHITECTURE.md
       - Schnittstellen: interfaces.md
       - Verifikationsplan: verification-plan.md
       - Konventionen: conventions.md

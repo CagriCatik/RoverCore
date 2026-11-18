@@ -10,7 +10,7 @@ benötigt. Übernommen sind KiCad-Diagnose, ERC/DRC mit Schaltplanabgleich,
 Bibliotheksprüfung, Fertigungsexport und thermische Analyse samt
 Abhängigkeiten, Konfiguration, Fixtures und Tests. Nicht übernommen sind
 Projektgenerator, Vorlagen, GUI und Paketierung. Umfang, Lizenz und lokale
-Änderungen: [`tools/VENDORED.md`](../../tools/VENDORED.md).
+Änderungen: [`tools/VENDORED.md`](https://github.com/CagriCatik/RoverCore/blob/main/tools/VENDORED.md).
 
 Historie: `b2d1831` hatte die damals vollständig enthaltenen Kit-Werkzeuge
 entfernt, `762bea3` sie durch einen Wrapper auf einen externen Checkout

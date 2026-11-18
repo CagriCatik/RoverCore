@@ -91,7 +91,7 @@ im historischen [Anhang A](#anhang-a--historische-2s-rechnung-ersetzt-am-2026-11
 
 Alle Zahlen dieses Abschnitts sind **Schätzungen und Kandidaten**. Sie gelten
 erst nach Prüfung von Schaltplan, Rechenskript und Prototyp. Rechenweg:
-[`hardware/simulations/power/rev1_power_calc.py`](../../hardware/simulations/power/rev1_power_calc.py)
+[`hardware/simulations/power/rev1_power_calc.py`](https://github.com/CagriCatik/RoverCore/blob/main/hardware/simulations/power/rev1_power_calc.py)
 (ohne Argument = 3S-Stand).
 
 ### 3.1 Annahmen
