@@ -1379,15 +1379,18 @@ bestätigen. Vier freie Stellen auf der Platine allein reichen dafür nicht.
 
 *Suche* (`hardware/scripts/mounting_holes.py search`, Raster 0,5 mm, ganze
 Platine):
-- Ohne Eingriff in Routing oder Platzierung gibt es **nur vier zulässige
-  Bereiche**: oben links, linke Kante Mitte, untere Kante Mitte, untere
-  rechte Ecke.
+- Unter den oben gewählten Abstandsregeln und ohne Umrouten fand die Suche
+  vier zulässige Bereiche: oben links, linke Kante Mitte, untere Kante Mitte,
+  untere rechte Ecke. Andere Regeln, etwa kleinere Abstände zu niedrigen
+  Bauteilen, eine andere Schraubengröße oder lokales Umrouten, können
+  weitere Stellen ergeben. Das ist eine Folge der Annahmen, keine
+  Eigenschaft der Platine.
 - **Oben rechts ist keine Bohrung möglich:** DevKit-Hülle samt Antenne bis
   zur Kante. Zwischen den DevKit-Buchsenleisten liegt ein dichter
   Signalkanal.
 - **Unten links:** LED-Stecker J108–J112 und die Logikversorgung.
-- Selbst mit erlaubtem Umrouten von Signalleitungen findet die Suche in der
-  rechten Hälfte nur (90…91 | 81).
+- Mit denselben Regeln, aber erlaubtem Umrouten von Signalleitungen, findet
+  die Suche in der rechten Hälfte nur (90…91 | 81).
 
 | Bohrung | Lage (K1) | nächstes Kupfer F/B | nächstes Leistungskupfer | Bemerkung |
 |---|---|---|---|---|
@@ -1427,9 +1430,27 @@ das DevKit wird vor dem Einbau gesteckt.
 - ERC 0, DRC (alle Schweregrade, mit JLCPCB-Regelsatz) 0 Verstöße und 0 offene
   Verbindungen, Schaltplan-Parität PASS.
 - DRAFT-Paket neu erzeugt. Die Bohrdatei enthält Werkzeug T13 Ø 3,200 mm mit
-  Attribut `NonPlated,NPTH` und vier Treffern an den Sollpositionen. PTH und
-  NPTH stehen gemeinsam in einer Excellon-Datei (KiCad „MixedPlating“); das
-  ist beim Hochladen zu beachten.
+  Attribut `NonPlated,NPTH` und vier Treffern an den Sollpositionen.
+- **Grenze dieser Prüfung:** Der Export von `kit export` schreibt PTH und
+  NPTH in **eine** Excellon-Datei (KiCad „MixedPlating“). Ob ein Loch
+  metallisiert wird, steht dort nur in Kommentarzeilen (X2-Attribute
+  `; #@! TA.AperFunction,NonPlated`). Ein CAM-System, das diese Zeilen nicht
+  auswertet, metallisiert alle Löcher. Die vier Treffer bestätigen also nur
+  Lage und Durchmesser, nicht die Erkennung als unmetallisiert. JLCPCB
+  veröffentlicht dazu keine verbindliche Aussage.
+- **Vergleich mit getrennten Dateien**
+  (`kicad-cli pcb export drill --excellon-separate-th`, Ausgabe
+  `qa/generated/fab/drill_separate/`): `RoverCore-NPTH.drl`
+  (FileFunction `NonPlated,1,4,NPTH`) enthält genau 10 Löcher:
+  - 4 × 3,2 mm H1–H4;
+  - 2 × 3,0 mm Rastzapfen J102/J103;
+  - 4 × 2,7 mm Modulbefestigung J115/J116.
+  `RoverCore-PTH.drl` enthält keines davon.
+- **Empfehlung für die Bestellung:** getrennte PTH/NPTH-Dateien hochladen
+  und in der Datei-Vorschau des Fertigers prüfen, dass die 10 NPTH-Löcher
+  ohne Hülse dargestellt sind. Zusätzlich im Bestellhinweis vermerken:
+  „4 × Ø 3,2 mm, 2 × Ø 3,0 mm, 4 × Ø 2,7 mm NPTH“. `kit export` ist dafür
+  nicht geändert; das ist ein Owner-Entscheid.
 - Abgleich Paket ↔ Board unverändert, einziger offener Fehler D502 ohne
   Teilenummer.
 - **Bilder:**
@@ -1437,6 +1458,9 @@ das DevKit wird vor dem Einbau gesteckt.
     (`render_mounting_drawing.py`);
   - 3D-Ansichten mit orangen Hüllkörpern für Scheibe, Kopf und
     Abstandshalter (`render_populated_review.py`).
+
+*Mechanischer Abgleich*: Prüfliste, 1:1-Druckvorlage und Vorschlag für die
+Auflage unter dem DevKit in [rev1-mechanik-abgleich.md](rev1-mechanik-abgleich.md).
 
 *Offen*: Lage gegen Chassis bzw. Fahrzeugbefestigung bestätigen,
 Abstandshalterlänge, Schraubentyp (Linsen- oder Zylinderkopf), Auflage unter dem

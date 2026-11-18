@@ -63,6 +63,7 @@ Aus den exportierten Gerber- und Bohrdateien gezeichnet
 | [Versorgung und Boardwahl](docs/vcu/rev1-versorgung-und-boardwahl.md) | Auslegung aller Versorgungen, Schutz, Wiederanlaufsperre |
 | [Pin- und Anschlussplan](docs/vcu/rev1-pin-und-anschlussplan.md) | GPIO-Belegung, Stecker (maschinenlesbar: `hardware/interfaces/pinmap.csv`) |
 | [Platzierung, Routing, Fertigung](docs/vcu/rev1-platzierung.md) | Platzierung, Routing K1, Strompfade (3j), Fertigerabgleich und DRAFT-Paket (3k) |
+| [Mechanischer Abgleich](docs/vcu/rev1-mechanik-abgleich.md) | Prüfliste am Fahrzeug, 1:1-Vorlage, Auflage unter dem DevKit |
 | [Review 2026-11-15](docs/vcu/rev1-review-2026-11-15.md) · [Werkzeuge](docs/vcu/tooling-integration.md) | Schaltplan-Review, lokale Werkzeuge |
 | [Engineering-Richtlinien](docs/engineering/README.md) | allgemeine Regeln aus dem Template |
 
@@ -77,7 +78,10 @@ Online: <https://cagricatik.github.io/RoverCore/>
 - Bestückungsdruck: 1 211 Umrissstriche mit 0,12 mm im exportierten Gerber
   (JLCPCB verlangt 0,15 mm); Entscheidung offen (Bericht 3l).
 - Befestigung: vier M3-NPTH-Bohrungen H1–H4 gesetzt, Lage **vorläufig** (keine
-  Chassismaße); vor der Fertigung am Fahrzeug bestätigen (Bericht 3n).
+  Chassismaße); vor der Fertigung am Fahrzeug abgleichen
+  ([Prüfliste](docs/vcu/rev1-mechanik-abgleich.md)), Auflage unter dem DevKit vorsehen.
+- Bohrdatei: PTH/NPTH getrennt hochladen und die 10 NPTH-Löcher in der
+  Fertiger-Vorschau prüfen (Bericht 3n).
 - 3D: Herstellermodelle für XT30, BZ101, Q101, Q401/Q402, D601–D608 sowie
   DevKit, OLED und IMU fehlen noch (Download-Stand je Teil im Bericht 3m).
   J102/J103 haben das Molex-Modell.

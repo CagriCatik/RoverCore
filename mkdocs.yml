@@ -31,6 +31,7 @@ nav:
       - Versorgung und Boardwahl: vcu/rev1-versorgung-und-boardwahl.md
       - Pin- und Anschlussplan: vcu/rev1-pin-und-anschlussplan.md
       - Platzierung, Routing, Fertigung: vcu/rev1-platzierung.md
+      - Mechanischer Abgleich: vcu/rev1-mechanik-abgleich.md
       - Review 2026-11-15: vcu/rev1-review-2026-11-15.md
       - Schaltplan-Darstellung 2026-11-15: vcu/reviews/2026-11-15-schematic-layout.md
       - Werkzeuge: vcu/tooling-integration.md
