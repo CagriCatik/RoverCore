@@ -102,8 +102,22 @@ def build(with_modules, src=None, out=None):
     b = pcbnew.LoadBoard(str(src or ROOT / "RoverCore.kicad_pcb"))
     mdir = out / "models"
     mdir.mkdir(parents=True, exist_ok=True)
+    for f in b.GetFootprints():          # the copy lives elsewhere: resolve project-local model paths
+        ms = []
+        for m in f.Models():
+            c = pcbnew.FP_3DMODEL()
+            c.m_Filename, c.m_Offset, c.m_Rotation, c.m_Scale = m.m_Filename, m.m_Offset, m.m_Rotation, m.m_Scale
+            c.m_Show, c.m_Opacity = m.m_Show, m.m_Opacity
+            ms.append(c)
+        if any("${KIPRJMOD}" in m.m_Filename for m in ms):
+            f.Models().clear()
+            for m in ms:
+                m.m_Filename = m.m_Filename.replace("${KIPRJMOD}", str(ROOT))
+                f.Add3DModel(m)
     for ref, boxes in ENVELOPES.items():
         fp = b.FindFootprintByReference(ref)
+        if ref not in SOCKETS and any(model_exists(m.m_Filename) for m in fp.Models()):
+            continue                      # a real model is assigned and present: no envelope
         for i, (kind, box, z0, z1, _src) in enumerate(boxes):
             if kind == "module" and not with_modules:
                 continue
@@ -127,10 +141,13 @@ def build(with_modules, src=None, out=None):
     return out / name
 
 
+ENV_LIST = ""
+
+
 def caption(png, title, out):
     lines = [title,
              "Magenta = Hüllkörper Carrier-Bauteil ohne geprüftes Modell (Maße dokumentiert/angenommen, kein Herstellermodell):",
-             "  J101 XT30, J102/J103 Micro-Fit (dunkle Stirnfläche = Steckseite), BZ101, Q101, Q401, Q402, D601-D604, D606-D608",
+             "  " + ENV_LIST,
              "Blau = Hüllkörper der gesteckten Module (DevKit, OLED, IMU), Höhen geschätzt; Buchsenleisten = generisches KiCad-Modell",
              "Quelle der Maße und Status je Position: qa/generated/populated/model_status.csv, Bericht 3g"]
     svg = ['<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="2400" '
@@ -166,6 +183,8 @@ def status_list(src=None, out=None):
         real = [f for f in files if model_exists(f)]
         if ref in SOCKETS:
             st = "generisches Bibliotheksmodell (Buchsenleiste) + Hüllkörper Modul (Review)"
+        elif ref in ENVELOPES and real:
+            st = "Herstellermodell (projektlokal, models.csv)"
         elif ref in ENVELOPES:
             st = "Hüllkörper (Review)" + ("; Bibliotheksdatei fehlt in dieser KiCad-Installation" if files else "")
         elif real:
@@ -192,6 +211,11 @@ def main():
     OUT.mkdir(parents=True)
     shutil.copy(ROOT / "RoverCore.kicad_pro", OUT / "RoverCore_review_populated.kicad_pro")
     shutil.copy(ROOT / "RoverCore.kicad_pro", OUT / "RoverCore_review_without_modules.kicad_pro")
+    global ENV_LIST
+    b0 = pcbnew.LoadBoard(str(ROOT / "RoverCore.kicad_pcb"))
+    env = [r for r in ENVELOPES if r not in SOCKETS and not any(model_exists(m.m_Filename)
+                                                                for m in b0.FindFootprintByReference(r).Models())]
+    ENV_LIST = ", ".join(r + (" (dunkle Stirnfläche = Steckseite)" if r in FACES else "") for r in env)
     pop = build(True)
     render(pop, "populated", list(VIEWS.items()))
     bare = build(False)

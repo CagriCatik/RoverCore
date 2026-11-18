@@ -6373,7 +6373,7 @@
 			(uuid "4744f2fc-cca0-4ada-8875-14b049207310")
 		)
 		(embedded_fonts no)
-		(model "${KICAD10_3DMODEL_DIR}/Connector_Molex.3dshapes/Molex_Micro-Fit_3.0_43650-0300_1x03_P3.00mm_Horizontal.step"
+		(model "${KIPRJMOD}/hardware/libraries/3d-models/vendor/Molex_436500300.stp"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -6381,7 +6381,7 @@
 				(xyz 1 1 1)
 			)
 			(rotate
-				(xyz 0 0 0)
+				(xyz -90 0 180)
 			)
 		)
 	)
@@ -34834,7 +34834,7 @@
 			(uuid "ef325905-d73d-4551-a25f-0408ccd2da86")
 		)
 		(embedded_fonts no)
-		(model "${KICAD10_3DMODEL_DIR}/Connector_Molex.3dshapes/Molex_Micro-Fit_3.0_43650-0300_1x03_P3.00mm_Horizontal.step"
+		(model "${KIPRJMOD}/hardware/libraries/3d-models/vendor/Molex_436500300.stp"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -34842,7 +34842,7 @@
 				(xyz 1 1 1)
 			)
 			(rotate
-				(xyz 0 0 0)
+				(xyz -90 0 180)
 			)
 		)
 	)
