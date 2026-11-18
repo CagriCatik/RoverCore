@@ -6,7 +6,8 @@ Parts without a verified 3D model get an ENVELOPE body in that copy only: a plai
 or assumed dimensions below, magenta for carrier parts, blue for the plug-in modules. Envelopes are not vendor
 models and are never written to the library or to RoverCore.kicad_pcb. Every footprint is listed in
 model_status.csv with one of: library model, generic library model (socket), envelope (review), no body (pad), missing.
-Views: populated_top / _bottom / _iso and without_modules_top / _iso (sockets visible, modules removed), each
+Views: populated_top / _bottom / _iso_front / _iso_rear / _front_low and without_modules_* (sockets visible, modules
+removed; no bottom view), high render quality, each
 with a caption naming the envelope parts; gap_map.png shows the free board area (courtyards, envelopes, M3
 keep-outs and power pours counted as occupied). Run with the KiCad Python.
 """
@@ -53,6 +54,14 @@ ENVELOPES = {
 for r in ("D601", "D602", "D603", "D604", "D606", "D607", "D608"):
     ENVELOPES[r] = [("carrier", "fab", 0.0, 0.4, "DPY0002A (X2SON) 0,6 x 1,0 mm (Footprint), Höhe Annahme 0,4 mm")]
 SOCKETS = {"U501", "J115", "J116"}  # generic KiCad library socket model (not the Samtec part)
+# mating face of the horizontal connectors: side of the F.Fab box where the housing runs past the pads (local y min
+# for J101/J102/J103, checked 2026-11-18). Drawn as a dark 0.4 mm plate so the plug direction is visible.
+FACES = {"J101": "ymin", "J102": "ymin", "J103": "ymin"}
+FACE = (0.15, 0.15, 0.15)
+VIEWS = {"top": ["--side", "top"], "bottom": ["--side", "bottom"],
+         "iso_front": ["--perspective", "--rotate", "-45,0,30", "--zoom", "0.9"],
+         "iso_rear": ["--perspective", "--rotate", "-45,0,-150", "--zoom", "0.9"],
+         "front_low": ["--perspective", "--rotate", "-75,0,0", "--zoom", "1.1"]}
 
 
 def wrl_box(path, x1, y1, x2, y2, z0, z1, rgb, transparency):
@@ -106,6 +115,13 @@ def build(with_modules, src=None, out=None):
             m.m_Filename = str(f)
             m.m_Scale = pcbnew.VECTOR3D(1, 1, 1)
             fp.Add3DModel(m)
+            if kind == "carrier" and FACES.get(ref) == "ymin":
+                f2 = mdir / ("%s_%d_face.wrl" % (ref, i))
+                wrl_box(f2, x1, y1 - 0.05, x2, y1 + 0.4, z0 + 0.05, z1 - 0.05, FACE, 0.0)
+                m2 = pcbnew.FP_3DMODEL()
+                m2.m_Filename = str(f2)
+                m2.m_Scale = pcbnew.VECTOR3D(1, 1, 1)
+                fp.Add3DModel(m2)
     name = "RoverCore_review_%s.kicad_pcb" % ("populated" if with_modules else "without_modules")
     b.Save(str(out / name))
     return out / name
@@ -114,7 +130,7 @@ def build(with_modules, src=None, out=None):
 def caption(png, title, out):
     lines = [title,
              "Magenta = Hüllkörper Carrier-Bauteil ohne geprüftes Modell (Maße dokumentiert/angenommen, kein Herstellermodell):",
-             "  J101 XT30, J102/J103 Micro-Fit, BZ101, Q101, Q401, Q402, D601-D604, D606-D608",
+             "  J101 XT30, J102/J103 Micro-Fit (dunkle Stirnfläche = Steckseite), BZ101, Q101, Q401, Q402, D601-D604, D606-D608",
              "Blau = Hüllkörper der gesteckten Module (DevKit, OLED, IMU), Höhen geschätzt; Buchsenleisten = generisches KiCad-Modell",
              "Quelle der Maße und Status je Position: qa/generated/populated/model_status.csv, Bericht 3g"]
     svg = ['<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="2400" '
@@ -135,7 +151,7 @@ def render(pcb, stem, sides, out=None, label=""):
     for side, args in sides:
         raw = out / ("%s_%s_raw.png" % (stem, side))
         subprocess.run([CLI, "pcb", "render", "-o", str(raw), "--width", "2400", "--height", "1600", "--quality",
-                        "basic"] + args + [str(pcb)], check=True, capture_output=True)
+                        "high", "--background", "opaque"] + args + [str(pcb)], check=True, capture_output=True)
         caption(raw, "%s%s - %s (Review-Ansicht, Hüllkörper sind keine Herstellermodelle)" % (label, stem, side),
                 out / ("%s_%s.png" % (stem, side)))
 
@@ -176,11 +192,10 @@ def main():
     OUT.mkdir(parents=True)
     shutil.copy(ROOT / "RoverCore.kicad_pro", OUT / "RoverCore_review_populated.kicad_pro")
     shutil.copy(ROOT / "RoverCore.kicad_pro", OUT / "RoverCore_review_without_modules.kicad_pro")
-    iso = ["--side", "top", "--rotate", "-45,0,45", "--zoom", "0.9"]
     pop = build(True)
-    render(pop, "populated", [("top", ["--side", "top"]), ("bottom", ["--side", "bottom"]), ("iso", iso)])
+    render(pop, "populated", list(VIEWS.items()))
     bare = build(False)
-    render(bare, "without_modules", [("top", ["--side", "top"]), ("iso", iso)])
+    render(bare, "without_modules", [(k, v) for k, v in VIEWS.items() if k != "bottom"])
     rows, counts = status_list()
     for k, v in sorted(counts.items()):
         print("%3d  %s" % (v, k))
@@ -204,6 +219,10 @@ def gap_map(step=0.5):
     BW, BH = round(T(e.GetWidth())), round(T(e.GetHeight()))
     W, H = int(BW / step), int(BH / step)
     occ = [[0] * W for _ in range(H)]
+    ox, oy = T(e.GetLeft()) + 0.05, T(e.GetTop()) + 0.05     # K1 coordinates (outline corner at -0.05/-0.05)
+
+    def mark_abs(x1, y1, x2, y2, v=1):
+        mark(x1 - ox, y1 - oy, x2 - ox, y2 - oy, v)
 
     def mark(x1, y1, x2, y2, v=1):
         for j in range(max(0, int(y1 / step)), min(H, int(y2 / step) + 1)):
@@ -213,17 +232,19 @@ def gap_map(step=0.5):
         fp.BuildCourtyardCaches()
         cy = fp.GetCourtyard(pcbnew.F_CrtYd if fp.GetLayer() == pcbnew.F_Cu else pcbnew.B_CrtYd)
         bb = cy.BBox() if cy.OutlineCount() else fp.GetBoundingBox(False)
-        mark(T(bb.GetLeft()), T(bb.GetTop()), T(bb.GetRight()), T(bb.GetBottom()))
+        mark_abs(T(bb.GetLeft()), T(bb.GetTop()), T(bb.GetRight()), T(bb.GetBottom()))
     for ref, _lab, _z, rect in ENV_REV:
-        r = rect or fab_rect(b, ref)
-        mark(*r, v=2)
+        if rect:
+            mark(*rect, v=2)
+        else:
+            mark_abs(*fab_rect(b, ref), v=2)
     for hx, hy in HOLES_REV:
         mark(hx - 4, hy - 4, hx + 4, hy + 4, v=3)
     for z in b.Zones():
         if z.IsOnLayer(pcbnew.F_Cu) and z.GetNetname() != "GND" or (z.IsOnLayer(pcbnew.F_Cu) and
                                                                    z.GetZoneName().startswith(("servo", "in_", "logic"))):
             bb = z.GetBoundingBox()
-            mark(T(bb.GetLeft()), T(bb.GetTop()), T(bb.GetRight()), T(bb.GetBottom()), v=4)
+            mark_abs(T(bb.GetLeft()), T(bb.GetTop()), T(bb.GetRight()), T(bb.GetBottom()), v=4)
     free = sum(row.count(0) for row in occ) * step * step
     # largest empty rectangles (greedy, by histogram), reported down to 60 mm2
     found = []
