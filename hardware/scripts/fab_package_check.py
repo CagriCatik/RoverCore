@@ -7,7 +7,9 @@ Checks, and prints each finding:
   match; MPN and manufacturer are present.
 - Positions (assembly/positions.csv): every SMD footprint not excluded from position files is listed once, with the
   board side, rotation and position (relative to the drill/place origin, Y up) of the board; no THT-only part listed.
-- Drill file: plated hole sizes against JLCPCB (via >= 0.15 mm; component holes below 0.5 mm are listed), NPTH >= 0.5 mm.
+- Drill files: separate PTH and NPTH files, no merged file; plated hole sizes against JLCPCB (via >= 0.15 mm,
+  component holes below 0.5 mm listed), NPTH >= 0.5 mm; every hole of the board (pads and vias) appears exactly once
+  with its diameter and position in the file of its plating, and nothing else.
 - Gerber job file: layer count and finished board thickness against the stackup in the board.
 Exit status 1 if any finding is an error.
 """
@@ -100,26 +102,78 @@ def main():
         len(pos), sum(1 for p in pos.values() if p["Side"] == "top"), sum(1 for p in pos.values() if p["Side"] == "bottom"),
         worst, "page origin (aux origin not set)" if o.x == 0 and o.y == 0 else "aux origin"))
 
-    tools, attr, kind = {}, "", {}
-    for line in open(next((pkg / "fabrication" / "drill").glob("*.drl"))):
-        if line.startswith("; #@! TA.AperFunction"):
-            attr = line.strip().split(",", 1)[1]
-        m = re.match(r"^T(\d+)C([\d.]+)", line)
-        if m:
-            tools[int(m.group(1))] = float(m.group(2))
-            kind[int(m.group(1))] = attr
-    for t, d in sorted(tools.items()):
-        k = kind[t]
-        if "NonPlated" in k and d < 0.5:
+    # drill files: separate PTH / NPTH expected, no merged file; hits compared with the board
+    files = sorted((pkg / "fabrication" / "drill").glob("*.drl"))
+    hits, tools_all = [], {}
+    for f in files:
+        txt = open(f).read()
+        func = re.search(r"TF\.FileFunction,([^\n]*)", txt)
+        func = func.group(1) if func else ""
+        if "MixedPlating" in func:
+            err.append("DRILL: %s is a merged PTH/NPTH file (plating only in comments)" % f.name)
+        tools, attr, cur = {}, ("NonPlated" if "NonPlated" in func else "Plated"), None
+        for line in txt.splitlines():
+            if line.startswith("; #@! TA.AperFunction"):
+                attr = line.strip().split(",", 1)[1]
+            m = re.match(r"^T(\d+)C([\d.]+)", line)
+            if m:
+                tools[int(m.group(1))] = (float(m.group(2)), attr)
+                continue
+            m = re.match(r"^T(\d+)$", line)
+            if m:
+                cur = int(m.group(1))
+                continue
+            m = re.match(r"^X([-\d.]+)Y([-\d.]+)$", line)
+            if m:
+                d, a = tools[cur]
+                hits.append((f.name, "N" if "NonPlated" in a else "P", d, float(m.group(1)), float(m.group(2)), a))
+        for d, a in tools.values():
+            tools_all[(d, "N" if "NonPlated" in a else "P")] = a
+    info.append("DRILL: files %s" % ", ".join(f.name for f in files))
+    for (d, k), a in sorted(tools_all.items()):
+        if k == "N" and d < 0.5:
             err.append("DRILL: NPTH %.2f mm < 0.5 mm" % d)
-        elif "ViaDrill" in k and d < 0.15:
+        elif "ViaDrill" in a and d < 0.15:
             err.append("DRILL: via %.2f mm < 0.15 mm" % d)
-        elif "ComponentDrill" in k and d < 0.5:
+        elif k == "P" and "ComponentDrill" in a and d < 0.5:
             users = sorted({f.GetReference() for f in b.GetFootprints() for p in f.Pads()
                             if p.GetAttribute() == pcbnew.PAD_ATTRIB_PTH and abs(T(p.GetDrillSize().x) - d) < 0.005})
             info.append("DRILL: component hole %.2f mm < 0.5 mm (JLCPCB recommendation) in %s" % (d, users))
-    info.append("DRILL: tools %s" % ", ".join("%.2f%s" % (d, "N" if "NonPlated" in kind[t] else "")
-                                              for t, d in sorted(tools.items())))
+    # board holes in drill coordinates (absolute, mm, Y up)
+    want = []
+    for f in b.GetFootprints():
+        for p in f.Pads():
+            if p.GetAttribute() in (pcbnew.PAD_ATTRIB_NPTH, pcbnew.PAD_ATTRIB_PTH) and p.GetDrillSize().x > 0:
+                want.append(("N" if p.GetAttribute() == pcbnew.PAD_ATTRIB_NPTH else "P", round(T(p.GetDrillSize().x), 3),
+                             T(p.GetPosition().x), -T(p.GetPosition().y), "%s.%s" % (f.GetReference(), p.GetNumber())))
+    for t in b.GetTracks():
+        if t.GetClass() == "PCB_VIA":
+            want.append(("P", round(T(t.GetDrill()), 3), T(t.GetPosition().x), -T(t.GetPosition().y), "via"))
+    for k in ("N", "P"):
+        got = sorted((round(d, 3), x, y) for _, kk, d, x, y, _ in hits if kk == k)
+        exp = sorted((d, x, y) for kk, d, x, y, _ in want if kk == k)
+        name = "NPTH" if k == "N" else "PTH"
+        left = list(got)
+        miss = []
+        for d, x, y in exp:                  # match within 0.02 mm (Excellon keeps 3 decimals)
+            j = next((i for i, (gd, gx, gy) in enumerate(left)
+                      if abs(gd - d) < 0.002 and abs(gx - x) < 0.02 and abs(gy - y) < 0.02), None)
+            if j is None:
+                miss.append((d, round(x, 3), round(y, 3)))
+            else:
+                left.pop(j)
+        same = not miss and not left
+        if not same:
+            err.append("DRILL: %s set differs from the board (missing %s, extra %s)" % (name, miss[:6], left[:6]))
+        per = {}
+        for d, _, _ in got:
+            per[d] = per.get(d, 0) + 1
+        info.append("DRILL: %s %d hits = board (%s)" % (name, len(got), ", ".join("%gx%d" % kv for kv in sorted(per.items())))
+                    if same else "DRILL: %s %d hits, board %d" % (name, len(got), len(exp)))
+        if k == "N":
+            for kk, d, x, y, ref in sorted(want):
+                if kk == "N":
+                    info.append("DRILL:   NPTH %s Ø%.2f at (%.2f, %.2f)" % (ref, d, x, y))
 
     job = json.load(open(next((pkg / "fabrication" / "gerbers").glob("*.gbrjob"))))
     spec = job.get("GeneralSpecs", {})

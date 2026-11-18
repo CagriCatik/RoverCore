@@ -2,7 +2,8 @@
 """Preview images rendered from the exported Gerber and Excellon files (fabrication review, 2026-11-18).
 
 Usage: python3 gerber_preview.py PACKAGE_DIR OUTDIR [--scale PX_PER_MM]
-PACKAGE_DIR is an export of `scripts/kit export` (fabrication/gerbers, fabrication/drill). The images are drawn from
+PACKAGE_DIR is an export of `scripts/kit export` (fabrication/gerbers, fabrication/drill: all *.drl, merged or
+separate PTH/NPTH). The images are drawn from
 the exported files, not from the board, so they show what a fabricator receives. Review images, not source.
 Supported subset (what KiCad 10.0.7 writes): FS/MO, apertures C/R/O and macros with primitives 1/4/20/21, D01/D02/D03,
 G01/G02/G03 with G75, regions G36/G37, LPD/LPC; Excellon tools with X/Y hits (no routed slots). Anything else stops
@@ -186,6 +187,8 @@ def drills(path):
     tools, hits, cur, plated = {}, [], None, {}
     attr = "Plated"
     for line in Path(path).read_text().splitlines():
+        if line.startswith("; #@! TF.FileFunction"):      # separate PTH / NPTH files: file-level attribute
+            attr = "NonPlated" if "NonPlated" in line else "Plated"
         if line.startswith("; #@! TA.AperFunction"):
             attr = "NonPlated" if "NonPlated" in line else "Plated"
         m = re.match(r"^T(\d+)C([\d.]+)", line)
@@ -224,7 +227,7 @@ def main():
     g = {p.stem.split("-", 1)[1]: Gerber(p) for p in sorted(gdir.glob("*.g*")) if p.suffix != ".gbrjob"
          and p.stem.split("-", 1)[1] in ("F_Cu", "In1_Cu", "In2_Cu", "B_Cu", "F_Mask", "B_Mask", "F_Silkscreen",
                                          "B_Silkscreen", "F_Paste", "B_Paste", "Edge_Cuts")}
-    hits = drills(next((pkg / "fabrication" / "drill").glob("*.drl")))
+    hits = [h for f in sorted((pkg / "fabrication" / "drill").glob("*.drl")) for h in drills(f)]
     xs = [h[0] for h in hits]
     ys = [-h[1] for h in hits]
     edge = layer_svg(g["Edge_Cuts"], "#e8e8a0")
