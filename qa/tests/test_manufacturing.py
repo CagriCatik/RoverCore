@@ -69,7 +69,8 @@ class NativeExportTests(TempDirTest):
         self.assertEqual(first.name, "rev-A1-DRAFT")
         self.assertEqual(m1["decision"], "NO-GO")
         self.assertTrue(m1["exports_complete"], m1["outputs"])
-        for path in ("fabrication/drill/divider.drl", "assembly/bom.csv", "assembly/positions.csv",
+        self.assertFalse((first / "fabrication/drill/divider.drl").exists(), "merged PTH/NPTH drill file")
+        for path in ("fabrication/drill/divider-PTH.drl", "assembly/bom.csv", "assembly/positions.csv",
                      "assembly/assembly-top.pdf", "assembly/assembly-bottom.pdf", "mechanical/board.step",
                      "documentation/schematic.pdf", "documentation/netlist.net", "verification/verification.json"):
             self.assertGreater((first / path).stat().st_size, 0, path)

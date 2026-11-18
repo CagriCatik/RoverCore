@@ -49,6 +49,10 @@ tests (`test_templates`, `test_gui`, `test_manager`, `test_layout`,
   `RoverCore-kit` so it never shares state with a separate template checkout.
 - `tools/__init__.py`, `tools/thermal/geometry.py`, `tools/kicad/ipc.py`:
   docstring/messages only.
+- `tools/release/exports.py` (2026-11-18): drill export with `--excellon-separate-th`
+  (`<board>-PTH.drl`, `<board>-NPTH.drl`, no merged file); in a merged file the
+  plated/non-plated distinction is only in X2 comment lines. Test expects
+  `divider-PTH.drl` and no merged file.
 - `tools/release/exports.py` (2026-11-18): BOM `--group-by` also groups by
   `${DNP}`. Without it a fitted part (R616) was merged into a DNP line
   (R801/R802) and marked DNP in the BOM while the position file placed it.

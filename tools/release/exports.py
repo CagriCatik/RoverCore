@@ -111,9 +111,13 @@ def export_plan(stage, sch, pcb):
     return [
         ("gerbers", ("pcb", "export", "gerbers"), ["--output", str(fab / "gerbers") + "/", pcb],
          [fab / "gerbers"]),
+        # separate PTH and NPTH files: in a merged file plated/non-plated is only told by X2 comment attributes,
+        # which a fabricator's CAM may ignore (RoverCore review 2026-11-18). The NPTH file is written by KiCad
+        # whenever the board has non-plated holes; the PTH file is always expected.
         ("drill", ("pcb", "export", "drill"),
-         ["--format", "excellon", "--excellon-units", "mm", "--generate-map", "--map-format", "pdf",
-          "--output", str(fab / "drill") + "/", pcb], [fab / "drill"]),
+         ["--format", "excellon", "--excellon-units", "mm", "--excellon-separate-th", "--generate-map",
+          "--map-format", "pdf", "--output", str(fab / "drill") + "/", pcb],
+         [fab / "drill" / (Path(pcb).stem + "-PTH.drl")]),
         ("bom", ("sch", "export", "bom"),
          ["--fields", BOM_FIELDS, "--labels", BOM_LABELS, "--group-by", "Value,Footprint,Manufacturer,MPN,${DNP}",
           "--output", asm / "bom.csv", sch], [asm / "bom.csv"]),
