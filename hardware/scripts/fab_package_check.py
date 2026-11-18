@@ -9,7 +9,8 @@ Checks, and prints each finding:
   board side, rotation and position (relative to the drill/place origin, Y up) of the board; no THT-only part listed.
 - Drill files: separate PTH and NPTH files, no merged file; plated hole sizes against JLCPCB (via >= 0.15 mm,
   component holes below 0.5 mm listed), NPTH >= 0.5 mm; every hole of the board (pads and vias) appears exactly once
-  with its diameter and position in the file of its plating, and nothing else.
+  with its diameter and position in the file of its plating, and nothing else. The comparison does not round: the
+  tolerance is half a unit of the last decimal place the files actually use (3 places = 0.001 mm -> 0.0005 mm).
 - Gerber job file: layer count and finished board thickness against the stackup in the board.
 Exit status 1 if any finding is an error.
 """
@@ -104,9 +105,13 @@ def main():
 
     # drill files: separate PTH / NPTH expected, no merged file; hits compared with the board
     files = sorted((pkg / "fabrication" / "drill").glob("*.drl"))
-    hits, tools_all = [], {}
+    hits, tools_all, decimals = [], {}, 0
     for f in files:
         txt = open(f).read()
+        if not re.search(r"^METRIC", txt, re.M) or "FORMAT={-:-/ absolute / metric / decimal}" not in txt:
+            err.append("DRILL: %s is not absolute metric decimal Excellon; comparison not valid" % f.name)
+        for v in re.findall(r"^X([-\d.]+)Y([-\d.]+)$", txt, re.M):
+            decimals = max([decimals] + [len(c.split(".")[1]) if "." in c else 0 for c in v])
         func = re.search(r"TF\.FileFunction,([^\n]*)", txt)
         func = func.group(1) if func else ""
         if "MixedPlating" in func:
@@ -144,20 +149,23 @@ def main():
     for f in b.GetFootprints():
         for p in f.Pads():
             if p.GetAttribute() in (pcbnew.PAD_ATTRIB_NPTH, pcbnew.PAD_ATTRIB_PTH) and p.GetDrillSize().x > 0:
-                want.append(("N" if p.GetAttribute() == pcbnew.PAD_ATTRIB_NPTH else "P", round(T(p.GetDrillSize().x), 3),
+                want.append(("N" if p.GetAttribute() == pcbnew.PAD_ATTRIB_NPTH else "P", T(p.GetDrillSize().x),
                              T(p.GetPosition().x), -T(p.GetPosition().y), "%s.%s" % (f.GetReference(), p.GetNumber())))
     for t in b.GetTracks():
         if t.GetClass() == "PCB_VIA":
-            want.append(("P", round(T(t.GetDrill()), 3), T(t.GetPosition().x), -T(t.GetPosition().y), "via"))
+            want.append(("P", T(t.GetDrill()), T(t.GetPosition().x), -T(t.GetPosition().y), "via"))
     for k in ("N", "P"):
-        got = sorted((round(d, 3), x, y) for _, kk, d, x, y, _ in hits if kk == k)
+        # No rounding: board positions are exact (nm); KiCad writes decimal mm with at most `decimals` places
+        # (0.001 mm for 3), so a correct file differs from the board by at most half a unit of the last place.
+        tol = 0.5 * 10 ** -decimals + 1e-9
+        got = sorted((d, x, y) for _, kk, d, x, y, _ in hits if kk == k)
         exp = sorted((d, x, y) for kk, d, x, y, _ in want if kk == k)
         name = "NPTH" if k == "N" else "PTH"
         left = list(got)
         miss = []
-        for d, x, y in exp:                  # match within 0.02 mm (Excellon keeps 3 decimals)
+        for d, x, y in exp:
             j = next((i for i, (gd, gx, gy) in enumerate(left)
-                      if abs(gd - d) < 0.002 and abs(gx - x) < 0.02 and abs(gy - y) < 0.02), None)
+                      if abs(gd - d) <= tol and abs(gx - x) <= tol and abs(gy - y) <= tol), None)
             if j is None:
                 miss.append((d, round(x, 3), round(y, 3)))
             else:
@@ -168,7 +176,8 @@ def main():
         per = {}
         for d, _, _ in got:
             per[d] = per.get(d, 0) + 1
-        info.append("DRILL: %s %d hits = board (%s)" % (name, len(got), ", ".join("%gx%d" % kv for kv in sorted(per.items())))
+        info.append("DRILL: %s %d hits = board within %.4f mm (file resolution %g mm) (%s)"
+                    % (name, len(got), tol, 10 ** -decimals, ", ".join("%gx%d" % kv for kv in sorted(per.items())))
                     if same else "DRILL: %s %d hits, board %d" % (name, len(got), len(exp)))
         if k == "N":
             for kk, d, x, y, ref in sorted(want):
