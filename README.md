@@ -33,6 +33,11 @@ Quellen stehen in `qa/generated/populated/model_status.csv` und im Bericht
 | ![Mit Modulen, oben](docs/images/populated_top.jpg) | ![Ohne Module, oben](docs/images/without_modules_top.jpg) |
 | ![Flach von vorne](docs/images/populated_front_low.jpg) | ![Unterseite](docs/images/populated_bottom.jpg) |
 
+Befestigung (vorläufig, Bericht 3n): vier M3-Bohrungen, NPTH 3,2 mm; orange in
+den 3D-Ansichten = Hüllkörper für Scheibe, Kopf und 10-mm-Abstandshalter.
+
+![Bemaßte Draufsicht der Befestigungsbohrungen](docs/images/mounting_top.jpg)
+
 Aus den exportierten Gerber- und Bohrdateien gezeichnet
 (`hardware/scripts/gerber_preview.py`), also so, wie der Fertiger sie erhält:
 
@@ -71,8 +76,8 @@ Online: <https://cagricatik.github.io/RoverCore/>
 - Datenblattfelder (44 Teile), 3D-Modelle (14), Bauteilakten.
 - Bestückungsdruck: 1 211 Umrissstriche mit 0,12 mm im exportierten Gerber
   (JLCPCB verlangt 0,15 mm); Entscheidung offen (Bericht 3l).
-- Befestigung: fünf M3-Positionen sind nur Kommentarmarken, keine Bohrungen;
-  Lage, Bohrungsart und Abstandshöhe mit dem Chassis festlegen (Bericht 3l).
+- Befestigung: vier M3-NPTH-Bohrungen H1–H4 gesetzt, Lage **vorläufig** (keine
+  Chassismaße); vor der Fertigung am Fahrzeug bestätigen (Bericht 3n).
 - 3D: Herstellermodelle für XT30, BZ101, Q101, Q401/Q402, D601–D608 sowie
   DevKit, OLED und IMU fehlen noch (Download-Stand je Teil im Bericht 3m).
   J102/J103 haben das Molex-Modell.

@@ -1214,8 +1214,7 @@ Geltungsbedingung).
   - Die Bestückungszeichnung aus `kit export` ist auf A4 1:1 kaum lesbar;
     ergänzend `qa/generated/fab/assembly_refs_top.pdf` / `_bottom.pdf`
     (nur Referenzen, skaliert).
-- **Keine Befestigungsbohrungen** auf K1, nur Kommentarmarken (3l). Vor der
-  Fertigung festzulegen.
+- Befestigung: seit 3n vier M3-NPTH-Bohrungen H1–H4, Lage vorläufig.
 
 Erstinbetriebnahme: [docs/bringup.md](../bringup.md) (Versorgung, D501,
 Servostrompfad, Abbruchkriterien).
@@ -1295,6 +1294,7 @@ Review-Bilder, Skripte und Dokumentation.
   USB-Steckers (10,4–17,4 mm hoch). Der Schraubenkopf kollidiert nicht, aber
   das Werkzeug kommt nur bei abgezogenem USB-Kabel heran. (91 | 81) liegt
   7,5 mm neben der OLED-Hülle.
+- **Umgesetzt in 3n** (H1–H4, Lage vorläufig). Ursprüngliche Bewertung:
 - **Notwendige mechanische Änderung (separat, vor dem nächsten Paket):**
   Befestigungsbohrungen setzen. Offene Entscheidungen des Owners:
   - Lage, abgestimmt mit dem Chassis;
@@ -1350,6 +1350,97 @@ bleiben, wie sie sind.
   STEP. Möglich wären Anfragen bei AMASS, Vishay und Infineon oder die
   KiCad-Bibliotheksmodelle derselben Footprints (CC-BY-SA, generiert, keine
   Herstellermodelle); dafür ist ein Download aus dem KiCad-GitLab nötig.
+
+## 3n. Befestigungsbohrungen H1–H4 (Stand 2026-11-18, Lage vorläufig)
+
+**Vorgaben:** Im Repository gibt es keine Chassis- oder Gehäusemaße
+(`hardware/mechanical/` enthält nur die Vorlage). Die Lage ist deshalb ein
+**vorläufiger Vorschlag** und vor der Fertigung an der Fahrzeugbefestigung zu
+bestätigen. Vier freie Stellen auf der Platine allein reichen dafür nicht.
+
+*Annahmen* (eigene Wahl, Schätzung):
+- **Schraube und Bohrung:** M3, Durchgangsbohrung 3,2 mm NPTH (ISO 273 fein).
+- **Oberseite:** Kopf ISO 7380 Ø 5,7 × 1,65 mm auf Scheibe ISO 7089
+  Ø 7,0 × 0,5 mm.
+- **Unterseite:** Sechskant-Abstandshalter SW 5,5, über Ecken Ø 6,35 mm,
+  10 mm lang.
+- **Kupfersperre (Sperrfläche im Footprint):**
+  - F.Cu/B.Cu r 3,8 mm (Scheibe bzw. Abstandshalter + 0,3 mm);
+  - In1/In2 r 2,0 mm;
+  - keine Leitungen, Vias oder Flächen.
+- **Courtyard:** r 3,8 mm auf beiden Seiten.
+- **Werkzeugzugang:** nächster Courtyard ≥ 4,5 mm, bei hohen Teilen ≥ 5,5 mm;
+  ≥ 5,5 mm zu den Modulhüllen.
+- **Rand:** Lochmitte ≥ 4,0 mm vom Rand.
+- **Leistungspfade:** kein Kupfer von Regler- oder Hochstromnetzen
+  (VBAT_*, SW_*, ISNS_PWR, VSERVO_REG, +V_SERVO, BOOT_5V, SENSE_P/N, +5V)
+  näher als 5,0 mm. Damit liegt keine Sperrfläche auf einem kritischen Pfad.
+  Signalkupfer muss nur außerhalb der Sperrfläche bleiben.
+
+*Suche* (`hardware/scripts/mounting_holes.py search`, Raster 0,5 mm, ganze
+Platine):
+- Ohne Eingriff in Routing oder Platzierung gibt es **nur vier zulässige
+  Bereiche**: oben links, linke Kante Mitte, untere Kante Mitte, untere
+  rechte Ecke.
+- **Oben rechts ist keine Bohrung möglich:** DevKit-Hülle samt Antenne bis
+  zur Kante. Zwischen den DevKit-Buchsenleisten liegt ein dichter
+  Signalkanal.
+- **Unten links:** LED-Stecker J108–J112 und die Logikversorgung.
+- Selbst mit erlaubtem Umrouten von Signalleitungen findet die Suche in der
+  rechten Hälfte nur (90…91 | 81).
+
+| Bohrung | Lage (K1) | nächstes Kupfer F/B | nächstes Leistungskupfer | Bemerkung |
+|---|---|---|---|---|
+| H1 | (21,0 \| 4,0) | 9,3 mm (J101-Pad) | > 9 mm | neben XT30, Ecke oben links 21 mm entfernt |
+| H2 | (4,0 \| 43,0) | 5,2 mm (+5V) | 5,2 mm | linke Kante Mitte |
+| H3 | (91,0 \| 81,0) | 5,8 mm (VBAT_SW_DRV) / 5,9 mm (VBAT_PROT) | 5,9 mm | links von SW501 |
+| H4 | (146,0 \| 81,0) | 3,81 mm (VBAT_OK_BUF, Signal) | > 5 mm | liegt unter der geschätzten USB-Stecker-/Kabelhülle (10,4–17,4 mm hoch). Der Kopf kollidiert nicht, die Schraube muss aber **vor** dem USB-Kabel gesetzt werden |
+
+Abstände der Lochmitten:
+- H1–H2 42,5 mm, H2–H3 94,9 mm, H3–H4 55,0 mm;
+- H1–H4 146,8 mm, H2–H4 147,0 mm.
+
+**Mechanische Schwäche:** Das DevKit-Feld oben rechts (ca. 25 × 62 mm) hat
+keine eigene Stütze. Steckkräfte beim Einsetzen des DevKits wirken auf eine
+Kragzone. Am Chassis ist dort eine Auflage ohne Schraube vorzusehen, oder
+das DevKit wird vor dem Einbau gesteckt.
+
+*Umsetzung*:
+- **Footprint:** `ProjectFootprints:MountingHole_3.2mm_M3_NPTH_Keepout`
+  (`make_mounting_hole.py`). Grundlage ist KiCads MountingHole_3.2mm_M3,
+  ergänzt um die Sperrflächen, die Courtyards beider Seiten und die Umrisse von
+  Kopf, Scheibe und Abstandshalter.
+- **Schaltplan:** Symbole Mechanical:MountingHole H1–H4 im Hauptblatt, nicht
+  in der BOM, mit dem Hinweis „vorläufig“ (`add_mounting_symbols.py`).
+- **Board:** übernommen mit `build_board.py`, gesetzt und gesperrt mit
+  `mounting_holes.py place`. Die fünf alten Kommentarmarken sind entfernt.
+- **Bestückungsdruck** (`mounting_silk.py`):
+  - Referenzen H1–H4 nur auf F.Fab (H1 hätte über der Kante gestanden);
+  - Platinentext „ENABLE“ lag über H3: Ein Platz in 1,5 mm Höhe fand sich
+    in 15 mm Umkreis von SW501 nicht. Er steht jetzt senkrecht links neben
+    SW501, 1,2 mm hoch, 0,2 mm Strich (JLCPCB ≥ 1,0 / 0,15 mm);
+  - Referenz R301 lag unter der H2-Scheibe und steht jetzt rechts von R301.
+- **Nicht verändert:** Schaltung, Routing und Bauteillagen. Geändert sind nur
+  die GND-Flächen, die um die Sperrflächen neu gefüllt sind.
+
+*Prüfung*:
+- ERC 0, DRC (alle Schweregrade, mit JLCPCB-Regelsatz) 0 Verstöße und 0 offene
+  Verbindungen, Schaltplan-Parität PASS.
+- DRAFT-Paket neu erzeugt. Die Bohrdatei enthält Werkzeug T13 Ø 3,200 mm mit
+  Attribut `NonPlated,NPTH` und vier Treffern an den Sollpositionen. PTH und
+  NPTH stehen gemeinsam in einer Excellon-Datei (KiCad „MixedPlating“); das
+  ist beim Hochladen zu beachten.
+- Abgleich Paket ↔ Board unverändert, einziger offener Fehler D502 ohne
+  Teilenummer.
+- **Bilder:**
+  - bemaßte Draufsicht `docs/images/mounting_top.jpg`
+    (`render_mounting_drawing.py`);
+  - 3D-Ansichten mit orangen Hüllkörpern für Scheibe, Kopf und
+    Abstandshalter (`render_populated_review.py`).
+
+*Offen*: Lage gegen Chassis bzw. Fahrzeugbefestigung bestätigen,
+Abstandshalterlänge, Schraubentyp (Linsen- oder Zylinderkopf), Auflage unter dem
+DevKit-Feld. Bis dahin bleibt das Paket DRAFT/NO-GO.
 
 ## 4. DevKit, Antenne und USB
 

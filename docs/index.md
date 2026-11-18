@@ -27,6 +27,11 @@ Hüllkörper sind keine Herstellermodelle.
 | ![Mit Modulen, oben](images/populated_top.jpg) | ![Ohne Module, oben](images/without_modules_top.jpg) |
 | ![Flach von vorne](images/populated_front_low.jpg) | ![Unterseite](images/populated_bottom.jpg) |
 
+Befestigung (vorläufig): vier M3-Bohrungen NPTH 3,2 mm, orange = Hüllkörper für
+Scheibe, Kopf und Abstandshalter.
+
+![Bemaßte Draufsicht der Befestigungsbohrungen](images/mounting_top.jpg)
+
 Aus den exportierten Gerber- und Bohrdateien gezeichnet:
 
 | Oberseite | Unterseite (von unten) | Innenlage In1 (GND) |
