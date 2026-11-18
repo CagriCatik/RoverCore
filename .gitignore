@@ -41,3 +41,5 @@ site/
 /qa/generated/placement/
 /qa/generated/populated/
 /qa/generated/compact/
+/qa/generated/copper/
+/qa/generated/current/

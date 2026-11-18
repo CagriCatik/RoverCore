@@ -59,6 +59,55 @@ STEPS = {
     # a 0.5-0.6 mm neck of the F pour to the D101 vias (estimated 9 A/mm there). Six vias 0.8/0.4 mm along the bottom
     # edge of the F band, inside both pours and south of the hand-routed VFB_TAP (B, y 28.3).
     "vbat_stitch": ([], [(VBAT, 0.4, (0.8, 0.4), [("via", (x, 29.55)) for x in (36.4, 37.5, 38.6, 39.7, 40.8, 41.9)])]),
+    # +5V trunk (current check, current_map.py 5v): pour at C304-C307 -> via -> B diagonal -> via -> F -> via at
+    # (50.34, 63.6), where the branches to D501/DevKit, U601-U603 and the buzzer leave. It carries up to 1.5 A (switch
+    # limits at maximum, estimate) in 0.4 mm copper (3.5-4.8 A/mm) and single 0.3 mm vias of about 1.06 A. Same path
+    # at 1.0 mm, plus a second via next to each of the three trunk vias.
+    "5v_trunk": ([("T", "+5V", B, (32.4, 58.0, 39.39, 64.75)),
+                   ("T", "+5V", F, (39.39, 64.75, 41.42, 64.75)),
+                   ("T", "+5V", F, (41.42, 64.75, 41.64, 64.97)),
+                   ("T", "+5V", F, (41.64, 64.97, 46.28, 64.97)),
+                   ("T", "+5V", F, (46.28, 64.97, 47.81, 64.97)),
+                   ("T", "+5V", F, (47.81, 64.97, 48.04, 65.19)),
+                   ("T", "+5V", F, (48.04, 65.19, 49.63, 63.6)),
+                   ("T", "+5V", F, (49.63, 63.6, 50.34, 63.6))],
+                 [("+5V", 1.0, (0.6, 0.3), [(B, [(32.4, 58.0), (39.39, 64.75)]),
+                                            (F, [(39.39, 64.75), (41.42, 64.75), (41.64, 64.97), (46.28, 64.97), (47.81, 64.97), (48.04, 65.19), (49.63, 63.6), (50.34, 63.6)])]),
+                  ("+5V", 0.6, (0.6, 0.3), [("via", (31.5, 58.0)), (B, [(31.5, 58.0), (32.4, 58.0)]),
+                                            (F, [(31.5, 58.0), (32.4, 58.0)]),
+                                            ("via", (40.29, 64.75)), (B, [(39.39, 64.75), (40.29, 64.75)]),
+                                            ("via", (49.44, 63.6)), (B, [(49.44, 63.6), (50.34, 63.6)])])]),
+    # +5V branch to D501/DevKit (current check, current_map.py 5v): 130 mm and 7 layer changes from the trunk to
+    # D501 at 0.55 A, 108 mV copper drop where document 3.11 assumes 50 mV for socket + traces. Every segment widened
+    # to the largest of 0.8/0.6/0.5 mm that keeps 0.2 mm clearance; two B segments near (97, 45) stay at 0.4 mm.
+    # The detour itself remains (a reroute would touch the other +5V feeds along the path).
+    "5v_devkit_branch": ([("T", "+5V", B, (50.34, 63.6, 53.93, 67.19)),
+                          ("T", "+5V", B, (53.93, 67.19, 53.93, 68.75)),
+                          ("T", "+5V", F, (79.95, 68.75, 53.93, 68.75)),
+                          ("T", "+5V", B, (79.95, 68.75, 81.32, 67.38)),
+                          ("T", "+5V", B, (81.32, 67.38, 81.32, 57.48)),
+                          ("T", "+5V", F, (83.03, 55.77, 81.32, 57.48)),
+                          ("T", "+5V", F, (95.5, 55.77, 83.03, 55.77)),
+                          ("T", "+5V", B, (100.05, 38.92, 99.73, 39.23)),
+                          ("T", "+5V", F, (97.14, 36.0, 100.05, 38.92)),
+                          ("T", "+5V", F, (97.14, 32.9, 97.14, 36.0)),
+                          ("T", "+5V", F, (98.03, 32.9, 97.14, 32.9)),
+                          ("T", "+5V", F, (99.1, 31.83, 98.03, 32.9)),
+                          ("T", "+5V", F, (100.18, 32.9, 99.1, 31.83)),
+                          ("T", "+5V", F, (102.84, 32.9, 100.18, 32.9)),
+                          ("T", "+5V", F, (108.54, 32.9, 102.84, 32.9)),
+                          ("T", "+5V", F, (109.43, 32.9, 108.54, 32.9)),
+                          ("T", "+5V", F, (110.5, 31.83, 109.43, 32.9)),
+                          ("T", "+5V", F, (111.57, 32.9, 110.5, 31.83)),
+                          ("T", "+5V", F, (114.24, 32.9, 111.57, 32.9)),
+                          ("T", "+5V", F, (114.24, 32.9, 117.54, 32.9)),
+                          ("T", "+5V", F, (117.54, 32.9, 117.54, 33.12)),
+                          ("T", "+5V", B, (117.54, 33.12, 117.66, 33.25)),
+                          ("T", "+5V", B, (117.66, 33.25, 117.66, 53.34)),
+                          ("T", "+5V", F, (119.2, 53.34, 117.66, 53.34))],
+                         [("+5V", 0.8, (0.6, 0.3), [(B, [(50.34, 63.6), (53.93, 67.19)]), (B, [(79.95, 68.75), (81.32, 67.38)]), (F, [(95.5, 55.77), (83.03, 55.77)]), (F, [(98.03, 32.9), (97.14, 32.9)]), (F, [(99.1, 31.83), (98.03, 32.9)]), (F, [(102.84, 32.9), (100.18, 32.9)]), (F, [(108.54, 32.9), (102.84, 32.9)]), (F, [(109.43, 32.9), (108.54, 32.9)]), (F, [(110.5, 31.83), (109.43, 32.9)]), (F, [(114.24, 32.9), (111.57, 32.9)]), (F, [(114.24, 32.9), (117.54, 32.9)]), (F, [(117.54, 32.9), (117.54, 33.12)]), (F, [(119.2, 53.34), (117.66, 53.34)])]),
+                          ("+5V", 0.6, (0.6, 0.3), [(B, [(53.93, 67.19), (53.93, 68.75)]), (F, [(79.95, 68.75), (53.93, 68.75)]), (B, [(81.32, 67.38), (81.32, 57.48)]), (F, [(83.03, 55.77), (81.32, 57.48)]), (B, [(100.05, 38.92), (99.73, 39.23)]), (F, [(97.14, 32.9), (97.14, 36.0)]), (B, [(117.54, 33.12), (117.66, 33.25)])]),
+                          ("+5V", 0.5, (0.6, 0.3), [(F, [(97.14, 36.0), (100.05, 38.92)]), (F, [(100.18, 32.9), (99.1, 31.83)]), (F, [(111.57, 32.9), (110.5, 31.83)]), (B, [(117.66, 33.25), (117.66, 53.34)])])]),
     "vbat_r414": ([], [(VBAT, 0.4, (0.6, 0.3), [
         ("via", (40.4, 35.0)), (F, [(40.4, 35.0), (41.25, 34.87)])])]),
     # GND of R407 pad 2 / Q407 pin 2 lies above the B VBAT pour: one GND via on the existing trace (the pour leaves
@@ -97,6 +146,37 @@ STEPS = {
              (118.8, 20.0)]), ("via", (118.8, 20.0)),
         (F, [(118.8, 20.0), (122.2, 20.0), (123.4, 19.0), (124.0, 18.4), (125.5, 17.78)])])]),
 }
+
+
+K1_EDGE_TOP_LEFT = (-0.05, -0.05)  # outline corner the coordinates below were written for (K1, 150 x 85 mm)
+
+
+def board_offset(b):
+    """The coordinates in STEPS refer to K1 with its outline corner at K1_EDGE_TOP_LEFT. If the whole board was
+    moved in the editor (2026-11-17: by +62.25/+50.5 mm), every coordinate is shifted by the same offset."""
+    e = b.GetBoardEdgesBoundingBox()
+    return T(e.GetLeft()) - K1_EDGE_TOP_LEFT[0], T(e.GetTop()) - K1_EDGE_TOP_LEFT[1]
+
+
+def shift_specs(specs, o):
+    out = []
+    for s in specs:
+        if s[0] == "V":
+            out.append((s[0], s[1], (s[2][0] + o[0], s[2][1] + o[1])))
+        else:
+            xy = s[3]
+            out.append((s[0], s[1], s[2], (xy[0] + o[0], xy[1] + o[1], xy[2] + o[0], xy[3] + o[1])))
+    return out
+
+
+def shift_parts(parts, o):
+    out = []
+    for kind, data in parts:
+        if kind == "via":
+            out.append((kind, (data[0] + o[0], data[1] + o[1])))
+        else:
+            out.append((kind, [(x + o[0], y + o[1]) for x, y in data]))
+    return out
 
 
 def match_track(t, net, layer, xy):
@@ -202,7 +282,7 @@ def main():
     phase = sys.argv[sys.argv.index("--phase") + 1]
     b = pcbnew.LoadBoard(str(pcb))
     if phase == "remove":
-        specs = [r for s in steps for r in STEPS[s][0]]
+        specs = shift_specs([r for s in steps for r in STEPS[s][0]], board_offset(b))
         n, missing, _keep = remove_all(b, specs)
         if missing:
             print("not found (already removed?): %s" % missing)
@@ -220,6 +300,7 @@ def main():
     for s in steps:
         for item in STEPS[s][1]:
             net, w, (vd, dr), parts = item[:4]
+            parts = shift_parts(parts, board_offset(b))
             ign = item[4] if len(item) > 4 else ()
             sg.CLR = item[5] if len(item) > 5 else 0.2
             bad = check(b, net, w, vd, parts, ign)

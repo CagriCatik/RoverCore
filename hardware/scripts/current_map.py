@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """DC current distribution in the actual copper of one net (routing review, 2026-11-16). ESTIMATE, not a measurement.
 
-Usage: <KiCad python> current_map.py BOARD.kicad_pcb CASE OUTDIR [--grid 0.1]
+Usage: <KiCad python> current_map.py BOARD.kicad_pcb CASE OUTDIR [--grid 0.1] [--region X0 Y0 X1 Y1 (K1 coordinates)]
 CASE is one of CASES below (net, layers, source terminal, sink terminals with load currents from the power budget).
 
 Model: the net's copper (filled zones, tracks, pads, via rings) is rasterised per layer on a square grid; neighbouring
@@ -41,6 +41,20 @@ CASES = {
     # 10.1 A VCU input at 9.0 V (3.10); 0.75 A of it to the 5 V buck (1.13 A x 5.08 V / (9 V x 0.85), estimate)
     "vbat": dict(net="/Power/VBAT_PROT", layers=["F.Cu", "B.Cu"], source=[("Q101", "1"), ("Q101", "2"), ("Q101", "3")],
                  sinks=[("servo buck Q401 drain", [("Q401", "5")], 9.35), ("5 V buck U301", [("U301", "3")], 0.75)]),
+    # track-routed supply nets (0.4 mm power class), loads from the 5 V budget (3.2) and the TPS2553 table
+    # (Anschlussplan 8); for the switched outputs the upper current limit I_OS max is used as the worst case
+    "5v": dict(net="+5V", layers=["F.Cu", "B.Cu"], source=[("L301", "2")],
+               sinks=[("D501 -> DevKit", [("D501", "2")], 0.55), ("U601 LED switch", [("U601", "1")], 0.32),
+                      ("U602 EXT switch", [("U602", "1")], 0.30), ("U603 RX switch", [("U603", "1")], 0.21),
+                      ("BZ101 buzzer", [("BZ101", "1")], 0.15)]),
+    "5v_devkit": dict(net="/Controller/+5V_DEVKIT", layers=["F.Cu", "B.Cu"], source=[("D501", "1")],
+                      sinks=[("DevKit 5V pin", [("U501", "21")], 0.55)]),
+    "5v_led": dict(net="/Lighting_IO/+5V_LED", layers=["F.Cu", "B.Cu"], source=[("U601", "6")],
+                   sinks=[("J%d" % j, [("J%d" % j, "1")], 0.08) for j in (108, 109, 110, 111)]),
+    "5v_ext": dict(net="/Lighting_IO/+5V_EXT", layers=["F.Cu", "B.Cu"], source=[("U602", "6")],
+                   sinks=[("J112", [("J112", "1")], 0.30)]),
+    "5v_rx": dict(net="/Lighting_IO/+5V_RX", layers=["F.Cu", "B.Cu"], source=[("U603", "6")],
+                  sinks=[("J107", [("J107", "2")], 0.21)]),
     # servo return current (11.2 A) from the connectors to the battery connector (9.35 A, input current of the servo
     # buck) and to the low-side FET Q402 (1.85 A, average freewheel share = output minus input current; estimate)
     "gnd_servo": dict(net="GND", layers=["F.Cu", "In1.Cu", "In2.Cu", "B.Cu"], source=[("J101", "1")],
@@ -117,7 +131,14 @@ def main():
         ext.append((T(r.GetLeft()), T(r.GetTop()), T(r.GetRight()), T(r.GetBottom())))
     ext = np.array(ext)
     x0, y0 = ext[:, 0].min() - 0.5, ext[:, 1].min() - 0.5
-    nx, ny = int((ext[:, 2].max() + 0.5 - x0) / g) + 1, int((ext[:, 3].max() + 0.5 - y0) / g) + 1
+    x1, y1 = ext[:, 2].max() + 0.5, ext[:, 3].max() + 0.5
+    if "--region" in sys.argv:  # K1 coordinates (outline corner at -0.05/-0.05), shifted with the board
+        k = sys.argv.index("--region")
+        r = [float(v) for v in sys.argv[k + 1:k + 5]]
+        e = b.GetBoardEdgesBoundingBox()
+        ox, oy = T(e.GetLeft()) + 0.05, T(e.GetTop()) + 0.05
+        x0, y0, x1, y1 = max(x0, r[0] + ox), max(y0, r[1] + oy), min(x1, r[2] + ox), min(y1, r[3] + oy)
+    nx, ny = int((x1 - x0) / g) + 1, int((y1 - y0) / g) + 1
     masks = {}
     for ln, L in lids.items():
         conts = []
