@@ -18,9 +18,10 @@ prüfbare Prototyp nach dem [Inbetriebnahmeplan](docs/bringup.md).
 
 Review-Ansichten (`hardware/scripts/render_populated_review.py`): Bauteile mit
 KiCad-Bibliotheksmodell erscheinen normal. **Magenta** sind gekennzeichnete
-Hüllkörper für Carrier-Teile ohne verfügbares Modell (J101 XT30, J102/J103
-Micro-Fit mit dunkler Stirnfläche auf der Steckseite, BZ101, Q101, Q401, Q402,
-D601–D604, D606–D608). **Blau** sind Hüllkörper der gesteckten Module
+Hüllkörper für Carrier-Teile ohne verfügbares Modell (J101 XT30 mit dunkler
+Stirnfläche auf der Steckseite, BZ101, Q101, Q401, Q402, D601–D604,
+D606–D608). J102/J103 zeigen das Molex-Herstellermodell (projektlokal, nicht
+in Git; Quelle und Prüfsumme in `hardware/libraries/3d-models/models.csv`). **Blau** sind Hüllkörper der gesteckten Module
 (DevKit, OLED, IMU). Hüllkörper sind keine Herstellermodelle; ihre Maße und
 Quellen stehen in `qa/generated/populated/model_status.csv` und im Bericht
 (3g, 3l).
@@ -72,9 +73,9 @@ Online: <https://cagricatik.github.io/RoverCore/>
   (JLCPCB verlangt 0,15 mm); Entscheidung offen (Bericht 3l).
 - Befestigung: fünf M3-Positionen sind nur Kommentarmarken, keine Bohrungen;
   Lage, Bohrungsart und Abstandshöhe mit dem Chassis festlegen (Bericht 3l).
-- 3D: KiCad-Bibliotheksmodelle für XT30, Micro-Fit, PowerPAK/TDSON und
-  X2SON fehlen in dieser Installation; Herstellermodelle für DevKit, OLED, IMU
-  und BZ101 liegen nicht vor.
+- 3D: Herstellermodelle für XT30, BZ101, Q101, Q401/Q402, D601–D608 sowie
+  DevKit, OLED und IMU fehlen noch (Download-Stand je Teil im Bericht 3m).
+  J102/J103 haben das Molex-Modell.
 - GO-Freigabe nur mit signierter Freigabe (`manufacturing/approval.example.json`)
   und `--authorize`.
 

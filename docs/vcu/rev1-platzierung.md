@@ -1302,6 +1302,55 @@ Review-Bilder, Skripte und Dokumentation.
   - Abstandshöhe unten (THT-Stifte, C403/C404/D401).
   Bis dahin bleibt das Paket DRAFT/NO-GO.
 
+## 3m. Herstellermodelle (Stand 2026-11-18)
+
+Auftrag: magenta Hüllkörper durch Herstellermodelle ersetzen. Es ändern sich
+nur die 3D-Einträge in `RoverCore.kicad_pcb`. Pads, Positionen und Routing
+bleiben, wie sie sind.
+
+| Position | Bauteil | Quelle | Ergebnis |
+|---|---|---|---|
+| J102, J103 | Molex 43650-0300 | [molex.com](https://www.molex.com/en-us/products/part-detail/436500300), STEP AP242 über TraceParts, ohne Anmeldung | **übernommen** |
+| J101 | AMASS XT30PW-M | [Ultra Librarian](https://app.ultralibrarian.com/details/25c08cfe-12d2-11ec-9033-0a34d6323d74/Amass/XT30PW-M) | dort **kein 3D-Modell** („No 3D Model Available“), nur Symbol und Footprint. Ein GrabCAD-Modell eines Nutzers ist kein Herstellermodell und braucht eine Anmeldung; nicht geladen |
+| BZ101 | Same Sky CMT-8540S-SMT-TR | [sameskydevices.com](https://www.sameskydevices.com/product/audio/buzzers/audio-transducers/cmt-8540s-smt-tr) | **blockiert:** Download nur nach Eingabe einer E-Mail-Adresse und Zustimmung zu den „CAD Model Terms“; nicht ohne Owner |
+| Q101 | Vishay SiRA99DP-T1-GE3 | [Vishay-Portal (Ultra Librarian)](https://vendor.ultralibrarian.com/vishay/embedded?q=library/ecad/&vdrSearch=SIRA99DP-T1-GE3&docId=71023) | dort **kein 3D-Format**, nur Symbol und Footprint; Export verlangt außerdem Zustimmung zu den UL-Bedingungen |
+| Q401, Q402 | Infineon BSC026N04LS, PG-TDSON-8-6 | [Infineon-Gehäuseseite](https://www.infineon.com/package/PG-TDSON-8-6), [Produktseite](https://www.infineon.com/part/BSC026N04LS) | **kein STEP** angeboten: nur interaktives 3D-PDF, Gehäusezeichnung, Footprint-PDF |
+| D601–D604, D606–D608 | TI TPD1E05U06DPYR | [Ultra Librarian](https://app.ultralibrarian.com/details/16990488-103f-11e9-ab3a-0a3560a4cccc/Texas-Instruments/TPD1E05U06DPYR) | 3D-Modell vorhanden, **blockiert:** „Login to Download“ (kostenloses Konto) |
+| (Molex J102/J103) | – | [Ultra Librarian](https://app.ultralibrarian.com/details/e86e5139-a2fd-11eb-9033-0a34d6323d74/Molex/436500300) | dort ebenfalls „Login to Download“; nicht nötig, weil Molex direkt liefert |
+
+*Molex 43650-0300* (`hardware/libraries/3d-models/models.csv`):
+- **Datei:** `vendor/Molex_436500300.stp`, SHA-256 `0b5b19a1…7d30`,
+  TraceParts-Teil 33-12012026-074690, Version 1.1.7. Laut Begleitdatei die
+  Variante „Right-Angle Header, 3.00mm Pitch, Single Row, 3 Circuits, with
+  Snap-in Plastic Peg PCB Lock, Black“; das ist die bestellte Teilenummer.
+- **Ausrichtung:** Drehung (−90°, 0°, 180°), Versatz 0. Prüfung mit
+  `hardware/scripts/model_fit_check.py` (Footprint allein, Ansichten oben,
+  vorne, seitlich, schräg):
+  - Gehäuse = Bestückungsdruck-Umriss einschließlich Fasen;
+  - Stifte 1–3 in den Pads bei x 0 / 3 / 6;
+  - Rastzapfen in der NPTH-Bohrung (3 | −4,32);
+  - Gehäuse liegt auf der Platine auf, Steckseite zur Platinenkante
+    (lokal y min).
+  Im Gesamtrender geprüft (Draufsicht, schräg von hinten).
+- **Lizenz:** Die Molex-Nutzungsbedingungen erlauben die Nutzung
+  heruntergeladener Inhalte zur Bewertung der Produkte, keine Weitergabe.
+  Das Repository ist öffentlich, deshalb ist die STEP-Datei **nicht in Git**
+  (`.gitignore`). Versioniert sind Quelle, Datum, Prüfsumme und Ausrichtung;
+  `hardware/scripts/assign_vendor_models.py` trägt sie ein. Ohne die Datei
+  fehlt der Körper, und `kit verify` meldet ihn unter `models_3d`.
+  Gerenderte Bilder des Modells stehen im README.
+- **Stand `models_3d`:** 12 statt 14 Meldungen. ERC, DRC und Parität bestehen.
+
+*Für die blockierten Teile braucht es den Owner:*
+- **Ultra Librarian (TPD1E05U06):** im Browser-Bereich anmelden; dann lade ich
+  das Modell und prüfe es wie oben.
+- **Same Sky (BZ101):** Freigabe, dort die E-Mail-Adresse einzutragen und den
+  CAD Model Terms zuzustimmen, oder die Datei selbst laden.
+- **XT30PW-M, SiRA99DP, PG-TDSON-8:** bei den genannten Quellen gibt es kein
+  STEP. Möglich wären Anfragen bei AMASS, Vishay und Infineon oder die
+  KiCad-Bibliotheksmodelle derselben Footprints (CC-BY-SA, generiert, keine
+  Herstellermodelle); dafür ist ein Download aus dem KiCad-GitLab nötig.
+
 ## 4. DevKit, Antenne und USB
 
 - U501 sitzt an der rechten Kante. Die Antennen-Sperrfläche des Footprints
