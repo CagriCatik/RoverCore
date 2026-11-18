@@ -161,15 +161,15 @@
 
 ## 3a. Lagenaufbau und vorgesehene Rückstromwege (2026-11-16)
 
-**Lagenaufbau** (Werte aus der Board-Datei, beim Fertiger noch zu bestätigen):
+**Lagenaufbau – festgelegt 2026-11-18** (in der Board-Datei eingetragen; Fertigungsvorgabe):
 
 | Lage | Dicke | Rolle |
 |---|---|---|
 | F.Cu | 35 µm | Bauteile; Leistungsflächen VBAT_PROT, SW, ISNS_PWR, VSERVO_REG, lokale GND-Flächen; kurze kritische Leitungen (TG/SW-Paar, Bootstrap, IC-Umgebung) |
 | Prepreg | 0,1 mm | – |
-| In1.Cu | 35 µm | **GND, durchgehend, ohne Leitungen**; Bezugs- und Rückstromebene für F.Cu |
-| Kern | 1,24 mm | – |
-| In2.Cu | 35 µm | **GND, durchgehend** (vorerst); Bezugsebene für B.Cu |
+| In1.Cu | 17,5 µm | **GND, durchgehend, ohne Leitungen**; Bezugs- und Rückstromebene für F.Cu |
+| Kern | 1,265 mm | – |
+| In2.Cu | 17,5 µm | **GND, durchgehend** (vorerst); Bezugsebene für B.Cu |
 | Prepreg | 0,1 mm | – |
 | B.Cu | 35 µm | C403/C404, D401; Leitungen BG, Sense-Paar, Rückkopplung, EXTVCC; später weitere Signale und Leistungsflächen parallel zu F |
 
@@ -183,9 +183,19 @@
 - **Leistungsinseln auf In2** (z. B. VBAT_PROT- oder +V_SERVO-Verteilung)
   nur außerhalb von Bereichen mit B-Leitungen. Entschieden wird beim Routing
   der übrigen Platine.
-- **Kupferdicke:** 35 µm außen bei bis zu 11,2 A Servostrom ist knapp. Ob
-  70 µm außen nötig sind, wird mit der Führung der Servoschiene entschieden
-  (offen).
+- **Festlegung Kupfer und Hülsen (2026-11-18):**
+  - Außenlagen 35 µm Endkupfer (1 oz), Innenlagen 17,5 µm (0,5 oz),
+    Prepreg 0,1 mm, Kern 1,265 mm, Gesamtdicke ca. 1,6 mm. Das entspricht
+    dem veröffentlichten 4-Lagen-Standardaufbau von JLCPCB (Prepreg
+    2313/3313); bei der Bestellung als Aufbau auswählen und bestätigen.
+  - **Kein 70-µm-Außenkupfer:** Die Platine ist mit 0,15 mm Abstand und
+    0,2-mm-Leitungen an den 0,5-mm-Raster-ICs (U401, U506) geroutet; dicke
+    Außenlagen verlangen gröbere Mindestabstände und damit ein Neurouting.
+    Die Servoschiene ist mit 35 µm gerechnet (3j).
+  - **Hülsenkupfer:** Vorgabe IPC-6012 Klasse 2 (Mittel ≥ 20 µm, dünnste
+    Stelle ≥ 18 µm). JLCPCB veröffentlicht keinen garantierten Wert; die
+    Vorgabe ist bei der Bestellung schriftlich zu bestätigen. Alle
+    Rechnungen verwenden 18 µm.
 
 **Vorgesehene Rückstromwege** (die Kupferführung dazu steht in 3b):
 
@@ -1005,9 +1015,11 @@ J103 Pin 1 getrennt, jedes Teil vernäht). Die F-VBAT-Fläche hat einen
 (x 41–46) ist ≥ 1,0 mm breit; sie liegt nicht im Hauptstrompfad.
 
 **Strompfade** (`current_map.py`: Gleichstrom-Netzwerkrechnung auf dem
-gerasterten Ist-Kupfer, 35 µm Cu, 20 µm Hülsenmetallisierung angenommen,
-20 °C, ohne Erwärmung, ohne Steckerübergänge – **alles Schätzungen**,
-Berichte und Stromdichtekarten unter `qa/generated/current/`):
+gerasterten Ist-Kupfer, 20 °C, ohne Erwärmung, ohne Steckerübergänge –
+**alles Schätzungen**; Berichte und Stromdichtekarten unter
+`qa/generated/current/`). Die Tabelle ist der Stand vom 2026-11-18 vor der
+Festlegung des Aufbaus (35 µm auf allen Lagen, 20 µm Hülse); die
+aktualisierten Werte mit festgelegtem Aufbau stehen im Abschluss unten.
 
 | Pfad | Last (Annahme) | Ergebnis |
 |---|---|---|
@@ -1016,7 +1028,7 @@ Berichte und Stromdichtekarten unter `qa/generated/current/`):
 | GND-Rückstrom Servo → J101/Q402 | 11,2 A | Läuft fast ganz über In1/In2. Vorher: Engstelle Wärmefallen der THT-GND-Pins (J101.1: 9,35 A über 2 × 4 Stege à 0,5 mm, ca. 2,75 A/mm). Mit massiver Anbindung max. 0,7 A/mm, Abfall 6 mV. Folge: beim Löten mehr Wärme nötig. |
 | +5V L301 → Verbraucher | 1,53 A (Schaltergrenzen max.) | Vorher 3,5–4,8 A/mm im 0,4-mm-Stamm, Stamm-Vias 1,06 A. Nach `5v_trunk` max. 2,7 A/mm, Vias ≤ 0,6 A. |
 | +5V → D501 (DevKit) | 0,55 A | 108 → 83 mV nach Verbreiterung. **Über der Annahme 50 mV (Versorgungsdokument 3.11)**; Reserve LDO-Eingang sinkt von 0,24 V auf ca. 0,21 V. Ursache: 130 mm Autorouter-Weg mit 7 Lagenwechseln. |
-| +5V_DEVKIT, +5V_LED/_EXT/_RX, +3V3, LOCK_SUP | 0,55 / 0,32 / 0,30 / 0,21 A, 50 mA, < 1 mA | ≤ 1,5 A/mm, Abfall ≤ 10 mV – unkritisch. |
+| +5V_DEVKIT, +5V_LED/_EXT/_RX, +3V3, LOCK_SUP | 0,55 / 0,32 / 0,30 / 0,21 A, 50 mA, < 1 mA | ≤ 1,5 A/mm, Abfall ≤ 10 mV – im untersuchten Gleichstromfall ohne Auffälligkeit (kein thermischer Nachweis). |
 
 Vergleichswert (IPC-2221, Schätzung, 35 µm außen): 1 mm Breite trägt bei
 20 K Erwärmung ca. 3 A; ein Via 0,4 mm (20 µm) nach der konservativen
@@ -1025,11 +1037,11 @@ besser angebunden als diese Näherung annimmt; der Nachweis bleibt eine
 Messung am Muster.
 
 **Offen aus dieser Prüfung:**
-- **D501-Kathodenkupfer:** gefordert ≥ 1 cm² (3.11), erreicht 63 mm²
+- *(überholt, siehe Abschluss unten)* **D501-Kathodenkupfer:** gefordert ≥ 1 cm² (3.11), erreicht 63 mm²
   (F 14 + B 49, 4 Vias). Um D501 ist F dicht geroutet. Lösung: D501 an
   eine freie Stelle versetzen oder Signale um D501 neu führen; sonst T_j
   zwischen den Schätzwerten 106 und 155 °C.
-- **DevKit-Zweig +5V:** 83 mV statt 50 mV; kürzere Neuführung (ca. 70 mm
+- *(überholt, siehe Abschluss unten)* **DevKit-Zweig +5V:** 83 mV statt 50 mV; kürzere Neuführung (ca. 70 mm
   statt 130 mm) beim Aufräumen.
 - **Servoschiene bei 11,2 A:** Via-Feld und J102-Lasche an der Grenze der
   konservativen Näherung; bei 6 A Fahrbetrieb unkritisch. Entscheidung
@@ -1041,6 +1053,82 @@ Messung am Muster.
 Kupferansichten (nicht versioniert): `render_copper_views.py`, Ausgabe
 `qa/generated/copper/` (ganze Platine F/B/überlagert; Ausschnitte
 +V_SERVO, VBAT_PROT, +5V, D501).
+
+
+**Abschluss Versorgung und Thermik (2026-11-18, nach Festlegung des
+Aufbaus).** Die Aussagen gelten für den untersuchten **Gleichstromfall**:
+Stromverteilung und Spannungsabfall. Eine zulässige Dauertemperatur ist
+damit nicht nachgewiesen – besonders nicht für Servoschiene und Via-Feld.
+
+*DevKit-Zweig neu geführt* (`k1_fixups.py 5v_devkit_direct`): D501 hing
+über die Nordschleife (bis y 33 und auf B zurück nach y 53, 2 Vias). Neu:
+direkte Verbindung vom Via (95,5 | 55,8) auf B, ein Via, F bis zur Anode,
+0,8 mm (0,6 mm an der J115-Befestigungsbohrung). Die Nordschleife versorgt
+weiter D201–D205, R211–R215 und U201. Kupferabfall L301 → D501 bei 0,55 A:
+108 → 83 → **56 mV**.
+
+*Spannungsbudget LDO-Eingang (Akku allein, 0,55 A, Schätzung)*:
+
+| Größe | kalt (−20 °C) | warm (Platine 85 °C) |
+|---|---|---|
+| +5V statisch min. | 4,74 V | 4,74 V |
+| Lastsprung-Reserve +5V (3.11) | −0,10 V | −0,10 V |
+| Kupfer L301 → D501 (`current_map.py 5v`, Cu-Temperaturbeiwert 0,39 %/K) | −0,05 V | −0,07 V |
+| V_F D501 (Datenblatt max. 25 °C: 0,498 V interpoliert; −20 °C ca. +0,09 V nach Fig. 1) | −0,59 V | −0,50 V |
+| Buchsenkontakt + DevKit-Leitung bis LDO (Annahme, nicht gemessen) | −0,025 V | −0,025 V |
+| **LDO-Eingang min.** | **3,98 V** | **4,05 V** |
+| benötigt: 3,349 V + Dropout 0,418 V bei 0,55 A (max. über Temperatur) | 3,77 V | 3,77 V |
+| **Reserve** | **ca. 0,21 V** | **ca. 0,28 V** |
+
+Die Reserve ist ein Rechenwert aus Grenz- und Annahmewerten; Messung am
+Muster (LDO-Eingang bei Funklast, kalt).
+
+*D501 thermisch*: Die „1 cm²“ im Datenblatt (PMEG4010CEH v.3, Tab. 6,
+Fußnote 3) sind die **Prüfbedingung** für R_th(j-a) = 150 K/W
+(einseitiges FR4, Kathodenpad 1 cm²), keine Anwendungsvorgabe; Standard-
+Footprint 330 K/W, R_th(j-sp) 60 K/W. Bewertung mit `scripts/kit thermal`
+(Eintrag `hardware/simulations/thermal/power_sources.csv`: 0,274 W Dauer,
+Umgebung 65 °C, nur D501 als Quelle):
+- Werkzeug ohne Innenlagen (konservativ): Platine 108 °C → T_j ≈ 125 °C.
+- Innenlagen als gleichwertige Flächenleitfähigkeit (In1 liegt 0,1 mm unter
+  F): Platine 77 °C → T_j ≈ 93 °C.
+- Damit T_j ≈ 93–125 °C bei T_j max. 150 °C; im Mittel 90 mW statt 274 mW.
+  Das F-Kupfer (14 mm²) und das B-Kupfer (49 mm², 4 Vias) sind nicht einer
+  zusammenhängenden 1-cm²-Fläche gleichwertig; der Vergleich geht über das
+  Platinenmodell, nicht über die Fläche.
+- **Kein Versetzen von D501.** Offen bleiben Wärme anderer Quellen am Ort
+  von D501 (Regler ca. 70 mm entfernt, nicht im Modell) und die Messung.
+
+*Strompfade mit festgelegtem Aufbau* (35/17,5/17,5/35 µm, Hülse 18 µm; feinstes
+Raster):
+
+| Pfad | Abfall | Vias / Bemerkung |
+|---|---|---|
+| +V_SERVO RS402 → J102 / J103 (11,2 A) | 22,5 / 28,2 mV | Via am Shunt max. 1,8 A (1,0/0,5 mm), Feld ungleich |
+| VBAT_PROT Q101 → Q401 (9,35 A) | 24,4 mV | Vias ≤ 1,3 A |
+| GND-Rückstrom Servo → J101 (11,2 A), ganze Platine | 11,3 / 12,0 mV | über In1/In2; mit 17,5 µm Innenlagen etwa doppelt so viel wie mit 35 µm |
+| +5V L301 → D501 (0,55 A) | 56 mV | Stamm-Vias ≤ 0,6 A |
+
+*Modellgrenzen (GND-Rechnung und allgemein)*:
+- **Ausschnitt:** Kupfer außerhalb des Rechenbereichs fehlt. Weglassen von
+  Leitern kann den Widerstand nur erhöhen (Monotonie), ein Ausschnitt macht
+  Abfälle also ungünstiger, nicht günstiger: GND-Rückstrom im Ausschnitt
+  130 × 45 mm 14,3 mV, ganze Platine 11,4 mV (Raster 0,25 mm). Für den
+  Bericht gilt die ganze Platine.
+- **Raster:** Abfälle und Via-Ströme ändern sich zwischen 0,25 und 0,15 mm
+  (GND) bzw. 0,1 und 0,05 mm (Servo, VBAT) um ≤ 4 %. **Punktspitzen** der
+  Stromdichte an Via-Ringen und Innenecken steigen mit feinerem Raster
+  weiter (Servo-B-Fläche 6,9 → 8,6 A/mm, VBAT-F 6,7 → 8,4 A/mm, GND
+  In1 0,7 → 0,8 A/mm): Sie konvergieren nicht und sind nur Hinweise auf
+  Stromverdrängung, keine Belastbarkeitswerte.
+- Nicht modelliert: Erwärmung und temperaturabhängiger Widerstand,
+  Toleranz der Hülsen, Lotfüllung der Bohrungen, Wechselanteile,
+  Steckerübergänge, Einspeisung über Pads als Äquipotential.
+
+*Verbleibend offen:* thermischer Nachweis der Servoschiene, des Via-Felds
+und der J102/J103-Laschen bei 11,2 A (Messung am Muster mit blockierten
+Servos oder Ersatzlast); Bestätigung von Aufbau und Hülsenklasse beim
+Fertiger; Muster-Messungen LDO-Eingang und D501.
 
 ## 4. DevKit, Antenne und USB
 
@@ -1159,7 +1247,8 @@ Ansichten:
 - Thermik: `scripts/kit thermal analyze` nach der Feinplatzierung. O-16:
   WROOM nur bis 65 °C, also Abstand zu den Reglern prüfen.
 - Lagenaufbau: festgelegt in 3a. Offen sind Prepreg-Dicke und
-  Außenkupfer (35 / 70 µm) beim Fertiger.
+  Außenkupfer: festgelegt in 3a (35/17,5/17,5/35 µm, Hülse IPC-6012 Kl. 2),
+  beim Fertiger zu bestätigen.
 - 3D-Modelle der 17 Footprints ohne Modell (nur echte Herstellerdaten).
 - Weiter offen aus dem Schaltplan:
   - O-36 (ESC-Test);
