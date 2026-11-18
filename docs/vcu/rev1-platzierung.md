@@ -1222,8 +1222,10 @@ Geltungsbedingung).
   - V_F typ. 2,0 V / max. 2,4 V bei 20 mA, I_F max. 30 mA, λ_dom 625 nm;
   - Pin 1 = Kathode mit Polaritätsmarke. Das passt zu Device:LED und
     LED_0603_1608Metric (Pad 1 an GND).
-  - Strom über R504 1 kΩ bei 3,3 V etwa 1,5 mA (Schätzung, V_F bei kleinem
-    Strom aus der Kennlinie nicht abgelesen).
+  - Strom über R504 1 kΩ: (3,3 V − 2,0 V) / 1 kΩ ≈ 1,3 mA (Schätzung mit
+    V_F typ.). Der tatsächliche Strom hängt von der GPIO-Ausgangsspannung
+    unter Last und von der LED-Kennlinie bei kleinem Strom ab; beides ist
+    nicht abgelesen. Eine frühere Angabe von 1,5 mA war falsch.
   - Eine LCSC-Nummer und der JLCPCB-Bestand sind nicht geprüft; das Feld
     LCSC ist leer.
   - Der Paketabgleich meldet 0 Fehler.
