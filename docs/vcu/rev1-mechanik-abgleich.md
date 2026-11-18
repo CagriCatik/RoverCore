@@ -34,7 +34,7 @@ festgelegt.
 | M6 | J104–J112 (senkrecht) mit Kabeln | Kabel kollidieren nicht mit Aufbauten über der Platine | OFFEN |
 | M7 | DevKit mit USB-Kabel: Zugang zu beiden USB-Buchsen | Stecker passt; H4-Schraube ist vor dem Kabel gesetzt oder zugänglich | OFFEN |
 | M8 | Werkzeugzugang zu H1–H4 mit gesteckten Modulen | Schraubendreher bzw. Innensechskant senkrecht ansetzbar | OFFEN |
-| M9 | Durchbiegung beim Einstecken des DevKits ohne und mit Auflage (siehe unten): Messuhr oder Lineal am DevKit-Feld | Vorschlag: ≤ 0,5 mm Durchbiegung, keine Rissgeräusche, kein Lösen von Lötstellen | OFFEN |
+| M9 | Durchbiegung beim Einstecken des DevKits ohne und mit Auflage (siehe unten): Messuhr oder Lineal am DevKit-Feld; außerdem Ebenheit nach dem Festschrauben **ohne** gestecktes DevKit | Vorschlag: ≤ 0,5 mm Durchbiegung beim Stecken; Platine nach dem Festschrauben eben (keine Vorspannung durch die Auflage); keine Rissgeräusche, kein Lösen von Lötstellen | OFFEN |
 | M10 | Antenne: Abstand des WROOM-Moduls zu Metallteilen des Chassis | keine Metallteile im Antennenbereich über der oberen Kante | OFFEN |
 
 ## Auflage unter dem DevKit
@@ -46,18 +46,46 @@ festgelegt.
   - x 128–144, y 1–41 (K1) zwischen den beiden Buchsenreihen;
   - mindestens 1,5 mm Abstand zu Pads und Courtyards der Unterseite, keine
     Vias;
-  - dort laufen nur Leitungen unter Lötstopplack.
-  - Vorschlag in der Vorlage: Auflagefeld x 129–143, y 4–40 mit zwei
-    Stützpunkten bei (136 | 12) und (136 | 34).
-- **Ausführung:** eine **isolierende** Auflage ohne Schraube, die nur auf den
-  Lötstopplack drückt, etwa Kunststoff-Abstandshalter mit flacher Kappe,
-  Gummi- oder Moosgummipuffer. Ihre Höhe entspricht der Länge der
-  Abstandshalter; eine leichte Vorspannung ist gewünscht, ein Wölben der
-  Platine nicht.
-  - Keine Metallteile: Die Leitungen liegen nur unter dem Lötstopplack.
-  - Nicht unter die Buchsenreihen: deren THT-Stifte stehen unten über.
+  - dort laufen Leitungen nur unter Lötstopplack.
+- **Antennenfreiraum:** Die Sperrfläche des DevKit-Footprints (alle
+  Kupferlagen) reicht auf der Platine bis y 1,0 (x 126,9–146,9); der größte
+  Teil liegt über der Oberkante. Die Auflage darf nicht hineinragen.
+  Vorschlag in der Vorlage: Auflagefeld x 129–143, y 4–40, mindestens 3 mm
+  von der Sperrfläche entfernt, mit Stützpunkten bei (136 | 12) und
+  (136 | 34). Die Auflage reicht nicht über die Oberkante hinaus, und im
+  Antennenbereich über der Kante darf kein Chassisteil liegen (M10).
+- **Ausführung:**
+  - **breite, isolierende** Auflage ohne scharfe Kanten: Kunststoffblock mit
+    gebrochenen Kanten, Abstandshalter mit großer, flacher Kunststoffkappe
+    oder ein Gummi- bzw. Moosgummipuffer;
+  - mindestens etwa Ø 8–10 mm Kontaktfläche je Stützpunkt (Vorschlag), damit
+    die Last verteilt wird;
+  - **kein Metall.** Der Lötstopplack über den Leitungen ist eine
+    Isolation, aber **kein mechanischer Scheuerschutz**. Ein Teil, das bei
+    Vibration reibt oder punktuell drückt, kann ihn durchscheuern. Eine
+    zusätzliche Kapton- oder Isolierfolie auf der Kontaktfläche ist
+    sinnvoll;
+  - nicht unter die Buchsenreihen: deren THT-Stifte stehen unten über.
+- **Höhe:** Die Auflage muss zur **gemessenen** Distanz zwischen Chassis und
+  Platinenunterseite passen, also zur tatsächlichen Länge der eingebauten
+  Abstandshalter samt Toleranz. Sie darf die Platine **nicht vorspannen**:
+  nach dem Festschrauben der vier Schrauben gerade anliegen, ohne die
+  Platine anzuheben. Prüfen mit Lineal oder Messuhr am DevKit-Feld: Die
+  Platine bleibt eben (M9), ein Spalt von wenigen Zehnteln vor dem
+  Einstecken ist zulässig. Eine elastische Auflage (Moosgummi) gleicht
+  Toleranzen aus, ohne die Platine zu biegen.
 - **Alternative:** das DevKit vor dem Einbau stecken und am Fahrzeug nicht
   mehr ziehen.
+
+## Reihenfolge am Fahrzeug
+
+1. Vorlage mit 100 % drucken und beide Kontrollmaße nachmessen.
+2. Vorlage auflegen, Stecker samt Kabeln und Abstandshalter anhalten (M1–M8, M10).
+3. Abstand Chassis–Platinenunterseite messen, Auflage danach wählen (M9).
+4. Erst dann Lochlage, Schrauben, Abstandshalter und Auflage festlegen.
+
+Lochpositionen werden bis zu diesem Abgleich nicht weiter am Rechner
+optimiert; erst der Abgleich bestätigt die vorläufige Mechanik oder nicht.
 
 ## Danach festlegen
 

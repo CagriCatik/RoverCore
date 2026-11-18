@@ -80,7 +80,8 @@ Online: <https://cagricatik.github.io/RoverCore/>
 - Befestigung: vier M3-NPTH-Bohrungen H1–H4 gesetzt, Lage **vorläufig** (keine
   Chassismaße); vor der Fertigung am Fahrzeug abgleichen
   ([Prüfliste](docs/vcu/rev1-mechanik-abgleich.md)), Auflage unter dem DevKit vorsehen.
-- Bohrdatei: PTH/NPTH getrennt hochladen und die 10 NPTH-Löcher in der
+- Bohrdateien: `kit export` liefert getrennt `RoverCore-PTH.drl` und
+  `RoverCore-NPTH.drl`; beide hochladen und die 10 NPTH-Löcher in der
   Fertiger-Vorschau prüfen (Bericht 3n).
 - 3D: Herstellermodelle für XT30, BZ101, Q101, Q401/Q402, D601–D608 sowie
   DevKit, OLED und IMU fehlen noch (Download-Stand je Teil im Bericht 3m).

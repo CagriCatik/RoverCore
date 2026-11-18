@@ -71,6 +71,16 @@ def main():
     s.append('<text x="%.2f" y="%.2f" font-size="2.2px" fill="#2a8a2a">Auflage Unterseite</text>' % (a[0] + 0.5, c[1] + 3))
     s.append('<text x="%.2f" y="%.2f" font-size="2.2px" fill="#2a8a2a">x %.0f-%.0f, y %.0f-%.0f</text>'
              % (a[0] + 0.5, c[1] + 5.6, SUPPORT[0], SUPPORT[2], SUPPORT[1], SUPPORT[3]))
+    # antenna keep-out of the DevKit footprint on the board (rule area of U501, all copper layers)
+    for z in b.FindFootprintByReference("U501").Zones():
+        if z.GetIsRuleArea():
+            bb = z.GetBoundingBox()
+            ka = P(T(bb.GetLeft()) - ox, max(T(bb.GetTop()) - oy, -8))
+            kc = P(T(bb.GetRight()) - ox, T(bb.GetBottom()) - oy)
+            s.append('<rect x="%.2f" y="%.2f" width="%.2f" height="%.2f" fill="#c02020" fill-opacity="0.12" '
+                     'stroke="#c02020" stroke-width="0.2"/>' % (ka[0], ka[1], kc[0] - ka[0], kc[1] - ka[1]))
+            s.append('<text x="%.2f" y="%.2f" font-size="2px" fill="#c02020">Antennenfreiraum (keine Auflage)</text>'
+                     % (ka[0] + 0.5, ka[1] - 0.8))
     # connectors with plug direction
     # horizontal plugs get an arrow; J104-J112 are vertical (plug from above, cable leaves upwards)
     conns = {"J101": "left", "J102": "up", "J103": "up", "J104": None, "J105": None, "J106": None,
@@ -151,13 +161,15 @@ def main():
         "drucken, beide Kontrollmaße nachmessen.",
         "Draufsicht von oben, Bezug linke obere Konturecke, mm. H1-H4: M3, NPTH Ø 3,2; Kreis Ø 7,0 = Scheibe; rot "
         "gestrichelt r 3,8 = Kupfersperre (F/B).",
-        "Grün schraffiert: freie Auflagefläche UNTERSEITE unter dem DevKit (±1,5 mm zu Pads/Courtyards, keine Vias; "
-        "nur abgedeckte Leitungen) - isolierende Auflage, keine Schraube.",
+        "Grün: Auflage UNTERSEITE unter dem DevKit (±1,5 mm zu Pads/Courtyards, keine Vias, ≥ 3 mm zum roten "
+        "Antennenfreiraum) - breit, isolierend, ohne scharfe Kanten,",
+        "kein Metall (Lötstopplack ist kein Scheuerschutz); Höhe = gemessener Abstand Chassis-Platine, Platine nicht "
+        "vorspannen.",
         "Orange: Steckrichtung der waagrechten Stecker (J101, J102/J103, DevKit-USB); J104-J112 senkrecht. Lochabstände: H1-H2 42,5 / H2-H3 94,9 / H3-H4 55,0 / H1-H4 146,8 / "
         "H2-H4 147,0 mm.",
     ]
     for i, ln in enumerate(notes):
-        s.append('<text x="15" y="%.1f" font-size="2.6px">%s</text>' % (176 + i * 4.2, ln))
+        s.append('<text x="15" y="%.1f" font-size="2.6px">%s</text>' % (174 + i * 4.0, ln))
     s.append("</svg>")
     svg = out.with_suffix(".svg")
     out.parent.mkdir(parents=True, exist_ok=True)

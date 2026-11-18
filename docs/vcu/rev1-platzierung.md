@@ -1446,11 +1446,31 @@ das DevKit wird vor dem Einbau gesteckt.
   - 2 × 3,0 mm Rastzapfen J102/J103;
   - 4 × 2,7 mm Modulbefestigung J115/J116.
   `RoverCore-PTH.drl` enthält keines davon.
-- **Empfehlung für die Bestellung:** getrennte PTH/NPTH-Dateien hochladen
-  und in der Datei-Vorschau des Fertigers prüfen, dass die 10 NPTH-Löcher
-  ohne Hülse dargestellt sind. Zusätzlich im Bestellhinweis vermerken:
-  „4 × Ø 3,2 mm, 2 × Ø 3,0 mm, 4 × Ø 2,7 mm NPTH“. `kit export` ist dafür
-  nicht geändert; das ist ein Owner-Entscheid.
+- **Umgestellt (Owner-Entscheid 2026-11-18):** `kit export` schreibt jetzt
+  getrennte Dateien `RoverCore-PTH.drl` und `RoverCore-NPTH.drl` (mit je
+  einer Bohrkarte), **keine** gemeinsame Datei mehr. Damit lassen sich keine
+  Bohrungen doppelt hochladen. Geändert ist `tools/release/exports.py`
+  (`--excellon-separate-th`, vermerkt in `tools/VENDORED.md`).
+  `fab_package_check.py` meldet eine gemeinsame Datei als Fehler.
+- **DRAFT-Paket neu erzeugt und geprüft** (`fab_package_check.py`, Vergleich
+  mit dem vorherigen Paket):
+  - NPTH: 10 Löcher, deckungsgleich mit dem Board innerhalb 0,02 mm
+    (Excellon speichert 3 Nachkommastellen):
+    - H1 (83,25 | −54,50), H2 (66,25 | −93,50), H3 (153,25 | −131,50) und
+      H4 (208,25 | −131,50), je Ø 3,2 mm;
+    - J102/J103 je Ø 3,0 mm;
+    - J115/J116 je 2 × Ø 2,7 mm.
+    Angegeben sind Bohrdatei-Koordinaten (Seitenursprung, Y nach oben).
+  - PTH: 416 Löcher = Board:
+    - Vias und Bauteile: 0,25 × 196, 0,3 × 42, 0,4 × 69, 0,5 × 6,
+      0,75 × 16;
+    - THT: 1,0 × 75, 1,02 × 6, 1,78 × 4, 1,9 × 2.
+  - Alle 426 Treffer sind nach Art, Durchmesser und Koordinate identisch mit
+    der vorherigen gemeinsamen Datei. Der Bestand ist also unverändert.
+- **Für die Bestellung:** beide Dateien hochladen, in der Datei-Vorschau des
+  Fertigers prüfen, dass die 10 NPTH-Löcher ohne Hülse dargestellt sind, und
+  im Bestellhinweis „4 × Ø 3,2 mm, 2 × Ø 3,0 mm, 4 × Ø 2,7 mm NPTH“
+  vermerken.
 - Abgleich Paket ↔ Board unverändert, einziger offener Fehler D502 ohne
   Teilenummer.
 - **Bilder:**
@@ -1461,6 +1481,10 @@ das DevKit wird vor dem Einbau gesteckt.
 
 *Mechanischer Abgleich*: Prüfliste, 1:1-Druckvorlage und Vorschlag für die
 Auflage unter dem DevKit in [rev1-mechanik-abgleich.md](rev1-mechanik-abgleich.md).
+Die Auflage hält mindestens 3 mm Abstand zum Antennenfreiraum. Sie muss
+breit, isolierend und ohne scharfe Kanten sein, denn der Lötstopplack ist
+kein Scheuerschutz. Ihre Höhe richtet sich nach dem gemessenen Abstand,
+ohne die Platine vorzuspannen.
 
 *Offen*: Lage gegen Chassis bzw. Fahrzeugbefestigung bestätigen,
 Abstandshalterlänge, Schraubentyp (Linsen- oder Zylinderkopf), Auflage unter dem
