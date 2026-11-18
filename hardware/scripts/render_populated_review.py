@@ -13,6 +13,7 @@ keep-outs and power pours counted as occupied). Run with the KiCad Python.
 """
 from pathlib import Path
 import csv
+import math
 import os
 import shutil
 import subprocess
@@ -77,6 +78,39 @@ def wrl_box(path, x1, y1, x2, y2, z0, z1, rgb, transparency):
                                                   ", ".join("%.4f %.4f %.4f" % p for p in pts), faces))
 
 
+MOUNT = (1.0, 0.55, 0.0)   # orange: mounting hardware envelopes
+# M3 hardware per hole (estimates, own choice; no chassis data): ISO 7380 head Ø 5.7 x 1.65 mm on an ISO 7089 washer
+# Ø 7.0 x 0.5 mm on top; hex standoff 5.5 mm AF (Ø 6.35 across corners), 10 mm long under the board (1.6 mm thick).
+MOUNT_PARTS = [("washer", 3.5, 48, 0.0, 0.5), ("head", 2.85, 48, 0.5, 2.15), ("standoff", 3.175, 6, -11.6, -1.6)]
+
+
+def wrl_prism(path, r, n, z0, z1, rgb, transparency):
+    """Regular n-gon prism around the footprint origin (VRML, 0.1-inch units, y up)."""
+    s = 1 / 2.54
+    ring = [(r * s * math.cos(2 * math.pi * k / n + math.pi / n), r * s * math.sin(2 * math.pi * k / n + math.pi / n))
+            for k in range(n)]
+    pts = [(x, y, z0 * s) for x, y in ring] + [(x, y, z1 * s) for x, y in ring]
+    faces = [",".join(str(k) for k in reversed(range(n))) + ",-1", ",".join(str(n + k) for k in range(n)) + ",-1"]
+    faces += ["%d,%d,%d,%d,-1" % (k, (k + 1) % n, n + (k + 1) % n, n + k) for k in range(n)]
+    path.write_text("#VRML V2.0 utf8\nShape { appearance Appearance { material Material { diffuseColor %s %s %s "
+                    "transparency %s } }\n geometry IndexedFaceSet { solid FALSE coord Coordinate { point [ %s ] }"
+                    " coordIndex [ %s ] } }\n" % (rgb[0], rgb[1], rgb[2], transparency,
+                                                  ", ".join("%.4f %.4f %.4f" % p for p in pts), ",".join(faces)))
+
+
+def add_mount_bodies(b, mdir):
+    for fp in b.GetFootprints():
+        if not fp.GetFPIDAsString().endswith("MountingHole_3.2mm_M3_NPTH_Keepout"):
+            continue
+        for name, r, n, z0, z1 in MOUNT_PARTS:
+            f = mdir / ("%s_%s.wrl" % (fp.GetReference(), name))
+            wrl_prism(f, r, n, z0, z1, MOUNT, 0.15)
+            m = pcbnew.FP_3DMODEL()
+            m.m_Filename = str(f)
+            m.m_Scale = pcbnew.VECTOR3D(1, 1, 1)
+            fp.Add3DModel(m)
+
+
 def local_fab_box(fp):
     pos, ang = fp.GetPosition(), fp.GetOrientation()
     fp.SetOrientationDegrees(0)
@@ -136,6 +170,7 @@ def build(with_modules, src=None, out=None):
                 m2.m_Filename = str(f2)
                 m2.m_Scale = pcbnew.VECTOR3D(1, 1, 1)
                 fp.Add3DModel(m2)
+    add_mount_bodies(b, mdir)
     name = "RoverCore_review_%s.kicad_pcb" % ("populated" if with_modules else "without_modules")
     b.Save(str(out / name))
     return out / name
@@ -149,13 +184,15 @@ def caption(png, title, out):
              "Magenta = Hüllkörper Carrier-Bauteil ohne geprüftes Modell (Maße dokumentiert/angenommen, kein Herstellermodell):",
              "  " + ENV_LIST,
              "Blau = Hüllkörper der gesteckten Module (DevKit, OLED, IMU), Höhen geschätzt; Buchsenleisten = generisches KiCad-Modell",
+             "Orange = Hüllkörper M3-Befestigung H1-H4 (Scheibe, Kopf, Abstandshalter 10 mm unten; Lage vorläufig)",
              "Quelle der Maße und Status je Position: qa/generated/populated/model_status.csv, Bericht 3g"]
     svg = ['<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="2400" '
-           'height="1830"><rect width="2400" height="1830" fill="white"/>',
+           'height="1868"><rect width="2400" height="1868" fill="white"/>',
            '<image xlink:href="%s" x="0" y="0" width="2400" height="1600"/>' % png.name]
     for i, ln in enumerate(lines):
         svg.append('<text x="30" y="%d" font-family="Helvetica" font-size="%d" fill="%s">%s</text>'
-                   % (1640 + i * 38, 34 if i == 0 else 26, "#000" if i in (0, 4) else ("#b000b0" if i < 3 else "#1f4fd0"),
+                   % (1640 + i * 38, 34 if i == 0 else 26, "#000" if i in (0, 5) else
+                      ("#b000b0" if i < 3 else "#1f4fd0" if i == 3 else "#c06000"),
                       ln.replace("&", "&amp;")))
     svg.append("</svg>")
     s = png.with_suffix(".svg")
@@ -189,6 +226,8 @@ def status_list(src=None, out=None):
             st = "Hüllkörper (Review)" + ("; Bibliotheksdatei fehlt in dieser KiCad-Installation" if files else "")
         elif real:
             st = "Bibliotheksmodell"
+        elif "MountingHole" in fpid:
+            st = "kein Körper (Bohrung; Befestigung als Hüllkörper im Review)"
         elif fpid.split(":")[-1].startswith(("TestPoint_Pad", "NetTie")):
             st = "kein Körper (Pad/Net-Tie)"
         else:
