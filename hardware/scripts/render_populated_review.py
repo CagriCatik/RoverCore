@@ -220,6 +220,8 @@ def status_list(src=None, out=None):
         real = [f for f in files if model_exists(f)]
         if ref in SOCKETS:
             st = "generisches Bibliotheksmodell (Buchsenleiste) + Hüllkörper Modul (Review)"
+        elif ref in ENVELOPES and real and any("/project/" in f for f in real):
+            st = "eigenes Modell nach Herstellerzeichnung (models.csv)"
         elif ref in ENVELOPES and real:
             st = "Herstellermodell (projektlokal, models.csv)"
         elif ref in ENVELOPES:
