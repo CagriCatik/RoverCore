@@ -7,7 +7,7 @@ dimensions below; they are not vendor files. They exist because neither the KiCa
 reference model files the official kicad-packages3D repository does not contain, checked on master and tag 10.0.7)
 nor an account-free vendor or community source offers them. Coordinates are footprint coordinates of the KiCad
 footprints used on the board (origin and pin positions read from the board), z up from the board top, mm.
-Nominal values are used where the drawing gives a range. VRML only: rendered by KiCad, not part of a STEP export.
+Nominal values are used where the drawing gives a range. See the note at the end for the file formats.
 
 Sources (read 2026-11-18):
 - PowerPAK SO-8 Single (Q101 SiRA99DP): Vishay "Package Information PowerPAK SO-8 (Single/Dual)", doc 71655,
@@ -17,6 +17,9 @@ Sources (read 2026-11-18):
 - DPY0002A X1SON (D601-D604, D606-D608 TPD1E05U06DPYR): TI datasheet SLVSBO7O (Aug 2024), outline 4224561/C.
 - XT30PW-M (J101): AMASS specification V1.2 "XT30PW-M" (customer drawing). The drawing gives no body height;
   5.2 mm is scaled from its end view (ESTIMATE).
+- CMT-8540S-SMT-TR (BZ101): Same Sky datasheet 09/11/2024, mechanical drawing (terminal shape simplified).
+Every model is written twice: VRML (.wrl) for the KiCad renderer and STEP AP214 (.step, faceted B-rep with colours)
+for the board STEP export / MCAD.
 """
 import math
 from pathlib import Path
@@ -49,6 +52,77 @@ class Model:
             f = [tuple(reversed(face)) for face in f]
         self.shapes.append((p, f, rgb))
 
+    def prism(self, poly, z0, z1, rgb):
+        """Straight extrusion of a convex polygon [(x, y), ...] (counter-clockwise in footprint coordinates)."""
+        n = len(poly)
+        p = [(x, y, z) for z in (z0, z1) for x, y in poly]
+        f = [tuple(reversed(range(n))), tuple(range(n, 2 * n))] + \
+            [(k, (k + 1) % n, n + (k + 1) % n, n + k) for k in range(n)]
+        self.shapes.append((p, f, rgb))
+
+    def write_step(self, path, name):
+        """Same geometry as STEP AP214: one faceted B-rep (planar faces, poly loops) per shape, with colours.
+        Coordinates are mm in the KiCad model frame (y up = -footprint y), as for the VRML file."""
+        ents, n = [], [0]
+
+        def e(text):
+            n[0] += 1
+            ents.append("#%d=%s;" % (n[0], text))
+            return "#%d" % n[0]
+        ctx = e("APPLICATION_CONTEXT('automotive design')")
+        e("APPLICATION_PROTOCOL_DEFINITION('international standard','automotive_design',2000,%s)" % ctx)
+        pc = e("PRODUCT_CONTEXT('',%s,'mechanical')" % ctx)
+        prod = e("PRODUCT('%s','%s','RoverCore own model',(%s))" % (name, name, pc))
+        pdf = e("PRODUCT_DEFINITION_FORMATION('','',%s)" % prod)
+        pdc = e("PRODUCT_DEFINITION_CONTEXT('part definition',%s,'design')" % ctx)
+        pd = e("PRODUCT_DEFINITION('design','',%s,%s)" % (pdf, pdc))
+        pds = e("PRODUCT_DEFINITION_SHAPE('','',%s)" % pd)
+        lu = e("(LENGTH_UNIT()NAMED_UNIT(*)SI_UNIT(.MILLI.,.METRE.))")
+        au = e("(NAMED_UNIT(*)PLANE_ANGLE_UNIT()SI_UNIT($,.RADIAN.))")
+        su = e("(NAMED_UNIT(*)SI_UNIT($,.STERADIAN.)SOLID_ANGLE_UNIT())")
+        unc = e("UNCERTAINTY_MEASURE_WITH_UNIT(LENGTH_MEASURE(1.E-05),%s,'distance_accuracy_value','')" % lu)
+        gctx = e("(GEOMETRIC_REPRESENTATION_CONTEXT(3)GLOBAL_UNCERTAINTY_ASSIGNED_CONTEXT((%s))"
+                 "GLOBAL_UNIT_ASSIGNED_CONTEXT((%s,%s,%s))REPRESENTATION_CONTEXT('',''))" % (unc, lu, au, su))
+        o = e("CARTESIAN_POINT('',(0.,0.,0.))")
+        ax = e("AXIS2_PLACEMENT_3D('',%s,%s,%s)" % (o, e("DIRECTION('',(0.,0.,1.))"), e("DIRECTION('',(1.,0.,0.))")))
+        breps, styled = [], []
+        for p, faces, rgb in self.shapes:
+            pts = [(x, -y, z) for x, y, z in p]
+            cp = [e("CARTESIAN_POINT('',(%.5f,%.5f,%.5f))" % q) for q in pts]
+            fs = []
+            for face in faces:
+                idx = list(reversed(face))
+                poly = [pts[i] for i in idx]
+                nx = ny = nz = 0.0                       # Newell normal
+                for i in range(len(poly)):
+                    (x1, y1, z1), (x2, y2, z2) = poly[i], poly[(i + 1) % len(poly)]
+                    nx += (y1 - y2) * (z1 + z2)
+                    ny += (z1 - z2) * (x1 + x2)
+                    nz += (x1 - x2) * (y1 + y2)
+                ln = math.sqrt(nx * nx + ny * ny + nz * nz) or 1.0
+                nx, ny, nz = nx / ln, ny / ln, nz / ln
+                ux, uy, uz = (poly[1][0] - poly[0][0], poly[1][1] - poly[0][1], poly[1][2] - poly[0][2])
+                lu_ = math.sqrt(ux * ux + uy * uy + uz * uz) or 1.0
+                pl = e("PLANE('',%s)" % e("AXIS2_PLACEMENT_3D('',%s,%s,%s)" % (
+                    cp[idx[0]], e("DIRECTION('',(%.6f,%.6f,%.6f))" % (nx, ny, nz)),
+                    e("DIRECTION('',(%.6f,%.6f,%.6f))" % (ux / lu_, uy / lu_, uz / lu_)))))
+                loop = e("POLY_LOOP('',(%s))" % ",".join(cp[i] for i in idx))
+                fs.append(e("FACE_SURFACE('',(%s),%s,.T.)" % (e("FACE_OUTER_BOUND('',%s,.T.)" % loop), pl)))
+            brep = e("FACETED_BREP('',%s)" % e("CLOSED_SHELL('',(%s))" % ",".join(fs)))
+            breps.append(brep)
+            col = e("COLOUR_RGB('',%.3f,%.3f,%.3f)" % rgb)
+            fas = e("FILL_AREA_STYLE('',(%s))" % e("FILL_AREA_STYLE_COLOUR('',%s)" % col))
+            sss = e("SURFACE_SIDE_STYLE('',(%s))" % e("SURFACE_STYLE_FILL_AREA(%s)" % fas))
+            psa = e("PRESENTATION_STYLE_ASSIGNMENT((%s))" % e("SURFACE_STYLE_USAGE(.BOTH.,%s)" % sss))
+            styled.append(e("STYLED_ITEM('color',(%s),%s)" % (psa, brep)))
+        rep = e("FACETED_BREP_SHAPE_REPRESENTATION('%s',(%s,%s),%s)" % (name, ax, ",".join(breps), gctx))
+        e("SHAPE_DEFINITION_REPRESENTATION(%s,%s)" % (pds, rep))
+        e("MECHANICAL_DESIGN_GEOMETRIC_PRESENTATION_REPRESENTATION('',(%s),%s)" % (",".join(styled), gctx))
+        head = ("ISO-10303-21;\nHEADER;\nFILE_DESCRIPTION(('RoverCore own package model'),'2;1');\n"
+                "FILE_NAME('%s','2026-11-19T00:00:00',('RoverCore'),(''),'make_package_models.py','','');\n"
+                "FILE_SCHEMA(('AUTOMOTIVE_DESIGN { 1 0 10303 214 1 1 1 1 }'));\nENDSEC;\nDATA;\n" % path.name)
+        path.write_text(head + "\n".join(ents) + "\nENDSEC;\nEND-ISO-10303-21;\n")
+
     def write(self, path):
         out = ["#VRML V2.0 utf8"]
         for p, f, rgb in self.shapes:
@@ -59,6 +133,7 @@ class Model:
                        "specularColor 0.2 0.2 0.2 shininess 0.3 } }\n geometry IndexedFaceSet { solid FALSE "
                        "coord Coordinate { point [ %s ] } coordIndex [ %s ] } }" % (rgb + (pts, idx)))
         path.write_text("\n".join(out) + "\n")
+        self.write_step(path.with_suffix(".step"), path.stem)
 
 
 def leadless_8(name, e_mold, e_lead, d, a, b, land, c, pin_x, rows=(-1.905, -0.635, 0.635, 1.905)):
@@ -103,6 +178,25 @@ def xt30pw_m():
     m.write(OUT / "AMASS_XT30PW-M_horizontal.wrl")
 
 
+def cmt8540s():
+    """Same Sky CMT-8540S-SMT-TR on footprint MagneticBuzzer_SameSky_CMT-8540S-SMT (pads +-3.5, pad 1 '+' at
+    (3.5|3.5), pad 2 at (3.5|-3.5)). Same Sky datasheet 09/11/2024, mechanical drawing: 8.5 x 8.5 (+0.2/-0),
+    height 4.0 (+0.2/-0), corners chamfered 1.5 x 45 deg, stand-off 0.15, sound port Ø 2.1 (centred), corner
+    terminals (sizes 0.8 / 0.55 read from the side views; drawn as 1.5 x 1.5 tabs under the chamfers, simplified)."""
+    m = Model()
+    h, c, a = 8.5 / 2, 1.5, 4.0
+    oct_ = [(-h + c, -h), (h - c, -h), (h, -h + c), (h, h - c), (h - c, h), (-h + c, h), (-h, h - c), (-h, -h + c)]
+    m.prism(oct_, 0.15, a, BODY)
+    for sx in (-1, 1):
+        for sy in (-1, 1):
+            x, y = sx * (h - 0.75), sy * (h - 0.75)
+            m.box(x - 0.75, y - 0.75, x + 0.75, y + 0.75, 0.0, 0.15, TIN)
+    m.cyl(0.0, 0.0, 1.05, a, a + 0.01, (0.02, 0.02, 0.02))          # sound port Ø 2.1
+    m.box(2.1, 2.45, 2.9, 2.65, a, a + 0.01, MARK)                    # '+' mark at the pad-1 corner
+    m.box(2.4, 2.15, 2.6, 2.95, a, a + 0.01, MARK)
+    m.write(OUT / "SameSky_CMT-8540S-SMT_8.5x8.5x4.0mm.wrl")
+
+
 def main():
     OUT.mkdir(parents=True, exist_ok=True)
     # Vishay 71655: E 6.15 (leads), E1 5.89 (mould), D 5.15, A 1.04, b 0.41, L 0.61, c 0.28; pins on x
@@ -111,7 +205,8 @@ def main():
     leadless_8("Infineon_PG-TDSON-8-6.wrl", 5.9, 6.15, 5.15, 1.0, 0.44, 0.55, 0.25, -2.863)
     dpy0002a()
     xt30pw_m()
-    for p in sorted(OUT.glob("*.wrl")):
+    cmt8540s()
+    for p in sorted(OUT.glob("*.*")):
         print("written", p.name)
 
 

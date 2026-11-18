@@ -20,5 +20,7 @@ substitute dummy 3D shapes as if they were sourced components.
 For parts where neither the KiCad library (the footprints reference files that kicad-packages3D does not contain)
 nor an account-free vendor or community source offers a model, `project/` holds own VRML models built by
 `hardware/scripts/make_package_models.py` from the manufacturers' package drawings (sources and checked dimensions
-per row in `models.csv`). They are in Git (MIT, own work). They render in KiCad but do not go into a STEP export.
+per row in `models.csv`). They are in Git (MIT, own work), written as STEP AP214 (faceted B-rep with colours; the board refers to these, so they
+render and go into the board STEP export) and as VRML twins. They are simplified models from nominal drawing
+dimensions, not vendor models.
 Estimated dimensions (XT30PW-M height) are marked in `models.csv`.

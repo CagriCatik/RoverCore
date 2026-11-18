@@ -257,6 +257,7 @@ def main():
     env = [r for r in ENVELOPES if r not in SOCKETS and not any(model_exists(m.m_Filename)
                                                                 for m in b0.FindFootprintByReference(r).Models())]
     ENV_LIST = ", ".join(r + (" (dunkle Stirnfläche = Steckseite)" if r in FACES else "") for r in env)
+    ENV_LIST = ENV_LIST or "keine (alle Carrier-Teile haben ein Modell)"
     pop = build(True)
     render(pop, "populated", list(VIEWS.items()))
     bare = build(False)

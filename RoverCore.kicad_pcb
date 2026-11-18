@@ -1887,7 +1887,7 @@
 			(uuid "60c0fd3e-187e-44bd-885c-0241e2b0a47d")
 		)
 		(embedded_fonts no)
-		(model "${KIPRJMOD}/hardware/libraries/3d-models/project/TI_DPY0002A_X1SON-2_1.0x0.6mm.wrl"
+		(model "${KIPRJMOD}/hardware/libraries/3d-models/project/TI_DPY0002A_X1SON-2_1.0x0.6mm.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -2088,7 +2088,7 @@
 			(uuid "7c5a36ce-f7ec-4c7c-8d82-95a127413069")
 		)
 		(embedded_fonts no)
-		(model "${KIPRJMOD}/hardware/libraries/3d-models/project/TI_DPY0002A_X1SON-2_1.0x0.6mm.wrl"
+		(model "${KIPRJMOD}/hardware/libraries/3d-models/project/TI_DPY0002A_X1SON-2_1.0x0.6mm.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -8820,7 +8820,7 @@
 			(uuid "f61031fc-f835-4e00-a08c-ab97467dda03")
 		)
 		(embedded_fonts no)
-		(model "${KIPRJMOD}/hardware/libraries/3d-models/project/TI_DPY0002A_X1SON-2_1.0x0.6mm.wrl"
+		(model "${KIPRJMOD}/hardware/libraries/3d-models/project/TI_DPY0002A_X1SON-2_1.0x0.6mm.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -11092,7 +11092,7 @@
 			(uuid "585caeaa-8c2d-430e-963f-e1d211382faa")
 		)
 		(embedded_fonts no)
-		(model "${KIPRJMOD}/hardware/libraries/3d-models/project/TI_DPY0002A_X1SON-2_1.0x0.6mm.wrl"
+		(model "${KIPRJMOD}/hardware/libraries/3d-models/project/TI_DPY0002A_X1SON-2_1.0x0.6mm.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -12052,7 +12052,7 @@
 			(uuid "79f7611e-7f16-4adb-acba-586330295b58")
 		)
 		(embedded_fonts no)
-		(model "${KIPRJMOD}/hardware/libraries/3d-models/project/AMASS_XT30PW-M_horizontal.wrl"
+		(model "${KIPRJMOD}/hardware/libraries/3d-models/project/AMASS_XT30PW-M_horizontal.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -23436,7 +23436,7 @@
 			(uuid "8c797f53-3811-4d27-944c-4cb41bec7b9b")
 		)
 		(embedded_fonts no)
-		(model "${KIPRJMOD}/hardware/libraries/3d-models/project/TI_DPY0002A_X1SON-2_1.0x0.6mm.wrl"
+		(model "${KIPRJMOD}/hardware/libraries/3d-models/project/TI_DPY0002A_X1SON-2_1.0x0.6mm.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -27952,7 +27952,7 @@
 			(uuid "ecd93849-db23-4928-8196-1f0b67c27e55")
 		)
 		(embedded_fonts no)
-		(model "${KIPRJMOD}/hardware/libraries/3d-models/project/Vishay_PowerPAK_SO-8_Single.wrl"
+		(model "${KIPRJMOD}/hardware/libraries/3d-models/project/Vishay_PowerPAK_SO-8_Single.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -33639,7 +33639,7 @@
 			(uuid "66749dda-f2aa-4330-9679-3ab2c43719f0")
 		)
 		(embedded_fonts no)
-		(model "${KIPRJMOD}/hardware/libraries/3d-models/project/Infineon_PG-TDSON-8-6.wrl"
+		(model "${KIPRJMOD}/hardware/libraries/3d-models/project/Infineon_PG-TDSON-8-6.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -34938,7 +34938,7 @@
 			(uuid "f7732f94-9dac-408a-aa3c-346897632d0e")
 		)
 		(embedded_fonts no)
-		(model "${KIPRJMOD}/hardware/libraries/3d-models/project/TI_DPY0002A_X1SON-2_1.0x0.6mm.wrl"
+		(model "${KIPRJMOD}/hardware/libraries/3d-models/project/TI_DPY0002A_X1SON-2_1.0x0.6mm.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -40136,7 +40136,7 @@
 			(uuid "5d2f5d24-2eaa-46dc-874c-3e1428e7b96a")
 		)
 		(embedded_fonts no)
-		(model "${KIPRJMOD}/hardware/libraries/3d-models/project/Infineon_PG-TDSON-8-6.wrl"
+		(model "${KIPRJMOD}/hardware/libraries/3d-models/project/Infineon_PG-TDSON-8-6.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -51662,7 +51662,7 @@
 			(uuid "17cbbae2-72da-4ea6-af0b-e472933b674d")
 		)
 		(embedded_fonts no)
-		(model "${KIPRJMOD}/hardware/libraries/3d-models/project/TI_DPY0002A_X1SON-2_1.0x0.6mm.wrl"
+		(model "${KIPRJMOD}/hardware/libraries/3d-models/project/TI_DPY0002A_X1SON-2_1.0x0.6mm.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -60341,6 +60341,17 @@
 			(uuid "a4d29a57-1c25-47da-abaf-34b5b91885d0")
 		)
 		(embedded_fonts no)
+		(model "${KIPRJMOD}/hardware/libraries/3d-models/project/SameSky_CMT-8540S-SMT_8.5x8.5x4.0mm.step"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
 	)
 	(footprint "Package_SO:TSSOP-24_4.4x7.8mm_P0.65mm"
 		(layer "F.Cu")
