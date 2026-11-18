@@ -860,9 +860,9 @@ geschätzt):
 
 ## 3i. Routing K1 (Stand 2026-11-16)
 
-**Status: Platzierungsprüfungen bestanden, Routing unvollständig.** Offene
-Verbindungen und das offene RUN-Ausbruch-Via bedeuten: Die Gesamt-DRC ist
-**nicht** bestanden.
+**Status (2026-11-16):** Platzierungsprüfungen bestanden, Routing
+unvollständig. **Nachtrag 2026-11-18:** Alle Verbindungen sind geschlossen,
+die DRC ist bestanden; Stand und Strompfadprüfung siehe 3j.
 
 **Schritt 3 – Servoschiene +V_SERVO** (`route_servo_rail.py`, Gruppe
 `servo_rail_routing`):
@@ -963,6 +963,84 @@ die Leistungsflächen; deshalb die Sperrflächen.
   über In2, GND-Ebenen ohne Signalschlitze.
 - Die Breite der Versorgungsleitungen (0,4 mm) und deren Erwärmung sind
   nicht nachgewiesen.
+
+## 3j. K1 geschlossen und Strompfade geprüft (Stand 2026-11-18)
+
+**Status: Routing geschlossen, ERC/DRC/Parität bestanden (0 offen, 0
+Befunde). Das ist eine elektrische Layoutprüfung, keine
+Fertigungsfreigabe.**
+
+Koordinaten in diesem Abschnitt sind K1-Koordinaten (Konturecke bei
+−0,05/−0,05). Die Platine wurde am 2026-11-17 im Editor als Ganzes um
++62,25/+50,5 mm verschoben (reine Verschiebung, Kupfer geprüft). Die
+Skripte rechnen den Versatz aus der Kontur (`k1_fixups.board_offset`).
+
+**Lokale Korrekturen** (`k1_fixups.py`, je Schritt Zonen neu gefüllt und
+DRC ausgeführt; Gruppen `servo_trial_routing`, `input_logic_routing`,
+`servo_rail_routing` unverändert außer dem Via-Feld unten):
+
+| Schritt | Änderung |
+|---|---|
+| `vbat_r405`, `vbat_r414` | drei überzählige VBAT-Vias samt Stichen entfernt (eines saß im SMD-Pad von R414, eines endete außerhalb der Fläche); R405 über ein Via an R414 Pad 1 |
+| `run_q403` | RUN von Q403 Pin 3 mit kurzer B-Strecke zur RUN-Leitung an Q408 |
+| `gnd_r407` | GND-Via für R407 Pad 2 / Q407 Pin 2 |
+| `imu_int1` | Abstand IMU_INT1 an DevKit Pin 12: rechter Winkel statt Diagonale, ACT_ARMED_FB dafür gerade nach Osten |
+| `vservo_branch` | +V_SERVO-Abzweig (Q405/R418/TP401, nur mA, 0,25 mm) auf B in die Schienenfläche südlich von RS402, nicht über NT405 |
+| `vbat_lower` | VBAT_PROT zur unteren Hälfte (R520, R508/Q505, R515; mA), 0,4 mm, 3 Vias |
+| `servo_pwr_en` | DevKit Pin 7 → Q404/R415, 0,2 mm, 2 Vias |
+| `run_unroute`, `run_reroute` | Die RUN-Vorverlegung aus `route_k1_links.py` lief 4 mm **innerhalb** der F-VBAT-Fläche und teilte sie in zwei Inseln (113 → 72 + 36 mm²). Neu: B unter der Servo-VBAT-Säule, F-Sprung über VFB_TAP östlich des Bands, B entlang der Ostkante der B-Fläche zu C420; 3 Vias. VFB_TAP liegt auf B unter dem ganzen Band, ein kürzerer Weg ohne Flächentrennung existiert nicht. |
+| `vbat_stitch` | 6 VBAT-Vias 0,8/0,4 am Südrand des F-Bands (siehe Strompfade) |
+| `5v_trunk`, `5v_devkit_branch` | +5V-Stamm 1,0 mm mit Doppel-Vias; DevKit-Zweig auf 0,5–0,8 mm verbreitert |
+
+Weitere Skripte: `power_pad_connections.py` (massive Ebenenanbindung
+J101.1, J102.3, J103.3), `d501_cathode_pour.py` (Kathodenkupfer D501),
+`servo_via_field.py` (sechs Vias am Shunt 1,0/0,5 mm).
+
+**Flächenprüfung:** Inselzahl und Fläche je Zone vor/nach jeder Änderung,
+dazu ein Erosionstest (Engstellenbreite). Alle Leistungsflächen sind je ein
+Stück; `rail_band_f` bleibt planmäßig dreiteilig (von den Signalpins J102/
+J103 Pin 1 getrennt, jedes Teil vernäht). Die F-VBAT-Fläche hat einen
+0,5–0,6 mm-Hals an Q101 (schon vor dem Routing vorhanden), der nach
+`vbat_stitch` nur noch wenig Strom trägt. Eine Randzunge der B-VBAT-Fläche
+(x 41–46) ist ≥ 1,0 mm breit; sie liegt nicht im Hauptstrompfad.
+
+**Strompfade** (`current_map.py`: Gleichstrom-Netzwerkrechnung auf dem
+gerasterten Ist-Kupfer, 35 µm Cu, 20 µm Hülsenmetallisierung angenommen,
+20 °C, ohne Erwärmung, ohne Steckerübergänge – **alles Schätzungen**,
+Berichte und Stromdichtekarten unter `qa/generated/current/`):
+
+| Pfad | Last (Annahme) | Ergebnis |
+|---|---|---|
+| +V_SERVO RS402 → J102/J103 | 11,2 A (2 × 5,1 A blockiert, 2 × 0,5 A) | Abfall 22 / 28 mV; Verlust 0,26 W. Die B-Fläche trägt fast alles, die F-Bandteile wenig (nur 2–3 Vias je Teil). Via-Feld: ungleich, 0,4–1,9 A je Via; die Spalte am Shunt am stärksten. Örtliche Spitzen ca. 6–7 A/mm an der B-Lasche von J102 und an der Innenecke der B-Fläche. |
+| VBAT_PROT Q101 → Q401/U301 | 9,35 + 0,75 A (10,1 A bei 9 V) | Abfall 24 mV. Vorher wurde die B-Fläche nur über den 0,5-mm-Hals an Q101 gespeist (ca. 9 A/mm); mit `vbat_stitch` max. 4,3 A/mm dort, Vias ≤ 1,3 A. Verbleibende Spitze ca. 6,7 A/mm an der Innenecke Band/Servo-Säule (F). |
+| GND-Rückstrom Servo → J101/Q402 | 11,2 A | Läuft fast ganz über In1/In2. Vorher: Engstelle Wärmefallen der THT-GND-Pins (J101.1: 9,35 A über 2 × 4 Stege à 0,5 mm, ca. 2,75 A/mm). Mit massiver Anbindung max. 0,7 A/mm, Abfall 6 mV. Folge: beim Löten mehr Wärme nötig. |
+| +5V L301 → Verbraucher | 1,53 A (Schaltergrenzen max.) | Vorher 3,5–4,8 A/mm im 0,4-mm-Stamm, Stamm-Vias 1,06 A. Nach `5v_trunk` max. 2,7 A/mm, Vias ≤ 0,6 A. |
+| +5V → D501 (DevKit) | 0,55 A | 108 → 83 mV nach Verbreiterung. **Über der Annahme 50 mV (Versorgungsdokument 3.11)**; Reserve LDO-Eingang sinkt von 0,24 V auf ca. 0,21 V. Ursache: 130 mm Autorouter-Weg mit 7 Lagenwechseln. |
+| +5V_DEVKIT, +5V_LED/_EXT/_RX, +3V3, LOCK_SUP | 0,55 / 0,32 / 0,30 / 0,21 A, 50 mA, < 1 mA | ≤ 1,5 A/mm, Abfall ≤ 10 mV – unkritisch. |
+
+Vergleichswert (IPC-2221, Schätzung, 35 µm außen): 1 mm Breite trägt bei
+20 K Erwärmung ca. 3 A; ein Via 0,4 mm (20 µm) nach der konservativen
+Innenlagenformel ca. 1,3 A. Flächen und kurze Laschen sind thermisch
+besser angebunden als diese Näherung annimmt; der Nachweis bleibt eine
+Messung am Muster.
+
+**Offen aus dieser Prüfung:**
+- **D501-Kathodenkupfer:** gefordert ≥ 1 cm² (3.11), erreicht 63 mm²
+  (F 14 + B 49, 4 Vias). Um D501 ist F dicht geroutet. Lösung: D501 an
+  eine freie Stelle versetzen oder Signale um D501 neu führen; sonst T_j
+  zwischen den Schätzwerten 106 und 155 °C.
+- **DevKit-Zweig +5V:** 83 mV statt 50 mV; kürzere Neuführung (ca. 70 mm
+  statt 130 mm) beim Aufräumen.
+- **Servoschiene bei 11,2 A:** Via-Feld und J102-Lasche an der Grenze der
+  konservativen Näherung; bei 6 A Fahrbetrieb unkritisch. Entscheidung
+  35/70 µm Außenkupfer (3a) bleibt offen und ist der wirksamste Hebel.
+- Rückstromwege der Regler- und Treiberschleifen wurden nicht neu
+  gerechnet; die handgerouteten Schleifen (3b) sind unverändert.
+- Aufräumen der Autorouter-Umwege und Lagenwechsel steht noch aus.
+
+Kupferansichten (nicht versioniert): `render_copper_views.py`, Ausgabe
+`qa/generated/copper/` (ganze Platine F/B/überlagert; Ausschnitte
++V_SERVO, VBAT_PROT, +5V, D501).
 
 ## 4. DevKit, Antenne und USB
 
