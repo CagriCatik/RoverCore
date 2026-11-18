@@ -2,8 +2,9 @@
 """Cathode copper for D501 (+5V_DEVKIT) on K1 (routing review, 2026-11-18).
 
 Usage: <KiCad python> d501_cathode_pour.py BOARD.kicad_pcb
-Power document 3.11 asks for >= 1 cm2 of cathode copper at D501 (T_j 106 degC at 0.55 A instead of 155 degC with the
-standard pad, estimate). After autorouting the net had only its 0.4 mm track. This adds two pours of
+Power document 3.11 planned >= 1 cm2 of cathode copper at D501. Note (2026-11-18): in the PMEG4010CEH datasheet
+(v.3, table 6) 1 cm2 is only the test condition for R_th(j-a) = 150 K/W on single-sided FR4, not an application
+rule; the thermal assessment is in docs/vcu/rev1-platzierung.md (D501 thermisch). After autorouting the net had only its 0.4 mm track. This adds two pours of
 +5V_DEVKIT in the space the routed signals leave: F between D501 and the DevKit pin column, B in the free strip
 between the vertical traces at x 119.6 and 124.1 (K1 coordinates), joined by vias next to the cathode pad.
 Prints the filled area. Coordinates are K1 coordinates and follow a moved board (k1_fixups.board_offset).
@@ -71,7 +72,7 @@ def main():
             a = sum(z.GetFilledPolysList(l).Area() for l in z.GetLayerSet().CuStack()) / 1e12
             tot += a
             print("%s: %.1f mm2 filled" % (z.GetZoneName(), a))
-    print("cathode pours together: %.1f mm2 (target >= 100 mm2, power document 3.11)" % tot)
+    print("cathode pours together: %.1f mm2 (planning value 100 mm2 = datasheet test pad, not a requirement)" % tot)
     b.Save(str(pcb))
 
 
