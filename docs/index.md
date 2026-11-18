@@ -6,27 +6,31 @@ IMU, OLED, geregelte Servoschiene (LTC7803, 6,8 V vorläufig, Auslegung 11,2 A),
 KiCad 10.0.7, 4 Lagen, 150 × 85 mm.
 
 !!! warning "Stand 2026-11-18: DRAFT A1 – NOT FOR FABRICATION"
-    Layout geschlossen; ERC, DRC (JLCPCB-Regelsatz) und Parität bestehen im
-    lokalen Lauf. Das ist ein Werkzeugergebnis. Alle Strom-, Spannungs- und
+    Layout geschlossen; ERC, DRC und Parität bestehen im lokalen Lauf. Das
+    ist ein Werkzeugergebnis. Offen vor der Fertigung: Linienbreite im
+    Bestückungsdruck und mechanische Befestigung (Bericht 3l). Alle Strom-, Spannungs- und
     Temperaturwerte in dieser Dokumentation sind Rechen- oder Datenblattwerte;
     sie werden am Muster nach der [Erstinbetriebnahme](bringup.md) geprüft.
 
-![RoverCore Rev 1, schräg von vorne](images/render_iso_front.png)
+![RoverCore Rev 1 mit gesteckten Modulen](images/populated_iso_front.jpg)
 
-| Oberseite | Unterseite |
+**Magenta** = gekennzeichnete Hüllkörper für Carrier-Teile ohne verfügbares
+Modell (XT30, Micro-Fit mit dunkler Steckseite, Buzzer, Leistungs-FETs, X2SON-
+Dioden); **blau** = Hüllkörper der gesteckten Module (DevKit, OLED, IMU).
+Hüllkörper sind keine Herstellermodelle.
+
+| Mit Modulen | Ohne Module |
 |---|---|
-| ![Oberseite](images/render_top.png) | ![Unterseite](images/render_bottom.png) |
-| **Schräg von hinten** | **Flach von vorne** |
-| ![Schräg von hinten](images/render_iso_rear.png) | ![Flach von vorne](images/render_front_low.png) |
+| ![Mit Modulen, schräg von vorne](images/populated_iso_front.jpg) | ![Ohne Module, schräg von vorne](images/without_modules_iso_front.jpg) |
+| ![Mit Modulen, schräg von hinten](images/populated_iso_rear.jpg) | ![Ohne Module, schräg von hinten](images/without_modules_iso_rear.jpg) |
+| ![Mit Modulen, oben](images/populated_top.jpg) | ![Ohne Module, oben](images/without_modules_top.jpg) |
+| ![Flach von vorne](images/populated_front_low.jpg) | ![Unterseite](images/populated_bottom.jpg) |
 
 Aus den exportierten Gerber- und Bohrdateien gezeichnet:
 
 | Oberseite | Unterseite (von unten) | Innenlage In1 (GND) |
 |---|---|---|
 | ![Gerber oben](images/gerber_top.png) | ![Gerber unten](images/gerber_bottom.png) | ![Gerber In1](images/gerber_in1.png) |
-
-Teile ohne Herstellermodell (14, u. a. J102/J103, BZ101) fehlen in den
-3D-Ansichten.
 
 ## Einstieg
 

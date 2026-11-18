@@ -6,20 +6,31 @@ Servoschiene, 5-V-Logikversorgung, LED-, Empfänger- und UART-Ausgänge.
 KiCad 10.0.7, 4 Lagen, 150 × 85 mm.
 
 **Stand 2026-11-18: Layout geschlossen, DRAFT-Fertigungspaket A1 (NO-GO).**
-ERC, DRC (mit JLCPCB-Regelsatz) und Schaltplan-Parität bestehen im lokalen
-Lauf. Das ist ein Werkzeugergebnis; elektrische, thermische und
+ERC, DRC und Schaltplan-Parität bestehen im lokalen Lauf. Der
+JLCPCB-Regelsatz im DRC prüft Kupfer, Bohrungen und Texte, aber keine
+Linienbreiten im Bestückungsdruck (bekannte Abweichung, siehe unten). Das ist ein Werkzeugergebnis; elektrische, thermische und
 fertigungstechnische Freigabe stehen aus. Nächster Schritt ist der
 prüfbare Prototyp nach dem [Inbetriebnahmeplan](docs/bringup.md).
 
-![RoverCore Rev 1, 3D-Ansicht schräg von vorne](docs/images/render_iso_front.png)
+![RoverCore Rev 1 mit gesteckten Modulen, schräg von vorne](docs/images/populated_iso_front.jpg)
 
 ## Ansichten
 
-| Oberseite | Unterseite |
+Review-Ansichten (`hardware/scripts/render_populated_review.py`): Bauteile mit
+KiCad-Bibliotheksmodell erscheinen normal. **Magenta** sind gekennzeichnete
+Hüllkörper für Carrier-Teile ohne verfügbares Modell (J101 XT30, J102/J103
+Micro-Fit mit dunkler Stirnfläche auf der Steckseite, BZ101, Q101, Q401, Q402,
+D601–D604, D606–D608). **Blau** sind Hüllkörper der gesteckten Module
+(DevKit, OLED, IMU). Hüllkörper sind keine Herstellermodelle; ihre Maße und
+Quellen stehen in `qa/generated/populated/model_status.csv` und im Bericht
+(3g, 3l).
+
+| Mit Modulen | Ohne Module (Buchsenleisten) |
 |---|---|
-| ![Oberseite](docs/images/render_top.png) | ![Unterseite](docs/images/render_bottom.png) |
-| **Schräg von hinten** | **Flach von vorne (Steckerkante)** |
-| ![Schräg von hinten](docs/images/render_iso_rear.png) | ![Flach von vorne](docs/images/render_front_low.png) |
+| ![Mit Modulen, schräg von vorne](docs/images/populated_iso_front.jpg) | ![Ohne Module, schräg von vorne](docs/images/without_modules_iso_front.jpg) |
+| ![Mit Modulen, schräg von hinten](docs/images/populated_iso_rear.jpg) | ![Ohne Module, schräg von hinten](docs/images/without_modules_iso_rear.jpg) |
+| ![Mit Modulen, oben](docs/images/populated_top.jpg) | ![Ohne Module, oben](docs/images/without_modules_top.jpg) |
+| ![Flach von vorne](docs/images/populated_front_low.jpg) | ![Unterseite](docs/images/populated_bottom.jpg) |
 
 Aus den exportierten Gerber- und Bohrdateien gezeichnet
 (`hardware/scripts/gerber_preview.py`), also so, wie der Fertiger sie erhält:
@@ -27,10 +38,6 @@ Aus den exportierten Gerber- und Bohrdateien gezeichnet
 | Oberseite (Gerber) | Unterseite (Gerber, von unten) | Innenlage In1 (GND) |
 |---|---|---|
 | ![Gerber oben](docs/images/gerber_top.png) | ![Gerber unten](docs/images/gerber_bottom.png) | ![Gerber In1](docs/images/gerber_in1.png) |
-
-Die 3D-Bilder stammen aus `kicad-cli pcb render`. 14 Teile haben noch kein
-3D-Modell (u. a. J102/J103 Micro-Fit, BZ101) und fehlen in den Bildern; es
-werden nur echte Herstellermodelle eingesetzt.
 
 ## Eckdaten (Auslegung, nicht gemessen)
 
@@ -61,7 +68,13 @@ Online: <https://cagricatik.github.io/RoverCore/>
   bestellen (JLCPCB nennt nur einen Mittelwert von 18 µm).
 - D502 (Status-LED): Typ und Teilenummer festlegen (O-28).
 - Datenblattfelder (44 Teile), 3D-Modelle (14), Bauteilakten.
-- Befestigungsbohrungen und Chassis-Abgleich (K1 hat keine).
+- Bestückungsdruck: 1 211 Umrissstriche mit 0,12 mm im exportierten Gerber
+  (JLCPCB verlangt 0,15 mm); Entscheidung offen (Bericht 3l).
+- Befestigung: fünf M3-Positionen sind nur Kommentarmarken, keine Bohrungen;
+  Lage, Bohrungsart und Abstandshöhe mit dem Chassis festlegen (Bericht 3l).
+- 3D: KiCad-Bibliotheksmodelle für XT30, Micro-Fit, PowerPAK/TDSON und
+  X2SON fehlen in dieser Installation; Herstellermodelle für DevKit, OLED, IMU
+  und BZ101 liegen nicht vor.
 - GO-Freigabe nur mit signierter Freigabe (`manufacturing/approval.example.json`)
   und `--authorize`.
 
