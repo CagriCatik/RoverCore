@@ -1,0 +1,221 @@
+(footprint "MountingHole_3.2mm_M3_NPTH_Keepout"
+	(version 20260206)
+	(generator "pcbnew")
+	(generator_version "10.0")
+	(layer "F.Cu")
+	(descr "Mounting hole M3, NPTH 3.2 mm, copper keep-out r 3.8 mm outer / 2.0 mm inner, courtyard r 3.8 mm both sides (washer ISO 7089, standoff 5.5 AF); RoverCore make_mounting_hole.py")
+	(tags "mountinghole M3 NPTH keepout")
+	(property "Reference" "REF**"
+		(at 0 -4.15 0)
+		(layer "F.SilkS")
+		(uuid "3a28cc9b-6b0e-4f26-9ed8-c3dd83a572da")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Value" "MountingHole_3.2mm_M3"
+		(at 0 4.15 0)
+		(layer "F.Fab")
+		(uuid "9221c653-150c-4471-aa09-dce38e7c3758")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Datasheet" ""
+		(at 0 0 0)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "9211cea8-da7a-460b-b27b-3ca258780afb")
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+		)
+	)
+	(property "Description" ""
+		(at 0 0 0)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "084842f1-9a32-4e16-8b2e-3a25f0f0574d")
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+		)
+	)
+	(property "KiLib_Generator" "mounting_hardware/mounting_hole"
+		(at 0 0 0)
+		(layer "F.SilkS")
+		(hide yes)
+		(uuid "15af7f05-b8da-4e1b-8669-6d8ea1e232ec")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(attr exclude_from_pos_files exclude_from_bom)
+	(duplicate_pad_numbers_are_jumpers no)
+	(fp_circle
+		(center 0 0)
+		(end 2.85 0)
+		(stroke
+			(width 0.1)
+			(type default)
+		)
+		(fill no)
+		(layer "Cmts.User")
+		(uuid "c6ce1c96-b63d-488f-93de-da50c923a2cb")
+	)
+	(fp_circle
+		(center 0 0)
+		(end 3.5 0)
+		(stroke
+			(width 0.1)
+			(type default)
+		)
+		(fill no)
+		(layer "Cmts.User")
+		(uuid "d80445dd-9b17-42ee-989b-5546b75494ea")
+	)
+	(fp_circle
+		(center 0 0)
+		(end 3.8 0)
+		(stroke
+			(width 0.05)
+			(type default)
+		)
+		(fill no)
+		(layer "B.CrtYd")
+		(uuid "1181e657-2842-408e-b3e0-f861695b8330")
+	)
+	(fp_circle
+		(center 0 0)
+		(end 3.8 0)
+		(stroke
+			(width 0.05)
+			(type default)
+		)
+		(fill no)
+		(layer "F.CrtYd")
+		(uuid "34bc42c2-be6a-4825-9e6b-f33ea5a7a620")
+	)
+	(fp_circle
+		(center 0 0)
+		(end 3.175 0)
+		(stroke
+			(width 0.1)
+			(type default)
+		)
+		(fill no)
+		(layer "B.Fab")
+		(uuid "5d9757f3-7509-4943-8263-8d3b6a5e2200")
+	)
+	(fp_text user "${REFERENCE}"
+		(at 0 0 0)
+		(layer "F.Fab")
+		(uuid "fd952ab0-8cd0-4926-8587-084f3d5526c5")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(pad "" np_thru_hole circle
+		(at 0 0)
+		(size 3.2 3.2)
+		(drill 3.2)
+		(layers "*.Cu" "*.Mask")
+		(uuid "563ead34-8e6d-470c-b53c-a5492a28f9ad")
+	)
+	(zone
+		(layers "F.Cu" "B.Cu")
+		(uuid "edff2634-a550-4c77-a4e2-2116fd5e2796")
+		(name "m3_keepout_outer")
+		(hatch edge 0.5)
+		(connect_pads
+			(clearance 0)
+		)
+		(min_thickness 0.25)
+		(keepout
+			(tracks not_allowed)
+			(vias not_allowed)
+			(pads allowed)
+			(copperpour not_allowed)
+			(footprints allowed)
+		)
+		(placement
+			(enabled no)
+			(sheetname "")
+		)
+		(fill
+			(thermal_gap 0.5)
+			(thermal_bridge_width 0.5)
+			(island_removal_mode 0)
+		)
+		(polygon
+			(pts
+				(xy 3.8 0) (xy 3.76749 0.495999) (xy 3.670518 0.983512) (xy 3.510742 1.454197) (xy 3.290896 1.899999)
+				(xy 3.014742 2.313293) (xy 2.687005 2.687005) (xy 2.313293 3.014742) (xy 1.9 3.290896) (xy 1.454197 3.510742)
+				(xy 0.983512 3.670518) (xy 0.495999 3.76749) (xy 0 3.8) (xy -0.495999 3.76749) (xy -0.983512 3.670518)
+				(xy -1.454197 3.510742) (xy -1.899999 3.290896) (xy -2.313293 3.014742) (xy -2.687005 2.687005)
+				(xy -3.014742 2.313293) (xy -3.290896 1.899999) (xy -3.510742 1.454197) (xy -3.670518 0.983512)
+				(xy -3.76749 0.495999) (xy -3.8 0) (xy -3.76749 -0.495999) (xy -3.670518 -0.983512) (xy -3.510742 -1.454197)
+				(xy -3.290896 -1.899999) (xy -3.014742 -2.313293) (xy -2.687005 -2.687005) (xy -2.313293 -3.014742)
+				(xy -1.9 -3.290896) (xy -1.454197 -3.510742) (xy -0.983512 -3.670518) (xy -0.495999 -3.76749) (xy 0 -3.8)
+				(xy 0.495999 -3.76749) (xy 0.983512 -3.670518) (xy 1.454197 -3.510742) (xy 1.9 -3.290896) (xy 2.313293 -3.014742)
+				(xy 2.687005 -2.687005) (xy 3.014742 -2.313293) (xy 3.290896 -1.9) (xy 3.510742 -1.454197) (xy 3.670518 -0.983512)
+				(xy 3.76749 -0.495999)
+			)
+		)
+	)
+	(zone
+		(layers "In1.Cu" "In2.Cu")
+		(uuid "5d899663-5fbf-4d13-a0cb-82b58a0b258b")
+		(name "m3_keepout_inner")
+		(hatch edge 0.5)
+		(connect_pads
+			(clearance 0)
+		)
+		(min_thickness 0.25)
+		(keepout
+			(tracks not_allowed)
+			(vias not_allowed)
+			(pads allowed)
+			(copperpour not_allowed)
+			(footprints allowed)
+		)
+		(placement
+			(enabled no)
+			(sheetname "")
+		)
+		(fill
+			(thermal_gap 0.5)
+			(thermal_bridge_width 0.5)
+			(island_removal_mode 0)
+		)
+		(polygon
+			(pts
+				(xy 2 0) (xy 1.982889 0.261052) (xy 1.931851 0.517638) (xy 1.847759 0.765366) (xy 1.73205 0.999999)
+				(xy 1.586706 1.217522) (xy 1.414213 1.414213) (xy 1.217522 1.586706) (xy 1 1.73205) (xy 0.765366 1.847759)
+				(xy 0.517638 1.931851) (xy 0.261052 1.982889) (xy 0 2) (xy -0.261052 1.982889) (xy -0.517638 1.931851)
+				(xy -0.765366 1.847759) (xy -0.999999 1.73205) (xy -1.217522 1.586706) (xy -1.414213 1.414213) (xy -1.586706 1.217522)
+				(xy -1.73205 0.999999) (xy -1.847759 0.765366) (xy -1.931851 0.517638) (xy -1.982889 0.261052) (xy -2 0)
+				(xy -1.982889 -0.261052) (xy -1.931851 -0.517638) (xy -1.847759 -0.765366) (xy -1.73205 -0.999999)
+				(xy -1.586706 -1.217522) (xy -1.414213 -1.414213) (xy -1.217522 -1.586706) (xy -1 -1.73205) (xy -0.765366 -1.847759)
+				(xy -0.517638 -1.931851) (xy -0.261052 -1.982889) (xy 0 -2) (xy 0.261052 -1.982889) (xy 0.517638 -1.931851)
+				(xy 0.765366 -1.847759) (xy 1 -1.73205) (xy 1.217522 -1.586706) (xy 1.414213 -1.414213) (xy 1.586706 -1.217522)
+				(xy 1.73205 -1) (xy 1.847759 -0.765366) (xy 1.931851 -0.517638) (xy 1.982889 -0.261052)
+			)
+		)
+	)
+	(embedded_fonts no)
+)
