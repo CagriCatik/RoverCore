@@ -1366,6 +1366,33 @@ Ergebnis:
 - **D502:** Für das jetzt festgelegte Teil 150060RS75000 bleibt das passende
   KiCad-Bibliotheksmodell LED_0603 im Einsatz.
 
+*Nachtrag 2026-11-18 (eigene Gehäusemodelle, Owner-Freigabe: frei lizenzierte, maßlich geprüfte Modelle
+erlaubt):*
+- **Quellen geprüft, ohne Ergebnis:**
+  - Die KiCad-Bibliothek enthält die von den Footprints referenzierten Modelle für PowerPAK SO-8,
+    PG-TDSON-8, DPY0002A und XT30PW-M nicht, weder auf master noch im Tag 10.0.7; in
+    `Connector_AMASS` gibt es nur XT60.
+  - EasyEDA/LCSC sperrt automatisierte Abrufe (HTTP 403).
+  - Flux.ai hat für XT30PW-M keine Dateien.
+- **Gehäuse bestätigt:**
+  - SiRA99DP = PowerPAK SO-8 Single (Vishay-Datenblatt 71023, Zeichnung 71655);
+  - BSC026N04LS = PG-TDSON-8-6 (Infineon-Produktseite);
+  - TPD1E05U06DPYR = DPY0002A X1SON (TI SLVSBO7O);
+  - XT30PW-M = AMASS-Spezifikation V1.2.
+- **Eigene Modelle:** `hardware/scripts/make_package_models.py` erzeugt VRML-Modelle aus diesen
+  Zeichnungen, mit Nennmaßen. Die XT30-Höhe von 5,2 mm ist in der Zeichnung nicht bemaßt und aus der
+  Ansicht abgegriffen (Schätzung). Die Modelle liegen in Git (`hardware/libraries/3d-models/project/`,
+  MIT); Werte und Prüfung je Zeile in `models.csv`.
+- **Prüfung im Render:** `model_fit_check.py` und die Gesamtansicht. Gehäuse und Anschlüsse liegen auf
+  Umriss und Pads, die Pin-1-Marke liegt an Pad 1, J101 steckt mit den Kontakten in den Pads und mit den
+  Zapfen in den Ohrbohrungen.
+- **Fehler im Generator gefunden und behoben:** Die y-Spiegelung kehrt die Flächenorientierung um. Im
+  ersten Render waren die Gehäuse hohl und zeigten die Pads.
+- **Grenze:** VRML erscheint nicht im STEP-Export der Platine.
+- **Stand `models_3d`:** BZ101 hat keinen Körper. Die Module DevKit, OLED und IMU erscheinen in der
+  Platine nur als Buchsenleisten; als ganze Module sind sie nur in den Review-Ansichten zu sehen, als
+  Hüllkörper.
+
 *Für die blockierten Teile braucht es den Owner:*
 - **Ultra Librarian (TPD1E05U06):** im Browser-Bereich anmelden; dann lade ich
   das Modell und prüfe es wie oben.

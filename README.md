@@ -17,14 +17,13 @@ prüfbare Prototyp nach dem [Inbetriebnahmeplan](docs/bringup.md).
 ## Ansichten
 
 Review-Ansichten (`hardware/scripts/render_populated_review.py`): Bauteile mit
-KiCad-Bibliotheksmodell erscheinen normal. **Magenta** sind gekennzeichnete
-Hüllkörper für Carrier-Teile ohne verfügbares Modell (J101 XT30 mit dunkler
-Stirnfläche auf der Steckseite, BZ101, Q101, Q401, Q402, D601–D604,
-D606–D608). J102/J103 zeigen das Molex-Herstellermodell (projektlokal, nicht
-in Git; Quelle und Prüfsumme in `hardware/libraries/3d-models/models.csv`). **Blau** sind Hüllkörper der gesteckten Module
-(DevKit, OLED, IMU). Hüllkörper sind keine Herstellermodelle; ihre Maße und
-Quellen stehen in `qa/generated/populated/model_status.csv` und im Bericht
-(3g, 3l).
+KiCad-Bibliotheksmodell erscheinen normal. J102/J103 zeigen das Molex-Herstellermodell
+(projektlokal, nicht in Git). J101 XT30, Q101, Q401/Q402 und D601–D604, D606–D608 zeigen **eigene
+Gehäusemodelle**, aus den Herstellerzeichnungen erzeugt (`hardware/scripts/make_package_models.py`, MIT; Maße
+und Quellen in `hardware/libraries/3d-models/models.csv`; die XT30-Höhe ist geschätzt). **Magenta** ist nur noch
+der Hüllkörper für BZ101 (Modell bei Same Sky nur gegen E-Mail und Zustimmung zu den CAD-Bedingungen).
+**Blau** sind Hüllkörper der gesteckten Module (DevKit, OLED, IMU). Hüllkörper sind keine Herstellermodelle;
+Status je Position in `qa/generated/populated/model_status.csv`, Bericht 3g, 3l, 3m.
 
 | Mit Modulen | Ohne Module (Buchsenleisten) |
 |---|---|
@@ -85,9 +84,8 @@ Online: <https://cagricatik.github.io/RoverCore/>
 - Bohrdateien: `kit export` liefert getrennt `RoverCore-PTH.drl` und
   `RoverCore-NPTH.drl`; beide hochladen und die 10 NPTH-Löcher in der
   Fertiger-Vorschau prüfen (Bericht 3n).
-- 3D: Herstellermodelle für XT30, BZ101, Q101, Q401/Q402, D601–D608 sowie
-  DevKit, OLED und IMU fehlen noch (Download-Stand je Teil im Bericht 3m).
-  J102/J103 haben das Molex-Modell.
+- 3D: Für BZ101 und die Module DevKit, OLED, IMU fehlen noch Modelle (Hüllkörper). J102/J103 haben das
+  Molex-Modell, J101, Q101, Q401/Q402 und D601–D608 eigene Gehäusemodelle nach Herstellerzeichnung.
 - GO-Freigabe nur mit signierter Freigabe (`manufacturing/approval.example.json`)
   und `--authorize`.
 

@@ -14,10 +14,9 @@ KiCad 10.0.7, 4 Lagen, 150 × 85 mm.
 
 ![RoverCore Rev 1 mit gesteckten Modulen](images/populated_iso_front.jpg)
 
-**Magenta** = gekennzeichnete Hüllkörper für Carrier-Teile ohne verfügbares
-Modell (XT30 mit dunkler Steckseite, Buzzer, Leistungs-FETs, X2SON-Dioden);
-**blau** = Hüllkörper der gesteckten Module (DevKit, OLED, IMU). J102/J103
-zeigen das Molex-Herstellermodell.
+J102/J103 zeigen das Molex-Herstellermodell; XT30, Leistungs-FETs und X1SON-Dioden eigene Gehäusemodelle
+nach Herstellerzeichnung. **Magenta** = Hüllkörper für den Buzzer BZ101; **blau** = Hüllkörper der
+gesteckten Module (DevKit, OLED, IMU).
 Hüllkörper sind keine Herstellermodelle.
 
 | Mit Modulen | Ohne Module |
