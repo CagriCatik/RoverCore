@@ -6,7 +6,7 @@ RoverCore carries the board-tooling part of PCB-Project-Template so that
 | Item | Value |
 | --- | --- |
 | Source | `https://github.com/CagriCatik/PCB-Project-Template` |
-| Source commit | `c28a376f0dd5bddb55cffc98bd07f630ea71973f` (2026-11-23, "Add review tools: fab preview, models fit, mounting print, power paths"); updated from `f349dc7e2170e77a2fb7e9efadbcb06f562cd6b6` and before that from `65486a57c34182e49e1d76b4ed9779de235f1fb9` (2026-10-18) by three-way merges, see below |
+| Source commit | `db2a4846e00e38126f91e897023e84909ba111dd` (2026-11-23, "kit export: shareable GLB/STL view models without restricted 3D models"); updated from `c28a376f0dd5bddb55cffc98bd07f630ea71973f`, before that from `f349dc7e2170e77a2fb7e9efadbcb06f562cd6b6` and before that from `65486a57c34182e49e1d76b4ed9779de235f1fb9` (2026-10-18) by three-way merges, see below |
 | Kit version | 2.0.0 (`tools/__init__.py`) |
 | License | MIT, Copyright (c) 2026 Çağrı Çatık – same text as the repository [`LICENSE`](../LICENSE) |
 | Vendored on | 2026-11-15, updated 2026-11-23 |
@@ -68,8 +68,6 @@ RoverCore checks its DevKit socket with `hardware/scripts/check_socket_pinmap.py
 - `qa/tests/test_schematic.py`: two tests skipped – the kit-repository Git rule (RoverCore's
   AGENTS.md allows local commits only) and generated-project content.
 - `tools/cli/main.py`: additionally without the `carrier` command.
-- `tools/cli/main.py`: `mounting print` console hint prints a single `%` (same fix as template
-  `b3621df`; drop this entry once the source commit includes it).
 
 ## Use
 
@@ -108,3 +106,8 @@ Update 2026-11-23 (`f349dc7` → `c28a376`): `tools/cli/main.py` and `tools/proj
 merged without conflict (local modifications kept), seven new `tools/quality` modules and two test
 files copied unchanged. 147 tests OK (3 skipped), `verify` PASS (required gates; advisory
 metadata/BOM findings unchanged).
+
+Update 2026-11-23 (`c28a376` → `db2a484`): `exports.py`, `verification.py` and
+`test_manufacturing.py` taken over unchanged; `tools/cli/main.py` merged (the local `%` fix is now in
+the template). `qa/verification.json` sets `restricted_3d_models` to `*/3d-models/vendor/*`, so the
+vendor connector models (J102/J103, not redistributable) stay out of `mechanical/board-view.glb/.stl`.

@@ -32,5 +32,8 @@
     "component_metadata",
     "models_3d",
     "bom"
+  ],
+  "restricted_3d_models": [
+    "*/3d-models/vendor/*"
   ]
 }
