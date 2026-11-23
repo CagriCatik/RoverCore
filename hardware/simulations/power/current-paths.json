@@ -1,0 +1,438 @@
+{
+  "schema": 1,
+  "plating": "HOLE_PLATING_MIN",
+  "cases": [
+    {
+      "id": "vservo",
+      "net": "+V_SERVO",
+      "layers": [
+        "F.Cu",
+        "B.Cu"
+      ],
+      "source": [
+        [
+          "RS402",
+          "2"
+        ]
+      ],
+      "sinks": [
+        {
+          "label": "J102 front servo",
+          "pads": [
+            [
+              "J102",
+              "2"
+            ]
+          ],
+          "current": "I_SERVO_MAIN"
+        },
+        {
+          "label": "J103 rear servo",
+          "pads": [
+            [
+              "J103",
+              "2"
+            ]
+          ],
+          "current": "I_SERVO_MAIN"
+        },
+        {
+          "label": "J104 reserve",
+          "pads": [
+            [
+              "J104",
+              "2"
+            ]
+          ],
+          "current": "I_SERVO_RESERVE"
+        },
+        {
+          "label": "J105 reserve",
+          "pads": [
+            [
+              "J105",
+              "2"
+            ]
+          ],
+          "current": "I_SERVO_RESERVE"
+        }
+      ]
+    },
+    {
+      "id": "vbat",
+      "net": "/Power/VBAT_PROT",
+      "layers": [
+        "F.Cu",
+        "B.Cu"
+      ],
+      "source": [
+        [
+          "Q101",
+          "1"
+        ],
+        [
+          "Q101",
+          "2"
+        ],
+        [
+          "Q101",
+          "3"
+        ]
+      ],
+      "sinks": [
+        {
+          "label": "servo buck Q401 drain",
+          "pads": [
+            [
+              "Q401",
+              "5"
+            ]
+          ],
+          "current": "I_SERVO_BUCK_INPUT"
+        },
+        {
+          "label": "5 V buck U301",
+          "pads": [
+            [
+              "U301",
+              "3"
+            ]
+          ],
+          "current": "I_5V_BUCK_INPUT"
+        }
+      ]
+    },
+    {
+      "id": "5v",
+      "net": "+5V",
+      "layers": [
+        "F.Cu",
+        "B.Cu"
+      ],
+      "source": [
+        [
+          "L301",
+          "2"
+        ]
+      ],
+      "sinks": [
+        {
+          "label": "D501 -> DevKit",
+          "pads": [
+            [
+              "D501",
+              "2"
+            ]
+          ],
+          "current": "I_DEVKIT_5V"
+        },
+        {
+          "label": "U601 LED switch",
+          "pads": [
+            [
+              "U601",
+              "1"
+            ]
+          ],
+          "current": "I_OS_MAX_U601"
+        },
+        {
+          "label": "U602 EXT switch",
+          "pads": [
+            [
+              "U602",
+              "1"
+            ]
+          ],
+          "current": "I_OS_MAX_U602"
+        },
+        {
+          "label": "U603 RX switch",
+          "pads": [
+            [
+              "U603",
+              "1"
+            ]
+          ],
+          "current": "I_OS_MAX_U603"
+        },
+        {
+          "label": "BZ101 buzzer",
+          "pads": [
+            [
+              "BZ101",
+              "1"
+            ]
+          ],
+          "current": "I_BUZZER_MAX"
+        }
+      ]
+    },
+    {
+      "id": "5v_devkit",
+      "net": "/Controller/+5V_DEVKIT",
+      "layers": [
+        "F.Cu",
+        "B.Cu"
+      ],
+      "source": [
+        [
+          "D501",
+          "1"
+        ]
+      ],
+      "sinks": [
+        {
+          "label": "DevKit 5V pin",
+          "pads": [
+            [
+              "U501",
+              "21"
+            ]
+          ],
+          "current": "I_DEVKIT_5V"
+        }
+      ]
+    },
+    {
+      "id": "5v_led",
+      "net": "/Lighting_IO/+5V_LED",
+      "layers": [
+        "F.Cu",
+        "B.Cu"
+      ],
+      "source": [
+        [
+          "U601",
+          "6"
+        ]
+      ],
+      "sinks": [
+        {
+          "label": "J108",
+          "pads": [
+            [
+              "J108",
+              "1"
+            ]
+          ],
+          "current": "I_LED_CONNECTOR"
+        },
+        {
+          "label": "J109",
+          "pads": [
+            [
+              "J109",
+              "1"
+            ]
+          ],
+          "current": "I_LED_CONNECTOR"
+        },
+        {
+          "label": "J110",
+          "pads": [
+            [
+              "J110",
+              "1"
+            ]
+          ],
+          "current": "I_LED_CONNECTOR"
+        },
+        {
+          "label": "J111",
+          "pads": [
+            [
+              "J111",
+              "1"
+            ]
+          ],
+          "current": "I_LED_CONNECTOR"
+        }
+      ]
+    },
+    {
+      "id": "5v_ext",
+      "net": "/Lighting_IO/+5V_EXT",
+      "layers": [
+        "F.Cu",
+        "B.Cu"
+      ],
+      "source": [
+        [
+          "U602",
+          "6"
+        ]
+      ],
+      "sinks": [
+        {
+          "label": "J112",
+          "pads": [
+            [
+              "J112",
+              "1"
+            ]
+          ],
+          "current": "I_OS_MAX_U602"
+        }
+      ]
+    },
+    {
+      "id": "5v_rx",
+      "net": "/Lighting_IO/+5V_RX",
+      "layers": [
+        "F.Cu",
+        "B.Cu"
+      ],
+      "source": [
+        [
+          "U603",
+          "6"
+        ]
+      ],
+      "sinks": [
+        {
+          "label": "J107",
+          "pads": [
+            [
+              "J107",
+              "2"
+            ]
+          ],
+          "current": "I_OS_MAX_U603"
+        }
+      ]
+    },
+    {
+      "id": "vbat_in",
+      "net": "/Power/VBAT_IN",
+      "layers": [
+        "F.Cu",
+        "B.Cu"
+      ],
+      "source": [
+        [
+          "J101",
+          "2"
+        ]
+      ],
+      "sinks": [
+        {
+          "label": "F101 input",
+          "pads": [
+            [
+              "F101",
+              "1"
+            ]
+          ],
+          "current": "I_VCU_INPUT_MAX"
+        }
+      ]
+    },
+    {
+      "id": "vbat_fused",
+      "net": "/Power/VBAT_FUSED",
+      "layers": [
+        "F.Cu",
+        "B.Cu"
+      ],
+      "source": [
+        [
+          "F101",
+          "2"
+        ]
+      ],
+      "sinks": [
+        {
+          "label": "Q101 drain",
+          "pads": [
+            [
+              "Q101",
+              "5"
+            ]
+          ],
+          "current": "I_VCU_INPUT_MAX"
+        }
+      ]
+    },
+    {
+      "id": "gnd_servo",
+      "net": "GND",
+      "layers": [
+        "F.Cu",
+        "In1.Cu",
+        "In2.Cu",
+        "B.Cu"
+      ],
+      "source": [
+        [
+          "J101",
+          "1"
+        ]
+      ],
+      "sinks": [
+        {
+          "label": "J102 front servo",
+          "pads": [
+            [
+              "J102",
+              "3"
+            ]
+          ],
+          "current": "I_SERVO_MAIN",
+          "direction": "in"
+        },
+        {
+          "label": "J103 rear servo",
+          "pads": [
+            [
+              "J103",
+              "3"
+            ]
+          ],
+          "current": "I_SERVO_MAIN",
+          "direction": "in"
+        },
+        {
+          "label": "J104 reserve",
+          "pads": [
+            [
+              "J104",
+              "3"
+            ]
+          ],
+          "current": "I_SERVO_RESERVE",
+          "direction": "in"
+        },
+        {
+          "label": "J105 reserve",
+          "pads": [
+            [
+              "J105",
+              "3"
+            ]
+          ],
+          "current": "I_SERVO_RESERVE",
+          "direction": "in"
+        },
+        {
+          "label": "Q402 source",
+          "pads": [
+            [
+              "Q402",
+              "1"
+            ],
+            [
+              "Q402",
+              "2"
+            ],
+            [
+              "Q402",
+              "3"
+            ]
+          ],
+          "current": "I_Q402_FREEWHEEL"
+        }
+      ]
+    }
+  ]
+}

@@ -68,6 +68,8 @@ RoverCore checks its DevKit socket with `hardware/scripts/check_socket_pinmap.py
 - `qa/tests/test_schematic.py`: two tests skipped – the kit-repository Git rule (RoverCore's
   AGENTS.md allows local commits only) and generated-project content.
 - `tools/cli/main.py`: additionally without the `carrier` command.
+- `tools/cli/main.py`: `mounting print` console hint prints a single `%` (same fix as template
+  `b3621df`; drop this entry once the source commit includes it).
 
 ## Use
 

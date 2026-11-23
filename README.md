@@ -40,7 +40,7 @@ den 3D-Ansichten = Hüllkörper für Scheibe, Kopf und 10-mm-Abstandshalter.
 ![Bemaßte Draufsicht der Befestigungsbohrungen](docs/images/mounting_top.jpg)
 
 Aus den exportierten Gerber- und Bohrdateien gezeichnet
-(`hardware/scripts/gerber_preview.py`), also so, wie der Fertiger sie erhält:
+(`scripts/kit fab preview`), also so, wie der Fertiger sie erhält:
 
 | Oberseite (Gerber) | Unterseite (Gerber, von unten) | Innenlage In1 (GND) |
 |---|---|---|
@@ -113,15 +113,28 @@ scripts/kit doctor                        # Umgebungsdiagnose, nur lesend
 scripts/kit verify .                      # ERC, DRC, Parität, Bibliotheken, Metadaten, 3D, BOM
 scripts/kit export . --revision A1        # DRAFT-Fertigungspaket (NO-GO)
 scripts/kit thermal analyze .             # stationäre Thermik-Schätzung
+scripts/kit power paths .                 # Gleichstrom-Pfade im Kupfer (Schätzung), Fälle in current-paths.json
 ```
 
-Prüfung eines DRAFT-Pakets gegen das Board und Gerber-Vorschau:
+Prüfwerkzeuge für Layout und Fertigungspaket (nur lesend, Ergebnisse unter `qa/generated/`):
 
 ```sh
-/Applications/KiCad/KiCad.app/Contents/Frameworks/Python.framework/Versions/Current/bin/python3 \
-  hardware/scripts/fab_package_check.py RoverCore.kicad_pcb manufacturing/releases/generated/rev-A3-DRAFT
-python3 -I hardware/scripts/gerber_preview.py manufacturing/releases/generated/rev-A3-DRAFT qa/generated/fab
+scripts/kit fab check . manufacturing/releases/generated/rev-A3-DRAFT     # Paket gegen Board
+scripts/kit fab preview . manufacturing/releases/generated/rev-A3-DRAFT   # Gerber-/Bohrbilder
+scripts/kit board diff ALT.kicad_pcb RoverCore.kicad_pcb --project .      # Kupfer-/Bauteilvergleich
+scripts/kit models fit . BZ101 hardware/libraries/3d-models/project/SameSky_CMT-8540S-SMT_8.5x8.5x4.0mm.step  # 3D-Sitz
+scripts/kit mounting print . --washer 7 --body J101 --body U501           # 1:1-Bohrbild (allgemein)
 ```
+
+Die Lastfälle für `power paths` stehen in
+[`hardware/simulations/power/current-paths.json`](hardware/simulations/power/current-paths.json),
+alle Ströme und die Hülsendicke mit Quelle in
+[`hardware/interfaces/assumptions.json`](hardware/interfaces/assumptions.json). Die früheren Skripte
+`current_map.py`, `board_copper_diff.py`, `fab_package_check.py`, `gerber_preview.py` und
+`model_fit_check.py` (in älteren Berichtsabschnitten noch genannt) sind durch diese Befehle ersetzt und
+nur noch in der Git-Historie (bis `53f6d7f`). Die RoverCore-spezifischen Montagebilder
+(`render_mounting_print.py` mit SUPPORT-Zone und Steckrichtungen, `render_mounting_drawing.py`,
+`render_mounting_proposal.py`) bleiben in `hardware/scripts`.
 
 Die Werkzeuge sind aus PCB-Project-Template 2.0.0 übernommen; Herkunft,
 Lizenz und lokale Änderungen stehen in [`tools/VENDORED.md`](tools/VENDORED.md).

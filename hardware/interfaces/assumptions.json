@@ -1,0 +1,122 @@
+{
+  "schema": 1,
+  "assumptions": [
+    {
+      "id": "HOLE_PLATING_MIN",
+      "value": 0.018,
+      "unit": "mm",
+      "status": "assumed",
+      "source": "docs/vcu/rev1-platzierung.md (Huelsenkupfer): IPC-6012 class 2 thinnest point, to be ordered; JLCPCB publishes no guaranteed value",
+      "revision": "Rev1 docs as of 2026-11-23",
+      "conditions": "via/plated-hole wall copper, thinnest point"
+    },
+    {
+      "id": "I_VCU_INPUT_MAX",
+      "value": 10.1,
+      "unit": "A",
+      "status": "assumed",
+      "source": "docs/vcu/rev1-versorgung-und-boardwahl.md 3.2/3.10 (worst case, calculated)",
+      "revision": "Rev1 docs as of 2026-11-23",
+      "conditions": "whole VCU input at 9.0 V, both steering servos stalled"
+    },
+    {
+      "id": "I_SERVO_BUCK_INPUT",
+      "value": 9.35,
+      "unit": "A",
+      "status": "assumed",
+      "source": "docs/vcu/rev1-platzierung.md Strompfade / docs/vcu/rev1-versorgung-und-boardwahl.md 3.10 (estimate)",
+      "revision": "Rev1 docs as of 2026-11-23",
+      "conditions": "servo buck input current at 9.0 V, 11.2 A output"
+    },
+    {
+      "id": "I_5V_BUCK_INPUT",
+      "value": 0.75,
+      "unit": "A",
+      "status": "assumed",
+      "source": "docs/vcu/rev1-versorgung-und-boardwahl.md 3.10: 1.13 A x 5.08 V / (9 V x 0.85), estimate",
+      "revision": "Rev1 docs as of 2026-11-23",
+      "conditions": "5 V buck input current at 9.0 V"
+    },
+    {
+      "id": "I_SERVO_MAIN",
+      "value": 5.1,
+      "unit": "A",
+      "status": "assumed",
+      "source": "docs/vcu/rev1-versorgung-und-boardwahl.md 3.2 load estimate 3.4",
+      "revision": "Rev1 docs as of 2026-11-23",
+      "conditions": "steering servo stalled at 6.8 V, per connector J102/J103"
+    },
+    {
+      "id": "I_SERVO_RESERVE",
+      "value": 0.5,
+      "unit": "A",
+      "status": "assumed",
+      "source": "docs/vcu/rev1-versorgung-und-boardwahl.md 3.2 (Festlegung)",
+      "revision": "Rev1 docs as of 2026-11-23",
+      "conditions": "reserve connector J104/J105 limit"
+    },
+    {
+      "id": "I_Q402_FREEWHEEL",
+      "value": 1.85,
+      "unit": "A",
+      "status": "assumed",
+      "source": "docs/vcu/rev1-platzierung.md Strompfade (GND-Rueckstrom): 11.2 A output minus 9.35 A input, estimate",
+      "revision": "Rev1 docs as of 2026-11-23",
+      "conditions": "average low-side share of the servo buck return"
+    },
+    {
+      "id": "I_DEVKIT_5V",
+      "value": 0.55,
+      "unit": "A",
+      "status": "assumed",
+      "source": "docs/vcu/rev1-versorgung-und-boardwahl.md 3.2 (WROOM-1 DS v1.8 Tab. 6-2 plus 50 mA carrier load)",
+      "revision": "Rev1 docs as of 2026-11-23",
+      "conditions": "DevKit via D501, LDO input = output current"
+    },
+    {
+      "id": "I_BUZZER_MAX",
+      "value": 0.15,
+      "unit": "A",
+      "status": "guaranteed",
+      "source": "docs/vcu/rev1-versorgung-und-boardwahl.md 3.2 / CMT-8540S-SMT-TR datasheet max",
+      "revision": "Rev1 docs as of 2026-11-23",
+      "conditions": "4 kHz, 50 % duty (datasheet condition)"
+    },
+    {
+      "id": "I_OS_MAX_U601",
+      "value": 0.32,
+      "unit": "A",
+      "status": "assumed",
+      "source": "docs/vcu/rev1-pin-und-anschlussplan.md 8 (SLVS841G eq. 1/3, R_ILIM 93.1k)",
+      "revision": "Rev1 docs as of 2026-11-23",
+      "conditions": "upper current limit incl. temperature/process spread, without 1 % resistor tolerance"
+    },
+    {
+      "id": "I_OS_MAX_U602",
+      "value": 0.3,
+      "unit": "A",
+      "status": "assumed",
+      "source": "docs/vcu/rev1-pin-und-anschlussplan.md 8 (SLVS841G eq. 1/3, R_ILIM 100k)",
+      "revision": "Rev1 docs as of 2026-11-23",
+      "conditions": "upper current limit incl. temperature/process spread, without 1 % resistor tolerance"
+    },
+    {
+      "id": "I_OS_MAX_U603",
+      "value": 0.21,
+      "unit": "A",
+      "status": "assumed",
+      "source": "docs/vcu/rev1-pin-und-anschlussplan.md 8 (SLVS841G eq. 1/3, R_ILIM 150k)",
+      "revision": "Rev1 docs as of 2026-11-23",
+      "conditions": "upper current limit incl. temperature/process spread, without 1 % resistor tolerance"
+    },
+    {
+      "id": "I_LED_CONNECTOR",
+      "value": 0.08,
+      "unit": "A",
+      "status": "assumed",
+      "source": "docs/vcu/rev1-pin-und-anschlussplan.md 8: U601 I_OS max 0.32 A shared evenly over J108-J111",
+      "revision": "Rev1 docs as of 2026-11-23",
+      "conditions": "worst case per LED connector (planned load 44 mA)"
+    }
+  ]
+}

@@ -4,7 +4,7 @@
 Usage: <KiCad python> render_mounting_drawing.py BOARD.kicad_pcb OUT.png [BACKGROUND.png]
 Reads the board outline and the footprints H1-H4 from the board and draws, in K1 coordinates (datum = top-left
 outline corner): outline with overall size, hole centres with Ø, washer Ø 7.0 mm and copper keep-out r 3.8 mm,
-chain dimensions from the datum to every hole and the hole-to-hole distances. With BACKGROUND (gerber_preview.py
+chain dimensions from the datum to every hole and the hole-to-hole distances. With BACKGROUND (`scripts/kit fab preview`
 composite, 10 px/mm, 2 mm margin) the Gerber top view is drawn faintly underneath. Needs rsvg-convert.
 """
 from pathlib import Path

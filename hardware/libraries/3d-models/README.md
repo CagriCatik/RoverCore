@@ -12,7 +12,7 @@ substitute dummy 3D shapes as if they were sourced components.
   for evaluation, not redistribution. A fresh checkout fetches them from the source in `models.csv`, checks the
   SHA-256 and then runs `hardware/scripts/assign_vendor_models.py` (already applied to `RoverCore.kicad_pcb`).
 - Without the files, KiCad shows these parts without a body and `kit verify` reports them under `models_3d`.
-- Fit check of a new model: `hardware/scripts/model_fit_check.py` renders the footprint alone with a candidate
+- Fit check of a new model: `scripts/kit models fit . REF MODEL [--offset X Y Z] [--rotate RX RY RZ]` renders the footprint alone with a candidate
   offset/rotation (top, front, side, iso).
 
 ## Own package models (`project/`)
