@@ -51,3 +51,10 @@ site/
 /qa/generated/contracts/
 /qa/generated/assumptions/
 /qa/generated/power-budget/
+# kit board/fab/models/mounting/power review runs (vendored kit, 2026-11-23)
+/qa/generated/board-diff/
+/qa/generated/fab-check/
+/qa/generated/fab-preview/
+/qa/generated/model-fit/
+/qa/generated/mounting-print/
+/qa/generated/power-paths/

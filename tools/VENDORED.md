@@ -6,7 +6,7 @@ RoverCore carries the board-tooling part of PCB-Project-Template so that
 | Item | Value |
 | --- | --- |
 | Source | `https://github.com/CagriCatik/PCB-Project-Template` |
-| Source commit | `f349dc7e2170e77a2fb7e9efadbcb06f562cd6b6` (2026-11-23, "Apply RoverCore lessons to mechanics, 3D review and manufacturing exports"); updated from `65486a57c34182e49e1d76b4ed9779de235f1fb9` (2026-10-18) by a three-way merge, see below |
+| Source commit | `c28a376f0dd5bddb55cffc98bd07f630ea71973f` (2026-11-23, "Add review tools: fab preview, models fit, mounting print, power paths"); updated from `f349dc7e2170e77a2fb7e9efadbcb06f562cd6b6` and before that from `65486a57c34182e49e1d76b4ed9779de235f1fb9` (2026-10-18) by three-way merges, see below |
 | Kit version | 2.0.0 (`tools/__init__.py`) |
 | License | MIT, Copyright (c) 2026 Çağrı Çatık – same text as the repository [`LICENSE`](../LICENSE) |
 | Vendored on | 2026-11-15, updated 2026-11-23 |
@@ -23,13 +23,14 @@ RoverCore carries the board-tooling part of PCB-Project-Template so that
 | `tools/project/components.py` | component records used by the BOM gate |
 | `tools/project/contracts.py`, `assumptions.py`, `tools/quality/power_budget.py`, `tools/core/evidence.py` | `kit contracts check`, `kit assumptions check`, `kit power-budget calculate` (added 2026-11-23) |
 | `tools/schematic/` | `kit schematic snapshot\|compare\|review\|lint\|status` (added 2026-11-23) |
+| `tools/quality/board_model.py`, `board_diff.py`, `fab_check.py`, `gerber_preview.py`, `model_fit.py`, `mounting.py`, `power_paths.py` | `kit board diff`, `kit fab check\|preview`, `kit models fit`, `kit mounting print`, `kit power paths` (added 2026-11-23, from RoverCore's former `hardware/scripts` review scripts) |
 | `tools/plugins/` | plugin status/verification (InteractiveHtmlBom used by exports) |
 | `tools/environment/installer.py` | `doctor` and `install` (creates `.venv`) |
 | `tools/cli/main.py`, `tools/__main__.py` | CLI entry point |
 | `scripts/kit` | local launcher (`python -m tools`, prefers `.venv`) |
 | `requirements.txt` | pinned Python dependencies for `.venv` (kicad-python, numpy, scipy) |
 | `qa/fixtures/` | tooling fixtures built from KiCad's official libraries (not reviewed circuits) and their builder |
-| `qa/tests/kit_test_support.py`, `test_verification.py`, `test_manufacturing.py`, `test_thermal.py`, `test_ipc.py`, `test_plugins.py`, `test_components.py`, `test_installer.py`, `test_design_contracts.py`, `test_schematic.py` | tool tests |
+| `qa/tests/kit_test_support.py`, `test_verification.py`, `test_manufacturing.py`, `test_thermal.py`, `test_ipc.py`, `test_plugins.py`, `test_components.py`, `test_installer.py`, `test_design_contracts.py`, `test_schematic.py`, `test_board_review.py`, `test_board_tools.py` | tool tests |
 
 ## Deliberately not included
 
@@ -100,3 +101,8 @@ update (unchanged iBOM call, standalone runs give the A3 value). New BOM/drill c
 commands stop with a missing-file error until RoverCore has filled
 `hardware/interfaces/design-contracts.json`, `assumptions.json`,
 `hardware/simulations/power/budget.json` and `firmware/bsp/pin-bindings.json`.
+
+Update 2026-11-23 (`f349dc7` → `c28a376`): `tools/cli/main.py` and `tools/project/assumptions.py`
+merged without conflict (local modifications kept), seven new `tools/quality` modules and two test
+files copied unchanged. 147 tests OK (3 skipped), `verify` PASS (required gates; advisory
+metadata/BOM findings unchanged).
