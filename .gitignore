@@ -47,3 +47,7 @@ site/
 /qa/generated/fab/
 /hardware/libraries/3d-models/vendor/
 /qa/generated/mounting/
+# kit contracts / assumptions / power-budget runs (vendored kit, 2026-11-23)
+/qa/generated/contracts/
+/qa/generated/assumptions/
+/qa/generated/power-budget/

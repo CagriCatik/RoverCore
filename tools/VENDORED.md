@@ -6,10 +6,10 @@ RoverCore carries the board-tooling part of PCB-Project-Template so that
 | Item | Value |
 | --- | --- |
 | Source | `https://github.com/CagriCatik/PCB-Project-Template` |
-| Source commit | `65486a57c34182e49e1d76b4ed9779de235f1fb9` (2026-10-18, "docs updated"); byte-identical to the `tools/` and `scripts/kit` removed from RoverCore in `b2d1831` (originally from `4c6b5f8`) |
+| Source commit | `f349dc7e2170e77a2fb7e9efadbcb06f562cd6b6` (2026-11-23, "Apply RoverCore lessons to mechanics, 3D review and manufacturing exports"); updated from `65486a57c34182e49e1d76b4ed9779de235f1fb9` (2026-10-18) by a three-way merge, see below |
 | Kit version | 2.0.0 (`tools/__init__.py`) |
 | License | MIT, Copyright (c) 2026 Çağrı Çatık – same text as the repository [`LICENSE`](../LICENSE) |
-| Vendored on | 2026-11-15 |
+| Vendored on | 2026-11-15, updated 2026-11-23 |
 
 ## Included
 
@@ -21,13 +21,15 @@ RoverCore carries the board-tooling part of PCB-Project-Template so that
 | `tools/release/exports.py` | NO-GO draft / GO release manufacturing exports with manifest and hashes |
 | `tools/thermal/` | steady-state thermal estimate |
 | `tools/project/components.py` | component records used by the BOM gate |
+| `tools/project/contracts.py`, `assumptions.py`, `tools/quality/power_budget.py`, `tools/core/evidence.py` | `kit contracts check`, `kit assumptions check`, `kit power-budget calculate` (added 2026-11-23) |
+| `tools/schematic/` | `kit schematic snapshot\|compare\|review\|lint\|status` (added 2026-11-23) |
 | `tools/plugins/` | plugin status/verification (InteractiveHtmlBom used by exports) |
 | `tools/environment/installer.py` | `doctor` and `install` (creates `.venv`) |
 | `tools/cli/main.py`, `tools/__main__.py` | CLI entry point |
 | `scripts/kit` | local launcher (`python -m tools`, prefers `.venv`) |
 | `requirements.txt` | pinned Python dependencies for `.venv` (kicad-python, numpy, scipy) |
 | `qa/fixtures/` | tooling fixtures built from KiCad's official libraries (not reviewed circuits) and their builder |
-| `qa/tests/kit_test_support.py`, `test_verification.py`, `test_manufacturing.py`, `test_thermal.py`, `test_ipc.py`, `test_plugins.py`, `test_components.py`, `test_installer.py` | tool tests |
+| `qa/tests/kit_test_support.py`, `test_verification.py`, `test_manufacturing.py`, `test_thermal.py`, `test_ipc.py`, `test_plugins.py`, `test_components.py`, `test_installer.py`, `test_design_contracts.py`, `test_schematic.py` | tool tests |
 
 ## Deliberately not included
 
@@ -36,7 +38,10 @@ Project generator and templates (`tools/project/templates.py`, `profiles.py`,
 (`tools/gui/`), the interactive manager (`tools/cli/interactive.py`), kit
 packaging (`tools/release/packaging.py`), installer shell wrappers and their
 tests (`test_templates`, `test_gui`, `test_manager`, `test_layout`,
-`test_toolchains`, `test_hardening`).
+`test_toolchains`, `test_hardening`). Also the `carrier` command
+(`tools/project/carrier.py`, `test_carrier.py`): it validates the socket inventory of the
+template's `esp32-carrier` project layout and its tests need the generator and PlatformIO;
+RoverCore checks its DevKit socket with `hardware/scripts/check_socket_pinmap.py`.
 
 ## Local modifications (diff against the source commit)
 
@@ -49,16 +54,19 @@ tests (`test_templates`, `test_gui`, `test_manager`, `test_layout`,
   `RoverCore-kit` so it never shares state with a separate template checkout.
 - `tools/__init__.py`, `tools/thermal/geometry.py`, `tools/kicad/ipc.py`:
   docstring/messages only.
-- `tools/release/exports.py` (2026-11-18): drill export with `--excellon-separate-th`
-  (`<board>-PTH.drl`, `<board>-NPTH.drl`, no merged file); in a merged file the
-  plated/non-plated distinction is only in X2 comment lines. Test expects
-  `divider-PTH.drl` and no merged file.
-- `tools/release/exports.py` (2026-11-18): BOM `--group-by` also groups by
-  `${DNP}`. Without it a fitted part (R616) was merged into a DNP line
-  (R801/R802) and marked DNP in the BOM while the position file placed it.
+- `tools/release/exports.py`: no local change any more. The two RoverCore fixes of
+  2026-11-18 (separate PTH/NPTH drill files, BOM grouped by `${DNP}`) are in the template
+  since `f349dc7`, together with a drill file-name check and a BOM-vs-schematic DNP check;
+  the template version replaced the local one.
 - `qa/tests/test_components.py`, `test_thermal.py`, `test_installer.py`: use
   fixture copies instead of the project generator; installer tests check the
   template-free behaviour and the local launcher.
+- `qa/tests/kit_test_support.py`: `create_seeded_project()` stands in for the generator in
+  `test_design_contracts.py` (fixture copy renamed to the board name plus the empty contract
+  seeds and the pinmap header, same content as the template seeds).
+- `qa/tests/test_schematic.py`: two tests skipped – the kit-repository Git rule (RoverCore's
+  AGENTS.md allows local commits only) and generated-project content.
+- `tools/cli/main.py`: additionally without the `carrier` command.
 
 ## Use
 
@@ -76,5 +84,19 @@ electrical, thermal or fabrication readiness, and no fabrication release is
 claimed. Requires KiCad 10.0.7 (official macOS DMG) at `/Applications/KiCad`
 or `KICAD_APP`/`KICAD_CLI`.
 
-Updating from a newer template commit: copy the files listed above, re-apply
-the local modifications, update the source commit here and rerun the tests.
+Updating from a newer template commit: three-way merge per file (base = the source commit
+above, ours = RoverCore, theirs = the new template commit, e.g. `git merge-file`), keep the
+local modifications listed above, update the source commit here, rerun the tests and
+`scripts/kit verify .`, then export a trial package and compare it with the current DRAFT
+package (`scripts/kit compare-exports`).
+
+Update 2026-11-23 (`65486a5` → `f349dc7`): 120 tests OK (3 skipped), `verify` PASS (required
+gates; advisory metadata/BOM findings unchanged). A trial export compared with
+`rev-A3-DRAFT`: first run differed only in `assembly/ibom.html` (iBOM bounding box of the
+keep-out-only footprint H4); a second run was identical in all 42 artifacts. iBOM is
+therefore not always reproducible for H4; this comes from the plugin, not from the kit
+update (unchanged iBOM call, standalone runs give the A3 value). New BOM/drill checks:
+`drill_file_consistency` COMPLETE. The new `contracts`, `assumptions` and `power-budget`
+commands stop with a missing-file error until RoverCore has filled
+`hardware/interfaces/design-contracts.json`, `assumptions.json`,
+`hardware/simulations/power/budget.json` and `firmware/bsp/pin-bindings.json`.

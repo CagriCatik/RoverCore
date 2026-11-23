@@ -92,3 +92,34 @@ class TempDirTest(unittest.TestCase):
 
 
 sandbox()
+
+
+# RoverCore vendors no project generator (tools/VENDORED.md). The design-contract tests only need what
+# tools.project.templates.create() writes for them: a KiCad project named after the board plus the
+# intentionally empty contract inputs (same content as the template seeds at the vendored commit).
+CONTRACT_SEEDS = {
+    "hardware/interfaces/assumptions.json": {"schema": 1, "assumptions": []},
+    "hardware/interfaces/design-contracts.json": {"schema": 1, "rails": [], "signals": [], "connectors": [],
+                                                  "states": []},
+    "firmware/bsp/pin-bindings.json": {"schema": 1, "bindings": []},
+    "hardware/simulations/power/budget.json": {"schema": 1, "scenarios": []},
+}
+
+
+PINMAP_HEADER = ("board_revision,reference,pin_number,schematic_net,mcu_port,mcu_pin,firmware_signal,direction,"
+                 "voltage_domain,boot_state,verification,source_reference")
+
+
+def create_seeded_project(template, dest, name, register=False):
+    """Stand-in for tools.project.templates.create in vendored tests; never registers anything."""
+    import json
+
+    dest = Path(dest)
+    shutil.copytree(FIXTURE, dest)
+    for path in list(dest.glob("divider.*")):
+        path.rename(dest / (name + path.suffix))
+    for rel, data in CONTRACT_SEEDS.items():
+        (dest / rel).parent.mkdir(parents=True, exist_ok=True)
+        (dest / rel).write_text(json.dumps(data, indent=2) + "\n")
+    (dest / "hardware/interfaces/pinmap.csv").write_text(PINMAP_HEADER + "\n")
+    return dest, {"template": template, "name": name, "stand_in": True}

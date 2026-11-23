@@ -47,6 +47,15 @@ def build_parser():
     c.add_argument("--gate", action="append", dest="gates")
     c.add_argument("--release", action="store_true", help="apply release gate severities")
 
+    c = cmd("schematic", "read-only schematic snapshots, comparison and visual-review evidence")
+    c.add_argument("action", choices=["snapshot", "compare", "review", "lint", "status"])
+    c.add_argument("source", help="root .kicad_sch, snapshot for compare, or manifest for status")
+    c.add_argument("other", nargs="?", help="second snapshot for compare")
+    c.add_argument("--output", help="new snapshot file; review output parent directory")
+    c.add_argument("--baseline", help="earlier snapshot for review comparison")
+    c.add_argument("--views", help="JSON detail views in paper millimetres")
+    c.add_argument("--dpi", type=int, default=150, help="overview resolution (details: 300 dpi)")
+
     c = cmd("export", "manufacturing outputs: NO-GO draft, or GO release with --approval --authorize")
     c.add_argument("project")
     c.add_argument("--revision", required=True)
@@ -86,6 +95,17 @@ def build_parser():
     c.add_argument("--datasheet-url", default="")
     c.add_argument("--revision", default="")
 
+    c = cmd("contracts", "check supply states, connector contracts, pinmap and declared BSP bindings")
+    c.add_argument("action", choices=["check"])
+    c.add_argument("project")
+    c.add_argument("--snapshot", help="optional current KiCad 10.0.7 schematic snapshot")
+    c = cmd("assumptions", "check source-labelled electrical input values")
+    c.add_argument("action", choices=["check"])
+    c.add_argument("project")
+    c = cmd("power-budget", "estimate static rail/common-path/branch voltage and current")
+    c.add_argument("action", choices=["calculate"])
+    c.add_argument("project")
+
     c = cmd("libraries", "library table checks and project-local registration")
     c.add_argument("action", choices=["check", "register"])
     c.add_argument("project", nargs="?")
@@ -104,7 +124,7 @@ def build_parser():
 
     c = cmd("firmware", "optional firmware build/test")
     c.add_argument("project")
-    c.add_argument("--target", choices=["host", "stm32", "arduino"], default="host")
+    c.add_argument("--target", choices=["host", "stm32", "arduino", "esp32"], default="host")
 
     cmd("version", "kit and KiCad versions")
     return p
@@ -130,6 +150,36 @@ def run_command(args):
         result = verify(args.project, gates=args.gates, release=args.release)
         _emit(args, result, summary_lines(result))
         return 0 if result["quality_gate"] == "PASS" else 20
+    if c == "schematic":
+        from tools.schematic import evidence, layout, model
+
+        if args.action == "snapshot":
+            if not args.output:
+                raise KitError("schematic snapshot requires --output NEW.json")
+            result = evidence.snapshot(args.source, args.output)
+        elif args.action == "compare":
+            if not args.other:
+                raise KitError("schematic compare needs two snapshot JSON files")
+            result = model.compare(json.loads(Path(args.source).read_text()),
+                                   json.loads(Path(args.other).read_text()))
+        elif args.action == "status":
+            result = evidence.status(args.source)
+        elif args.action == "lint":
+            result = layout.hints(args.source)
+        else:
+            result = evidence.review(args.source, args.output, args.views, args.baseline, args.dpi)
+        _emit(args, result)
+        if args.action == "status":
+            return 0 if result["status"] == "CURRENT" else 20
+        if args.action == "compare":
+            return 0 if result["identical"] and result["toolchain_match"] and result["toolchain_supported"] else 20
+        if args.action == "review":
+            comparison = result.get("comparison", {})
+            failed = (result["erc"]["active"] or comparison.get("identical") is False
+                      or comparison.get("toolchain_match") is False
+                      or comparison.get("toolchain_supported") is False)
+            return 20 if failed else 0
+        return 0
     if c == "export":
         from tools.release.exports import export_project
 
@@ -208,6 +258,24 @@ def run_command(args):
                                                                          result["approved"])] +
               ["  %s: %s" % (Path(f["file"]).name, f["problem"]) for f in result["findings"]])
         return 0 if result["status"] == "PASS" else 20
+    if c == "contracts":
+        from tools.project.contracts import check
+
+        result = check(args.project, args.snapshot)
+        _emit(args, result)
+        return 0 if result["status"] == "PASS" else 20
+    if c == "assumptions":
+        from tools.project.assumptions import check
+
+        result = check(args.project)
+        _emit(args, result)
+        return 0 if result["status"] == "PASS" else 20
+    if c == "power-budget":
+        from tools.quality.power_budget import calculate
+
+        result = calculate(args.project)
+        _emit(args, result)
+        return 0 if result["status"] == "WITHIN_LIMITS" else 20
     if c == "libraries":
         from tools.kicad.libraries import LibraryTables, register_library
 
