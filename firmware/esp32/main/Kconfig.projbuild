@@ -1,0 +1,25 @@
+menu "RoverCore VCU"
+
+config ROVERCORE_ACTUATORS_PERMITTED
+    bool "Let SERVO_PWR_EN / ACT_OE_N follow the enable (NOT in this firmware stage)"
+    default n
+    help
+        Off: the outputs stay locked (SERVO_PWR_EN low, ACT_OE_N high) in every state, also after a valid
+        enable sequence. Must stay off until the PWM stage defines the neutral first pulse and the limits,
+        and until the carrier measurements of the shutdown are done (docs/vcu/firmware-plan.md).
+
+config ROVERCORE_BENCH_DEVKIT_ONLY
+    bool "Bench build for a bare DevKit without carrier"
+    default n
+    depends on !ROVERCORE_ACTUATORS_PERMITTED
+    help
+        Internal pull-up on GPIO10 (button released) and pull-down on GPIO18 (ACT_ARMED low), and VBAT reported
+        as 12.0 V, so the enable sequence can be exercised with a push button on GPIO10 and a wire on GPIO18.
+        Never for the carrier: the carrier has its own pull resistors and real VBAT measurement.
+
+config ROVERCORE_DIAG_PERIOD_MS
+    int "Diagnostic line period (ms)"
+    default 500
+    range 100 10000
+
+endmenu

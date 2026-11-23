@@ -1,0 +1,15 @@
+# RoverCore VCU - ESP32-S3-DevKitC-1 N16R8 v1.1
+CONFIG_IDF_TARGET="esp32s3"
+CONFIG_ESPTOOLPY_FLASHSIZE_16MB=y
+# 1 kHz tick: the control task runs every 5 ms (must stay < 12 ms, enable_fsm.h)
+CONFIG_FREERTOS_HZ=1000
+# task watchdog: control task subscribed, 1 s, panic -> reset -> start again in S0
+CONFIG_ESP_TASK_WDT_EN=y
+CONFIG_ESP_TASK_WDT_INIT=y
+CONFIG_ESP_TASK_WDT_TIMEOUT_S=1
+CONFIG_ESP_TASK_WDT_PANIC=y
+CONFIG_ESP_INT_WDT=y
+# brown-out detector of the ESP32-S3 (resets; the firmware starts in S0 after every reset)
+CONFIG_ESP_BROWNOUT_DET=y
+# console on the DevKit UART bridge (CP2102N, GPIO43/44)
+CONFIG_ESP_CONSOLE_UART_DEFAULT=y

@@ -13,3 +13,10 @@ record toolchain pinning in docs/architecture.md.
 
 Hardware is authoritative for pinouts; firmware config tracks the reviewed
 `hardware/interfaces/pinmap.csv` contract.
+
+## Selected target (2026-11-23)
+
+ESP-IDF v5.x, ESP32-S3-DevKitC-1 N16R8 v1.1, project in `esp32/`
+(`idf.py set-target esp32s3 build`). Stage plan, safety rules and the split into
+host tests, DevKit tests and carrier measurements: `docs/vcu/firmware-plan.md`.
+Actuators stay locked unless `CONFIG_ROVERCORE_ACTUATORS_PERMITTED` is set (default n).

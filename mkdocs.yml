@@ -35,6 +35,7 @@ nav:
       - Vorschlag Lochbild: vcu/rev1-befestigung-vorschlag.md
       - Review 2026-11-15: vcu/rev1-review-2026-11-15.md
       - Schaltplan-Darstellung 2026-11-15: vcu/reviews/2026-11-15-schematic-layout.md
+      - Firmware-Plan: vcu/firmware-plan.md
       - Werkzeuge: vcu/tooling-integration.md
   - Projekt:
       - Anforderungen: requirements.md
