@@ -39,6 +39,9 @@ den 3D-Ansichten = Hüllkörper für Scheibe, Kopf und 10-mm-Abstandshalter.
 
 ![Bemaßte Draufsicht der Befestigungsbohrungen](docs/images/mounting_top.jpg)
 
+**Im Browser ansehen:** [drehbares 3D-Modell und interaktive Stückliste (iBOM)](https://cagricatik.github.io/RoverCore/vcu/ansicht/)
+(DRAFT A3.1; ohne die Herstellermodelle von J102/J103, siehe dort).
+
 Aus den exportierten Gerber- und Bohrdateien gezeichnet
 (`scripts/kit fab preview`), also so, wie der Fertiger sie erhält:
 
